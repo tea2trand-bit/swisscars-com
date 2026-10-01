@@ -90,12 +90,21 @@ button.b:disabled{opacity:.5;cursor:not-allowed}
 ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 @media (min-width:900px){.split.two{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:8px;cursor:pointer;text-align:left;font:inherit;color:inherit}
-.card:hover{border-color:var(--accent)}
-.card.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-.card .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
-.card .money{font-family:var(--f-num);font-size:15px}
+.cards{display:grid;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.cards:empty{display:none}
+.card,.cardh{display:grid;grid-template-columns:minmax(0,2.4fr) 170px minmax(0,1.5fr) 130px 100px;gap:6px 14px;align-items:center;padding:10px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;font:inherit;color:inherit}
+.card:last-child{border-bottom:0}
+.cardh{font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;padding-top:8px;padding-bottom:8px;background:var(--soft)}
+.card{cursor:pointer}
+.card:hover{background:var(--soft)}
+.card.sel{background:var(--soft);box-shadow:inset 4px 0 0 var(--accent)}
+.card .cm b{display:block}
+.card .cn{font-family:var(--f-num);text-align:right;white-space:nowrap}
+.cardh .cn{text-align:right}
+@media (max-width:760px){.cardh{display:none}.card{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"m p" "n z"}.card .cm{grid-area:m}.card .cst{grid-area:p;text-align:right}.card .cnext{grid-area:n}.card .cprof{grid-area:z}.card .cinv{display:none}}
+.pipe button.st{font:inherit;font-size:14px;color:var(--ink);background:var(--paper);cursor:pointer}
+.pipe button.st:disabled{opacity:.55;cursor:default}
+.pipe button.st[aria-pressed=true]{border-color:var(--accent);background:var(--soft);box-shadow:inset 0 -2px 0 var(--accent)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{font:14px var(--f-body);border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
 .chips button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
@@ -251,10 +260,10 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
   <!-- AUTA -->
   <section id="t-auta" class="wrap" style="gap:16px">
     <details class="intro"><summary>ⓘ Kako radi</summary><p>Auta koja smo <b>kupili</b> i koja su u radu, od Švajcarske do prodaje. Prodata auta su pod dugmetom „Prodata auta“. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p></details>
-    <div class="pipe" id="pipe"></div>
+    <div class="top" style="align-items:flex-start"><div class="pipe" id="pipe"></div><button class="b" type="button" id="soldBtn">Prodata auta (<span id="cntSold">0</span>) →</button></div>
     <div class="top">
       <p class="note" style="margin:0"><b id="cntAkt">0</b> auta u radu</p>
-      <div class="btns"><button class="b" type="button" id="soldBtn">Prodata auta (<span id="cntSold">0</span>) →</button>
+      <div class="btns">
       <button class="b primary" id="newCar" type="button">+ Novi auto</button></div>
     </div>
 
@@ -554,7 +563,7 @@ const SPECKEYS=SPEC.flatMap(g=>g[1].map(f=>f[0]));
 let assets=null;
 let db=null,user=null,me=null,canWrite=true;
 let CARS=[],COSTS=[],LEADS=[],EVENTS=[],SET={...DEF};
-let curId=null,filter="aktivna",IAM="";
+let curId=null,filter="aktivna",IAM="",pipeF=null;
 const $=id=>document.getElementById(id);
 const fmt=n=>Math.round(n||0).toLocaleString("sr-Latn-RS");
 const sgn=n=>(n>=0?"+":"−")+fmt(Math.abs(n));
@@ -660,13 +669,17 @@ function renderCards(){
   $("cntAkt").textContent=vis.filter(c=>!["prodat","odustao"].includes(c.status)).length;$("cntSold").textContent=vis.filter(c=>c.status==="prodat").length;
   const list=vis.filter(c=>!["prodat","odustao"].includes(c.status))
     .sort((a,b)=>(idx(b.status)-idx(a.status))||((b.updated||0)-(a.updated||0)));
-  $("cards").innerHTML=list.map(c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c);
+  $("pipe").innerHTML=FLOW.filter(([st])=>st!=="prodat").map(([st,l])=>{const n=list.filter(c=>c.status===st).length;return `<button type="button" class="st" data-pf="${st}" aria-pressed="${pipeF===st}" ${n||pipeF===st?"":"disabled"}><span class="pill s-${st}">${l}</span><b>${n}</b></button>`;}).join("");
+  $("pipe").querySelectorAll("[data-pf]").forEach(b=>b.onclick=()=>{pipeF=pipeF===b.dataset.pf?null:b.dataset.pf;renderCards();});
+  const shown=pipeF?list.filter(c=>c.status===pipeF):list;
+  $("cards").innerHTML=shown.length?`<div class="cardh"><span>Auto</span><span>Faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Zarada</span></div>`+shown.map(c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c);
     return `<button type="button" class="card${c._id===curId?" sel":""}" data-id="${esc(c._id)}">
-      <div class="row"><b>${esc(c.model)}</b><span class="pill s-${esc(c.status)}">${SL[c.status]||esc(c.status)}</span></div>
-      <span class="sub">${c.year||""}${c.km?" · "+fmt(c.km)+" km":""}${nb&&c.status!=="prodat"?` · <span class="match">${nb} ${nb===1?"upit za ovaj model":"upita za ovaj model"}</span>`:""}</span>
-      <div class="row money"><span>Uloženo ${fmt(r.cost)} €</span><span class="${r.post==null?"":r.post>=0?"pos":"neg"}">${r.post==null?"":sgn(r.post)}</span></div>
-      <span class="note">${st?"Sledeće: "+esc(st.title):c.status==="prodat"?`Prodat za ${fmt(c.salePrice)} € · ${r.days??"—"} dana`:"—"}</span></button>`;}).join("");
-  $("carEmpty").hidden=list.length>0;
+      <span class="cm"><b>${esc(c.model)}</b><span class="sub">${c.year||""}${c.km?" · "+fmt(c.km)+" km":""}${nb?` · <span class="match">${nb} ${nb===1?"upit":"upita"}</span>`:""}</span></span>
+      <span class="cst"><span class="pill s-${esc(c.status)}">${SL[c.status]||esc(c.status)}</span></span>
+      <span class="note cnext">${st?esc(st.title):"—"}</span>
+      <span class="cn cinv">${fmt(r.cost)} €</span>
+      <span class="cn cprof ${r.post==null?"":r.post>=0?"pos":"neg"}">${r.post==null?"—":sgn(r.post)+" €"}</span></button>`;}).join(""):"";
+  $("carEmpty").hidden=shown.length>0;
   $("cards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCar(b.dataset.id));
 }
 function openCar(id){curId=id;$("detail").hidden=false;fillCarForm();render();$("detail").scrollIntoView({behavior:"smooth",block:"start"});}
@@ -750,7 +763,6 @@ function renderKpis(){
   const exp=act.filter(c=>c.askEur).reduce((s,c)=>s+(carCalc(c).post||0),0);
   $("kpis").innerHTML=[["Novac u autima",fmt(tied)+" €",`${act.length} auta kupljeno, još neprodato`],["Zarađeno",`<span class="${prof>=0?"pos":"neg"}">${sgn(prof)} €</span>`,`${sold.length} prodatih auta, posle poreza`],["Još se očekuje",`<span class="${exp>=0?"pos":"neg"}">${sgn(exp)} €</span>`,"od auta koja imaju traženu cenu"],["Prosečno do prodaje",avgD==null?"—":fmt(avgD)+" dana","od kupovine do prodaje"]]
     .map(([l,v,s])=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
-  $("pipe").innerHTML=STATUS.filter(([s])=>s!=="odustao"&&s!=="prodat").map(([s,l])=>`<span class="st"><span class="pill s-${s}">${l}</span><b>${CARS.filter(c=>c.status===s).length}</b></span>`).join("");
   const sp=$("soldPer").value, now=new Date(), pad=n=>String(n).padStart(2,"0"), ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
   const [sf,st]=sp==="m0"?[ymd(new Date(now.getFullYear(),now.getMonth(),1)),"9999"]:sp==="m1"?[ymd(new Date(now.getFullYear(),now.getMonth()-1,1)),ymd(new Date(now.getFullYear(),now.getMonth(),1))]:sp==="6m"?[ymd(new Date(now.getFullYear(),now.getMonth()-6,now.getDate())),"9999"]:sp==="y0"?[now.getFullYear()+"-01-01","9999"]:sp==="y1"?[(now.getFullYear()-1)+"-01-01",now.getFullYear()+"-01-01"]:["","9999"];
   const soldP=sold.filter(c=>(c.soldDate||"")>=sf&&(c.soldDate||"")<st);
