@@ -1054,7 +1054,7 @@ function leadStage(l,n){
   if(props.some(p=>pAns(p)==="zanima"&&!p.photosAt)) return {t:"Zanima ga – dodajte slike",c:"s-new"};
   if(props.some(p=>pAns(p)==="zanima"&&p.photosAt)) return {t:"Slike poslate – čeka odluku",c:"s-wait"};
   if(props.some(p=>!pAns(p))) return {t:"Čeka odgovor na predloge",c:"s-wait"};
-  if(n) return {t:`Asistent našao ${n} ${n===1?"oglas":"oglasa"} – izaberite predlog`,c:"s-new"};
+  if(n) return {t:"Asistent šalje nove predloge (do 1 h)",c:"s-wait"};
   if(l.aiCheckedAt) return {t:"Asistent još nema dobar oglas – traži dalje",c:"s-new"};
   return {t:"Novo – asistent proverava (do 1 h)",c:"s-new"};
 }
@@ -1069,7 +1069,7 @@ function renderLeads(){
     const want=[l.budget?`do ${fmt(l.budget)} €`:"",l.yearFrom?`od ${l.yearFrom}.`:"",sv(l.fuel),sv(l.body),l.drive==="4x4"?"4x4":"",sv(l.gearbox),l.mileage&&l.mileage!=="Nije presudno"?l.mileage.toLowerCase():"",(l.equip||[]).length?"oprema: "+l.equip.join(", "):"",l.when].filter(Boolean).map(esc).join(" · ");
     const head=`<div class="lhd"><div><h3>${esc(l.name||l.contact||"Bez imena")}</h3><span class="sub">${[l.city||(l.where&&l.where!=="Sajt"?l.where:""),l.source==="web"?"sa sajta":"telefonom / uživo",l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):"",l.source!=="web"&&l.payer?"uneo "+l.payer:""].filter(Boolean).map(esc).join(" · ")}</span></div><span class="stage ${st.c}">${esc(st.t)}</span></div>`;
     const contact=`<div class="lcontact">${l.phone?`<a href="tel:${esc(wa)}">📞 ${esc(l.phone)}</a>${wa.length>6?`<a href="https://wa.me/${esc(wa.replace("+",""))}" target="_blank" rel="noopener">WhatsApp</a>`:""}`:""}${l.email?`<a href="mailto:${esc(l.email)}">✉ ${esc(l.email)}</a>`:""}${!l.phone&&!l.email&&l.contact?esc(l.contact):""}</div>`;
-    const propHTML=props.length?`<div class="blk"><h4>Predlozi</h4><ul class="plist">${props.map(p=>{const ps=propState(p);const f=p.findId?FINDS.find(x=>x._id===p.findId):null;
+    const propHTML=props.length?`<div class="blk"><h4>Predlozi</h4><ul class="plist">${props.map(p=>{let ps=propState(p);if(car&&["zanima","zelim"].includes(pAns(p)))ps={t:"✓ Kupljeno",c:"ans-da"};const f=p.findId?FINDS.find(x=>x._id===p.findId):null;
       return `<li><span>${esc(p.title)}${p.year?" · "+p.year:""}${p.km?" · "+fmt(p.km)+" km":""} · <b>${p.price?fmt(p.price)+" €":"cena po dogovoru"}</b> <span class="note">${p.at?new Date(p.at).toLocaleDateString("sr-Latn-RS"):""}${p.by?", "+esc(who(p.by)):""}</span>${p.answerNote?`<span class="sub">„${esc(p.answerNote)}“</span>`:""}</span>
         <span class="pst"><span class="${ps.c}">${esc(ps.t)}</span>${canWrite&&!car?(ps.act==="photos"?`<button class="b small primary" type="button" data-pph="${esc(l._id)}|${esc(p.id)}">Dodaj slike i opis</button>`:ps.act==="paid"?`<button class="b small primary" type="button" data-ppaid="${esc(l._id)}|${esc(p.id)}">Kapara primljena</button>`:ps.act==="refund"?`<button class="b small" type="button" data-prefund="${esc(l._id)}|${esc(p.id)}">Kapara vraćena</button>`:""):""}</span>
         <div class="pphoto" data-pphbox="${esc(l._id)}|${esc(p.id)}" hidden><p class="note">${f&&f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">Otvori oglas ↗</a> · `:""}Sačuvaj slike iz oglasa i ubaci ih ovde, pa prepiši bitno iz opisa. Potražilac ne vidi link oglasa.</p>
