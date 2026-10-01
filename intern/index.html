@@ -192,6 +192,7 @@ details.intro p{margin:0 0 4px}
 .plist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center}
 .plist .pst{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
 .pphoto{grid-column:1/-1;display:grid;gap:8px;background:var(--soft);border-radius:8px;padding:10px}
+.tbadge{display:inline-block;margin-left:6px;min-width:20px;padding:0 6px;border-radius:999px;background:var(--neg);color:#fff;font-size:12px;line-height:20px;text-align:center}
 .lactions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
 .lactions select{width:auto;max-width:100%}
 .lead-dummy{display:none}
@@ -261,7 +262,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <nav class="tabs" role="tablist">
     <button role="tab" data-t="auta" aria-selected="true">Naša auta</button>
-    <button role="tab" data-t="narudzbine" aria-selected="false">Upiti</button>
+    <button role="tab" data-t="narudzbine" aria-selected="false">Upiti<span class="tbadge" id="tabLeadCnt" title="Upiti koji čekaju na vas" hidden></span></button>
     <button role="tab" data-t="ai" aria-selected="false">Asistent pretraga</button>
     <button role="tab" data-t="novac" aria-selected="false">Novac i obračun</button>
     <button role="tab" data-t="istorija" aria-selected="false">Istorija</button>
@@ -1059,6 +1060,7 @@ function leadStage(l,n){
   return {t:"Novo – asistent proverava (do 1 h)",c:"s-new"};
 }
 function renderLeads(){
+  {const n=LEADS.filter(l=>!l.carId&&(l.proposals||[]).some(p=>propState(p).act)).length;$("tabLeadCnt").textContent=n;$("tabLeadCnt").hidden=!n;}
   const rows=shopRows();
   const list=[...LEADS].map(l=>{const fs=leadFindsOf(l,rows);return {l,fs,st:leadStage(l,fs.length)};}).filter(x=>leadFilter==="open"?!x.st.done:x.st.done).sort((a,b)=>(b.l.created||0)-(a.l.created||0));
   const ourCars=CARS.filter(c=>["kupljen","transport","carinjen","garaza","prodaja"].includes(c.status));
