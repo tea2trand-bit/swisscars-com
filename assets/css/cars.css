@@ -94,6 +94,15 @@
 .up-ans textarea { width: 100%; min-height: 60px; font: inherit; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px }
 .up-ok { color: #1f7a4c; font-weight: 700 }
 .up-no { color: #a3362b; font-weight: 700 }
+.up-wait { color: var(--muted); font-weight: 700 }
+.up-box { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px }
+.up-pay { white-space: pre-line; font-weight: 700 }
+.up-ad { border-left: 3px solid var(--gold2); padding-left: 10px }
+.up-ad p { white-space: pre-line }
+.up-dim { opacity: .6 }
+.up-gal { grid-column: 1 / -1; padding: 0 22px 22px }
+.up-how summary { cursor: pointer; font-weight: 700 }
+.up-how ol { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 4px }
 .up-out { color: var(--text) !important; border-color: var(--line) !important; background: #fff !important }
 .up-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px }
 .up-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; display: block }
