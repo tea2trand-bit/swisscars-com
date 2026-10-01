@@ -156,8 +156,20 @@ td.r,th.r{text-align:right;width:1%;white-space:nowrap}
 .hsum b{font-family:var(--f-num)}
 .filters{display:flex;flex-wrap:wrap;gap:8px}
 .filters select{width:auto}
-.leads{display:grid;gap:12px}
-.lead{border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px}
+.leads{display:grid;gap:18px}
+.lead{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:12px;box-shadow:0 2px 10px rgba(20,24,30,.06)}
+.lead.s-wait{border-left-color:var(--warn)} .lead.s-yes{border-left-color:var(--pos)} .lead.s-car{border-left-color:var(--info)} .lead.s-new{border-left-color:var(--accent)} .lead.s-done{border-left-color:var(--muted);opacity:.85}
+.lhd{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:space-between;align-items:flex-start}
+.lhd h3{margin:0;font-size:19px}
+.stage{font:600 13px var(--f-body);padding:4px 11px;border-radius:999px;background:var(--soft);color:var(--ink);white-space:nowrap}
+.stage.s-wait{background:var(--warn-soft);color:var(--warn)} .stage.s-yes{background:var(--pos-soft);color:var(--pos)} .stage.s-car{background:var(--info-soft);color:var(--info)} .stage.s-new{background:var(--accent);color:var(--accent-ink)}
+.lwant{font-size:15px} .lwant b{font-weight:600}
+.lcontact{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px} .lcontact a{color:var(--ink)}
+.lfinds{border:1px dashed var(--line);border-radius:8px;padding:8px 12px} .lfinds summary{cursor:pointer;font-weight:600;font-size:14px}
+.lfinds ul{margin-top:8px}
+.lactions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.lactions select{width:auto;max-width:100%}
+.lead-dummy{display:none}
 .lead .hd{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:flex-start}
 .lead h3{margin:0}
 .lead .meta{font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
@@ -357,29 +369,29 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- UPITI -->
   <section id="t-narudzbine" class="wrap" style="gap:16px" hidden>
-    <p class="intro"><b>Upit</b> je kad neko traži određeno auto. Sa sajta stiže sam (potražilac dobije email i link za praćenje), a upit sa telefona upišeš desno. Asistent traži baš to auto. Iz pronađenog mu jednim klikom pošalješ <b>predlog</b>, a on na svom linku odgovori. Kad kupi, postaje kupac.</p>
-    <div class="split two">
-      <div class="sheet">
-        <div class="top"><h2>Upiti</h2><div class="chips" id="leadFilter"><button type="button" data-lf="open" aria-pressed="true">Otvoreni</button><button type="button" data-lf="done" aria-pressed="false">Završeni</button></div></div>
-        <div class="leads" id="leadList"></div>
-        <p class="note" id="leadEmpty" hidden>Nema upita u ovom prikazu.</p>
-      </div>
-      <div class="sheet" style="align-content:start">
-        <h2>Novi upit (telefon, uživo)</h2>
-        <form id="leadForm" autocomplete="off">
-          <div class="field"><label for="l_model">Šta traži (model, motor)</label><input id="l_model" list="models" required placeholder="npr. Golf 7 karavan automatik"></div>
-          <div class="grid">
-            <div class="field"><label for="l_budget">Budžet do, €</label><input id="l_budget" type="number" min="0" step="500"></div>
-            <div class="field"><label for="l_where">Gde</label><select id="l_where"></select></div>
-            <div class="field"><label for="l_name">Ime</label><input id="l_name"></div>
-            <div class="field"><label for="l_phone">Telefon / WhatsApp</label><input id="l_phone" type="tel"></div>
-            <div class="field"><label for="l_email">Email (za link za praćenje)</label><input id="l_email" type="email"></div>
-          </div>
-          <div class="field"><label for="l_note">Napomena</label><textarea id="l_note"></textarea></div>
-          <button class="b primary" type="submit">Sačuvaj upit</button>
-        </form>
-      </div>
+    <p class="intro"><b>Upit</b> = neko traži određeno auto. Sa sajta stiže sam, asistent ga proveri u roku od sat vremena, a potražilac dobija email i link za praćenje. Vi samo pošaljete predlog i, kad kupi, izaberete auto. Faza upita se menja sama.</p>
+    <div class="top">
+      <div class="chips" id="leadFilter"><button type="button" data-lf="open" aria-pressed="true">Otvoreni</button><button type="button" data-lf="done" aria-pressed="false">Završeni</button></div>
+      <button class="b" type="button" id="leadNewBtn">+ Upit sa telefona</button>
     </div>
+    <div class="sheet" id="leadNewBox" hidden>
+      <h2>Upit sa telefona ili uživo</h2>
+      <p class="note">Upiti sa sajta stižu sami. Ovde upiši samo kad te neko pozove ili dođe lično.</p>
+      <form id="leadForm" autocomplete="off">
+        <div class="grid">
+          <div class="field"><label for="l_name">Ime i prezime</label><input id="l_name" required></div>
+          <div class="field"><label for="l_phone">Telefon / WhatsApp</label><input id="l_phone" type="tel"></div>
+          <div class="field"><label for="l_email">Email (za link za praćenje)</label><input id="l_email" type="email"></div>
+          <div class="field"><label for="l_where">Gde</label><select id="l_where"></select></div>
+          <div class="field"><label for="l_model">Šta traži (marka, model)</label><input id="l_model" list="models" required placeholder="npr. Golf 7 karavan automatik"></div>
+          <div class="field"><label for="l_budget">Budžet do, €</label><input id="l_budget" type="number" min="0" step="500"></div>
+        </div>
+        <div class="field"><label for="l_note">Godište, gorivo, menjač, oprema, ostalo</label><textarea id="l_note" placeholder="npr. od 2015, dizel, automatik, karavan, kuka"></textarea></div>
+        <div class="btns"><button class="b primary" type="submit">Sačuvaj upit</button><button class="b" type="button" id="leadNewCancel">Odustani</button></div>
+      </form>
+    </div>
+    <div class="leads" id="leadList"></div>
+    <p class="note" id="leadEmpty" hidden>Nema upita u ovom prikazu.</p>
   </section>
 
   <!-- NOVAC -->
@@ -857,44 +869,53 @@ async function savePrice(source){if(!db)return;const num=v=>v===""?null:+v;
 }
 $("priceForm").addEventListener("submit",e=>{e.preventDefault();savePrice("ai");});
 $("p_manual").addEventListener("click",()=>savePrice("manual"));
-const LS=[["novo","Novo"],["trazimo","Tražimo"],["ponudjeno","Predlog poslat"],["kupljeno","Kupljeno za njega (u toku)"],["predato","Predato – postao kupac"],["odustao","Odustao"]];
 const newToken=()=>{const a=new Uint8Array(12);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("");};
 const trackUrl=t=>`https://swiscars.com/upit/#${t}`;
-const leadStatus=l=>l.status==="kupio"?"predato":(l.status||"novo");
+function leadFindsOf(l,rows){const k=leadKey(l.model).join(" ");const r=rows.find(x=>x.id==="lead:"+k);return r?findsFor(r).filter(f=>["novo","gledano"].includes(f.status||"novo")):[];}
+function leadStage(l,n){
+  const car=l.carId?CARS.find(c=>c._id===l.carId):null, props=l.proposals||[], last=props[props.length-1];
+  if(l.status==="odustao") return {t:"Zatvoren",c:"s-done",done:true};
+  if(l.status==="predato"||l.status==="kupio"||car?.status==="prodat") return {t:"Predato – postao kupac",c:"s-done",done:true};
+  if(car) return {t:`Auto kupljeno: ${SL[car.status]||""}`,c:"s-car"};
+  if(last&&!last.answer) return {t:"Čeka odgovor na predlog",c:"s-wait"};
+  if(last&&last.answer==="da") return {t:"Prihvatio predlog – dogovoriti kupovinu",c:"s-yes"};
+  if(last&&last.answer==="ne") return {t:"Odbio predlog – tražimo dalje",c:"s-wait"};
+  if(n) return {t:`Asistent našao ${n} ${n===1?"oglas":"oglasa"} – izaberite predlog`,c:"s-new"};
+  if(l.aiCheckedAt) return {t:"Asistent još nema dobar oglas – traži dalje",c:"s-new"};
+  return {t:"Novo – asistent proverava (do 1 h)",c:"s-new"};
+}
 function renderLeads(){
-  const open=l=>LEAD_OPEN.includes(leadStatus(l));
-  const list=[...LEADS].filter(l=>leadFilter==="open"?open(l):!open(l)).sort((a,b)=>(b.created||0)-(a.created||0));
   const rows=shopRows();
+  const list=[...LEADS].map(l=>{const fs=leadFindsOf(l,rows);return {l,fs,st:leadStage(l,fs.length)};}).filter(x=>leadFilter==="open"?!x.st.done:x.st.done).sort((a,b)=>(b.l.created||0)-(a.l.created||0));
   const ourCars=CARS.filter(c=>["pregledan","kupljen","transport","carinjen","garaza","prodaja"].includes(c.status));
-  $("leadList").innerHTML=list.map(l=>{const k=leadKey(l.model).join(" ");const r=rows.find(x=>x.id==="lead:"+k);
-    const fs=r?findsFor(r).filter(f=>["novo","gledano"].includes(f.status||"novo")):[];
-    const props=l.proposals||[]; const st=leadStatus(l); const car=l.carId?CARS.find(c=>c._id===l.carId):null;
+  $("leadList").innerHTML=list.map(({l,st,fs})=>{
+    const props=l.proposals||[]; const car=l.carId?CARS.find(c=>c._id===l.carId):null;
     const wa=(l.phone||"").replace(/[^0-9+]/g,"").replace(/^00/,"+");
-    const contact=[l.name?`<b>${esc(l.name)}</b>`:"",l.phone?`<a href="tel:${esc(wa)}">${esc(l.phone)}</a>${wa.length>6?` · <a href="https://wa.me/${esc(wa.replace("+",""))}" target="_blank" rel="noopener">WhatsApp</a>`:""}`:"",l.email?`<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>`:"",(!l.name&&!l.phone&&!l.email&&l.contact)?esc(l.contact):""].filter(Boolean).join(" · ");
-    const wish=[l.yearFrom?"od "+l.yearFrom+".":"",l.fuel,l.body,l.drive==="4x4"?"4x4":"",l.gearbox,l.mileage,l.when,l.city||(l.where&&l.where!=="Sajt"?l.where:""),(l.equip||[]).length?"oprema: "+l.equip.join(", "):""].filter(x=>x&&x!=="Svejedno").map(esc).join(" · ");
-    const propHTML=props.length?`<div class="blk"><h4>Poslati predlozi</h4><ul>${props.map(p=>`<li><span>${esc(p.title)}${p.year?" · "+p.year:""}${p.km?" · "+fmt(p.km)+" km":""} · <b>${p.price?fmt(p.price)+" €":"cena po dogovoru"}</b></span><span class="${p.answer==="da"?"ans-da":p.answer==="ne"?"ans-ne":"ans-wait"}">${p.answer==="da"?"✓ Odgovara mu":p.answer==="ne"?"✗ Traži dalje":"čeka odgovor"}${p.answerNote?` — „${esc(p.answerNote)}“`:""}</span></li>`).join("")}</ul></div>`:"";
-    const findHTML=open(l)&&st!=="kupljeno"?`<div class="blk"><h4>Asistent našao za ovaj upit</h4>${fs.length?`<ul>${fs.slice(0,5).map(f=>{const p=findProfit(f);const sent=props.some(x=>x.findId===f._id);return `<li><span>${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.title||f.model)}</a>`:esc(f.title||f.model)} · ${f.year||""} · ${f.km?fmt(f.km)+" km · ":""}${fmt(f.priceChf)} CHF${p?` · zarada <span class="${p.post>=0?"pos":"neg"}">${sgn(p.post)} €</span>`:""}</span>${canWrite?(sent?'<span class="note">predlog poslat</span>':`<button class="b small" type="button" data-prop="${esc(l._id)}|f|${esc(f._id)}">Predloži</button>`):""}</li>`;}).join("")}</ul>`:`<p class="note">Još ništa${l.budget?"":". Upiši budžet da bi asistent mogao da traži"}.</p>`}
-      ${canWrite&&ourCars.length?`<div class="propform"><select data-propcar="${esc(l._id)}" aria-label="Predloži naše auto"><option value="">Predloži neko od naših auta…</option>${ourCars.map(c=>`<option value="${esc(c._id)}">${esc(c.model)}${c.year?" "+c.year:""} · ${SL[c.status]}</option>`).join("")}</select></div>`:""}
-      <div class="propform" data-pform="${esc(l._id)}" hidden></div></div>`:"";
-    const linkHTML=l.token?`<div class="linkbox">Link za praćenje: <code>${esc(trackUrl(l.token))}</code><button class="b small" type="button" data-copy="${esc(trackUrl(l.token))}">Kopiraj</button><a class="b small" href="${esc(trackUrl(l.token))}" target="_blank" rel="noopener">Otvori</a></div>`:(canWrite?`<div class="linkbox"><button class="b small" type="button" data-mktok="${esc(l._id)}">Napravi link za praćenje</button></div>`:"");
-    const carHTML=`<div class="linkbox">${car?`Auto za njega: <b>${esc(car.model)}${car.year?" "+car.year:""}</b> · ${SL[car.status]||""}`:"Auto za njega: još nije izabrano"}${canWrite?` <select data-lcar="${esc(l._id)}" aria-label="Auto kupljeno za ovaj upit" style="width:auto"><option value="">${car?"Promeni…":"Izaberi kad kupimo…"}</option>${CARS.filter(c=>!["odustao","prodat"].includes(c.status)||c._id===l.carId).map(c=>`<option value="${esc(c._id)}">${esc(c.model)}${c.year?" "+c.year:""} · ${SL[c.status]}</option>`).join("")}${car?'<option value="-">— ukloni vezu</option>':""}</select>`:""}</div>`;
-    return `<article class="lead"><div class="hd"><div><h3>${esc(l.model)}${l.budget?` · do ${fmt(l.budget)} €`:""}</h3><div class="meta">${l.source==="web"?'<span class="pill web">sa sajta</span>':""}<span>${l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):""}</span>${wish?`<span>${wish}</span>`:""}<span>uneo: ${esc(l.payer||"—")}</span>${l.aiCheckedAt?`<span class="match">Asistent proverio ${new Date(l.aiCheckedAt).toLocaleString("sr-Latn-RS",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"})}: ${l.aiFound||0} ${l.aiFound===1?"oglas":"oglasa"}</span>`:(open(l)?'<span class="note">Asistent ga proverava u roku od sat vremena</span>':"")}</div></div>
-      <div class="btns"><select data-lead="${esc(l._id)}" aria-label="Status upita" style="width:auto" ${canWrite?"":"disabled"}>${LS.map(([v,t])=>`<option value="${v}" ${st===v?"selected":""}>${t}</option>`).join("")}</select>${canWrite?`<button class="b small danger" type="button" data-ldel="${esc(l._id)}" aria-label="Obriši upit">×</button>`:""}</div></div>
-      ${contact?`<div class="meta">${contact}</div>`:""}${l.note?`<div class="meta">„${esc(l.note)}“</div>`:""}
-      ${linkHTML}${propHTML}${findHTML}${open(l)?carHTML:""}</article>`;}).join("");
+    const sv=x=>x&&x!=="Svejedno"?x:"";
+    const want=[l.budget?`do ${fmt(l.budget)} €`:"",l.yearFrom?`od ${l.yearFrom}.`:"",sv(l.fuel),sv(l.body),l.drive==="4x4"?"4x4":"",sv(l.gearbox),l.mileage&&l.mileage!=="Nije presudno"?l.mileage.toLowerCase():"",(l.equip||[]).length?"oprema: "+l.equip.join(", "):"",l.when].filter(Boolean).map(esc).join(" · ");
+    const head=`<div class="lhd"><div><h3>${esc(l.name||l.contact||"Bez imena")}</h3><span class="sub">${[l.city||(l.where&&l.where!=="Sajt"?l.where:""),l.source==="web"?"sa sajta":"telefonom / uživo",l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):"",l.source!=="web"&&l.payer?"uneo "+l.payer:""].filter(Boolean).map(esc).join(" · ")}</span></div><span class="stage ${st.c}">${esc(st.t)}</span></div>`;
+    const contact=`<div class="lcontact">${l.phone?`<a href="tel:${esc(wa)}">📞 ${esc(l.phone)}</a>${wa.length>6?`<a href="https://wa.me/${esc(wa.replace("+",""))}" target="_blank" rel="noopener">WhatsApp</a>`:""}`:""}${l.email?`<a href="mailto:${esc(l.email)}">✉ ${esc(l.email)}</a>`:""}${!l.phone&&!l.email&&l.contact?esc(l.contact):""}</div>`;
+    const propHTML=props.length?`<div class="blk"><h4>Predlozi</h4><ul>${props.map(p=>`<li><span>${esc(p.title)}${p.year?" · "+p.year:""}${p.km?" · "+fmt(p.km)+" km":""} · <b>${p.price?fmt(p.price)+" €":"cena po dogovoru"}</b> <span class="note">${p.at?new Date(p.at).toLocaleDateString("sr-Latn-RS"):""}${p.by?", "+esc(p.by):""}</span></span><span class="${p.answer==="da"?"ans-da":p.answer==="ne"?"ans-ne":"ans-wait"}">${p.answer==="da"?"✓ Odgovara mu":p.answer==="ne"?"✗ Traži dalje":"čeka odgovor"}${p.answerNote?` — „${esc(p.answerNote)}“`:""}</span></li>`).join("")}</ul></div>`:"";
+    const findHTML=!st.done&&!car?`<details class="lfinds"${props.length?"":" open"}><summary>${fs.length?`Asistent našao ${fs.length} ${fs.length===1?"oglas":"oglasa"} u Švajcarskoj`:(l.aiCheckedAt?"Asistent trenutno nema odgovarajući oglas":"Asistent još proverava")}${l.aiNote?` <span class="note">· ${esc(l.aiNote)}</span>`:""}</summary>${fs.length?`<ul>${fs.slice(0,6).map(f=>{const p=findProfit(f);const sent=props.some(x=>x.findId===f._id);return `<li><span>${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.title||f.model)}</a>`:esc(f.title||f.model)} · ${f.year||""} · ${f.km?fmt(f.km)+" km · ":""}${fmt(f.priceChf)} CHF${p?` · naša zarada <span class="${p.post>=0?"pos":"neg"}">${sgn(p.post)} €</span>`:""}</span>${canWrite?(sent?'<span class="note">predlog poslat</span>':`<button class="b small" type="button" data-prop="${esc(l._id)}|f|${esc(f._id)}">Predloži njemu</button>`):""}</li>`;}).join("")}</ul>`:""}</details>`:"";
+    const actions=canWrite?`<div class="lactions">${l.token?`<button class="b small" type="button" data-copy="${esc(trackUrl(l.token))}">Kopiraj link za praćenje</button><a class="b small" href="${esc(trackUrl(l.token))}" target="_blank" rel="noopener">Kako on vidi upit ↗</a>`:`<button class="b small" type="button" data-mktok="${esc(l._id)}">Napravi link za praćenje</button>`}
+      ${!st.done&&!car&&ourCars.length?`<select data-propcar="${esc(l._id)}" aria-label="Predloži naše auto"><option value="">Predloži neko od naših auta…</option>${ourCars.map(c=>`<option value="${esc(c._id)}">${esc(c.model)}${c.year?" "+c.year:""} · ${SL[c.status]}</option>`).join("")}</select>`:""}
+      ${!st.done?`<select data-lcar="${esc(l._id)}" aria-label="Auto kupljeno za njega"><option value="">${car?"Auto: "+esc(car.model)+" (promeni…)":"Kupljeno za njega? Izaberi auto…"}</option>${CARS.filter(c=>!["odustao","prodat"].includes(c.status)&&c._id!==l.carId).map(c=>`<option value="${esc(c._id)}">${esc(c.model)}${c.year?" "+c.year:""} · ${SL[c.status]}</option>`).join("")}${car?'<option value="-">— ukloni vezu sa autom</option>':""}</select>`:""}
+      ${st.done?`<button class="b small" type="button" data-reopen="${esc(l._id)}">Ponovo otvori</button>`:`<button class="b small danger" type="button" data-close="${esc(l._id)}">Zatvori upit</button>`}</div>`:"";
+    return `<article class="lead ${st.c}">${head}<div class="lwant"><b>Traži:</b> ${esc(l.model)}${want?" · "+want:""}</div>${contact}${l.note?`<div class="note">„${esc(l.note)}“</div>`:""}${propHTML}${findHTML}<div class="propform" data-pform="${esc(l._id)}" hidden></div>${actions}</article>`;}).join("");
   $("leadEmpty").hidden=list.length>0;
   const L=$("leadList");
-  L.querySelectorAll("[data-lead]").forEach(s=>s.onchange=async()=>{try{await db.doc("leads/"+s.dataset.lead).update({status:s.value});await logEvent(null,"order",`Upit „${LEADS.find(x=>x._id===s.dataset.lead)?.model}“: ${LS.find(x=>x[0]===s.value)[1]}`);}catch(e){fail(e);}});
-  L.querySelectorAll("[data-ldel]").forEach(b=>b.onclick=async()=>{if(!b.dataset.armed){b.dataset.armed=1;b.textContent="Obriši?";setTimeout(()=>{delete b.dataset.armed;b.textContent="×";},3000);return;}try{await db.doc("leads/"+b.dataset.ldel).delete();}catch(e){fail(e);}});
+  L.querySelectorAll("[data-close]").forEach(b=>b.onclick=async()=>{if(!b.dataset.armed){b.dataset.armed=1;b.textContent="Sigurno zatvoriti?";setTimeout(()=>{delete b.dataset.armed;b.textContent="Zatvori upit";},4000);return;}
+    const l=LEADS.find(x=>x._id===b.dataset.close);try{await db.doc("leads/"+l._id).update({status:"odustao"});await logEvent(null,"order",`Upit zatvoren: ${l.name||l.model}`);toast("Upit zatvoren. Nalazi se pod „Završeni“.");}catch(e){fail(e);}});
+  L.querySelectorAll("[data-reopen]").forEach(b=>b.onclick=async()=>{const l=LEADS.find(x=>x._id===b.dataset.reopen);try{await db.doc("leads/"+l._id).update({status:(l.proposals||[]).length?"ponudjeno":"trazimo"});await logEvent(null,"order",`Upit ponovo otvoren: ${l.name||l.model}`);}catch(e){fail(e);}});
   L.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);toast("Link kopiran. Pošalji ga potražiocu.");}catch(e){toast("Kopiraj ručno: "+b.dataset.copy);}});
   L.querySelectorAll("[data-mktok]").forEach(b=>b.onclick=async()=>{try{await db.doc("leads/"+b.dataset.mktok).update({token:newToken()});toast("Link napravljen");}catch(e){fail(e);}});
   L.querySelectorAll("[data-prop]").forEach(b=>b.onclick=()=>{const [lid,,fid]=b.dataset.prop.split("|");const l=LEADS.find(x=>x._id===lid),f=FINDS.find(x=>x._id===fid);const p=findProfit(f);openPropForm(l,{findId:f._id,title:f.title||f.model,year:f.year||null,km:f.km||null,gear:f.gear||"",photos:[],price:l.budget?Math.min(l.budget,Math.round((p?.sale||l.budget)/50)*50):null});});
   L.querySelectorAll("[data-propcar]").forEach(s=>s.onchange=()=>{if(!s.value)return;const l=LEADS.find(x=>x._id===s.dataset.propcar),c=CARS.find(x=>x._id===s.value);s.value="";openPropForm(l,{carId:c._id,title:c.model,year:c.year||null,km:c.km||null,gear:c.gear||"",fuel:c.fuel||"",photos:c.photos||[],price:c.askEur||l.budget||null});});
   L.querySelectorAll("[data-lcar]").forEach(s=>s.onchange=async()=>{const l=LEADS.find(x=>x._id===s.dataset.lcar);const v=s.value;if(!v)return;
     try{if(l.carId&&l.carId!==v){await db.doc("cars/"+l.carId).update({orderId:null});}
-      if(v==="-"){await db.doc("leads/"+l._id).update({carId:null});toast("Veza uklonjena");return;}
-      const c=CARS.find(x=>x._id===v);await db.doc("leads/"+l._id).update({carId:v,status:"kupljeno"});await db.doc("cars/"+v).update({orderId:l._id});
-      await logEvent(v,"order",`Auto je za upit: ${l.name||l.contact||l.model}`);toast("Povezano. Potražilac na svom linku vidi gde je auto.");}catch(e){fail(e);}});
+      if(v==="-"){await db.doc("leads/"+l._id).update({carId:null,status:"ponudjeno"});toast("Veza uklonjena");return;}
+      await db.doc("leads/"+l._id).update({carId:v,status:"kupljeno"});await db.doc("cars/"+v).update({orderId:l._id});
+      await logEvent(v,"order",`Auto je kupljeno za: ${l.name||l.model}`);toast("Povezano. Potražilac na svom linku vidi gde je auto.");}catch(e){fail(e);}});
 }
 function openPropForm(l,prop){
   const box=document.querySelector(`[data-pform="${CSS.escape(l._id)}"]`);if(!box)return;box.hidden=false;
@@ -906,6 +927,8 @@ function openPropForm(l,prop){
       if(p.findId)await db.doc("finds/"+p.findId).update({status:"gledano"});
       await logEvent(p.carId||null,"order",`Predlog za ${l.name||l.model}: ${p.title}${p.price?", "+fmt(p.price)+" €":""}`);toast("Predlog je na njegovom linku. Pošalji mu link ako ga nema.");}catch(e){fail(e);ok.disabled=false;}};
 }
+$("leadNewBtn").onclick=()=>{$("leadNewBox").hidden=!$("leadNewBox").hidden;if(!$("leadNewBox").hidden)$("l_name").focus();};
+$("leadNewCancel").onclick=()=>{$("leadNewBox").hidden=true;$("leadForm").reset();};
 document.querySelectorAll("#leadFilter button").forEach(b=>b.onclick=()=>{leadFilter=b.dataset.lf;document.querySelectorAll("#leadFilter button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderLeads();});
 
 /* ---------- quick cost ---------- */
@@ -1001,7 +1024,7 @@ $("delCar").addEventListener("click",async()=>{const b=$("delCar");
   try{for(const k of COSTS.filter(k=>k.carId===curId))await db.doc("costs/"+k._id).delete();for(const ev of EVENTS.filter(x=>x.carId===curId))await db.doc("events/"+ev._id).delete();await db.doc("cars/"+curId).delete();toast("Auto obrisan");closeCar();}catch(e){fail(e);}
 });
 $("leadForm").addEventListener("submit",async e=>{e.preventDefault();if(!db)return;
-  const nm=$("l_name").value.trim(),ph=$("l_phone").value.trim(),em=$("l_email").value.trim().toLowerCase();
+  const nm=$("l_name").value.trim(),ph=$("l_phone").value.trim(),em=$("l_email").value.trim().toLowerCase();$("leadNewBox").hidden=true;
   const body={model:$("l_model").value.trim(),budget:+$("l_budget").value||null,where:$("l_where").value,name:nm,phone:ph,email:em,contact:[nm,ph,em].filter(Boolean).join(" · "),note:$("l_note").value.trim(),status:"novo",payer:actor(),source:"rucno",token:newToken(),proposals:[],lang:"sr",by:me?.id||null,created:Date.now()};
   try{await db.collection("leads").add(body);e.target.reset();toast("Upit sačuvan. Asistent traži to auto u roku od sat vremena.");}catch(err){fail(err);}
 });
