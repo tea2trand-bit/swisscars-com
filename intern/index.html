@@ -250,11 +250,12 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- AUTA -->
   <section id="t-auta" class="wrap" style="gap:16px">
-    <details class="intro"><summary>ⓘ Kako radi</summary><p>Auta koja smo <b>kupili</b>, od Švajcarske do prodaje. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p></details>
+    <details class="intro"><summary>ⓘ Kako radi</summary><p>Auta koja smo <b>kupili</b> i koja su u radu, od Švajcarske do prodaje. Prodata auta su pod dugmetom „Prodata auta“. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p></details>
     <div class="pipe" id="pipe"></div>
     <div class="top">
-      <div class="chips" id="carFilter"><button type="button" data-f="aktivna" aria-pressed="true">U radu (<span id="cntAkt">0</span>)</button><button type="button" data-f="prodat" aria-pressed="false">Prodata (<span id="cntSold">0</span>)</button></div>
-      <button class="b primary" id="newCar" type="button">+ Novi auto</button>
+      <p class="note" style="margin:0"><b id="cntAkt">0</b> auta u radu</p>
+      <div class="btns"><button class="b" type="button" id="soldBtn">Prodata auta (<span id="cntSold">0</span>) →</button>
+      <button class="b primary" id="newCar" type="button">+ Novi auto</button></div>
     </div>
 
     <div class="sheet" id="newBox" hidden>
@@ -434,8 +435,9 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       </div>
       <details class="more" id="settleHist"><summary>Zaključeni meseci</summary><div class="scroll" style="margin-top:8px"><table id="setTbl"><thead><tr><th>Mesec</th><th>Zaključio</th><th>Ukupno po osobi</th></tr></thead><tbody></tbody></table></div></details>
     </div>
-    <div class="sheet">
-      <h2>Prodata auta</h2>
+    <div class="sheet" id="soldSheet">
+      <div class="top"><h2>Prodata auta</h2><select id="soldPer" aria-label="Period" style="width:auto"><option value="m0">Ovaj mesec</option><option value="m1">Prošli mesec</option><option value="6m">Poslednjih 6 meseci</option><option value="y0">Ova godina</option><option value="y1">Prošla godina</option><option value="all" selected>Sve</option></select></div>
+      <p class="note" id="soldSum" style="margin:0"></p>
       <div class="scroll"><table id="soldTbl"><thead><tr><th>Auto</th><th>Prodao</th><th class="n">Uloženo</th><th class="n">Traženo</th><th class="n">Prodato</th><th class="n">Zarada</th><th class="n">Dana</th></tr></thead><tbody></tbody></table></div>
       <p class="note" id="soldEmpty" hidden>Još nema prodatih auta.</p>
     </div>
@@ -656,8 +658,8 @@ function buyersFor(c){const m=(c.model||"").toLowerCase();return openLeads().fil
 function renderCards(){
   const vis=CARS.filter(c=>!c.moved&&c.status!=="pregledan");
   $("cntAkt").textContent=vis.filter(c=>!["prodat","odustao"].includes(c.status)).length;$("cntSold").textContent=vis.filter(c=>c.status==="prodat").length;
-  const list=vis.filter(c=>filter==="sve"?true:filter==="prodat"?c.status==="prodat":!["prodat","odustao"].includes(c.status))
-    .sort((a,b)=>filter==="prodat"?(b.soldDate||"").localeCompare(a.soldDate||""):(idx(b.status)-idx(a.status))||((b.updated||0)-(a.updated||0)));
+  const list=vis.filter(c=>!["prodat","odustao"].includes(c.status))
+    .sort((a,b)=>(idx(b.status)-idx(a.status))||((b.updated||0)-(a.updated||0)));
   $("cards").innerHTML=list.map(c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c);
     return `<button type="button" class="card${c._id===curId?" sel":""}" data-id="${esc(c._id)}">
       <div class="row"><b>${esc(c.model)}</b><span class="pill s-${esc(c.status)}">${SL[c.status]||esc(c.status)}</span></div>
@@ -748,9 +750,14 @@ function renderKpis(){
   const exp=act.filter(c=>c.askEur).reduce((s,c)=>s+(carCalc(c).post||0),0);
   $("kpis").innerHTML=[["Novac u autima",fmt(tied)+" €",`${act.length} auta kupljeno, još neprodato`],["Zarađeno",`<span class="${prof>=0?"pos":"neg"}">${sgn(prof)} €</span>`,`${sold.length} prodatih auta, posle poreza`],["Još se očekuje",`<span class="${exp>=0?"pos":"neg"}">${sgn(exp)} €</span>`,"od auta koja imaju traženu cenu"],["Prosečno do prodaje",avgD==null?"—":fmt(avgD)+" dana","od kupovine do prodaje"]]
     .map(([l,v,s])=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
-  $("pipe").innerHTML=STATUS.filter(([s])=>s!=="odustao").map(([s,l])=>`<span class="st"><span class="pill s-${s}">${l}</span><b>${CARS.filter(c=>c.status===s).length}</b></span>`).join("");
-  $("soldTbl").tBodies[0].innerHTML=sold.sort((a,b)=>(b.soldDate||"").localeCompare(a.soldDate||"")).map(c=>{const r=carCalc(c);return `<tr class="click" data-id="${esc(c._id)}"><td>${esc(c.model)}<span class="sub">${c.year||""} · ${esc(c.soldDate||"")}</span></td><td>${esc(soldByOf(c))}<span class="sub">${esc(locOf(soldByOf(c)))}</span></td><td class="n">${fmt(r.cost)}</td><td class="n">${c.askEur?fmt(c.askEur):"—"}</td><td class="n">${fmt(c.salePrice)}</td><td class="n ${r.post>=0?"pos":"neg"}">${sgn(r.post)}</td><td class="n">${r.days??"—"}</td></tr>`;}).join("");
-  $("soldEmpty").hidden=sold.length>0;
+  $("pipe").innerHTML=STATUS.filter(([s])=>s!=="odustao"&&s!=="prodat").map(([s,l])=>`<span class="st"><span class="pill s-${s}">${l}</span><b>${CARS.filter(c=>c.status===s).length}</b></span>`).join("");
+  const sp=$("soldPer").value, now=new Date(), pad=n=>String(n).padStart(2,"0"), ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  const [sf,st]=sp==="m0"?[ymd(new Date(now.getFullYear(),now.getMonth(),1)),"9999"]:sp==="m1"?[ymd(new Date(now.getFullYear(),now.getMonth()-1,1)),ymd(new Date(now.getFullYear(),now.getMonth(),1))]:sp==="6m"?[ymd(new Date(now.getFullYear(),now.getMonth()-6,now.getDate())),"9999"]:sp==="y0"?[now.getFullYear()+"-01-01","9999"]:sp==="y1"?[(now.getFullYear()-1)+"-01-01",now.getFullYear()+"-01-01"]:["","9999"];
+  const soldP=sold.filter(c=>(c.soldDate||"")>=sf&&(c.soldDate||"")<st);
+  {const pr=soldP.reduce((s,c)=>s+(carCalc(c).post||0),0), rev=soldP.reduce((s,c)=>s+(c.salePrice||0),0), ds=soldP.map(c=>carCalc(c).days).filter(x=>x!=null);
+   $("soldSum").innerHTML=soldP.length?`<b>${soldP.length}</b> ${soldP.length===1?"prodato auto":"prodatih auta"} · prodato za ${fmt(rev)} € · zarada <span class="${pr>=0?"pos":"neg"}">${sgn(pr)} €</span>${ds.length?` · prosečno ${fmt(ds.reduce((a,b)=>a+b,0)/ds.length)} dana do prodaje`:""}`:"U ovom periodu nema prodatih auta.";}
+  $("soldTbl").tBodies[0].innerHTML=soldP.sort((a,b)=>(b.soldDate||"").localeCompare(a.soldDate||"")).map(c=>{const r=carCalc(c);return `<tr class="click" data-id="${esc(c._id)}"><td>${esc(c.model)}<span class="sub">${c.year||""} · ${esc(c.soldDate||"")}</span></td><td>${esc(soldByOf(c))}<span class="sub">${esc(locOf(soldByOf(c)))}</span></td><td class="n">${fmt(r.cost)}</td><td class="n">${c.askEur?fmt(c.askEur):"—"}</td><td class="n">${fmt(c.salePrice)}</td><td class="n ${r.post>=0?"pos":"neg"}">${sgn(r.post)}</td><td class="n">${r.days??"—"}</td></tr>`;}).join("");
+  $("soldEmpty").hidden=true;$("soldTbl").closest(".scroll").hidden=!soldP.length;
   $("soldTbl").querySelectorAll("tr[data-id]").forEach(tr=>tr.onclick=()=>{switchTab("auta");openCar(tr.dataset.id);});
   fillMonths($("ocMonth"));
   const mk=$("ocMonth").value.slice(2), [from,to]=mRange(mk);
@@ -768,6 +775,7 @@ function renderKpis(){
   $("setTbl").tBodies[0].innerHTML=[...SETTLES].filter(x=>x.month).sort((a,b)=>b.month.localeCompare(a.month)).map(x=>`<tr><td>${mLabel(x.month)}</td><td>${esc(x.by||"—")} · ${dShort(x.at)}</td><td>${(x.totals||[]).map(t=>`${esc(t.name)} ${fmt(t.eur)} €`).join(" · ")||"—"}</td></tr>`).join("")||`<tr><td colspan="3" class="note">Još nijedan mesec nije zaključen.</td></tr>`;
 }
 $("ocMonth").onchange=()=>renderKpis();
+$("soldPer").onchange=()=>renderKpis();
 $("csvBtn").addEventListener("click",()=>{const mk=$("ocMonth").value.slice(2),[from,to]=mRange(mk);
   const cs=COSTS.filter(k=>costAt(k)>=from&&costAt(k)<to).sort((a,b)=>costAt(a)-costAt(b));
   const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
@@ -1166,7 +1174,7 @@ $("delDemo").addEventListener("click",async()=>{const b=$("delDemo");
 /* ---------- tabs ---------- */
 function switchTab(t){document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));if(!["auta","ai","narudzbine","novac","istorija","pod"].includes(t))t="auta";document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));["auta","ai","narudzbine","novac","istorija","pod"].forEach(x=>$("t-"+x).hidden=x!==t);try{localStorage.setItem("sc_tab",t);}catch(e){}}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
-$("carFilter").querySelectorAll("button").forEach(b=>b.onclick=()=>{filter=b.dataset.f;$("carFilter").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderCards();});
+$("soldBtn").onclick=()=>{switchTab("novac");setTimeout(()=>$("soldSheet").scrollIntoView({behavior:"smooth",block:"start"}),50);};
 $("c_status").innerHTML=STATUS.map(([s,l])=>`<option value="${s}">${l}</option>`).join("");
 $("k_cat").innerHTML=CATS.map(c=>`<option>${c}</option>`).join("");
 $("l_where").innerHTML=LOCS.map(c=>`<option>${c}</option>`).join("");
