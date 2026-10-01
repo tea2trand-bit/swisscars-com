@@ -103,6 +103,7 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .cardh .cn{text-align:right}
 @media (max-width:760px){.cardh{display:none}.card{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"m p" "n z"}.card .cm{grid-area:m}.card .cst{grid-area:p;text-align:right}.card .cnext{grid-area:n}.card .cprof{grid-area:z}.card .cinv{display:none}}
 .pipe button.st{font:inherit;font-size:14px;color:var(--ink);background:var(--paper);cursor:pointer}
+#soldBtn[aria-pressed=true]{border-color:var(--accent);background:var(--soft)}
 .pipe button.st:disabled{opacity:.55;cursor:default}
 .pipe button.st[aria-pressed=true]{border-color:var(--accent);background:var(--soft);box-shadow:inset 0 -2px 0 var(--accent)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -259,9 +260,9 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- AUTA -->
   <section id="t-auta" class="wrap" style="gap:16px">
-    <details class="intro"><summary>ⓘ Kako radi</summary><p>Auta koja smo <b>kupili</b> i koja su u radu, od Švajcarske do prodaje. Prodata auta su pod dugmetom „Prodata auta“. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p></details>
-    <div class="top" style="align-items:flex-start"><div class="pipe" id="pipe"></div><button class="b" type="button" id="soldBtn">Prodata auta (<span id="cntSold">0</span>) →</button></div>
-    <div class="top">
+    <details class="intro"><summary>ⓘ Kako radi</summary><p>Auta koja smo <b>kupili</b> i koja su u radu, od Švajcarske do prodaje. Prodata auta se otvaraju dugmetom „Prodata auta“ desno. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p></details>
+    <div class="top" style="align-items:flex-start"><div class="pipe" id="pipe"></div><button class="b" type="button" id="soldBtn">Prodata auta →</button></div>
+    <div class="top" id="workBar">
       <p class="note" style="margin:0"><b id="cntAkt">0</b> auta u radu</p>
       <div class="btns">
       <button class="b primary" id="newCar" type="button">+ Novi auto</button></div>
@@ -280,6 +281,12 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <div class="empty" id="carEmpty" hidden>
       <h3>Nema auta u ovom prikazu</h3>
       <p class="note">Klikni „+ Novi auto“ kad Stefan pregleda ili kupi auto.</p>
+    </div>
+    <div class="sheet" id="soldSheet" hidden>
+      <div class="top"><h2>Prodata auta</h2><select id="soldPer" aria-label="Period" style="width:auto"><option value="m0">Ovaj mesec</option><option value="m1">Prošli mesec</option><option value="6m">Poslednjih 6 meseci</option><option value="y0">Ova godina</option><option value="y1">Prošla godina</option><option value="all" selected>Sve</option></select></div>
+      <p class="note" id="soldSum" style="margin:0"></p>
+      <div class="scroll"><table id="soldTbl"><thead><tr><th>Auto</th><th>Prodao</th><th class="n">Uloženo</th><th class="n">Traženo</th><th class="n">Prodato</th><th class="n">Zarada</th><th class="n">Dana</th></tr></thead><tbody></tbody></table></div>
+      <p class="note" id="soldEmpty" hidden>Još nema prodatih auta.</p>
     </div>
 
     <div class="split two" id="detail" hidden>
@@ -444,12 +451,6 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       </div>
       <details class="more" id="settleHist"><summary>Zaključeni meseci</summary><div class="scroll" style="margin-top:8px"><table id="setTbl"><thead><tr><th>Mesec</th><th>Zaključio</th><th>Ukupno po osobi</th></tr></thead><tbody></tbody></table></div></details>
     </div>
-    <div class="sheet" id="soldSheet">
-      <div class="top"><h2>Prodata auta</h2><select id="soldPer" aria-label="Period" style="width:auto"><option value="m0">Ovaj mesec</option><option value="m1">Prošli mesec</option><option value="6m">Poslednjih 6 meseci</option><option value="y0">Ova godina</option><option value="y1">Prošla godina</option><option value="all" selected>Sve</option></select></div>
-      <p class="note" id="soldSum" style="margin:0"></p>
-      <div class="scroll"><table id="soldTbl"><thead><tr><th>Auto</th><th>Prodao</th><th class="n">Uloženo</th><th class="n">Traženo</th><th class="n">Prodato</th><th class="n">Zarada</th><th class="n">Dana</th></tr></thead><tbody></tbody></table></div>
-      <p class="note" id="soldEmpty" hidden>Još nema prodatih auta.</p>
-    </div>
   </section>
 
   <!-- ISTORIJA -->
@@ -563,7 +564,7 @@ const SPECKEYS=SPEC.flatMap(g=>g[1].map(f=>f[0]));
 let assets=null;
 let db=null,user=null,me=null,canWrite=true;
 let CARS=[],COSTS=[],LEADS=[],EVENTS=[],SET={...DEF};
-let curId=null,filter="aktivna",IAM="",pipeF=null;
+let curId=null,filter="aktivna",IAM="",pipeF=null,soldView=false;
 const $=id=>document.getElementById(id);
 const fmt=n=>Math.round(n||0).toLocaleString("sr-Latn-RS");
 const sgn=n=>(n>=0?"+":"−")+fmt(Math.abs(n));
@@ -666,7 +667,7 @@ function buyersFor(c){const m=(c.model||"").toLowerCase();return openLeads().fil
 
 function renderCards(){
   const vis=CARS.filter(c=>!c.moved&&c.status!=="pregledan");
-  $("cntAkt").textContent=vis.filter(c=>!["prodat","odustao"].includes(c.status)).length;$("cntSold").textContent=vis.filter(c=>c.status==="prodat").length;
+  $("cntAkt").textContent=vis.filter(c=>!["prodat","odustao"].includes(c.status)).length;const nSold=vis.filter(c=>c.status==="prodat").length;$("soldBtn").textContent=soldView?"← Auta u radu":`Prodata auta (${nSold}) →`;$("soldBtn").setAttribute("aria-pressed",soldView);["pipe","workBar","cards"].forEach(id=>$(id).hidden=soldView);$("soldSheet").hidden=!soldView;
   const list=vis.filter(c=>!["prodat","odustao"].includes(c.status))
     .sort((a,b)=>(idx(b.status)-idx(a.status))||((b.updated||0)-(a.updated||0)));
   $("pipe").innerHTML=FLOW.filter(([st])=>st!=="prodat").map(([st,l])=>{const n=list.filter(c=>c.status===st).length;return `<button type="button" class="st" data-pf="${st}" aria-pressed="${pipeF===st}" ${n||pipeF===st?"":"disabled"}><span class="pill s-${st}">${l}</span><b>${n}</b></button>`;}).join("");
@@ -679,7 +680,7 @@ function renderCards(){
       <span class="note cnext">${st?esc(st.title):"—"}</span>
       <span class="cn cinv">${fmt(r.cost)} €</span>
       <span class="cn cprof ${r.post==null?"":r.post>=0?"pos":"neg"}">${r.post==null?"—":sgn(r.post)+" €"}</span></button>`;}).join(""):"";
-  $("carEmpty").hidden=shown.length>0;
+  $("carEmpty").hidden=soldView||shown.length>0;
   $("cards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCar(b.dataset.id));
 }
 function openCar(id){curId=id;$("detail").hidden=false;fillCarForm();render();$("detail").scrollIntoView({behavior:"smooth",block:"start"});}
@@ -770,7 +771,7 @@ function renderKpis(){
    $("soldSum").innerHTML=soldP.length?`<b>${soldP.length}</b> ${soldP.length===1?"prodato auto":"prodatih auta"} · prodato za ${fmt(rev)} € · zarada <span class="${pr>=0?"pos":"neg"}">${sgn(pr)} €</span>${ds.length?` · prosečno ${fmt(ds.reduce((a,b)=>a+b,0)/ds.length)} dana do prodaje`:""}`:"U ovom periodu nema prodatih auta.";}
   $("soldTbl").tBodies[0].innerHTML=soldP.sort((a,b)=>(b.soldDate||"").localeCompare(a.soldDate||"")).map(c=>{const r=carCalc(c);return `<tr class="click" data-id="${esc(c._id)}"><td>${esc(c.model)}<span class="sub">${c.year||""} · ${esc(c.soldDate||"")}</span></td><td>${esc(soldByOf(c))}<span class="sub">${esc(locOf(soldByOf(c)))}</span></td><td class="n">${fmt(r.cost)}</td><td class="n">${c.askEur?fmt(c.askEur):"—"}</td><td class="n">${fmt(c.salePrice)}</td><td class="n ${r.post>=0?"pos":"neg"}">${sgn(r.post)}</td><td class="n">${r.days??"—"}</td></tr>`;}).join("");
   $("soldEmpty").hidden=true;$("soldTbl").closest(".scroll").hidden=!soldP.length;
-  $("soldTbl").querySelectorAll("tr[data-id]").forEach(tr=>tr.onclick=()=>{switchTab("auta");openCar(tr.dataset.id);});
+  $("soldTbl").querySelectorAll("tr[data-id]").forEach(tr=>tr.onclick=()=>openCar(tr.dataset.id));
   fillMonths($("ocMonth"));
   const mk=$("ocMonth").value.slice(2), [from,to]=mRange(mk);
   const cs=COSTS.filter(k=>costAt(k)>=from&&costAt(k)<to);
@@ -1186,7 +1187,7 @@ $("delDemo").addEventListener("click",async()=>{const b=$("delDemo");
 /* ---------- tabs ---------- */
 function switchTab(t){document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));if(!["auta","ai","narudzbine","novac","istorija","pod"].includes(t))t="auta";document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));["auta","ai","narudzbine","novac","istorija","pod"].forEach(x=>$("t-"+x).hidden=x!==t);try{localStorage.setItem("sc_tab",t);}catch(e){}}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
-$("soldBtn").onclick=()=>{switchTab("novac");setTimeout(()=>$("soldSheet").scrollIntoView({behavior:"smooth",block:"start"}),50);};
+$("soldBtn").onclick=()=>{soldView=!soldView;if(soldView&&curId)closeCar();renderCards();};
 $("c_status").innerHTML=STATUS.map(([s,l])=>`<option value="${s}">${l}</option>`).join("");
 $("k_cat").innerHTML=CATS.map(c=>`<option>${c}</option>`).join("");
 $("l_where").innerHTML=LOCS.map(c=>`<option>${c}</option>`).join("");
