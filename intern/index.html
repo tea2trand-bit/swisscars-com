@@ -170,7 +170,18 @@ details.intro p{margin:0 0 4px}
 #runInfo{margin:0}
 .intro b{color:var(--ink)}
 .user{display:flex;gap:10px;align-items:center;font-size:14px}
-.user .nm{display:flex;gap:6px;align-items:center;font-weight:500}
+.user .nm{display:flex;gap:6px;align-items:center;font:500 14px var(--f-body);color:var(--ink);background:none;border:1px solid transparent;border-radius:7px;padding:4px 8px;cursor:pointer}
+.user .nm:hover{border-color:var(--line);background:var(--paper)}
+.bellw{position:relative}
+.bell{display:flex;align-items:center;gap:4px;position:relative}
+.bell .tbadge{position:absolute;top:-7px;right:-8px;margin:0}
+.bellbox{position:absolute;right:0;top:calc(100% + 8px);width:min(380px,90vw);max-height:70vh;overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:20;display:grid}
+.bellbox h4{margin:0;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px;display:flex;justify-content:space-between;align-items:center}
+.bellbox button.it{all:unset;cursor:pointer;display:grid;gap:2px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px}
+.bellbox button.it:hover{background:var(--soft)}
+.bellbox .it.new{box-shadow:inset 3px 0 0 var(--neg);background:color-mix(in srgb,var(--neg-soft) 45%,transparent)}
+.bellbox .it small{color:var(--muted);font-size:12px}
+.bellbox .empty{padding:14px;color:var(--muted);font-size:14px}
 .user .nm svg{color:var(--muted)}
 .offline{color:var(--neg);font-size:13px}
 .profit{font-family:var(--f-num);font-weight:700}
@@ -255,7 +266,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 <div class="wrap" id="app" hidden>
   <header class="top">
     <div class="brand"><svg class="mark" viewBox="0 0 48 48" fill="none" width="34" height="34" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg><div><h1>SWISCARS evidencija</h1><p class="note">Švajcarska → Niš / Sremčica</p></div></div>
-    <div class="user"><span class="offline" id="sync" role="status"></span><button class="b small primary" type="button" id="qcOpen">+ Trošak</button><span class="nm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span id="who"></span></span><button class="b small" type="button" id="logout">Odjava</button><select id="iam" hidden aria-hidden="true"></select></div>
+    <div class="user"><span class="offline" id="sync" role="status"></span><span class="bellw"><button class="b small bell" type="button" id="bellBtn" aria-label="Obaveštenja" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="tbadge" id="bellCnt" hidden></span></button><div class="bellbox" id="bellBox" hidden></div></span><button class="b small primary" type="button" id="qcOpen">+ Trošak</button><button type="button" class="nm" id="meBtn" title="Nalozi tima i moja lozinka"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span id="who"></span></button><button class="b small" type="button" id="logout">Odjava</button><select id="iam" hidden aria-hidden="true"></select></div>
   </header>
   <div class="banner" id="banner" hidden></div>
   <div class="banner" id="demoBanner" hidden>Prikazani su izmišljeni demo podaci (Stefan, Nemanja, Aleksandar). Obriši ih u Podešavanjima pre pravog rada.</div>
@@ -492,6 +503,26 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- PODEŠAVANJA -->
   <section id="t-pod" class="wrap" style="gap:16px" hidden>
+    <div class="sheet" id="usersBox">
+      <h2>Nalozi tima</h2>
+      <p class="note">Svako sa nalogom vidi i upisuje sve u evidenciji. Kupci vide samo stranicu swiscars.com/auta, bez troškova i zarade.</p>
+      <div class="scroll"><table id="usersTbl"><thead><tr><th>Ime</th><th>Email</th><th>Mesto</th><th>Uloga</th><th></th></tr></thead><tbody></tbody></table></div>
+      <p class="note" id="usersMsg" role="status"></p>
+      <details class="more" id="newUserBox" hidden>
+        <summary><b>+ Novi nalog</b> (Nemanja, Stefan, Aleksandar…): korisničko ime je email, lozinku upisuješ ti</summary>
+        <form id="userForm" autocomplete="off" style="margin-top:10px">
+          <div class="grid">
+            <div class="field"><label for="u_name">Ime</label><input id="u_name" required placeholder="npr. Nemanja"></div>
+            <div class="field"><label for="u_email">Email</label><input id="u_email" type="email" required></div>
+            <div class="field"><label for="u_loc">Mesto</label><input id="u_loc" list="locs" placeholder="npr. Niš"></div>
+            <div class="field"><label for="u_pw">Prva lozinka</label><input id="u_pw" required minlength="8"></div>
+            <div class="field"><label for="u_role">Uloga</label><select id="u_role"><option value="member">Član tima</option><option value="admin">Administrator (pravi naloge)</option></select></div>
+          </div>
+          <div class="btns"><button class="b primary" type="submit">Napravi nalog</button></div>
+          <p class="note">Posle pošalji partneru: adresu <b>swiscars.com/intern</b>, njegov email i lozinku. Lozinku može sam da promeni u Podešavanjima.</p>
+        </form>
+      </details>
+    </div>
     <div class="sheet">
       <h2>Brojke za račun</h2>
       <p class="note">Važe za sva auta i za pretragu asistenta. Promena se odmah vidi kod svih.</p>
@@ -506,26 +537,6 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <h2>Demo podaci</h2>
       <p class="note">U evidenciji su izmišljeni podaci da vidiš kako izgleda kad radi. Pre pravog rada ih obriši. Pravi unosi i tim ostaju.</p>
       <div class="btns"><button class="b danger" type="button" id="delDemo">Obriši demo podatke</button></div>
-    </div>
-    <div class="sheet" id="usersBox">
-      <h2>Nalozi tima</h2>
-      <p class="note">Svako sa nalogom vidi i upisuje sve u evidenciji. Kupci vide samo stranicu swiscars.com/auta, bez troškova i zarade.</p>
-      <div class="scroll"><table id="usersTbl"><thead><tr><th>Ime</th><th>Email</th><th>Mesto</th><th>Uloga</th><th></th></tr></thead><tbody></tbody></table></div>
-      <p class="note" id="usersMsg" role="status"></p>
-      <details class="more" id="newUserBox" hidden>
-        <summary>+ Novi nalog</summary>
-        <form id="userForm" autocomplete="off" style="margin-top:10px">
-          <div class="grid">
-            <div class="field"><label for="u_name">Ime</label><input id="u_name" required placeholder="npr. Nemanja"></div>
-            <div class="field"><label for="u_email">Email</label><input id="u_email" type="email" required></div>
-            <div class="field"><label for="u_loc">Mesto</label><input id="u_loc" list="locs" placeholder="npr. Niš"></div>
-            <div class="field"><label for="u_pw">Prva lozinka</label><input id="u_pw" required minlength="8"></div>
-            <div class="field"><label for="u_role">Uloga</label><select id="u_role"><option value="member">Član tima</option><option value="admin">Administrator (pravi naloge)</option></select></div>
-          </div>
-          <div class="btns"><button class="b primary" type="submit">Napravi nalog</button></div>
-          <p class="note">Posle pošalji partneru: adresu <b>swiscars.com/intern</b>, njegov email i lozinku. Lozinku može sam da promeni u Podešavanjima.</p>
-        </form>
-      </details>
     </div>
     <div class="sheet">
       <h2>Moja lozinka</h2>
@@ -682,7 +693,27 @@ async function doStep(c,st){
 }
 
 /* ---------- render ---------- */
-function render(){ renderCards(); renderDetail(); renderShop(); renderLeads(); renderKpis(); renderHistory(); const d=isDemo(); $("demoBox").hidden=!d; $("demoBanner").hidden=!d; }
+function bellItems(){const out=[];
+  EVENTS.forEach(e=>{if(!e.at)return;if(e.actor==="Potražilac")out.push({at:e.at,t:e.text,tab:"narudzbine",k:"Potražilac"});
+    else if((e.actor==="Asistent"||e.actor==="Claude")&&e.type==="order")out.push({at:e.at,t:e.text,tab:"narudzbine",k:"Asistent"});});
+  LEADS.forEach(l=>{if(l.source==="web"&&l.created)out.push({at:l.created,t:`Novi upit sa sajta: ${l.name||""} traži ${l.model||"auto"}`,tab:"narudzbine",k:"Sajt"});});
+  RUNS.forEach(r=>{if(r.at&&r.newFinds>0&&r._id!=="lock")out.push({at:r.at,t:`Asistent je našao ${r.newFinds} ${r.newFinds===1?"nov oglas":"novih oglasa"} u Švajcarskoj`,tab:"ai",k:"Asistent"});});
+  return out.sort((a,b)=>b.at-a.at).slice(0,30);}
+const bellKey=()=>"sc_bell_"+(me?.id||"x");
+function bellSeen(){try{const v=+localStorage.getItem(bellKey());if(v)return v;}catch(e){}return Date.now()-2*864e5;}
+function renderBell(){const items=bellItems(),seen=bellSeen(),n=items.filter(i=>i.at>seen).length;
+  $("bellCnt").textContent=n>9?"9+":n;$("bellCnt").hidden=!n;$("bellBtn").title=n?`${n} ${n===1?"novo obaveštenje":"novih obaveštenja"}`:"Obaveštenja";
+  if($("bellBox").hidden)return;
+  $("bellBox").innerHTML=`<h4>Obaveštenja<span class="note">${n?n+" novo":"sve pročitano"}</span></h4>`+(items.length?items.map(i=>`<button type="button" class="it${i.at>(+$("bellBox").dataset.seen||seen)?" new":""}" data-tab="${i.tab}"><span>${esc(i.t)}</span><small>${esc(i.k)} · ${new Date(i.at).toLocaleString("sr-Latn-RS",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"})}</small></button>`).join(""):`<div class="empty">Još nema obaveštenja.</div>`);
+  $("bellBox").querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{closeBell();switchTab(b.dataset.tab);});}
+function closeBell(){$("bellBox").hidden=true;$("bellBtn").setAttribute("aria-expanded","false");}
+$("bellBtn").onclick=e=>{e.stopPropagation();if(!$("bellBox").hidden){closeBell();return;}
+  $("bellBox").dataset.seen=bellSeen();$("bellBox").hidden=false;$("bellBtn").setAttribute("aria-expanded","true");renderBell();
+  try{localStorage.setItem(bellKey(),String(Date.now()));}catch(err){}setTimeout(renderBell,0);};
+document.addEventListener("click",e=>{if(!$("bellBox").hidden&&!e.target.closest(".bellw"))closeBell();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("bellBox").hidden)closeBell();});
+$("meBtn").onclick=()=>{switchTab("pod");setTimeout(()=>$("usersBox").scrollIntoView({behavior:"smooth",block:"start"}),50);};
+function render(){ renderBell(); renderCards(); renderDetail(); renderShop(); renderLeads(); renderKpis(); renderHistory(); const d=isDemo(); $("demoBox").hidden=!d; $("demoBanner").hidden=!d; }
 function leadKey(s){return (s||"").toLowerCase().replace(/[^a-z0-9šđčćž ]/g," ").split(/\s+/).filter(Boolean).slice(0,2);}
 const LEAD_OPEN=["novo","trazimo","ponudjeno","kupljeno"];
 const openLeads=()=>LEADS.filter(l=>LEAD_OPEN.includes(l.status||"novo"));
