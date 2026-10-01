@@ -772,6 +772,13 @@ input:focus, select:focus, textarea:focus {
 
 textarea { grid-column: 1 / -1; min-height: 110px }
 .contact-form button { grid-column: 1 / -1 }
+.cf-group { grid-column: 1 / -1; margin: 6px 0 -4px; font: 700 12px Inter, 'Segoe UI', sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--gold) }
+.cf-hint { grid-column: 1 / -1; margin: -4px 0 0; font-size: 13px; color: var(--muted) }
+.cf-equip { grid-column: 1 / -1; border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 12px 12px; margin: 0; display: flex; flex-wrap: wrap; gap: 8px }
+.cf-equip legend { padding: 0 6px; font-size: 14px; color: var(--muted) }
+.cf-equip label { display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 14px; cursor: pointer; background: #fff }
+.cf-equip input { width: auto; padding: 0; margin: 0; accent-color: var(--gold) }
+.cf-equip label:has(input:checked) { border-color: var(--gold); background: rgba(183,134,61,.08) }
 
 /* Visually-hidden labels: accessible to screen readers, removed from the grid flow */
 .sr-only {

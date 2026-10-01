@@ -16,7 +16,7 @@
       track: ["Primljeno", "Tražimo", "Predlog", "Kupljeno", "Transport", "Carina", "Priprema", "Predato"],
       now: ["Primili smo vaš upit i uskoro krećemo u potragu.", "Tražimo auto u Švajcarskoj koje odgovara vašim željama.", "Imamo predlog za vas. Pogledajte ispod i javite nam da li vam odgovara.", "Auto je kupljeno za vas u Švajcarskoj.", "Auto je na putu za Srbiju.", "Auto je na carini u Srbiji.", "Auto se priprema: servis, provera i pranje.", "Auto je predato. Hvala na poverenju i srećna vožnja!"],
       ready: "Auto je spremno za preuzimanje.", aiYes: "Prva provera tržišta ({d}): u Švajcarskoj smo našli {n} vozila koja bi mogla da odgovaraju vašem budžetu. Naš tim ih sada proverava i javlja vam se sa predlogom.", aiNo: "Prva provera tržišta ({d}): trenutno nema vozila koja odgovaraju budžetu. Pratimo tržište i javljamo vam se čim se pojavi nešto dobro.", closed: "Ovaj upit je zatvoren. Ako i dalje tražite auto, javite nam se.",
-      req: { model: "Tražite", budget: "Budžet", mileage: "Kilometraža", gearbox: "Menjač", created: "Upit poslat" },
+      req: { model: "Tražite", yearFrom: "Godište od", fuel: "Gorivo", body: "Karoserija", budget: "Budžet", mileage: "Kilometraža", gearbox: "Menjač", equip: "Oprema", created: "Upit poslat" },
       propT: "Predlog za vas", priceL: "Cena u Srbiji", noPrice: "Cena po dogovoru", yes: "Odgovara mi", no: "Tražite dalje", noteP: "Poruka za nas (nije obavezno)",
       saidYes: "✓ Rekli ste da vam odgovara. Javljamo vam se oko sledećih koraka.", saidNo: "Rekli ste da tražimo dalje. Nastavljamo potragu.", send: "Šaljem…", err: "Slanje nije uspelo. Pokušajte ponovo.",
       carT: "Vaše auto", qT: "Pitanja?", qP: "Javite nam se kad god želite, najbrže preko WhatsApp-a.",
@@ -26,7 +26,7 @@
       track: ["Erhalten", "Suche", "Vorschlag", "Gekauft", "Transport", "Zoll", "Aufbereitung", "Übergeben"],
       now: ["Wir haben Ihre Anfrage erhalten und beginnen bald mit der Suche.", "Wir suchen in der Schweiz ein Auto, das zu Ihren Wünschen passt.", "Wir haben einen Vorschlag für Sie. Bitte sehen Sie unten nach und sagen Sie uns, ob er passt.", "Das Auto wurde für Sie in der Schweiz gekauft.", "Das Auto ist unterwegs nach Serbien.", "Das Auto ist beim Zoll in Serbien.", "Das Auto wird vorbereitet: Service, Prüfung und Reinigung.", "Das Auto wurde übergeben. Danke für Ihr Vertrauen und gute Fahrt!"],
       ready: "Das Auto ist abholbereit.", aiYes: "Erste Marktprüfung ({d}): Wir haben in der Schweiz {n} Fahrzeuge gefunden, die zu Ihrem Budget passen könnten. Unser Team prüft sie jetzt und meldet sich mit einem Vorschlag.", aiNo: "Erste Marktprüfung ({d}): Derzeit gibt es keine passenden Fahrzeuge in Ihrem Budget. Wir beobachten den Markt und melden uns, sobald etwas Gutes auftaucht.", closed: "Diese Anfrage ist abgeschlossen. Wenn Sie weiterhin ein Auto suchen, melden Sie sich.",
-      req: { model: "Gesucht", budget: "Budget", mileage: "Kilometerstand", gearbox: "Getriebe", created: "Anfrage gesendet" },
+      req: { model: "Gesucht", yearFrom: "Baujahr ab", fuel: "Treibstoff", body: "Karosserie", budget: "Budget", mileage: "Kilometerstand", gearbox: "Getriebe", equip: "Ausstattung", created: "Anfrage gesendet" },
       propT: "Vorschlag für Sie", priceL: "Preis in Serbien", noPrice: "Preis nach Absprache", yes: "Passt mir", no: "Bitte weitersuchen", noteP: "Nachricht an uns (optional)",
       saidYes: "✓ Sie haben zugesagt. Wir melden uns zu den nächsten Schritten.", saidNo: "Sie möchten, dass wir weitersuchen. Wir suchen weiter.", send: "Senden…", err: "Senden fehlgeschlagen. Bitte erneut versuchen.",
       carT: "Ihr Auto", qT: "Fragen?", qP: "Melden Sie sich jederzeit, am schnellsten per WhatsApp.",
@@ -36,7 +36,7 @@
       track: ["Received", "Searching", "Proposal", "Bought", "Transport", "Customs", "Preparation", "Handed over"],
       now: ["We received your request and will start searching shortly.", "We are searching Switzerland for a car that matches your wishes.", "We have a proposal for you. Please look below and tell us if it suits you.", "The car has been bought for you in Switzerland.", "The car is on its way to Serbia.", "The car is at customs in Serbia.", "The car is being prepared: service, inspection and cleaning.", "The car has been handed over. Thank you for your trust and enjoy the drive!"],
       ready: "The car is ready for pick-up.", aiYes: "First market check ({d}): we found {n} cars in Switzerland that could match your budget. Our team is checking them now and will come back with a proposal.", aiNo: "First market check ({d}): there are no matching cars in your budget right now. We keep watching the market and will contact you as soon as something good appears.", closed: "This request is closed. If you are still looking for a car, get in touch.",
-      req: { model: "Looking for", budget: "Budget", mileage: "Mileage", gearbox: "Gearbox", created: "Request sent" },
+      req: { model: "Looking for", yearFrom: "Year from", fuel: "Fuel", body: "Body type", budget: "Budget", mileage: "Mileage", gearbox: "Gearbox", equip: "Equipment", created: "Request sent" },
       propT: "Proposal for you", priceL: "Price in Serbia", noPrice: "Price on request", yes: "This suits me", no: "Keep searching", noteP: "Message to us (optional)",
       saidYes: "✓ You said it suits you. We will contact you about the next steps.", saidNo: "You asked us to keep searching. We are on it.", send: "Sending…", err: "Sending failed. Please try again.",
       carT: "Your car", qT: "Questions?", qP: "Contact us any time, fastest via WhatsApp.",
@@ -74,7 +74,8 @@
     $("u_now").textContent = st < 0 ? t.closed : (d.car && d.car.status === "prodaja" && st === 6 ? t.ready : t.now[st]);
     $("u_ai").hidden = !(d.aiAt && st >= 0 && st <= 2 && !(d.proposals || []).length);
     if (d.aiAt) $("u_ai").textContent = (d.aiN > 0 ? t.aiYes : t.aiNo).replace("{d}", new Date(d.aiAt).toLocaleDateString(t.locale)).replace("{n}", d.aiN);
-    const rq = [["model", d.model], ["budget", d.budget ? num(d.budget) + " €" : ""], ["mileage", d.mileage], ["gearbox", t.gear[d.gearbox] || d.gearbox], ["created", d.created ? new Date(d.created).toLocaleDateString(t.locale) : ""]];
+    const sv = x => x === "Svejedno" ? "" : x;
+    const rq = [["model", d.model + (d.drive === "4x4" ? " 4x4" : "")], ["yearFrom", d.yearFrom || ""], ["fuel", sv(d.fuel)], ["body", sv(d.body)], ["budget", d.budget ? num(d.budget) + " €" : ""], ["mileage", d.mileage], ["gearbox", t.gear[sv(d.gearbox)] || sv(d.gearbox)], ["equip", (d.equip || []).join(", ")], ["created", d.created ? new Date(d.created).toLocaleDateString(t.locale) : ""]];
     $("u_req").innerHTML = rq.filter(r => r[1]).map(([k, v]) => `<div><dt>${esc(t.req[k])}</dt><dd>${esc(v)}</dd></div>`).join("");
     const c = d.car;
     $("u_car").innerHTML = c ? `<div class="up-card"><h2>${esc(t.carT)}: ${esc(c.model)}${c.year ? " " + c.year : ""}</h2>

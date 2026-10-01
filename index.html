@@ -130,22 +130,40 @@
     <form class="contact-form" id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="contact">
       <p class="hidden-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+      <p class="cf-group" data-i18n="cfCar">Koje auto tražite</p>
+      <label class="sr-only" for="cf-brand" data-i18n="brand">Marka</label>
+      <select id="cf-brand" name="brand"><option value="" data-i18n="brand">Marka</option><option>Volkswagen</option><option>Audi</option><option>Škoda</option><option>BMW</option><option>Mercedes-Benz</option><option>Seat</option><option>Opel</option><option>Ford</option><option>Peugeot</option><option>Renault</option><option>Toyota</option><option>Kia</option><option>Hyundai</option><option>Volvo</option><option>Mazda</option><option value="Druga marka" data-i18n="brandOther">Druga marka</option></select>
+      <label class="sr-only" for="cf-model" data-i18n="modelPh">Model</label>
+      <input id="cf-model" name="model" data-i18n-placeholder="modelPh" placeholder="Model (npr. Golf 7, 520d, C 220)">
+      <label class="sr-only" for="cf-year" data-i18n="yearFrom">Godište od</label>
+      <select id="cf-year" name="yearFrom"><option value="" data-i18n="yearFrom">Godište od</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>2018</option><option>2017</option><option>2016</option><option>2015</option><option>2014</option><option>2013</option><option>2012</option><option>2011</option><option>2010</option><option>2009</option><option>2008</option><option>2007</option><option>2006</option></select>
+      <label class="sr-only" for="cf-budget" data-i18n="budget">Budžet (EUR)</label>
+      <input id="cf-budget" name="budget" inputmode="numeric" data-i18n-placeholder="budget" placeholder="Budžet (EUR)">
+      <label class="sr-only" for="cf-fuel" data-i18n="fuel">Gorivo</label>
+      <select id="cf-fuel" name="fuel"><option value="" data-i18n="fuel">Gorivo</option><option value="Dizel" data-i18n="fuelD">Dizel</option><option value="Benzin" data-i18n="fuelB">Benzin</option><option value="Hibrid" data-i18n="fuelH">Hibrid</option><option value="Električni" data-i18n="fuelE">Električni</option><option value="Svejedno" data-i18n="any">Svejedno</option></select>
+      <label class="sr-only" for="cf-gearbox" data-i18n="gearbox">Tip menjača</label>
+      <select id="cf-gearbox" name="gearbox"><option value="" data-i18n="gearbox">Tip menjača</option><option>Automatik</option><option value="Manuelni" data-i18n="manual">Manuelni</option><option value="Svejedno" data-i18n="any">Svejedno</option></select>
+      <label class="sr-only" for="cf-body" data-i18n="body">Karoserija</label>
+      <select id="cf-body" name="body"><option value="" data-i18n="body">Karoserija</option><option value="Karavan" data-i18n="bodyK">Karavan</option><option value="Limuzina" data-i18n="bodyL">Limuzina</option><option value="Hečbek" data-i18n="bodyH">Hečbek</option><option value="SUV">SUV</option><option value="Monovolumen" data-i18n="bodyM">Monovolumen</option><option value="Svejedno" data-i18n="any">Svejedno</option></select>
+      <label class="sr-only" for="cf-drive" data-i18n="drive">Pogon</label>
+      <select id="cf-drive" name="drive"><option value="" data-i18n="drive">Pogon</option><option value="4x4" data-i18n="drive4">4x4 obavezno</option><option value="Svejedno" data-i18n="any">Svejedno</option></select>
+      <label class="sr-only" for="cf-mileage" data-i18n="mileage">Maksimalna kilometraža</label>
+      <select id="cf-mileage" name="mileage"><option value="" data-i18n="mileage">Maksimalna kilometraža</option><option>Do 50.000 km</option><option>Do 100.000 km</option><option>Do 150.000 km</option><option>Do 200.000 km</option><option>Do 250.000 km</option><option value="Nije presudno" data-i18n="notImportant">Nije presudno</option></select>
+      <label class="sr-only" for="cf-when" data-i18n="when">Kada vam treba auto?</label>
+      <select id="cf-when" name="when"><option value="" data-i18n="when">Kada vam treba auto?</option><option value="Što pre" data-i18n="whenNow">Što pre</option><option value="U narednih mesec dana" data-i18n="when1">U narednih mesec dana</option><option value="Nije hitno" data-i18n="when3">Nije hitno, čekam pravo auto</option></select>
+      <fieldset class="cf-equip"><legend data-i18n="equipT">Važna oprema (nije obavezno)</legend><label><input type="checkbox" name="equip" value="Navigacija"><span data-i18n="eqNav">Navigacija</span></label><label><input type="checkbox" name="equip" value="Kamera"><span data-i18n="eqCam">Kamera</span></label><label><input type="checkbox" name="equip" value="Parking senzori"><span data-i18n="eqPdc">Parking senzori</span></label><label><input type="checkbox" name="equip" value="Kuka"><span data-i18n="eqHitch">Kuka</span></label><label><input type="checkbox" name="equip" value="Grejanje sedišta"><span data-i18n="eqHeat">Grejanje sedišta</span></label><label><input type="checkbox" name="equip" value="Kožna sedišta"><span data-i18n="eqLeather">Kožna sedišta</span></label><label><input type="checkbox" name="equip" value="LED / Xenon farovi"><span data-i18n="eqLed">LED / Xenon farovi</span></label><label><input type="checkbox" name="equip" value="Panorama krov"><span data-i18n="eqPano">Panorama krov</span></label><label><input type="checkbox" name="equip" value="Apple CarPlay / Android Auto"><span data-i18n="eqCarplay">Apple CarPlay / Android Auto</span></label><label><input type="checkbox" name="equip" value="Adaptivni tempomat"><span data-i18n="eqAcc">Adaptivni tempomat</span></label></fieldset>
+      <label class="sr-only" for="cf-notes" data-i18n="notes">Dodatne želje / napomene</label>
+      <textarea id="cf-notes" name="notes" data-i18n-placeholder="notesPh" placeholder="Još nešto? Npr. boja, šta ne dolazi u obzir, za šta vam treba auto"></textarea>
+      <p class="cf-group" data-i18n="cfContact">Vaši podaci</p>
       <label class="sr-only" for="cf-name" data-i18n="name">Ime i prezime</label>
       <input id="cf-name" name="name" data-i18n-placeholder="name" placeholder="Ime i prezime" required>
+      <label class="sr-only" for="cf-city" data-i18n="city">Grad</label>
+      <input id="cf-city" name="city" data-i18n-placeholder="city" placeholder="Grad (npr. Beograd, Niš)">
       <label class="sr-only" for="cf-phone" data-i18n="phone">Telefon / WhatsApp</label>
-      <input id="cf-phone" name="phone" data-i18n-placeholder="phone" placeholder="Telefon / WhatsApp">
+      <input id="cf-phone" name="phone" type="tel" data-i18n-placeholder="phone" placeholder="Telefon / WhatsApp">
       <label class="sr-only" for="cf-email" data-i18n="email">E-mail</label>
       <input id="cf-email" name="email" type="email" data-i18n-placeholder="email" placeholder="E-mail">
-      <label class="sr-only" for="cf-budget" data-i18n="budget">Budžet (EUR)</label>
-      <input id="cf-budget" name="budget" data-i18n-placeholder="budget" placeholder="Budžet (EUR)">
-      <label class="sr-only" for="cf-model" data-i18n="model">Koji model tražite?</label>
-      <input id="cf-model" name="model" data-i18n-placeholder="model" placeholder="Koji model tražite?">
-      <label class="sr-only" for="cf-mileage" data-i18n="mileage">Maksimalna kilometraža</label>
-      <select id="cf-mileage" name="mileage"><option value="" data-i18n="mileage">Maksimalna kilometraža</option><option>Do 50.000 km</option><option>Do 100.000 km</option><option>Do 150.000 km</option><option>Do 200.000 km</option><option data-i18n="notImportant">Nije presudno</option></select>
-      <label class="sr-only" for="cf-gearbox" data-i18n="gearbox">Tip menjača</label>
-      <select id="cf-gearbox" name="gearbox"><option value="" data-i18n="gearbox">Tip menjača</option><option>Automatik</option><option>Manuelni</option></select>
-      <label class="sr-only" for="cf-notes" data-i18n="notes">Dodatne želje / napomene</label>
-      <textarea id="cf-notes" name="notes" data-i18n-placeholder="notes" placeholder="Dodatne želje / napomene"></textarea>
+      <p class="cf-hint" data-i18n="cfHint">Na email dobijate link na kom pratite svoj upit.</p>
       <button class="btn btn-gold" type="submit" data-i18n="send">Pošalji upit</button>
       <p class="form-status" role="status" aria-live="polite" hidden></p>
     </form>
