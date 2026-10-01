@@ -680,10 +680,10 @@ function renderCards(){
   $("pipe").querySelectorAll("[data-pf]").forEach(b=>b.onclick=()=>{pipeF=pipeF===b.dataset.pf?null:b.dataset.pf;renderCards();});
   const shown=pipeF?list.filter(c=>c.status===pipeF):list;
   const ordOf=c=>c.orderId?LEADS.find(l=>l._id===c.orderId):null;
-  const row=c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c),ld=ordOf(c);
+  const row=c=>{const r=carCalc(c),st=stepFor(c),ld=ordOf(c);
     return `<button type="button" class="card${c._id===curId?" sel":""}" data-id="${esc(c._id)}">
       <span class="cm"><b>${esc(c.model)}</b><span class="sub">${c.year||""}${c.km?" · "+fmt(c.km)+" km":""}</span></span>
-      <span class="cup">${ld||c.orderId?`<b>${esc(ld?.name||"potražilac")}</b>${ld?.city?`<span class="sub">${esc(ld.city)}</span>`:""}`:`<span class="note">${nb?`${nb} ${nb===1?"zainteresovan":"zainteresovana"} (upiti)`:"—"}</span>`}</span>
+      <span class="cup">${ld||c.orderId?`<b>${esc(ld?.name||"potražilac")}</b>${ld?.city?`<span class="sub">${esc(ld.city)}</span>`:""}`:`<span class="note">naše</span>`}</span>
       <span class="cst"><span class="pill s-${esc(c.status)}">${SL[c.status]||esc(c.status)}</span></span>
       <span class="note cnext">${st?esc(st.title):"—"}</span>
       <span class="cn cinv">${fmt(r.cost)} €</span>
