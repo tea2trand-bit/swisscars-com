@@ -650,7 +650,7 @@ const openLeads=()=>LEADS.filter(l=>LEAD_OPEN.includes(l.status||"novo"));
 function buyersFor(c){const m=(c.model||"").toLowerCase();return openLeads().filter(l=>{const k=leadKey(l.model);return k.length&&k.every(w=>m.includes(w));}).length;}
 
 function renderCards(){
-  const list=CARS.filter(c=>!c.moved).filter(c=>filter==="sve"?true:filter==="prodat"?c.status==="prodat":!["prodat","odustao"].includes(c.status))
+  const list=CARS.filter(c=>!c.moved&&c.status!=="pregledan").filter(c=>filter==="sve"?true:filter==="prodat"?c.status==="prodat":!["prodat","odustao"].includes(c.status))
     .sort((a,b)=>filter==="prodat"?(b.soldDate||"").localeCompare(a.soldDate||""):(idx(b.status)-idx(a.status))||((b.updated||0)-(a.updated||0)));
   $("cards").innerHTML=list.map(c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c);
     return `<button type="button" class="card${c._id===curId?" sel":""}" data-id="${esc(c._id)}">
@@ -967,7 +967,7 @@ function leadStage(l,n){
 function renderLeads(){
   const rows=shopRows();
   const list=[...LEADS].map(l=>{const fs=leadFindsOf(l,rows);return {l,fs,st:leadStage(l,fs.length)};}).filter(x=>leadFilter==="open"?!x.st.done:x.st.done).sort((a,b)=>(b.l.created||0)-(a.l.created||0));
-  const ourCars=CARS.filter(c=>["pregledan","kupljen","transport","carinjen","garaza","prodaja"].includes(c.status));
+  const ourCars=CARS.filter(c=>["kupljen","transport","carinjen","garaza","prodaja"].includes(c.status));
   $("leadList").innerHTML=list.map(({l,st,fs})=>{
     const props=l.proposals||[]; const car=l.carId?CARS.find(c=>c._id===l.carId):null;
     const wa=(l.phone||"").replace(/[^0-9+]/g,"").replace(/^00/,"+");
