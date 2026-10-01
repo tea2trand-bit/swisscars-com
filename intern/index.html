@@ -118,6 +118,13 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .stepper span.done::before{content:"✓ "}
 .stepper span.cur{background:var(--btn);color:#fff;font-weight:700;opacity:1}
 .stepper span.nx{border:1px dashed var(--btn);color:var(--btn);opacity:1}
+.dwrap{display:grid;gap:12px}
+.dtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.dtiles button{font:inherit;color:var(--ink);text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:9px 12px;cursor:pointer;display:grid;gap:2px;min-width:0}
+.dtiles button:hover{border-color:var(--btn)}
+.dtiles button .k{font-size:12px;color:var(--muted)}
+.dtiles button .v{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dtiles button[aria-pressed=true]{border-color:var(--btn);box-shadow:inset 0 -3px 0 var(--btn);background:var(--soft)}
 .next{border:2px dashed var(--next-line);background:var(--next-bg);border-radius:10px;padding:14px;display:grid;gap:12px}
 .next h3{color:var(--btn)}
 .next h3{display:flex;gap:8px;align-items:center}
@@ -202,6 +209,11 @@ details.intro p{margin:0 0 4px}
 .lfinds ul{margin-top:8px}
 .plist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center}
 .plist .pst{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.pthumbs{display:flex;flex-wrap:wrap;gap:6px}
+.pthumbs:empty{display:none}
+.pt{position:relative}
+.pt img{width:92px;height:68px;object-fit:cover;border-radius:6px;display:block}
+.pt button{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;line-height:1}
 .pphoto{grid-column:1/-1;display:grid;gap:8px;background:var(--soft);border-radius:8px;padding:10px}
 .tbadge{display:inline-block;margin-left:6px;min-width:20px;padding:0 6px;border-radius:999px;background:var(--neg);color:#fff;font-size:12px;line-height:20px;text-align:center}
 .lactions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
@@ -215,6 +227,9 @@ details.intro p{margin:0 0 4px}
 .lead .blk h4{margin:0;font:600 13px var(--f-body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .lead ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
 .lead li{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:space-between}
+.lead .plist li{display:grid}
+.lead .pphoto{width:100%}
+label.b{display:inline-block;font:14px var(--f-body);border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:7px;padding:4px 10px;cursor:pointer}
 .ans-da{color:var(--pos);font-weight:600} .ans-ne{color:var(--neg);font-weight:600} .ans-wait{color:var(--muted)}
 .propform{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}
 .propform input{width:auto;flex:1 1 120px}
@@ -307,32 +322,15 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <p class="note">Klikni „+ Novi auto“ kad Stefan pregleda ili kupi auto.</p>
     </div>
 
-    <div class="split two" id="detail" hidden>
-      <div style="display:grid;gap:16px;min-width:0">
-        <div class="sheet">
-          <div class="top"><div><h2 id="dTitle"></h2><span class="sub" id="dSub"></span></div><button class="b small" type="button" id="dClose">Zatvori</button></div>
-          <div class="stepper" id="stepper"></div>
-          <div class="next" id="nextBox"></div>
-          <div class="resv" id="resvBox" hidden></div>
-        </div>
-        <div class="sheet" id="specBox">
-          <h3>Kartica auta</h3>
-          <dl class="specs" id="specList"></dl>
-          <div class="chips" id="equipList"></div>
-          <div id="photoBox" style="display:grid;gap:8px">
-            <h3>Fotografije</h3>
-            <div class="photos" id="photos"></div>
-            <label class="b upl" id="uplLbl" hidden><input type="file" id="upl" accept="image/*" multiple hidden>+ Dodaj fotografije</label>
-            <span class="note" id="uplNote"></span>
-          </div>
-          <div style="display:grid;gap:8px">
-            <h3>Tekst za oglas</h3>
-            <textarea id="adText" rows="12" aria-label="Tekst za oglas"></textarea>
-            <div class="btns"><button class="b primary" type="button" id="copyAd">Kopiraj tekst</button><span class="note">Za polovniautomobili.com. Tražena cena se upisuje kad je auto spreman za prodaju.</span></div>
-          </div>
-        </div>
-        <div class="sheet">
-          <h3>Dodaj trošak</h3>
+    <div id="detail" class="dwrap" hidden>
+      <div class="sheet">
+        <div class="top"><div><h2 id="dTitle"></h2><span class="sub" id="dSub"></span></div><button class="b small" type="button" id="dClose">Zatvori</button></div>
+        <div class="stepper" id="stepper"></div>
+        <div class="dtiles" id="dTiles"></div>
+      </div>
+      <div class="sheet dpanel" data-dp="next"><div class="next" id="nextBox"></div><div class="resv" id="resvBox" hidden></div></div>
+      <div class="sheet money dpanel" data-dp="money" id="moneyBox" hidden></div>
+      <div class="sheet dpanel" data-dp="costs" hidden><h3>Troškovi ovog auta</h3>
           <form id="costForm" autocomplete="off">
             <div class="grid">
               <div class="field"><label for="k_what">Za šta</label><input id="k_what" required placeholder="npr. zamena kvačila"></div>
@@ -343,17 +341,24 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
             <div class="btns"><button class="b primary" type="submit">Dodaj trošak</button><span class="note" id="k_hint"></span></div>
           </form>
           <div class="scroll"><table id="costTbl"><thead><tr><th>Trošak</th><th>Ko</th><th class="n">€</th><th></th></tr></thead><tbody></tbody></table></div>
-        </div>
-        <div class="sheet">
-          <h3>Istorija ovog auta</h3>
-          <ul class="timeline" id="carTimeline"></ul>
-        </div>
       </div>
-      <div style="display:grid;gap:16px;align-content:start;min-width:0">
-        <div class="sheet money" id="moneyBox"></div>
-        <details class="more sheet">
-          <summary>Izmeni podatke o autu</summary>
-          <form id="carForm" autocomplete="off" style="margin-top:12px">
+      <div class="sheet dpanel" data-dp="spec" id="specBox" hidden><h3>Kartica auta</h3><dl class="specs" id="specList"></dl><div class="chips" id="equipList"></div></div>
+      <div class="sheet dpanel" data-dp="photos" hidden>
+          <div id="photoBox" style="display:grid;gap:8px">
+            <h3>Fotografije</h3>
+            <div class="photos" id="photos"></div>
+            <label class="b upl" id="uplLbl" hidden><input type="file" id="upl" accept="image/*" multiple hidden>+ Dodaj fotografije</label>
+            <span class="note" id="uplNote"></span>
+          </div>
+      </div>
+      <div class="sheet dpanel" data-dp="ad" hidden><div style="display:grid;gap:8px">
+            <h3>Tekst za oglas</h3>
+            <textarea id="adText" rows="12" aria-label="Tekst za oglas"></textarea>
+            <div class="btns"><button class="b primary" type="button" id="copyAd">Kopiraj tekst</button><span class="note">Za polovniautomobili.com. Tražena cena se upisuje kad je auto spreman za prodaju.</span></div>
+      </div></div>
+      <div class="sheet dpanel" data-dp="hist" hidden><h3>Istorija ovog auta</h3><ul class="timeline" id="carTimeline"></ul></div>
+      <div class="sheet dpanel" data-dp="edit" hidden><h3>Izmeni podatke o autu</h3>
+          <form id="carForm" autocomplete="off">
             <div id="editFields" style="display:grid;gap:14px"></div>
             <h3>Prodaja i status</h3>
             <div class="grid">
@@ -365,7 +370,6 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
             </div>
             <div class="btns"><button class="b primary" type="submit">Sačuvaj izmene</button><button class="b danger" type="button" id="delCar">Obriši auto</button></div>
           </form>
-        </details>
       </div>
     </div>
   </section>
@@ -743,7 +747,7 @@ function renderCards(){
   $("carEmpty").hidden=shown.length>0;
   $("cards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCar(b.dataset.id));
 }
-function openCar(id){curId=id;$("detail").hidden=false;fillCarForm();render();$("detail").scrollIntoView({behavior:"smooth",block:"start"});}
+function openCar(id){if(curId!==id)dPanel="next";curId=id;$("detail").hidden=false;fillCarForm();render();$("detail").scrollIntoView({behavior:"smooth",block:"start"});}
 function closeCar(){curId=null;$("detail").hidden=true;render();}
 $("dClose").onclick=closeCar;
 
@@ -761,11 +765,27 @@ function renderResv(c){const box=$("resvBox");
     try{await db.doc("cars/"+c._id).update({reservation:{name,phone:$("rv_phone").value.trim(),deposit:dep,at:Date.now(),by:actor()},updated:Date.now()});
       await logEvent(c._id,"status",`Rezervisao ${name}${dep?", kapara "+fmt(dep)+" €":""}`);document.activeElement?.blur?.();toast("Rezervacija sačuvana. Na sajtu piše „Rezervisano“.");}catch(err){fail(err);}};
 }
+let dPanel="next";
+function renderTiles(c){const r=carCalc(c),st=stepFor(c),cs=COSTS.filter(k=>k.carId===c._id),ev=EVENTS.filter(e=>e.carId===c._id),ph=(c.photos||[]).length;
+  const csum=cs.reduce((s,k)=>s+toEUR(k.amount||0,k.currency),0);
+  const T=[["next","Sledeći korak",st?(TODO[c.status]||st.title):(c.status==="prodat"?"Prodat":"—")],
+    ["money","Novac",`${fmt(r.cost)} €${r.post!=null?" · "+sgn(r.post)+" €":""}`],
+    ["costs","Troškovi",cs.length?`${cs.length} · ${fmt(csum)} €`:"nema"],
+    ["spec","Kartica auta",[c.gear,c.km?fmt(c.km)+" km":""].filter(Boolean).join(" · ")||"—"],
+    ["photos","Fotografije",ph?`${ph} ${ph===1?"slika":"slika"}`:"nema"],
+    ["ad","Tekst za oglas","kopiraj"],
+    ["hist","Istorija",`${ev.length} ${ev.length===1?"događaj":"događaja"}`],
+    ["edit","Izmeni","podatke, status"]];
+  $("dTiles").innerHTML=T.map(([k,l,v])=>`<button type="button" data-dt="${k}" aria-pressed="${dPanel===k}"><span class="k">${l}</span><span class="v">${esc(v)}</span></button>`).join("");
+  $("dTiles").querySelectorAll("[data-dt]").forEach(b=>b.onclick=()=>{dPanel=dPanel===b.dataset.dt?"":b.dataset.dt;showPanel();renderTiles(c);});
+  showPanel();}
+function showPanel(){document.querySelectorAll("#detail .dpanel").forEach(p=>p.hidden=p.dataset.dp!==dPanel);}
 function renderDetail(){
   const c=CARS.find(x=>x._id===curId); if(!c){ if(curId){$("detail").hidden=true;curId=null;} return; }
   $("dTitle").textContent=c.model; $("dSub").textContent=[c.year,c.km?fmt(c.km)+" km":"",c.gear,c.seller==="dealer"?"od trgovca":"privatno",c.place].filter(Boolean).join(" · ");
   const i=idx(c.status);
   $("stepper").innerHTML=FLOW.map(([s,l],j)=>`<span class="${c.status==="odustao"?"":j<i?"done":j===i?"cur":j===i+1?"nx":""}" ${j===i+1?'title="Sledeći korak"':""}>${l}</span>`).join("");
+  renderTiles(c);
   if(document.activeElement?.closest?.("#nextBox")==null) renderNext(c);
   if(document.activeElement?.closest?.("#resvBox")==null) renderResv(c);
   renderSpec(c);
@@ -1090,8 +1110,10 @@ function leadStage(l,n){
   if(l.aiCheckedAt) return {t:"Asistent još nema dobar oglas – traži dalje",c:"s-new"};
   return {t:"Novo – asistent proverava (do 1 h)",c:"s-new"};
 }
+let leadBusy=false;
 function renderLeads(){
   {const n=LEADS.filter(l=>!l.carId&&(l.proposals||[]).some(p=>propState(p).act)).length;$("tabLeadCnt").textContent=n;$("tabLeadCnt").hidden=!n;}
+  if(leadBusy&&document.querySelector("#leadList .pphoto:not([hidden])"))return;
   const rows=shopRows();
   const list=[...LEADS].map(l=>{const fs=leadFindsOf(l,rows);return {l,fs,st:leadStage(l,fs.length)};}).filter(x=>leadFilter==="open"?!x.st.done:x.st.done).sort((a,b)=>(b.l.created||0)-(a.l.created||0));
   const ourCars=CARS.filter(c=>["kupljen","transport","carinjen","garaza","prodaja"].includes(c.status));
@@ -1102,12 +1124,17 @@ function renderLeads(){
     const want=[l.budget?`do ${fmt(l.budget)} €`:"",l.yearFrom?`od ${l.yearFrom}.`:"",sv(l.fuel),sv(l.body),l.drive==="4x4"?"4x4":"",sv(l.gearbox),l.mileage&&l.mileage!=="Nije presudno"?l.mileage.toLowerCase():"",(l.equip||[]).length?"oprema: "+l.equip.join(", "):"",l.when].filter(Boolean).map(esc).join(" · ");
     const head=`<div class="lhd"><div><h3>${esc(l.name||l.contact||"Bez imena")}</h3><span class="sub">${[l.city||(l.where&&l.where!=="Sajt"?l.where:""),l.source==="web"?"sa sajta":"telefonom / uživo",l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):"",l.source!=="web"&&l.payer?"uneo "+l.payer:""].filter(Boolean).map(esc).join(" · ")}</span></div><span class="stage ${st.c}">${esc(st.t)}</span></div>`;
     const contact=`<div class="lcontact">${l.phone?`<a href="tel:${esc(wa)}">📞 ${esc(l.phone)}</a>${wa.length>6?`<a href="https://wa.me/${esc(wa.replace("+",""))}" target="_blank" rel="noopener">WhatsApp</a>`:""}`:""}${l.email?`<a href="mailto:${esc(l.email)}">✉ ${esc(l.email)}</a>`:""}${!l.phone&&!l.email&&l.contact?esc(l.contact):""}</div>`;
-    const propHTML=props.length?`<div class="blk"><h4>Predlozi</h4><ul class="plist">${props.map(p=>{let ps=propState(p);if(car&&["zanima","zelim"].includes(pAns(p)))ps={t:"✓ Kupljeno",c:"ans-da"};const f=p.findId?FINDS.find(x=>x._id===p.findId):null;
-      return `<li><span>${esc(p.title)}${p.year?" · "+p.year:""}${p.km?" · "+fmt(p.km)+" km":""} · <b>${p.price?fmt(p.price)+" €":"cena po dogovoru"}</b> <span class="note">${p.at?new Date(p.at).toLocaleDateString("sr-Latn-RS"):""}${p.by?", "+esc(who(p.by)):""}</span>${p.answerNote?`<span class="sub">„${esc(p.answerNote)}“</span>`:""}</span>
-        <span class="pst"><span class="${ps.c}">${esc(ps.t)}</span>${canWrite&&!car?(ps.act==="photos"?`<button class="b small primary" type="button" data-pph="${esc(l._id)}|${esc(p.id)}">Dodaj slike i opis</button>`:ps.act==="paid"?`<button class="b small primary" type="button" data-ppaid="${esc(l._id)}|${esc(p.id)}">Kapara primljena</button>`:ps.act==="refund"?`<button class="b small" type="button" data-prefund="${esc(l._id)}|${esc(p.id)}">Kapara vraćena</button>`:""):""}</span>
-        <div class="pphoto" data-pphbox="${esc(l._id)}|${esc(p.id)}" hidden><p class="note">${f&&f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">Otvori oglas ↗</a> · `:""}Sačuvaj slike iz oglasa i ubaci ih ovde, pa prepiši bitno iz opisa. Potražilac ne vidi link oglasa.</p>
-          <input type="file" accept="image/*" multiple data-pfiles><textarea rows="3" data-pnote placeholder="npr. servisna knjiga, mala ogrebotina na braniku, nove gume, bez udesa">${esc(p.adNote||"")}</textarea>
-          <div class="btns"><button class="b primary small" type="button" data-psend>Pošalji mu slike i opis</button><button class="b small" type="button" data-pcancel>Odustani</button></div></div></li>`;}).join("")}</ul></div>`:"";
+    const pli=p=>{let ps=propState(p);if(car&&["zanima","zelim"].includes(pAns(p)))ps={t:"✓ Kupljeno",c:"ans-da"};const f=p.findId?FINDS.find(x=>x._id===p.findId):null;const url=f&&f.url;
+      return `<li><span>${url?`<a href="${esc(url)}" target="_blank" rel="noopener" title="Otvori švajcarski oglas">${esc(p.title)}</a>`:esc(p.title)}${p.year?" · "+p.year:""}${p.km?" · "+fmt(p.km)+" km":""} · <b>${p.price?fmt(p.price)+" €":"cena po dogovoru"}</b> <span class="note">${p.at?new Date(p.at).toLocaleDateString("sr-Latn-RS"):""}${p.by?", "+esc(who(p.by)):""}</span>${p.answerNote?`<span class="sub">„${esc(p.answerNote)}“</span>`:""}${(p.photos||[]).length&&p.photosAt?`<span class="sub">${p.photos.length} ${p.photos.length===1?"slika poslata":"slika poslato"}${p.adNote?" · "+esc(p.adNote.slice(0,80)):""}</span>`:""}</span>
+        <span class="pst"><span class="${ps.c}">${esc(ps.t)}</span>${url&&!car&&ps.act==="photos"?`<a class="b small" href="${esc(url)}" target="_blank" rel="noopener">Oglas ↗</a>`:""}${canWrite&&!car?(ps.act==="photos"?`<button class="b small primary" type="button" data-pph="${esc(l._id)}|${esc(p.id)}">Dodaj slike i opis</button>`:ps.act==="paid"?`<button class="b small primary" type="button" data-ppaid="${esc(l._id)}|${esc(p.id)}">Kapara primljena</button>`:ps.act==="refund"?`<button class="b small" type="button" data-prefund="${esc(l._id)}|${esc(p.id)}">Kapara vraćena</button>`:""):""}</span>
+        <div class="pphoto" data-pphbox="${esc(l._id)}|${esc(p.id)}" hidden><p class="note">${url?`<a href="${esc(url)}" target="_blank" rel="noopener">Otvori oglas ↗</a> · `:""}Sačuvaj slike iz oglasa i dodaj ih ovde (možeš više puta), ili kopiraj sliku i nalepi je sa Ctrl+V. Potražilac ne vidi link oglasa.</p>
+          <div class="pthumbs" data-pthumbs></div>
+          <div class="btns"><label class="b small"><input type="file" accept="image/*" multiple data-pfiles hidden>+ Dodaj slike</label><span class="note" data-pcount>Još nema slika</span></div>
+          <textarea rows="3" data-pnote placeholder="Opis iz oglasa: npr. servisna knjiga, mala ogrebotina na braniku, nove gume, bez udesa">${esc(p.adNote||"")}</textarea>
+          <div class="btns"><button class="b primary small" type="button" data-psend>Pošalji mu slike i opis</button><button class="b small" type="button" data-pcancel>Odustani</button></div></div></li>`;};
+    const hot=props.filter(p=>["zanima","zelim"].includes(pAns(p))||p.depositPaidAt||p.insp||p.choice), cold=props.filter(p=>!hot.includes(p));
+    const coldSum=(()=>{const w=cold.filter(p=>!pAns(p)).length,n=cold.filter(p=>pAns(p)==="ne").length;return [w?`${w} čeka odgovor`:"",n?`${n} ne zanima`:""].filter(Boolean).join(", ");})();
+    const propHTML=props.length?`<div class="blk"><h4>${hot.length?"Zanima ga":"Predlozi"}</h4>${hot.length?`<ul class="plist">${hot.map(pli).join("")}</ul>${cold.length?`<details class="more pcold"><summary>Ostali predlozi (${cold.length}): ${coldSum}</summary><ul class="plist">${cold.map(pli).join("")}</ul></details>`:""}`:`<ul class="plist">${props.map(pli).join("")}</ul>`}</div>`:"";
     const findHTML=!st.done&&!car?`<details class="lfinds"><summary>${fs.length?`Asistent našao ${fs.length} ${fs.length===1?"oglas":"oglasa"} u Švajcarskoj · šalje ih sam, po 3`:(l.aiCheckedAt?"Asistent trenutno nema odgovarajući oglas":"Asistent još proverava")}${l.aiNote?` <span class="note">· ${esc(l.aiNote)}</span>`:""}</summary>${fs.length?`<ul>${fs.slice(0,6).map(f=>{const p=findProfit(f);const sent=props.some(x=>x.findId===f._id);return `<li><span>${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.title||f.model)}</a>`:esc(f.title||f.model)} · ${f.year||""} · ${f.km?fmt(f.km)+" km · ":""}${fmt(f.priceChf)} CHF${p?` · naša zarada <span class="${p.post>=0?"pos":"neg"}">${sgn(p.post)} €</span>`:""}</span>${(sent?'<span class="note">poslato njemu</span>':'<span class="note">na čekanju</span>')}</li>`;}).join("")}</ul>`:""}</details>`:"";
     const first=(l.name||"").split(" ")[0];
     const waMsg=l.token?encodeURIComponent(`Zdravo ${first}, ovde možete pratiti vaš upit kod SWISCARS: ${trackUrl(l.token)}`):"";
@@ -1122,15 +1149,24 @@ function renderLeads(){
   L.querySelectorAll("[data-reopen]").forEach(b=>b.onclick=async()=>{const l=LEADS.find(x=>x._id===b.dataset.reopen);try{await db.doc("leads/"+l._id).update({status:(l.proposals||[]).length?"ponudjeno":"trazimo"});await logEvent(null,"order",`Upit ponovo otvoren: ${l.name||l.model}`);}catch(e){fail(e);}});
   L.querySelectorAll("[data-lgo]").forEach(b=>b.onclick=()=>moveFind(b.dataset.lgo,"izabrano",b));
   const lp=v=>{const [lid,pid]=v.split("|");const l=LEADS.find(x=>x._id===lid);return [l,(l?.proposals||[]).find(p=>p.id===pid)];};
-  L.querySelectorAll("[data-pph]").forEach(b=>b.onclick=()=>{const box=L.querySelector(`[data-pphbox="${CSS.escape(b.dataset.pph)}"]`);box.hidden=false;b.hidden=true;
-    box.querySelector("[data-pcancel]").onclick=()=>{box.hidden=true;b.hidden=false;};
+  L.querySelectorAll("[data-pph]").forEach(b=>b.onclick=()=>{const box=L.querySelector(`[data-pphbox="${CSS.escape(b.dataset.pph)}"]`);box.hidden=false;b.hidden=true;leadBusy=true;
+    const files=[];const thumbs=box.querySelector("[data-pthumbs]"),cnt=box.querySelector("[data-pcount]");
+    const draw=()=>{thumbs.innerHTML=files.map((f,i)=>`<span class="pt"><img src="${URL.createObjectURL(f)}" alt=""><button type="button" data-prm="${i}" aria-label="Ukloni sliku">×</button></span>`).join("");
+      cnt.textContent=files.length?`${files.length} ${files.length===1?"slika spremna":"slika spremno"}`:"Još nema slika";
+      thumbs.querySelectorAll("[data-prm]").forEach(x=>x.onclick=()=>{files.splice(+x.dataset.prm,1);draw();});};
+    const add=list=>{[...list].filter(f=>f&&f.type&&f.type.startsWith("image/")).forEach(f=>files.push(f));draw();};
+    box.querySelector("[data-pfiles]").onchange=e=>{add(e.target.files);e.target.value="";};
+    box.addEventListener("paste",e=>{const its=[...(e.clipboardData?.items||[])].filter(i=>i.type.startsWith("image/")).map(i=>i.getAsFile());if(its.length){e.preventDefault();add(its);toast("Slika nalepljena");}});
+    box.addEventListener("dragover",e=>e.preventDefault());box.addEventListener("drop",e=>{e.preventDefault();add(e.dataTransfer.files);});
+    box.tabIndex=-1;box.focus();
+    box.querySelector("[data-pcancel]").onclick=()=>{box.hidden=true;b.hidden=false;leadBusy=false;renderLeads();};
     box.querySelector("[data-psend]").onclick=async e=>{const btn=e.currentTarget;const [l,p]=lp(b.dataset.pph);if(!l||!p)return;
-      const files=[...box.querySelector("[data-pfiles]").files], note=box.querySelector("[data-pnote]").value.trim();
-      if(!files.length&&!(p.photos||[]).length){toast("Ubaci bar jednu sliku iz oglasa");return;}
+      const note=box.querySelector("[data-pnote]").value.trim();
+      if(!files.length&&!(p.photos||[]).length){toast("Dodaj bar jednu sliku iz oglasa");return;}
       btn.disabled=true;btn.textContent="Šaljem…";const ids=[...(p.photos||[])];
-      try{for(const f of files){const r=await assets.upload(await shrink(f));ids.push(r.id);}
+      try{let i=0;for(const f of files){i++;btn.textContent=`Šaljem ${i}/${files.length}…`;const r=await assets.upload(await shrink(f));ids.push(r.id);}
         await updProp(l,p.id,{photos:ids,adNote:note,photosAt:Date.now(),photosBy:actor()});
-        await logEvent(null,"order",`Poslate slike potražiocu ${l.name||""}: ${p.title}`);toast("Poslato. Potražilac dobija email sa slikama.");}
+        await logEvent(null,"order",`Poslate slike potražiocu ${l.name||""}: ${p.title}`);leadBusy=false;renderLeads();toast("Poslato. Potražilac dobija email sa slikama.");}
       catch(err){btn.disabled=false;btn.textContent="Pošalji mu slike i opis";fail(err);}};});
   L.querySelectorAll("[data-ppaid]").forEach(b=>b.onclick=async()=>{const [l,p]=lp(b.dataset.ppaid);if(!l||!p)return;
     if(!b.dataset.armed){b.dataset.armed=1;b.textContent=`Potvrdi: primljeno ${p.deposit?fmt(p.deposit)+" €":""}`;setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent="Kapara primljena";}},5000);return;}
