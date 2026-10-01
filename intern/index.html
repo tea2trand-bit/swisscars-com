@@ -73,7 +73,8 @@ textarea{min-height:60px;resize:vertical}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 button.b{font:15px var(--f-body);border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:7px;padding:7px 14px;cursor:pointer}
-button.b.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+button.b.primary,a.b.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.b.primary:hover{filter:brightness(1.08)}
 button.b.danger{color:var(--neg)}
 button.b.small{padding:4px 10px;font-size:14px}
 button.b:disabled{opacity:.5;cursor:not-allowed}
@@ -97,7 +98,7 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .card .money{font-family:var(--f-num);font-size:15px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{font:14px var(--f-body);border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
-.chips button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chips button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .stepper{display:flex;gap:4px;overflow-x:auto;padding-bottom:2px}
 .stepper span{flex:1 0 auto;font-size:12px;padding:6px 8px;border-radius:6px;background:var(--soft);color:var(--muted);white-space:nowrap;text-align:center}
 .stepper span.done{background:var(--pos-soft);color:var(--pos)}
@@ -146,6 +147,11 @@ a.b{display:inline-block;font:14px var(--f-body);border:1px solid var(--line);ba
 td.r,th.r{text-align:right;width:1%;white-space:nowrap}
 .tabs button.set{color:var(--muted)}
 .intro{font-size:15px;color:var(--muted);margin:0;max-width:80ch}
+details.intro summary{cursor:pointer;font-size:13px;color:var(--muted);list-style:none;display:inline-block}
+details.intro summary::-webkit-details-marker{display:none}
+details.intro[open] summary{margin-bottom:4px}
+details.intro p{margin:0 0 4px}
+#runInfo{margin:0}
 .intro b{color:var(--ink)}
 .user{display:flex;gap:10px;align-items:center;font-size:14px}
 .user .nm{display:flex;gap:6px;align-items:center;font-weight:500}
@@ -205,6 +211,8 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 .frow .fform{grid-column:1/-1;display:grid;gap:8px;background:var(--soft);border-radius:8px;padding:10px}
 .frow .seen{display:block;margin-top:4px;font-size:14px;background:var(--soft);border-radius:6px;padding:4px 8px}
 @media (max-width:700px){.fsteps{grid-template-columns:repeat(2,minmax(0,1fr))}.frow{grid-template-columns:1fr}.frow .fnum{text-align:left}.frow .fact{justify-content:flex-start}}
+.toolrow{display:flex;flex-wrap:wrap;gap:8px}
+.toolrow .b[aria-pressed=true]{background:var(--soft);color:var(--ink);border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
 .match{display:inline-block;font-size:12px;background:var(--info-soft);color:var(--info);border-radius:999px;padding:1px 8px}
 </style>
 </head>
@@ -241,7 +249,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- AUTA -->
   <section id="t-auta" class="wrap" style="gap:16px">
-    <p class="intro">Auta koja smo <b>kupili</b>, od Švajcarske do prodaje. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p>
+    <details class="intro"><summary>ⓘ Kako radi</summary><p>Auta koja smo <b>kupili</b>, od Švajcarske do prodaje. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p></details>
     <div class="pipe" id="pipe"></div>
     <div class="top">
       <div class="chips" id="carFilter"><button type="button" data-f="aktivna" aria-pressed="true">U radu</button><button type="button" data-f="prodat" aria-pressed="false">Prodata</button><button type="button" data-f="sve" aria-pressed="false">Sva</button></div>
@@ -327,25 +335,14 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- AI PRETRAGA -->
   <section id="t-ai" class="wrap" style="gap:16px" hidden>
-    <p class="intro">Asistent svakog ponedeljka (i kad zatražite proveru) traži u Švajcarskoj auta koja nama donose <b>bar <span class="minp"></span> € zarade</b>. Svaki oglas ide u četiri koraka: <b>Novo → Idemo da gledamo → Pogledano, razmišljamo → Kupljeno</b>. Kupljeno auto samo prelazi u „Naša auta“. Oglasi koje asistent nađe za nekog potražioca su u kartici tog upita.</p>
-    <div class="sheet">
-      <div class="top"><h2>Oglasi u Švajcarskoj</h2><div class="btns"><button class="b" type="button" id="resetBtn">Resetuj pretragu</button><button class="b primary" type="button" id="runBtn">Zatraži proveru tržišta</button></div></div>
-      <p class="note" id="runInfo"></p>
-      <p class="note" id="runNext"></p>
-      <div class="fsteps" id="fSteps">
-        <button type="button" data-ff="novo" aria-pressed="true"><span class="k">KORAK 1</span><span class="l">Novo</span><span class="c" data-cnt="novo">0</span></button>
-        <button type="button" data-ff="izabrano" aria-pressed="false"><span class="k">KORAK 2</span><span class="l">Idemo da gledamo</span><span class="c" data-cnt="izabrano">0</span></button>
-        <button type="button" data-ff="pogledano" aria-pressed="false"><span class="k">KORAK 3</span><span class="l">Pogledano, razmišljamo</span><span class="c" data-cnt="pogledano">0</span></button>
-        <button type="button" data-ff="kupljeno" aria-pressed="false"><span class="k">KORAK 4</span><span class="l">Kupljeno</span><span class="c" data-cnt="kupljeno">0</span></button>
-      </div>
-      <div class="fsub"><p class="note" id="fStepNote" style="margin:0"></p><div class="chips" id="fMore"><button type="button" data-ff="odbijeno" aria-pressed="false">Ne zanima nas (<span data-cnt="odbijeno">0</span>)</button><button type="button" data-ff="arhiva" aria-pressed="false">Sklonjeno resetom (<span data-cnt="arhiva">0</span>)</button></div></div>
-      <div class="flist" id="findList"></div>
-      <p class="note" id="findEmpty" hidden></p>
-      <p class="note" id="findHidden"></p>
-      <p class="note">Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p>
-      <details class="more">
-        <summary>+ Našao sam oglas sam (javi Stefanu)</summary>
-        <form id="findForm" autocomplete="off" style="margin-top:10px">
+    <details class="intro"><summary>ⓘ Kako radi</summary><p>Asistent svakog ponedeljka (i kad zatražite proveru) traži u Švajcarskoj auta koja nama donose <b>bar <span class="minp"></span> € zarade</b>. Svaki oglas ide u četiri koraka: <b>Novo → Idemo da gledamo → Pogledano, razmišljamo → Kupljeno</b>. Kupljeno auto samo prelazi u „Naša auta“. Oglasi koje asistent nađe za nekog potražioca su u kartici tog upita.</p><p>Automatska provera je svakog ponedeljka oko 7:00; zatražena provera i novi upiti se rade u roku od sat vremena (7–21 h). Već upisani oglasi se ne upisuju ponovo, osim posle reseta. Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
+    <div class="toolrow" id="aiTools">
+      <button class="b" type="button" data-panel="pFind">+ Našao sam oglas sam</button>
+      <button class="b" type="button" data-panel="pShop">Šta tražimo i do koje cene</button>
+      <button class="b" type="button" data-panel="pModels">Modeli koje asistent prati</button>
+    </div>
+    <div class="sheet" id="pFind" hidden><h2>Oglas koji sam našao (javi Stefanu)</h2>
+        <form id="findForm" autocomplete="off" >
           <div class="field"><label for="f_url">Link oglasa</label><input id="f_url" type="url" required placeholder="https://www.autoscout24.ch/…"></div>
           <div class="grid">
             <div class="field"><label for="f_ref">Za koji model</label><select id="f_ref"></select></div>
@@ -359,15 +356,12 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <p class="note" id="f_prev"></p>
           <button class="b primary" type="submit">Javi Stefanu</button>
         </form>
-      </details>
     </div>
-    <details class="more sheet">
-      <summary><b>Šta tražimo i do koje cene</b> · koliko Stefan najviše sme da plati</summary>
+    <div class="sheet" id="pShop" hidden><h2>Šta tražimo i do koje cene</h2>
       <p class="note" style="margin-top:10px">Za svaki model: za koliko se prodaje u Srbiji i koliko Stefan najviše sme da plati u Švajcarskoj da ostane bar minimalna zarada.</p>
       <div class="scroll"><table class="shop" id="shopTbl"><thead><tr><th>Model</th><th>Cena u Srbiji, izvor</th><th class="n">Prodaja u RS</th><th class="n">Min. zarada</th><th class="n">Najviše, trgovac</th><th class="n">Privatno lice</th><th>Isplativih</th></tr></thead><tbody></tbody></table></div>
-    </details>
-    <details class="more sheet">
-      <summary><b>Modeli koje asistent prati</b> · cene u Srbiji · dodaj model ili svoju cenu</summary>
+    </div>
+    <div class="sheet" id="pModels" hidden><h2>Modeli koje asistent prati</h2>
       <div class="split two" style="margin-top:12px">
         <div style="display:grid;gap:10px;min-width:0">
           <p class="note"><span class="pill">Asistent</span> Asistent analizira oglase na polovniautomobili.com za svaki model. Cene koje upišu Nemanja i Aleksandar su dopuna. Kad postoje obe, uzima se niža.</p>
@@ -387,12 +381,26 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <div class="btns"><button class="b primary" type="submit" id="p_ai">Neka asistent prati ovaj model</button><button class="b" type="button" id="p_manual">Sačuvaj moju cenu</button></div>
         </form>
       </div>
-    </details>
+    </div>
+    <div class="sheet">
+      <div class="top"><h2>Oglasi u Švajcarskoj</h2><div class="btns"><button class="b" type="button" id="resetBtn">Resetuj pretragu</button><button class="b primary" type="button" id="runBtn">Zatraži proveru tržišta</button></div></div>
+      <p class="note" id="runInfo"></p>
+      <div class="fsteps" id="fSteps">
+        <button type="button" data-ff="novo" aria-pressed="true"><span class="k">KORAK 1</span><span class="l">Novo</span><span class="c" data-cnt="novo">0</span></button>
+        <button type="button" data-ff="izabrano" aria-pressed="false"><span class="k">KORAK 2</span><span class="l">Idemo da gledamo</span><span class="c" data-cnt="izabrano">0</span></button>
+        <button type="button" data-ff="pogledano" aria-pressed="false"><span class="k">KORAK 3</span><span class="l">Pogledano, razmišljamo</span><span class="c" data-cnt="pogledano">0</span></button>
+        <button type="button" data-ff="kupljeno" aria-pressed="false"><span class="k">KORAK 4</span><span class="l">Kupljeno</span><span class="c" data-cnt="kupljeno">0</span></button>
+      </div>
+      <div class="fsub"><p class="note" id="fStepNote" style="margin:0"></p><div class="chips" id="fMore"><button type="button" data-ff="odbijeno" aria-pressed="false">Ne zanima nas (<span data-cnt="odbijeno">0</span>)</button><button type="button" data-ff="arhiva" aria-pressed="false">Sklonjeno resetom (<span data-cnt="arhiva">0</span>)</button></div></div>
+      <div class="flist" id="findList"></div>
+      <p class="note" id="findEmpty" hidden></p>
+      <p class="note" id="findHidden"></p>
+    </div>
   </section>
 
   <!-- UPITI -->
   <section id="t-narudzbine" class="wrap" style="gap:16px" hidden>
-    <p class="intro"><b>Upit</b> = neko traži određeno auto. Sa sajta stiže sam, asistent ga proveri u roku od sat vremena, a potražilac dobija email i link za praćenje. Vi samo pošaljete predlog i, kad kupi, izaberete auto. Faza upita se menja sama.</p>
+    <details class="intro"><summary>ⓘ Kako radi</summary><p><b>Upit</b> = neko traži određeno auto. Sa sajta stiže sam, asistent ga proveri u roku od sat vremena, a potražilac dobija email i link za praćenje. Vi samo pošaljete predlog i, kad kupi, izaberete auto. Faza upita se menja sama.</p></details>
     <div class="top">
       <div class="chips" id="leadFilter"><button type="button" data-lf="open" aria-pressed="true">Otvoreni</button><button type="button" data-lf="done" aria-pressed="false">Završeni</button></div>
       <button class="b" type="button" id="leadNewBtn">+ Upit sa telefona</button>
@@ -419,7 +427,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- NOVAC -->
   <section id="t-novac" class="wrap" style="gap:16px" hidden>
-    <p class="intro">Koliko je novca <b>uloženo</b> i <b>zarađeno</b>, i <b>mesečni obračun</b>: ko je koliko platio i za šta u izabranom mesecu. Iz obračuna jednim klikom dobiješ fajl za knjigovođu.</p>
+    <details class="intro"><summary>ⓘ Kako radi</summary><p>Koliko je novca <b>uloženo</b> i <b>zarađeno</b>, i <b>mesečni obračun</b>: ko je koliko platio i za šta u izabranom mesecu. Iz obračuna jednim klikom dobiješ fajl za knjigovođu.</p></details>
     <div class="kpis" id="kpis"></div>
     <div class="sheet">
       <div class="top"><h2 id="owTitle">Mesečni obračun</h2><div class="btns"><select id="ocMonth" aria-label="Mesec" style="width:auto"></select><button class="b" type="button" id="csvBtn">Fajl za knjigovođu</button><button class="b" type="button" id="settleBtn" hidden>Zaključi mesec</button></div></div>
@@ -439,7 +447,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- ISTORIJA -->
   <section id="t-istorija" class="wrap" style="gap:16px" hidden>
-    <p class="intro">Sve što se dešavalo: ko je šta uradio i platio. Izaberi osobu i mesec, na primer „Nemanja, oktobar 2026, samo troškovi“.</p>
+    <details class="intro"><summary>ⓘ Kako radi</summary><p>Sve što se dešavalo: ko je šta uradio i platio. Izaberi osobu i mesec, na primer „Nemanja, oktobar 2026, samo troškovi“.</p></details>
     <div class="sheet">
       <div class="filters">
         <select id="hWho" aria-label="Osoba"></select>
@@ -892,6 +900,9 @@ $("resetBtn").addEventListener("click",async()=>{const b=$("resetBtn");
     findFilter="novo";renderFinds();renderRun();toast("Pretraga resetovana. Asistent traži ispočetka u roku od sat vremena.");}
   catch(e){fail(e);}finally{b.disabled=false;delete b.dataset.armed;b.textContent="Resetuj pretragu";}
 });
+document.querySelectorAll("#aiTools [data-panel]").forEach(b=>b.onclick=()=>{const open=b.getAttribute("aria-pressed")==="true";
+  document.querySelectorAll("#aiTools [data-panel]").forEach(x=>{x.setAttribute("aria-pressed","false");$(x.dataset.panel).hidden=true;});
+  if(!open){b.setAttribute("aria-pressed","true");$(b.dataset.panel).hidden=false;}});
 const LOCK_H=24, PEND_MIN=8*60;
 function nextMonday(){const d=new Date();d.setHours(7,0,0,0);let add=(8-d.getDay())%7;if(add===0&&Date.now()>=d.getTime())add=7;d.setDate(d.getDate()+add);return d;}
 function runState(){
@@ -905,10 +916,11 @@ function runState(){
 function renderRun(){
   const {last,lock,reqAt,pending,recent}=runState();
   const dt=t=>new Date(t).toLocaleString("sr-Latn-RS",{weekday:"short",day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"});
-  let s=last?`Poslednja provera: ${dt(last.at)}${last.requestedBy?" ("+last.requestedBy+")":""}. ${last.note||""}`:"Asistent prvo izračuna cene u Srbiji za praćene modele, pa pretraži švajcarske oglase i upiše one koji upadaju u limit.";
-  if(pending) s=`Proveru je zatražio ${lock?.by||actor()} u ${new Date(reqAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}. Asistent je radi u roku od sat vremena (između 7 i 21 h), a novi oglasi se sami pojave ovde.`;
+  const nx=dt(nextMonday());
+  let s=last?`Poslednja provera ${dt(last.at)}${last.newFinds!=null?` · ${last.newFinds} ${last.newFinds===1?"nov oglas":"novih"}`:""} · sledeća ${nx}`:`Još nije bilo provere · sledeća ${nx}`;
+  if(pending) s=`Provera zatražena (${lock?.by||actor()}, ${new Date(reqAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}) · rezultati za najviše sat vremena`;
   $("runInfo").textContent=s;
-  $("runNext").textContent=`Automatska provera: svakog ponedeljka oko 7:00. Sledeća: ${dt(nextMonday())}. Već upisani oglasi se ne upisuju ponovo, osim posle reseta. Zatražena provera i svaki novi upit se rade u roku od sat vremena (7–21 h).`;
+  $("runInfo").title=last?.note||"";
   const b=$("runBtn");
   b.disabled=!!(pending||recent);
   b.textContent=pending?"Provera zatražena":recent?"Već provereno":"Zatraži proveru tržišta";
