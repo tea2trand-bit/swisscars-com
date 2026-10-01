@@ -252,7 +252,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <details class="intro"><summary>ⓘ Kako radi</summary><p>Auta koja smo <b>kupili</b>, od Švajcarske do prodaje. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p></details>
     <div class="pipe" id="pipe"></div>
     <div class="top">
-      <div class="chips" id="carFilter"><button type="button" data-f="aktivna" aria-pressed="true">U radu</button><button type="button" data-f="prodat" aria-pressed="false">Prodata</button><button type="button" data-f="sve" aria-pressed="false">Sva</button></div>
+      <div class="chips" id="carFilter"><button type="button" data-f="aktivna" aria-pressed="true">U radu (<span id="cntAkt">0</span>)</button><button type="button" data-f="prodat" aria-pressed="false">Prodata (<span id="cntSold">0</span>)</button></div>
       <button class="b primary" id="newCar" type="button">+ Novi auto</button>
     </div>
 
@@ -658,7 +658,9 @@ const openLeads=()=>LEADS.filter(l=>LEAD_OPEN.includes(l.status||"novo"));
 function buyersFor(c){const m=(c.model||"").toLowerCase();return openLeads().filter(l=>{const k=leadKey(l.model);return k.length&&k.every(w=>m.includes(w));}).length;}
 
 function renderCards(){
-  const list=CARS.filter(c=>!c.moved&&c.status!=="pregledan").filter(c=>filter==="sve"?true:filter==="prodat"?c.status==="prodat":!["prodat","odustao"].includes(c.status))
+  const vis=CARS.filter(c=>!c.moved&&c.status!=="pregledan");
+  $("cntAkt").textContent=vis.filter(c=>!["prodat","odustao"].includes(c.status)).length;$("cntSold").textContent=vis.filter(c=>c.status==="prodat").length;
+  const list=vis.filter(c=>filter==="sve"?true:filter==="prodat"?c.status==="prodat":!["prodat","odustao"].includes(c.status))
     .sort((a,b)=>filter==="prodat"?(b.soldDate||"").localeCompare(a.soldDate||""):(idx(b.status)-idx(a.status))||((b.updated||0)-(a.updated||0)));
   $("cards").innerHTML=list.map(c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c);
     return `<button type="button" class="card${c._id===curId?" sel":""}" data-id="${esc(c._id)}">
