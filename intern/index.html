@@ -813,9 +813,9 @@ function renderRun(){
   const {last,lock,reqAt,pending,recent}=runState();
   const dt=t=>new Date(t).toLocaleString("sr-Latn-RS",{weekday:"short",day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"});
   let s=last?`Poslednja provera: ${dt(last.at)}${last.requestedBy?" ("+last.requestedBy+")":""}. ${last.note||""}`:"Claude prvo izračuna cene u Srbiji za praćene modele, pa pretraži švajcarske oglase i upiše one koji upadaju u limit.";
-  if(pending) s=`Proveru je zatražio ${lock?.by||actor()} u ${new Date(reqAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}. Claude je radi u prvom sledećem terminu (oko 7, 12 ili 17 h), traje 5–15 minuta, a novi oglasi se sami pojave ovde.`;
+  if(pending) s=`Proveru je zatražio ${lock?.by||actor()} u ${new Date(reqAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}. Claude je radi u roku od sat vremena (između 7 i 21 h), a novi oglasi se sami pojave ovde.`;
   $("runInfo").textContent=s;
-  $("runNext").textContent=`Automatska provera: svakog ponedeljka oko 7:00. Sledeća: ${dt(nextMonday())}. Već upisani oglasi se ne upisuju ponovo. Ako zatražiš proveru, radi se u prvom sledećem terminu: oko 7, 12 ili 17 h.`;
+  $("runNext").textContent=`Automatska provera: svakog ponedeljka oko 7:00. Sledeća: ${dt(nextMonday())}. Već upisani oglasi se ne upisuju ponovo. Zatražena provera i svaki novi upit se rade u roku od sat vremena (7–21 h).`;
   const b=$("runBtn");
   b.disabled=!!(pending||recent);
   b.textContent=pending?"Provera zatražena":recent?"Već provereno":"Zatraži proveru tržišta";
