@@ -81,6 +81,7 @@
 .up-track li.done { color: var(--muted); border-top-color: var(--gold2) }
 .up-track li.now { color: var(--text); font-weight: 700; border-top-color: var(--gold) }
 .up-now { font-size: 17px }
+.up-ai { background: var(--bg); border-left: 3px solid var(--gold2); padding: 10px 14px; border-radius: 6px; font-size: 15px }
 .up-prop { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 0; padding: 0; overflow: hidden }
 .up-prop .ph { background: var(--soft); min-height: 200px; display: grid; place-items: center; color: #b9b2a6 }
 .up-prop .ph img { width: 100%; height: 100%; object-fit: cover; display: block }

@@ -28,6 +28,7 @@
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);padding-inline:16px;padding-block:20px 48px}
 .wrap{max-width:1040px;margin:0 auto;display:grid;gap:20px}
+#app>section.wrap{width:100%;max-width:none;margin:0}
 h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;text-wrap:balance;line-height:1.15}
 h1{font-size:clamp(24px,4vw,32px);letter-spacing:-.01em} h2{font-size:22px} h3{font-size:17px}
 p{margin:0;max-width:70ch}
@@ -801,7 +802,7 @@ document.querySelectorAll("#findFilter button").forEach(b=>b.onclick=()=>{findFi
 const LOCK_H=24, PEND_MIN=8*60;
 function nextMonday(){const d=new Date();d.setHours(7,0,0,0);let add=(8-d.getDay())%7;if(add===0&&Date.now()>=d.getTime())add=7;d.setDate(d.getDate()+add);return d;}
 function runState(){
-  const last=RUNS.filter(r=>r.at).sort((a,b)=>b.at-a.at)[0];
+  const last=RUNS.filter(r=>r.at&&r.mode!=="brzi").sort((a,b)=>b.at-a.at)[0];
   const lock=RUNS.find(r=>r._id==="lock");
   const reqAt=Math.max(runStarted||0,lock?.startedAt||0);
   const pending=reqAt&&(!last||last.at<reqAt)&&Date.now()-reqAt<PEND_MIN*60000;
@@ -876,7 +877,7 @@ function renderLeads(){
       <div class="propform" data-pform="${esc(l._id)}" hidden></div></div>`:"";
     const linkHTML=l.token?`<div class="linkbox">Link za praćenje: <code>${esc(trackUrl(l.token))}</code><button class="b small" type="button" data-copy="${esc(trackUrl(l.token))}">Kopiraj</button><a class="b small" href="${esc(trackUrl(l.token))}" target="_blank" rel="noopener">Otvori</a></div>`:(canWrite?`<div class="linkbox"><button class="b small" type="button" data-mktok="${esc(l._id)}">Napravi link za praćenje</button></div>`:"");
     const carHTML=`<div class="linkbox">${car?`Auto za njega: <b>${esc(car.model)}${car.year?" "+car.year:""}</b> · ${SL[car.status]||""}`:"Auto za njega: još nije izabrano"}${canWrite?` <select data-lcar="${esc(l._id)}" aria-label="Auto kupljeno za ovaj upit" style="width:auto"><option value="">${car?"Promeni…":"Izaberi kad kupimo…"}</option>${CARS.filter(c=>!["odustao","prodat"].includes(c.status)||c._id===l.carId).map(c=>`<option value="${esc(c._id)}">${esc(c.model)}${c.year?" "+c.year:""} · ${SL[c.status]}</option>`).join("")}${car?'<option value="-">— ukloni vezu</option>':""}</select>`:""}</div>`;
-    return `<article class="lead"><div class="hd"><div><h3>${esc(l.model)}${l.budget?` · do ${fmt(l.budget)} €`:""}</h3><div class="meta">${l.source==="web"?'<span class="pill web">sa sajta</span>':""}<span>${l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):""}</span>${wish?`<span>${wish}</span>`:""}<span>uneo: ${esc(l.payer||"—")}</span></div></div>
+    return `<article class="lead"><div class="hd"><div><h3>${esc(l.model)}${l.budget?` · do ${fmt(l.budget)} €`:""}</h3><div class="meta">${l.source==="web"?'<span class="pill web">sa sajta</span>':""}<span>${l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):""}</span>${wish?`<span>${wish}</span>`:""}<span>uneo: ${esc(l.payer||"—")}</span>${l.aiCheckedAt?`<span class="match">AI proverio ${new Date(l.aiCheckedAt).toLocaleString("sr-Latn-RS",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"})}: ${l.aiFound||0} ${l.aiFound===1?"oglas":"oglasa"}</span>`:(open(l)?'<span class="note">AI ga proverava u roku od sat vremena</span>':"")}</div></div>
       <div class="btns"><select data-lead="${esc(l._id)}" aria-label="Status upita" style="width:auto" ${canWrite?"":"disabled"}>${LS.map(([v,t])=>`<option value="${v}" ${st===v?"selected":""}>${t}</option>`).join("")}</select>${canWrite?`<button class="b small danger" type="button" data-ldel="${esc(l._id)}" aria-label="Obriši upit">×</button>`:""}</div></div>
       ${contact?`<div class="meta">${contact}</div>`:""}${l.note?`<div class="meta">„${esc(l.note)}“</div>`:""}
       ${linkHTML}${propHTML}${findHTML}${open(l)?carHTML:""}</article>`;}).join("");
