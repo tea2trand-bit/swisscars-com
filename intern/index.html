@@ -188,6 +188,23 @@ dialog.qc{border:0;border-radius:12px;padding:0;width:min(520px,94vw);background
 dialog.qc::backdrop{background:rgba(20,24,30,.5)}
 dialog.qc form{padding:18px;display:grid;gap:12px}
 .lead-finds{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:13px}
+.fsteps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.fsteps button{font:inherit;color:var(--ink);text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;cursor:pointer;display:grid;gap:2px;min-width:0}
+.fsteps button .k{font-size:12px;color:var(--muted);letter-spacing:.02em}
+.fsteps button .l{font-weight:600;line-height:1.25}
+.fsteps button .c{font-family:var(--f-num);font-size:22px;line-height:1.1}
+.fsteps button[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent);background:var(--soft)}
+.fsub{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:center}
+.flist{display:grid;gap:10px}
+.frow{border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px;align-items:start}
+.frow .ft a{font-weight:600}
+.frow .fnum{text-align:right;font-family:var(--f-num);white-space:nowrap}
+.frow .fnum .big{font-size:18px;display:block}
+.frow .fnum .sub{font-family:var(--f-body)}
+.frow .fact{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;border-top:1px dashed var(--line);padding-top:8px}
+.frow .fform{grid-column:1/-1;display:grid;gap:8px;background:var(--soft);border-radius:8px;padding:10px}
+.frow .seen{display:block;margin-top:4px;font-size:14px;background:var(--soft);border-radius:6px;padding:4px 8px}
+@media (max-width:700px){.fsteps{grid-template-columns:repeat(2,minmax(0,1fr))}.frow{grid-template-columns:1fr}.frow .fnum{text-align:left}.frow .fact{justify-content:flex-start}}
 .match{display:inline-block;font-size:12px;background:var(--info-soft);color:var(--info);border-radius:999px;padding:1px 8px}
 </style>
 </head>
@@ -224,7 +241,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- AUTA -->
   <section id="t-auta" class="wrap" style="gap:16px">
-    <p class="intro">Auta koja smo <b>pregledali ili kupili</b>, od Švajcarske do prodaje. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (kupljen, na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p>
+    <p class="intro">Auta koja smo <b>kupili</b>, od Švajcarske do prodaje. Auta koja tek gledamo su u „Asistent pretraga“. Klikni auto, pa dugme „Sledeći korak“ kad se nešto desi (na transportu, ocarinjen, u garaži, spreman, prodat). <a href="/auta/" target="_blank" rel="noopener">Kako kupci vide auta na sajtu ↗</a></p>
     <div class="pipe" id="pipe"></div>
     <div class="top">
       <div class="chips" id="carFilter"><button type="button" data-f="aktivna" aria-pressed="true">U radu</button><button type="button" data-f="prodat" aria-pressed="false">Prodata</button><button type="button" data-f="sve" aria-pressed="false">Sva</button></div>
@@ -234,7 +251,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <div class="sheet" id="newBox" hidden>
       <h2>Novi auto</h2>
       <form id="newForm" autocomplete="off">
-        <p class="note">Upiši sve što znaš u trenutku kupovine ili pregleda. Kasnije se iz ovoga pravi tekst za oglas. Obavezan je samo model.</p>
+        <p class="note">Upiši sve što znaš o kupljenom autu. Auta koja tek gledate idu kroz „Asistent pretraga“. Kasnije se iz ovoga pravi tekst za oglas. Obavezan je samo model.</p>
         <div id="newFields" style="display:grid;gap:14px"></div>
         <div class="btns"><button class="b primary" type="submit">Sačuvaj auto</button><button class="b" type="button" id="newCancel">Odustani</button></div>
       </form>
@@ -310,13 +327,19 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- AI PRETRAGA -->
   <section id="t-ai" class="wrap" style="gap:16px" hidden>
-    <p class="intro">Asistent svake nedelje proveri cene u Srbiji (polovniautomobili.com), pa traži u Švajcarskoj auta koja posle kupovine, prevoza, carine, rezerve za popravke i poreza donose <b>bar <span class="minp"></span> € zarade</b>. Sve ispod toga se ne prikazuje. Minimum menjaš u Podešavanjima.</p>
+    <p class="intro">Asistent svakog ponedeljka (i kad zatražite proveru) traži u Švajcarskoj auta koja nama donose <b>bar <span class="minp"></span> € zarade</b>. Svaki oglas ide u četiri koraka: <b>Novo → Idemo da gledamo → Pogledano, razmišljamo → Kupljeno</b>. Kupljeno auto samo prelazi u „Naša auta“. Oglasi koje asistent nađe za nekog potražioca su u kartici tog upita.</p>
     <div class="sheet">
-      <div class="top"><h2>Isplativi oglasi u Švajcarskoj</h2><button class="b primary" type="button" id="runBtn">Zatraži proveru tržišta</button></div>
+      <div class="top"><h2>Oglasi u Švajcarskoj</h2><div class="btns"><button class="b" type="button" id="resetBtn">Resetuj pretragu</button><button class="b primary" type="button" id="runBtn">Zatraži proveru tržišta</button></div></div>
       <p class="note" id="runInfo"></p>
       <p class="note" id="runNext"></p>
-      <div class="chips" id="findFilter"><button type="button" data-ff="open" aria-pressed="true">Za pregled</button><button type="button" data-ff="taken" aria-pressed="false">Uzeto u naša auta</button><button type="button" data-ff="no" aria-pressed="false">Ne zanima nas</button></div>
-      <div class="scroll"><table id="findTbl"><thead><tr><th>Oglas</th><th class="n">Cena u CH</th><th class="n">Prodaja u RS</th><th class="n">Zarada</th><th>Status</th><th></th></tr></thead><tbody></tbody></table></div>
+      <div class="fsteps" id="fSteps">
+        <button type="button" data-ff="novo" aria-pressed="true"><span class="k">KORAK 1</span><span class="l">Novo</span><span class="c" data-cnt="novo">0</span></button>
+        <button type="button" data-ff="izabrano" aria-pressed="false"><span class="k">KORAK 2</span><span class="l">Idemo da gledamo</span><span class="c" data-cnt="izabrano">0</span></button>
+        <button type="button" data-ff="pogledano" aria-pressed="false"><span class="k">KORAK 3</span><span class="l">Pogledano, razmišljamo</span><span class="c" data-cnt="pogledano">0</span></button>
+        <button type="button" data-ff="kupljeno" aria-pressed="false"><span class="k">KORAK 4</span><span class="l">Kupljeno</span><span class="c" data-cnt="kupljeno">0</span></button>
+      </div>
+      <div class="fsub"><p class="note" id="fStepNote" style="margin:0"></p><div class="chips" id="fMore"><button type="button" data-ff="odbijeno" aria-pressed="false">Ne zanima nas (<span data-cnt="odbijeno">0</span>)</button><button type="button" data-ff="arhiva" aria-pressed="false">Sklonjeno resetom (<span data-cnt="arhiva">0</span>)</button></div></div>
+      <div class="flist" id="findList"></div>
       <p class="note" id="findEmpty" hidden></p>
       <p class="note" id="findHidden"></p>
       <p class="note">Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p>
@@ -338,11 +361,11 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         </form>
       </details>
     </div>
-    <div class="sheet">
-      <h2>Šta tražimo i do koje cene</h2>
-      <p class="note">Za svaki model: za koliko se prodaje u Srbiji i koliko Stefan najviše sme da plati u Švajcarskoj da ostane bar minimalna zarada.</p>
+    <details class="more sheet">
+      <summary><b>Šta tražimo i do koje cene</b> · koliko Stefan najviše sme da plati</summary>
+      <p class="note" style="margin-top:10px">Za svaki model: za koliko se prodaje u Srbiji i koliko Stefan najviše sme da plati u Švajcarskoj da ostane bar minimalna zarada.</p>
       <div class="scroll"><table class="shop" id="shopTbl"><thead><tr><th>Model</th><th>Cena u Srbiji, izvor</th><th class="n">Prodaja u RS</th><th class="n">Min. zarada</th><th class="n">Najviše, trgovac</th><th class="n">Privatno lice</th><th>Isplativih</th></tr></thead><tbody></tbody></table></div>
-    </div>
+    </details>
     <details class="more sheet">
       <summary><b>Modeli koje asistent prati</b> · cene u Srbiji · dodaj model ili svoju cenu</summary>
       <div class="split two" style="margin-top:12px">
@@ -502,9 +525,9 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/intern/sc-db.js"></script>
 <script>
-const FLOW=[["pregledan","Pregledan"],["kupljen","Kupljen"],["transport","U transportu"],["carinjen","Ocarinjen"],["garaza","U garaži"],["prodaja","Spreman za prodaju"],["prodat","Prodat"]];
+const FLOW=[["kupljen","Kupljen"],["transport","U transportu"],["carinjen","Ocarinjen"],["garaza","U garaži"],["prodaja","Spreman za prodaju"],["prodat","Prodat"]];
 const STATUS=[...FLOW,["odustao","Odustali"]];
-const SL=Object.fromEntries(STATUS);
+const SL={...Object.fromEntries(STATUS),pregledan:"Pregledan"};
 const CATS=["Prevoz","Carina i takse","Popravka i delovi","Rad (garaža, električar)","Pranje i priprema","Put i gorivo","Pregled auta","Ostalo"];
 const LOCS=["Švajcarska","Niš","Sremčica","Ostalo"];
 // Serbian asking-price medians from the market check (polovniautomobili.com, 1 Oct 2026)
@@ -518,7 +541,7 @@ const SPEC=[
  ["Stanje",[["keys","Ključeva","select",["","1","2","3"]],["serviceBook","Servisna knjiga","select",["","Kompletna","Delimična","Nema"]],["lastService","Poslednji servis","text",{ph:"npr. 198.000 km, 05/2026"}],["belt","Zupčasti kaiš / lanac","text",{ph:"npr. menjan na 180.000 km"}],["tires","Gume","text",{ph:"npr. letnje 6 mm + zimske na felnama"}],["damage","Oštećenja i šta treba popraviti","textarea"],["note","Ostale napomene","textarea"]]],
 ];
 const EQUIP=["Navigacija","Klima automatik","Kamera","Parking senzori","LED / Xenon farovi","Grejanje sedišta","Tempomat","Adaptivni tempomat","Kožna sedišta","Alu felne","Kuka","Panorama krov","Apple CarPlay / Android Auto","Bluetooth","Virtuelna tabla","Keyless","Elektro sedišta","Head-up displej"];
-let SETTLES=[],findFilter="open",leadFilter="open";
+let SETTLES=[],findFilter="novo",leadFilter="open";
 let PRICES=[],FINDS=[],RUNS=[],mcp=null,runStarted=0;
 const TRIGGER="trig_01CEdDQF6stYnBEfRWx42nBo";
 const SPECKEYS=SPEC.flatMap(g=>g[1].map(f=>f[0]));
@@ -627,7 +650,7 @@ const openLeads=()=>LEADS.filter(l=>LEAD_OPEN.includes(l.status||"novo"));
 function buyersFor(c){const m=(c.model||"").toLowerCase();return openLeads().filter(l=>{const k=leadKey(l.model);return k.length&&k.every(w=>m.includes(w));}).length;}
 
 function renderCards(){
-  const list=CARS.filter(c=>filter==="sve"?true:filter==="prodat"?c.status==="prodat":!["prodat","odustao"].includes(c.status))
+  const list=CARS.filter(c=>!c.moved).filter(c=>filter==="sve"?true:filter==="prodat"?c.status==="prodat":!["prodat","odustao"].includes(c.status))
     .sort((a,b)=>filter==="prodat"?(b.soldDate||"").localeCompare(a.soldDate||""):(idx(b.status)-idx(a.status))||((b.updated||0)-(a.updated||0)));
   $("cards").innerHTML=list.map(c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c);
     return `<button type="button" class="card${c._id===curId?" sel":""}" data-id="${esc(c._id)}">
@@ -777,7 +800,7 @@ function shopRows(){
 function findsFor(r){return FINDS.filter(f=>(r.ids||[r.id]).includes(f.priceRef)||(!f.priceRef&&r.key.length&&r.key.every(w=>(f.model||"").toLowerCase().includes(w))));}
 function renderShop(){
   const cell=v=>v>0?`<b>${fmt(v)} CHF</b>`:'<span class="neg">ne isplati se</span>';
-  $("shopTbl").tBodies[0].innerHTML=shopRows().map(r=>{const fs=findsFor(r).filter(f=>["novo","gledano"].includes(f.status||"novo")).filter(f=>{const p=findProfit(f);return !p||p.post>=p.min;});
+  $("shopTbl").tBodies[0].innerHTML=shopRows().map(r=>{const fs=findsFor(r).filter(f=>(f.status||"novo")==="novo").filter(f=>{const p=findProfit(f);return !p||p.post>=p.min;});
     return `<tr><td>${esc(r.label)}${r.range?`<span class="sub">${esc(r.range)}</span>`:""}</td><td><span class="sub" style="margin:0">${esc(r.src)}</span></td><td class="n">${r.rs?fmt(r.rs)+" €":"—"}</td><td class="n">${fmt(r.profit)} €</td><td class="n">${r.mb.pending?'<span class="note">čeka asistenta</span>':cell(r.mb.dealer)}</td><td class="n">${r.mb.pending?"—":r.mb.priv>0?fmt(r.mb.priv)+" CHF":'<span class="neg">ne isplati se</span>'}</td><td>${fs.length?`<span class="match">${fs.length} ${fs.length===1?"oglas":"oglasa"}</span>`:'<span class="note">—</span>'}</td></tr>`;}).join("")||`<tr><td colspan="7" class="note">Dodaj model koji asistent prati ili upit, pa se ovde pojavi koliko Stefan sme da plati.</td></tr>`;
   renderPrices(); renderFinds(); renderRun();
 }
@@ -794,24 +817,81 @@ function findProfit(f){const r=rowForFind(f);if(!r||!r.rs||!f.priceChf)return nu
   const buy=f.priceChf*SET.rate/(1+SET.vat/100);
   const pre=sale/(1+SET.pdv/100)-SET.prevoz-SET.izvoz-SET.eko-SET.rezerva-buy;
   return {sale,post:pre>0?pre*(1-SET.porez/100):pre,min:r.profit??SET.cilj,row:r};}
-const FS=[["novo","Novo"],["gledano","Pogledano"],["odbijeno","Ne zanima"],["evidencija","U našim autima"]];
+const isLeadFind=f=>String(f.priceRef||"").startsWith("lead:")||String(rowForFind(f)?.id||"").startsWith("lead:");
+function fStage(f){const st=f.status||"novo";const lead=isLeadFind(f);
+  if(st==="gledano") return lead?"predlozeno":"izabrano";
+  if(st==="evidencija") return "izabrano";
+  if(st==="novo") return lead?"upit":"novo";
+  if(st==="odbijeno"||st==="arhiva") return lead?"upit-"+st:st;
+  return st;}
+const FSTEP_NOTE={novo:"Oglasi koje je asistent našao. Ako vam se neki sviđa: „Idemo da gledamo“.",izabrano:"Stefan ide da pogleda ova auta. Kad pogleda, klikni „Pogledano“ i upiši šta je video.",pogledano:"Pogledana auta. Odlučite: kupujemo ili ne.",kupljeno:"Kupljena auta su u „Naša auta“, odakle ide transport, carina i prodaja.",odbijeno:"Oglasi koji nas ne zanimaju.",arhiva:"Oglasi sklonjeni resetom pretrage. Možeš ih vratiti u „Novo“."};
+let fOpen=null;
 function renderFinds(){
   document.querySelectorAll(".minp").forEach(e=>e.textContent=fmt(SET.cilj));document.querySelectorAll(".popp").forEach(e=>e.textContent=SET.popust);
-  const withP=FINDS.map(f=>({f,p:findProfit(f)}));
+  const all=FINDS.map(f=>({f,p:findProfit(f),st:fStage(f)}));
   const ok=x=>x.p==null||x.p.post>=x.p.min;
-  const inF=x=>findFilter==="open"?["novo","gledano"].includes(x.f.status||"novo"):findFilter==="taken"?x.f.status==="evidencija":x.f.status==="odbijeno";
-  const list=withP.filter(inF).filter(ok).sort((a,b)=>(b.p?.post??-1e9)-(a.p?.post??-1e9));
-  const hidden=withP.filter(inF).filter(x=>!ok(x)).length;
-  $("findTbl").tBodies[0].innerHTML=list.map(({f,p})=>`<tr><td>${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.title||f.model)}</a>`:esc(f.title||f.model)}<span class="sub">${[f.year,f.km?fmt(f.km)+" km":"",f.ps?f.ps+" KS":"",f.gear,f.place].filter(Boolean).map(esc).join(" · ")}</span><span class="sub">${String(f.priceRef||"").startsWith("lead:")?'<span class="match">za upit</span> ':""}${esc(p?.row?.label||f.model)} · našao ${esc(who(f.actor||"—"))}${f.foundAt?", "+new Date(f.foundAt).toLocaleDateString("sr-Latn-RS"):""}</span>${f.note?`<span class="sub">⚠ ${esc(f.note)}</span>`:""}</td><td class="n">${fmt(f.priceChf)} CHF</td><td class="n">${p?fmt(p.sale)+" €":"—"}</td><td class="n">${p?`<span class="profit ${p.post>=0?"pos":"neg"}">${sgn(p.post)} €</span>`:'<span class="note">bez procene</span>'}</td><td><select data-fst="${esc(f._id)}" aria-label="Status oglasa" ${canWrite?"":"disabled"}>${FS.map(([v,l])=>`<option value="${v}" ${(f.status||"novo")===v?"selected":""}>${l}</option>`).join("")}</select></td><td>${canWrite&&f.status!=="evidencija"?`<button class="b small primary" type="button" data-fadd="${esc(f._id)}">Kupujemo → Naša auta</button>`:""}</td></tr>`).join("");
+  const cnt={};all.forEach(x=>{if(x.st==="novo"&&!ok(x))return;cnt[x.st]=(cnt[x.st]||0)+1;});
+  document.querySelectorAll("[data-cnt]").forEach(e=>e.textContent=cnt[e.dataset.cnt]||0);
+  document.querySelectorAll("#fSteps button,#fMore button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.ff===findFilter));
+  $("fStepNote").textContent=FSTEP_NOTE[findFilter]||"";
+  const inStep=all.filter(x=>x.st===findFilter);
+  const list=(findFilter==="novo"?inStep.filter(ok):inStep).sort((a,b)=>findFilter==="novo"?(b.p?.post??-1e9)-(a.p?.post??-1e9):((b.f.stepAt||b.f.foundAt||0)-(a.f.stepAt||a.f.foundAt||0)));
+  const hidden=findFilter==="novo"?inStep.filter(x=>!ok(x)).length:0;
+  const leadName=f=>{if(!isLeadFind(f))return "";const r=rowForFind(f);const k=r?.key?.join(" ");const l=openLeads().find(l=>leadKey(l.model).join(" ")===k);return l?(l.name||l.model):"upit";};
+  const dd=t=>t?new Date(t).toLocaleDateString("sr-Latn-RS"):"";
+  const actions=f=>{const id=esc(f._id);const st=fStage(f);
+    if(st==="novo") return `<button class="b small" type="button" data-fgo="${id}|odbijeno">Ne zanima</button><button class="b small primary" type="button" data-fgo="${id}|izabrano">Idemo da gledamo →</button>`;
+    if(st==="izabrano") return `<button class="b small" type="button" data-fgo="${id}|novo">↩ Nazad</button><button class="b small" type="button" data-fgo="${id}|odbijeno">Ne zanima</button><button class="b small primary" type="button" data-fopen="${id}|seen">Pogledano →</button>`;
+    if(st==="pogledano") return `<button class="b small" type="button" data-fgo="${id}|izabrano">↩ Nazad</button><button class="b small" type="button" data-fgo="${id}|odbijeno">Ne kupujemo</button><button class="b small primary" type="button" data-fopen="${id}|buy">Kupljeno →</button>`;
+    if(st==="kupljeno") return f.carId&&CARS.some(c=>c._id===f.carId)?`<button class="b small" type="button" data-fcar="${esc(f.carId)}">Otvori u „Naša auta“</button>`:"";
+    if(st==="odbijeno"||st==="arhiva") return `<button class="b small" type="button" data-fgo="${id}|novo">Vrati u „Novo“</button>`;
+    return "";};
+  const form=f=>{if(!fOpen||fOpen.id!==f._id)return "";const id=esc(f._id);
+    if(fOpen.kind==="seen") return `<form class="fform" data-fseen="${id}"><div class="field"><label for="fs_${id}">Šta je Stefan video? (stanje, servis, kvarovi, cena koju bi spustio)</label><textarea id="fs_${id}" rows="3" placeholder="npr. dobro stanje, servisna knjiga, nove gume; prodavac spušta na 7.500 CHF">${esc(f.seenNote||"")}</textarea></div><div class="btns"><button class="b primary" type="submit">Sačuvaj: pogledano</button><button class="b" type="button" data-fclose>Odustani</button></div></form>`;
+    if(fOpen.kind==="buy") return `<form class="fform" data-fbuy="${id}"><div class="grid"><div class="field"><label for="fb_p_${id}">Plaćeno, CHF</label><input id="fb_p_${id}" type="number" min="0" step="50" required value="${esc(f.priceChf||"")}"></div><div class="field"><label for="fb_s_${id}">Prodavac</label><select id="fb_s_${id}"><option value="dealer">Trgovac (vraća PDV)</option><option value="private">Privatno lice</option></select></div><div class="field"><label for="fb_d_${id}">Datum kupovine</label><input id="fb_d_${id}" type="date" value="${today()}"></div></div><div class="btns"><button class="b primary" type="submit">Sačuvaj: kupljeno, prebaci u „Naša auta“</button><button class="b" type="button" data-fclose>Odustani</button></div></form>`;
+    return "";};
+  $("findList").innerHTML=list.map(({f,p})=>{const ln=leadName(f);
+    const steps=[f.pickedBy?`gledanje: ${esc(who(f.pickedBy))} ${dd(f.pickedAt)}`:"",f.seenBy?`pogledao: ${esc(who(f.seenBy))} ${dd(f.seenAt)}`:"",f.boughtAt?`kupljeno ${dd(f.boughtAt)}${f.paidChf?" za "+fmt(f.paidChf)+" CHF":""}`:""].filter(Boolean).join(" · ");
+    return `<div class="frow"><div class="ft">${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.title||f.model)}</a>`:`<b>${esc(f.title||f.model)}</b>`}
+      <span class="sub">${[f.year,f.km?fmt(f.km)+" km":"",f.ps?f.ps+" KS":"",f.gear,f.place].filter(Boolean).map(esc).join(" · ")}</span>
+      <span class="sub">${ln?`<span class="match">za upit: ${esc(ln)}</span> `:""}${esc(p?.row?.label||f.model)} · našao ${esc(who(f.actor||"—"))}${f.foundAt?", "+dd(f.foundAt):""}${steps?" · "+steps:""}</span>
+      ${f.note?`<span class="sub">⚠ ${esc(f.note)}</span>`:""}${f.seenNote?`<span class="seen">👀 ${esc(f.seenNote)}</span>`:""}</div>
+      <div class="fnum"><span class="big">${fmt(f.priceChf)} CHF</span><span class="sub">${p?`prodaja u RS ~${fmt(p.sale)} €`:""}</span><span class="sub">${p?`zarada <span class="profit ${p.post>=0?"pos":"neg"}">${sgn(p.post)} €</span>`:'<span class="note">bez procene</span>'}</span></div>
+      ${form(f)}<div class="fact">${actions(f)}</div></div>`;}).join("");
   $("findEmpty").hidden=list.length>0;
-  $("findEmpty").textContent=findFilter==="open"?`Trenutno nema oglasa koji donose bar ${fmt(SET.cilj)} € zarade.`:"Nema oglasa u ovom prikazu.";
+  $("findEmpty").textContent=findFilter==="novo"?`Trenutno nema novih oglasa koji donose bar ${fmt(SET.cilj)} € zarade.`:"Ovde trenutno nema oglasa.";
   $("findHidden").textContent=hidden?`${hidden} ${hidden===1?"oglas donosi":"oglasa donose"} manje od ${fmt(SET.cilj)} € zarade po sadašnjim cenama, pa se ne prikazuju.`:"";
-  $("findTbl").querySelectorAll("[data-fst]").forEach(s=>s.onchange=async()=>{try{await db.doc("finds/"+s.dataset.fst).update({status:s.value});}catch(e){fail(e);}});
-  $("findTbl").querySelectorAll("[data-fadd]").forEach(b=>b.onclick=async()=>{const f=FINDS.find(x=>x._id===b.dataset.fadd);b.disabled=true;
-    try{const ref=await db.collection("cars").add({model:f.model,year:f.year||null,km:f.km||null,buyChf:f.priceChf||null,seller:"dealer",link:f.url||"",place:f.place||"",gear:f.gear||"",note:[f.title,f.note].filter(Boolean).join(" · "),status:"pregledan",equip:[],photos:[],askEur:null,salePrice:null,soldDate:"",boughtDate:"",by:me?.id||null,created:Date.now(),updated:Date.now()});
-      await logEvent(ref.id,"status",`Uzet iz pretrage asistenta, cena ${fmt(f.priceChf)} CHF`);await db.doc("finds/"+f._id).update({status:"evidencija"});toast("Dodat u „Naša auta“ kao „Pregledan“");}catch(e){fail(e);b.disabled=false;}});
+  const L=$("findList");
+  L.querySelectorAll("[data-fgo]").forEach(b=>b.onclick=()=>{const [id,to]=b.dataset.fgo.split("|");moveFind(id,to,b);});
+  L.querySelectorAll("[data-fopen]").forEach(b=>b.onclick=()=>{const [id,kind]=b.dataset.fopen.split("|");fOpen={id,kind};renderFinds();const t=$("findList").querySelector(".fform textarea,.fform input");t&&t.focus();});
+  L.querySelectorAll("[data-fclose]").forEach(b=>b.onclick=()=>{fOpen=null;renderFinds();});
+  L.querySelectorAll("[data-fcar]").forEach(b=>b.onclick=()=>{switchTab("auta");openCar(b.dataset.fcar);});
+  L.querySelectorAll("[data-fseen]").forEach(fm=>fm.onsubmit=async e=>{e.preventDefault();const id=fm.dataset.fseen;const note=$("fs_"+id).value.trim();
+    await moveFind(id,"pogledano",fm.querySelector("button[type=submit]"),{seenNote:note,seenBy:actor(),seenAt:Date.now()});});
+  L.querySelectorAll("[data-fbuy]").forEach(fm=>fm.onsubmit=async e=>{e.preventDefault();const id=fm.dataset.fbuy;const f=FINDS.find(x=>x._id===id);if(!f)return;
+    const btn=fm.querySelector("button[type=submit]");btn.disabled=true;const paid=+$("fb_p_"+id).value||f.priceChf||null, seller=$("fb_s_"+id).value, date=$("fb_d_"+id).value||today();
+    try{const ref=await db.collection("cars").add({model:f.model,year:f.year||null,km:f.km||null,buyChf:paid,seller,boughtDate:date,link:f.url||"",place:f.place||"",gear:f.gear||"",note:[f.title,f.note,f.seenNote].filter(Boolean).join(" · "),status:"kupljen",fromFind:f._id,equip:[],photos:[],askEur:null,salePrice:null,soldDate:"",by:me?.id||null,created:Date.now(),updated:Date.now()});
+      await logEvent(ref.id,"status",`Kupljen za ${fmt(paid)} CHF (iz pretrage asistenta)`);
+      await db.doc("finds/"+id).update({status:"kupljeno",carId:ref.id,paidChf:paid,boughtAt:Date.now(),stepAt:Date.now()});
+      fOpen=null;toast("Kupljeno. Auto je sada u „Naša auta“.");}catch(err){btn.disabled=false;fail(err);}});
 }
-document.querySelectorAll("#findFilter button").forEach(b=>b.onclick=()=>{findFilter=b.dataset.ff;document.querySelectorAll("#findFilter button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderFinds();});
+const FSTEP_LOG={izabrano:"Idemo da gledamo",pogledano:"Pogledano",odbijeno:"Ne zanima nas",novo:"Vraćeno u Novo"};
+async function moveFind(id,to,btn,extra){const f=FINDS.find(x=>x._id===id);if(!f||!db)return;if(btn)btn.disabled=true;
+  const patch={status:to,stepAt:Date.now(),...(extra||{})};if(to==="izabrano"&&fStage(f)==="novo"){patch.pickedBy=actor();patch.pickedAt=Date.now();}
+  try{await db.doc("finds/"+id).update(patch);if(FSTEP_LOG[to])await logEvent(null,"status",`${FSTEP_LOG[to]}: ${f.title||f.model}, ${fmt(f.priceChf)} CHF`);fOpen=null;
+    toast(to==="izabrano"?"Prebačeno u „Idemo da gledamo“":to==="pogledano"?"Prebačeno u „Pogledano“":to==="odbijeno"?"Skloneno: ne zanima nas":"Vraćeno");}
+  catch(e){if(btn)btn.disabled=false;fail(e);}}
+document.querySelectorAll("#fSteps button,#fMore button").forEach(b=>b.onclick=()=>{findFilter=b.dataset.ff;fOpen=null;renderFinds();});
+$("resetBtn").addEventListener("click",async()=>{const b=$("resetBtn");
+  const nov=FINDS.filter(f=>fStage(f)==="novo");
+  if(!b.dataset.armed){b.dataset.armed=1;b.textContent=`Potvrdi: skloni ${nov.length} ${nov.length===1?"oglas":"oglasa"} iz „Novo“`;setTimeout(()=>{delete b.dataset.armed;b.textContent="Resetuj pretragu";},6000);return;}
+  b.disabled=true;const now=Date.now();
+  try{for(const f of nov)await db.doc("finds/"+f._id).update({status:"arhiva",archivedAt:now});
+    await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true,reset:true});runStarted=now;
+    await logEvent(null,"status",`Resetovana pretraga asistenta: ${nov.length} oglasa sklonjeno, asistent traži ispočetka`);
+    findFilter="novo";renderFinds();renderRun();toast("Pretraga resetovana. Asistent traži ispočetka u roku od sat vremena.");}
+  catch(e){fail(e);}finally{b.disabled=false;delete b.dataset.armed;b.textContent="Resetuj pretragu";}
+});
 const LOCK_H=24, PEND_MIN=8*60;
 function nextMonday(){const d=new Date();d.setHours(7,0,0,0);let add=(8-d.getDay())%7;if(add===0&&Date.now()>=d.getTime())add=7;d.setDate(d.getDate()+add);return d;}
 function runState(){
@@ -828,7 +908,7 @@ function renderRun(){
   let s=last?`Poslednja provera: ${dt(last.at)}${last.requestedBy?" ("+last.requestedBy+")":""}. ${last.note||""}`:"Asistent prvo izračuna cene u Srbiji za praćene modele, pa pretraži švajcarske oglase i upiše one koji upadaju u limit.";
   if(pending) s=`Proveru je zatražio ${lock?.by||actor()} u ${new Date(reqAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}. Asistent je radi u roku od sat vremena (između 7 i 21 h), a novi oglasi se sami pojave ovde.`;
   $("runInfo").textContent=s;
-  $("runNext").textContent=`Automatska provera: svakog ponedeljka oko 7:00. Sledeća: ${dt(nextMonday())}. Već upisani oglasi se ne upisuju ponovo. Zatražena provera i svaki novi upit se rade u roku od sat vremena (7–21 h).`;
+  $("runNext").textContent=`Automatska provera: svakog ponedeljka oko 7:00. Sledeća: ${dt(nextMonday())}. Već upisani oglasi se ne upisuju ponovo, osim posle reseta. Zatražena provera i svaki novi upit se rade u roku od sat vremena (7–21 h).`;
   const b=$("runBtn");
   b.disabled=!!(pending||recent);
   b.textContent=pending?"Provera zatražena":recent?"Već provereno":"Zatraži proveru tržišta";
@@ -956,7 +1036,7 @@ function specForm(p,c,isNew){
     if(t==="textarea") return `<div class="field" style="grid-column:1/-1"><label for="${p}${k}">${l}</label><textarea id="${p}${k}">${esc(v)}</textarea></div>`;
     return `<div class="field"><label for="${p}${k}">${l}</label><input id="${p}${k}" type="${t}" value="${esc(v)}" ${o.list?`list="${o.list}"`:""} ${o.req?"required":""} ${o.ph?`placeholder="${esc(o.ph)}"`:""} ${o.step?`step="${o.step}"`:""} ${o.max?`maxlength="${o.max}"`:""} ${t==="number"?'min="0"':""}></div>`;};
   const eq=new Set(c.equip||[]);
-  return SPEC.map(([g,fs])=>`<fieldset class="grp"><legend>${g}</legend><div class="grid">${fs.map(fld).join("")}${isNew&&g.startsWith("Kupovina")?`<div class="field"><label for="${p}status">Stanje</label><select id="${p}status"><option value="pregledan">Samo pregledan</option><option value="kupljen">Već kupljen</option></select></div>`:""}</div></fieldset>`).join("")+
+  return SPEC.map(([g,fs])=>`<fieldset class="grp"><legend>${g}</legend><div class="grid">${fs.map(fld).join("")}</div></fieldset>`).join("")+
    `<fieldset class="grp"><legend>Oprema</legend><div class="eq">${EQUIP.map((e,i)=>`<label><input type="checkbox" id="${p}eq${i}" ${eq.has(e)?"checked":""}>${esc(e)}</label>`).join("")}</div><div class="field"><label for="${p}equipOther">Ostala oprema</label><input id="${p}equipOther" value="${esc(c.equipOther||"")}" placeholder="npr. Webasto, 3-zonska klima"></div></fieldset>`;
 }
 function readSpec(p){const b={};SPEC.forEach(([,fs])=>fs.forEach(([k,,t])=>{const v=$(p+k).value;b[k]=t==="number"?(v===""?null:+v):v.trim();}));b.equip=EQUIP.filter((e,i)=>$(p+"eq"+i).checked);b.equipOther=$(p+"equipOther").value.trim();return b;}
@@ -1005,7 +1085,7 @@ $("copyAd").onclick=async()=>{const t=$("adText");try{await navigator.clipboard.
 $("newCar").onclick=()=>{$("newFields").innerHTML=specForm("n_",{},true);$("newBox").hidden=false;$("n_model").focus();};
 $("newCancel").onclick=()=>{$("newBox").hidden=true;$("newFields").innerHTML="";};
 $("newForm").addEventListener("submit",async e=>{e.preventDefault();if(!db)return;
-  const st=$("n_status").value, spec=readSpec("n_");
+  const st="kupljen", spec=readSpec("n_");
   const body={...spec,status:st,boughtDate:spec.boughtDate||(st==="kupljen"?today():""),askEur:null,salePrice:null,soldDate:"",photos:[],by:me?.id||null,created:Date.now(),updated:Date.now()};
   try{const ref=await db.collection("cars").add(body);await logEvent(ref.id,"status",st==="kupljen"?`Unet i kupljen${body.buyChf?" za "+fmt(body.buyChf)+" CHF":""}`:`Pregledan${body.buyChf?", cena u oglasu "+fmt(body.buyChf)+" CHF":""}`);
     $("newFields").innerHTML="";$("newBox").hidden=true;toast("Auto dodat");filter="aktivna";openCar(ref.id);}catch(err){fail(err);}
