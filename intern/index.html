@@ -222,6 +222,8 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 .frow .fform{grid-column:1/-1;display:grid;gap:8px;background:var(--soft);border-radius:8px;padding:10px}
 .frow .seen{display:block;margin-top:4px;font-size:14px;background:var(--soft);border-radius:6px;padding:4px 8px}
 @media (max-width:700px){.fsteps{grid-template-columns:repeat(2,minmax(0,1fr))}.frow{grid-template-columns:1fr}.frow .fnum{text-align:left}.frow .fact{justify-content:flex-start}}
+.addbox{align-self:start;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px;align-content:start}
+.addbox h3{margin:0}
 .toolrow{display:flex;flex-wrap:wrap;gap:8px}
 .toolrow .b[aria-pressed=true]{background:var(--soft);color:var(--ink);border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
 .match{display:inline-block;font-size:12px;background:var(--info-soft);color:var(--info);border-radius:999px;padding:1px 8px}
@@ -356,7 +358,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <details class="intro"><summary>ⓘ Kako radi</summary><p>Asistent svakog ponedeljka (i kad zatražite proveru) traži u Švajcarskoj auta koja nama donose <b>bar <span class="minp"></span> € zarade</b>. Svaki oglas ide u četiri koraka: <b>Novo → Idemo da gledamo → Pogledano, razmišljamo → Kupljeno</b>. Kupljeno auto samo prelazi u „Naša auta“. Oglasi koje asistent nađe za nekog potražioca su u kartici tog upita.</p><p>Automatska provera je svakog ponedeljka oko 7:00; zatražena provera i novi upiti se rade u roku od sat vremena (7–21 h). Već upisani oglasi se ne upisuju ponovo, osim posle reseta. Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
     <div class="toolrow" id="aiTools">
       <button class="b" type="button" data-panel="pFind">+ Našao sam oglas sam</button>
-      <button class="b" type="button" data-panel="pModels">Modeli koje asistent prati</button>
+      <button class="b" type="button" data-panel="pModels">Modeli u pretrazi</button>
     </div>
     <div class="sheet" id="pFind" hidden><h2>Oglas koji sam našao (javi Stefanu)</h2>
         <form id="findForm" autocomplete="off" >
@@ -374,24 +376,27 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <button class="b primary" type="submit">Javi Stefanu</button>
         </form>
     </div>
-    <div class="sheet" id="pModels" hidden><h2>Modeli koje asistent prati</h2>
+    <div class="sheet" id="pModels" hidden><h2>Modeli u asistent pretrazi</h2>
       <div class="split two" style="margin-top:12px">
         <div style="display:grid;gap:10px;min-width:0">
-          <p class="note"><span class="pill">Asistent</span> Asistent analizira oglase na polovniautomobili.com za svaki model. Cene koje upišu Nemanja i Aleksandar su dopuna. Kad postoje obe, uzima se niža.</p>
+          <p class="note">Za ove modele asistent traži oglase u Švajcarskoj. Cenu u Srbiji sam računa sa polovniautomobili.com. Ako je neko od vas upisao svoju cenu, uzima se niža.</p>
           <div class="scroll"><table id="priceTbl"><thead><tr><th>Model</th><th class="n">Cena u RS</th><th>Izvor</th><th></th></tr></thead><tbody></tbody></table></div>
         </div>
-        <form id="priceForm" autocomplete="off">
+        <form id="priceForm" class="addbox" autocomplete="off">
+          <h3>Dodaj model u asistent pretragu</h3>
           <div class="field"><label for="p_model">Model i motor</label><input id="p_model" list="models" required placeholder="npr. VW Golf 6 1.6 TDI"></div>
           <div class="grid">
             <div class="field"><label for="p_y1">Godište od</label><input id="p_y1" type="number" min="1995" max="2030"></div>
             <div class="field"><label for="p_y2">Godište do</label><input id="p_y2" type="number" min="1995" max="2030"></div>
             <div class="field"><label for="p_km">Km do</label><input id="p_km" type="number" min="0" step="10000" placeholder="250000"></div>
-            <div class="field"><label for="p_rs">Tvoja cena iz oglasa u Srbiji, € (nije obavezno)</label><input id="p_rs" type="number" min="0" step="100"></div>
-            <div class="field"><label for="p_min">Minimalna zarada, € (prazno = iz podešavanja)</label><input id="p_min" type="number" min="0" step="50"></div>
           </div>
-          <div class="field"><label for="p_note">Napomena</label><input id="p_note" placeholder="npr. samo karavan, traži se automatik"></div>
-          <p class="note" id="p_prev">Upiši cenu i vidi koliko Stefan sme da plati.</p>
-          <div class="btns"><button class="b primary" type="submit" id="p_ai">Neka asistent prati ovaj model</button><button class="b" type="button" id="p_manual">Sačuvaj moju cenu</button></div>
+          <div class="field"><label for="p_note">Napomena za asistenta</label><input id="p_note" placeholder="npr. samo karavan, automatik"></div>
+          <details class="more"><summary>Više opcija (nije obavezno)</summary><div class="grid" style="margin-top:8px">
+            <div class="field"><label for="p_rs">Cena u Srbiji, € (ako je znaš)</label><input id="p_rs" type="number" min="0" step="100"></div>
+            <div class="field"><label for="p_min">Minimalna zarada, € (prazno = iz podešavanja)</label><input id="p_min" type="number" min="0" step="50"></div>
+          </div></details>
+          <p class="note" id="p_prev"></p>
+          <div class="btns"><button class="b primary" type="submit" id="p_ai">Dodaj u pretragu</button></div>
         </form>
       </div>
     </div>
@@ -961,7 +966,7 @@ $("findForm").addEventListener("submit",async e=>{e.preventDefault();if(!db)retu
   const body={priceRef:r?r.id:"",model:r?r.label:($("f_title").value.trim()||"Auto"),title:$("f_title").value.trim(),year:num($("f_year").value),km:num($("f_km").value),priceChf:+$("f_price").value,maxChf:r?Math.round(r.mb.dealer):null,place:$("f_place").value.trim(),url:$("f_url").value.trim(),note:$("f_note").value.trim(),status:"novo",actor:actor(),foundAt:Date.now()};
   try{await db.collection("finds").add(body);e.target.reset();findPreview();toast("Oglas dodat, Stefan ga vidi u listi");}catch(err){fail(err);}});
 function pricePreview(){const rs=+$("p_rs").value, mp=$("p_min").value===""?null:+$("p_min").value;
-  if(!rs){$("p_prev").textContent="Upiši cenu i vidi koliko Stefan sme da plati.";return;}
+  if(!rs){$("p_prev").textContent="";return;}
   const mb=maxBuy(rs,true,mp);$("p_prev").innerHTML=`Stefan sme da plati najviše <b>${mb.dealer>0?fmt(mb.dealer)+" CHF":"—"}</b> kod trgovca ili <b>${mb.priv>0?fmt(mb.priv)+" CHF":"—"}</b> kod privatnog lica, za zaradu od ${fmt(mp??SET.cilj)} € posle poreza.`;}
 ["p_rs","p_min"].forEach(id=>$(id).addEventListener("input",pricePreview));
 async function savePrice(source){if(!db)return;const num=v=>v===""?null:+v;
@@ -973,13 +978,12 @@ async function savePrice(source){if(!db)return;const num=v=>v===""?null:+v;
     if(source==="ai"){const exists=PRICES.some(p=>p.source==="ai"&&gkey(p)===gkey(base));
       if(!exists) await db.collection("prices").add({...base,source:"ai",priceRs:null,n:null,kmMedian:null,checkedAt:null,actor:"Claude",requestedBy:actor()});
       if(rs) await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});
-      toast(exists?"Asistent već prati ovaj model":"Asistent će pratiti ovaj model pri sledećoj proveri tržišta");}
+      toast(exists?"Ovaj model je već u pretrazi":"Dodato u pretragu. Asistent ga traži pri sledećoj proveri.");}
     else{await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});toast("Tvoja cena je sačuvana");}
     $("priceForm").reset();pricePreview();
   }catch(err){fail(err);}
 }
 $("priceForm").addEventListener("submit",e=>{e.preventDefault();savePrice("ai");});
-$("p_manual").addEventListener("click",()=>savePrice("manual"));
 const newToken=()=>{const a=new Uint8Array(12);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("");};
 const trackUrl=t=>`https://swiscars.com/upit/#${t}`;
 function leadFindsOf(l,rows){const k=leadKey(l.model).join(" ");const r=rows.find(x=>x.id==="lead:"+k);return r?findsFor(r).filter(f=>["novo","gledano"].includes(f.status||"novo")):[];}
