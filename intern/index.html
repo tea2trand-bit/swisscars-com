@@ -95,6 +95,7 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .card:last-child{border-bottom:0}
 .resv{border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:8px}
 .resv .on{background:var(--warn-soft);border-radius:8px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.cardg.g-ord{color:var(--pos)}
 .cardg{padding:8px 14px;font-weight:600;font-size:14px;border-bottom:1px solid var(--line);background:var(--paper);color:var(--accent)}
 .cardh{font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;padding-top:8px;padding-bottom:8px;background:var(--soft)}
 .card{cursor:pointer}
@@ -125,6 +126,9 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .dtiles button .k{font-size:12px;color:var(--muted)}
 .dtiles button .v{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dtiles button[aria-pressed=true]{border-color:var(--btn);box-shadow:inset 0 -3px 0 var(--btn);background:var(--soft)}
+#podTiles{grid-template-columns:repeat(auto-fill,minmax(175px,1fr))}
+.subpanel{background:var(--soft);border-radius:10px;padding:12px 14px;display:grid;gap:10px}
+.setgrid .field label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .next{border:2px dashed var(--next-line);background:var(--next-bg);border-radius:10px;padding:14px;display:grid;gap:12px}
 .next h3{color:var(--btn)}
 .next h3{display:flex;gap:8px;align-items:center}
@@ -216,6 +220,15 @@ details.intro p{margin:0 0 4px}
 .pt button{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;line-height:1}
 .pphoto{grid-column:1/-1;display:grid;gap:8px;background:var(--soft);border-radius:8px;padding:10px}
 .tbadge{display:inline-block;margin-left:6px;min-width:20px;padding:0 6px;border-radius:999px;background:var(--neg);color:#fff;font-size:12px;line-height:20px;text-align:center}
+.lsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}
+.lsteps li{font-size:12px;text-align:center;padding:5px 2px;border-radius:6px;color:var(--muted);border:1px dashed var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lsteps li.done{background:var(--soft);color:var(--ink);border-style:solid;border-color:var(--soft)}
+.lsteps li.cur{background:var(--btn);color:#fff;border-color:var(--btn);font-weight:700}
+.lnext{font-size:15px;padding:8px 12px;border-radius:8px;background:var(--next-bg);border:1px dashed var(--next-line)}
+.lnext.mine{background:var(--neg-soft);border:1px solid var(--neg)}
+.who{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--soft);white-space:nowrap}
+.who.w-vi{background:var(--neg);color:#fff}
+@media (max-width:700px){.lsteps{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .lactions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
 .lactions select{width:auto;max-width:100%}
 .lead-dummy{display:none}
@@ -284,7 +297,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <div class="user"><span class="offline" id="sync" role="status"></span><span class="bellw"><button class="b small bell" type="button" id="bellBtn" aria-label="Obaveštenja" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="tbadge" id="bellCnt" hidden></span></button><div class="bellbox" id="bellBox" hidden></div></span><button class="b small primary" type="button" id="qcOpen">+ Trošak</button><button type="button" class="nm" id="meBtn" title="Nalozi tima i moja lozinka"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span id="who"></span></button><button class="b small" type="button" id="logout">Odjava</button><select id="iam" hidden aria-hidden="true"></select></div>
   </header>
   <div class="banner" id="banner" hidden></div>
-  <div class="banner" id="demoBanner" hidden>Prikazani su izmišljeni demo podaci (Stefan, Nemanja, Aleksandar). Obriši ih u Podešavanjima pre pravog rada.</div>
+  <div class="banner" id="demoBanner" hidden>Prikazani su izmišljeni demo podaci (Stefan, Nemanja, Aleksandar). Obriši ih u Administraciji (Demo podaci) pre pravog rada.</div>
 
   <nav class="tabs" role="tablist">
     <button role="tab" data-t="auta" aria-selected="true">Naša auta</button>
@@ -294,7 +307,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <button role="tab" data-t="istorija" aria-selected="false">Istorija</button>
     <button role="tab" data-t="prodata" aria-selected="false">Prodata auta</button>
     <span class="sp"></span>
-    <button role="tab" data-t="pod" aria-selected="false" class="set">⚙ Podešavanja</button>
+    <button role="tab" data-t="pod" aria-selected="false" class="set">⚙ Administracija</button>
   </nav>
 
   <!-- AUTA -->
@@ -506,15 +519,14 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
   </section>
 
   <!-- PODEŠAVANJA -->
-  <section id="t-pod" class="wrap" style="gap:16px" hidden>
-    <div class="sheet" id="usersBox">
-      <h2>Nalozi tima</h2>
-      <p class="note">Svako sa nalogom vidi i upisuje sve u evidenciji. Kupci vide samo stranicu swiscars.com/auta, bez troškova i zarade.</p>
-      <div class="scroll"><table id="usersTbl"><thead><tr><th>Ime</th><th>Email</th><th>Mesto</th><th>Uloga</th><th></th></tr></thead><tbody></tbody></table></div>
-      <p class="note" id="usersMsg" role="status"></p>
-      <details class="more" id="newUserBox" hidden>
-        <summary><b>+ Novi nalog</b> (Nemanja, Stefan, Aleksandar…): korisničko ime je email, lozinku upisuješ ti</summary>
-        <form id="userForm" autocomplete="off" style="margin-top:10px">
+  <section id="t-pod" class="wrap" style="gap:12px" hidden>
+    <h2 style="margin:0">Administracija</h2>
+    <div class="dtiles" id="podTiles"></div>
+    <div class="sheet ppanel" data-pp="users" id="usersBox">
+      <div class="top"><h2>Nalozi tima</h2><button class="b small primary" type="button" id="nuBtn" hidden>+ Novi nalog</button></div>
+      <div class="subpanel" id="newUserBox" hidden>
+        <p class="note" style="margin:0">Korisničko ime je email. Prvu lozinku upisuješ ti, a on je posle sam menja.</p>
+        <form id="userForm" autocomplete="off">
           <div class="grid">
             <div class="field"><label for="u_name">Ime</label><input id="u_name" required placeholder="npr. Nemanja"></div>
             <div class="field"><label for="u_email">Email</label><input id="u_email" type="email" required></div>
@@ -523,26 +535,28 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
             <div class="field"><label for="u_role">Uloga</label><select id="u_role"><option value="member">Član tima</option><option value="admin">Administrator (pravi naloge)</option></select></div>
           </div>
           <div class="btns"><button class="b primary" type="submit">Napravi nalog</button></div>
-          <p class="note">Posle pošalji partneru: adresu <b>swiscars.com/intern</b>, njegov email i lozinku. Lozinku može sam da promeni u Podešavanjima.</p>
+          <p class="note">Posle pošalji partneru: adresu <b>swiscars.com/intern</b>, njegov email i lozinku. Lozinku može sam da promeni u Administraciji (Moja lozinka).</p>
         </form>
-      </details>
+      </div>
+      <div class="scroll"><table id="usersTbl"><thead><tr><th>Ime</th><th>Email</th><th>Mesto</th><th>Uloga</th><th></th></tr></thead><tbody></tbody></table></div>
+      <p class="note" id="usersMsg" role="status"></p>
     </div>
-    <div class="sheet">
-      <h2>Brojke za račun</h2>
-      <p class="note">Važe za sva auta i za pretragu asistenta. Promena se odmah vidi kod svih.</p>
-      <form id="setForm">
-        <div class="grid" id="setGrid"></div>
-        <div class="field"><label for="s_pay">Podaci za uplatu kapare (vidi ih potražilac kad izabere auto; prazno = „šaljemo vam lično“)</label><textarea id="s_pay" rows="4" placeholder="Primalac: …&#10;IBAN: …&#10;Banka: …&#10;Svrha: kapara + ime"></textarea></div>
-        <div class="field"><label for="s_team">Ostali koji plaćaju troškove a nemaju nalog: jedna osoba po redu, ime pa mesto (članovi tima sa nalogom su već tu)</label><textarea id="s_team" rows="4"></textarea></div>
-        <div class="btns"><button class="b primary" type="submit">Sačuvaj podešavanja</button></div>
-      </form>
-    </div>
-    <div class="sheet" id="demoBox" hidden>
-      <h2>Demo podaci</h2>
-      <p class="note">U evidenciji su izmišljeni podaci da vidiš kako izgleda kad radi. Pre pravog rada ih obriši. Pravi unosi i tim ostaju.</p>
-      <div class="btns"><button class="b danger" type="button" id="delDemo">Obriši demo podatke</button></div>
-    </div>
-    <div class="sheet">
+    <form id="setForm" style="display:contents">
+      <div class="sheet ppanel" data-pp="nums" hidden>
+        <div class="top"><h2>Brojke za račun</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
+        <div class="grid setgrid" id="setGrid"></div>
+      </div>
+      <div class="sheet ppanel" data-pp="pay" hidden>
+        <div class="top"><h2>Kapara i uplata</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
+        <div class="grid setgrid"><div class="field"><label for="s_depositPct">Kapara, % od cene</label><input id="s_depositPct" type="number" step="1" min="0" max="100"></div></div>
+        <div class="field"><label for="s_pay">Podaci za uplatu (prazno = „šaljemo vam lično“)</label><textarea id="s_pay" rows="4" placeholder="Primalac: …&#10;IBAN: …&#10;Banka: …&#10;Svrha: kapara + ime"></textarea></div>
+      </div>
+      <div class="sheet ppanel" data-pp="payers" hidden>
+        <div class="top"><h2>Ko još plaća troškove</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
+        <div class="field"><label for="s_team">Bez naloga, jedna osoba po redu: ime, mesto</label><textarea id="s_team" rows="4"></textarea></div>
+      </div>
+    </form>
+    <div class="sheet ppanel" data-pp="pw" hidden>
       <h2>Moja lozinka</h2>
       <form id="pwForm" autocomplete="off">
         <div class="grid">
@@ -552,6 +566,11 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         <div class="btns"><button class="b primary" type="submit" id="pwBtn">Promeni lozinku</button></div>
         <p class="note" id="pwMsg" role="status" aria-live="polite"></p>
       </form>
+    </div>
+    <div class="sheet ppanel" data-pp="demo" id="demoBox" hidden>
+      <h2>Demo podaci</h2>
+      <p class="note">Izmišljeni podaci da se vidi kako radi. Pre pravog rada ih obriši; pravi unosi i tim ostaju.</p>
+      <div class="btns"><button class="b danger" type="button" id="delDemo">Obriši demo podatke</button></div>
     </div>
   </section>
 </div>
@@ -586,7 +605,7 @@ const LOCS=["Švajcarska","Niš","Sremčica","Ostalo"];
 // Serbian asking-price medians from the market check (polovniautomobili.com, 1 Oct 2026)
 const MARKET={"VW Golf 6 1.6 TDI":5999,"VW Passat B7 2.0 TDI":7575,"VW Polo 1.2–1.6 TDI":5485,"Škoda Octavia III TDI":7375,"Audi A4 B8 2.0 TDI":9295,"Audi A3 8V TDI":10499,"VW Golf 7 2.0 TDI":12500,"Peugeot 3008 BlueHDi":13999,"VW Tiguan II 2.0 TDI":17050,"Kia Sportage CRDi":13000,"Toyota Yaris Hybrid":9500,"Audi A6 C7 TDI":15995,"BMW 520d F10/F11":12500,"Audi Q5 8R TDI":15250,"Škoda Superb III 2.0 TDI":14745,"Mercedes C 220 d W205":16950};
 const DEF={depositPct:10,payInfo:"",rate:1.057,vat:8.1,rsd:117,pdv:20,popust:7,porez:15,cilj:1000,rezerva:300,prevoz:500,izvoz:100,eko:155,team:[]};
-const SETF=[["rate","Kurs 1 CHF u €",0.001],["vat","Švajcarski PDV koji se vraća, %",0.1],["rsd","Kurs 1 € u dinarima",0.1],["pdv","PDV u Srbiji, %",1],["popust","Popust pri prodaji, %",1],["porez","Porez na dobit, %",1],["cilj","Minimalna zarada po autu, € (asistent ne prikazuje oglase ispod ovoga)",50],["rezerva","Rezerva za popravke, €",50],["prevoz","Prevoz (predlog), €",10],["izvoz","Izvozna deklaracija (predlog), €",10],["eko","Eko taksa (predlog), €",5],["depositPct","Kapara od potražioca, % od cene",1]];
+const SETF=[["rate","Kurs CHF → €",0.001,"Koliko evra vredi 1 CHF"],["vat","PDV CH (vraća se), %",0.1,"Švajcarski PDV koji se vraća pri izvozu"],["rsd","Kurs € → dinar",0.1,"Koliko dinara vredi 1 €"],["pdv","PDV Srbija, %",1,"PDV u Srbiji"],["popust","Popust pri prodaji, %",1,"Koliko se obično spusti pri cenkanju"],["porez","Porez na dobit, %",1,"Porez na dobit u Srbiji"],["cilj","Min. zarada po autu, €",50,"Asistent ne prikazuje oglase ispod ove zarade"],["rezerva","Rezerva za popravke, €",50,"Rezerva po autu za popravke"],["prevoz","Prevoz, €",10,"Predlog troška prevoza do Srbije"],["izvoz","Izvozna deklaracija, €",10,"Predlog troška izvozne deklaracije"],["eko","Eko taksa, €",5,"Predlog eko takse"],["depositPct","Kapara, % od cene",1,"Kapara od potražioca"]];
 
 const SPEC=[
  ["Auto",[["model","Model","text",{list:"models",req:1,ph:"npr. VW Golf 6 1.6 TDI"}],["year","Godište","number"],["firstReg","Prva registracija","month"],["km","Kilometraža","number",{step:1000}],["engine","Motor","text",{ph:"npr. 1.6 TDI"}],["kw","Snaga, kW","number"],["fuel","Gorivo","select",["","Dizel","Benzin","Hibrid","Električni","Gas"]],["gear","Menjač","select",["","Manuelni 5","Manuelni 6","Automatik","DSG / S-tronic"]],["body","Karoserija","select",["","Hečbek","Karavan","Limuzina","SUV","Monovolumen","Kupe","Kabriolet"]],["drive","Pogon","select",["","Prednji","4x4","Zadnji"]],["doors","Vrata","select",["","4/5","2/3"]],["euro","Emisiona klasa","select",["","Euro 6","Euro 6d","Euro 5","Euro 4"]],["color","Boja","text"],["vin","Broj šasije (VIN)","text",{max:17}]]],
@@ -716,8 +735,8 @@ $("bellBtn").onclick=e=>{e.stopPropagation();if(!$("bellBox").hidden){closeBell(
   try{localStorage.setItem(bellKey(),String(Date.now()));}catch(err){}setTimeout(renderBell,0);};
 document.addEventListener("click",e=>{if(!$("bellBox").hidden&&!e.target.closest(".bellw"))closeBell();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("bellBox").hidden)closeBell();});
-$("meBtn").onclick=()=>{switchTab("pod");setTimeout(()=>$("usersBox").scrollIntoView({behavior:"smooth",block:"start"}),50);};
-function render(){ renderBell(); renderCards(); renderDetail(); renderShop(); renderLeads(); renderKpis(); renderHistory(); const d=isDemo(); $("demoBox").hidden=!d; $("demoBanner").hidden=!d; }
+$("meBtn").onclick=()=>{podPanel="users";switchTab("pod");renderPodTiles();};
+function render(){ renderBell(); renderCards(); renderDetail(); renderShop(); renderLeads(); renderKpis(); renderHistory(); const d=isDemo(); $("demoBanner").hidden=!d; renderPodTiles(); }
 function leadKey(s){return (s||"").toLowerCase().replace(/[^a-z0-9šđčćž ]/g," ").split(/\s+/).filter(Boolean).slice(0,2);}
 const LEAD_OPEN=["novo","trazimo","ponudjeno","kupljeno"];
 const openLeads=()=>LEADS.filter(l=>LEAD_OPEN.includes(l.status||"novo"));
@@ -743,7 +762,7 @@ function renderCards(){
   const isRes=c=>!c.orderId&&c.reservation&&c.reservation.name;
   const ord=shown.filter(c=>c.orderId), res=shown.filter(isRes), own=shown.filter(c=>!c.orderId&&!isRes(c));
   const head=`<div class="cardh"><span>Auto</span><span>Za koga</span><span>Trenutna faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Zarada</span></div>`;
-  $("cards").innerHTML=shown.length?head+(ord.length?`<div class="cardg">Naručena, za potražioce · ${ord.length}</div>`+ord.map(row).join(""):"")+(res.length?`<div class="cardg">Rezervisana · ${res.length}</div>`+res.map(row).join(""):"")+(own.length?`<div class="cardg">Naša, na sajtu za prodaju · ${own.length}</div>`+own.map(row).join(""):""):"";
+  $("cards").innerHTML=shown.length?head+(ord.length?`<div class="cardg g-ord">Naručena · ${ord.length}</div>`+ord.map(row).join(""):"")+(res.length?`<div class="cardg">Rezervisana · ${res.length}</div>`+res.map(row).join(""):"")+(own.length?`<div class="cardg">Na sajtu za prodaju · ${own.length}</div>`+own.map(row).join(""):""):"";
   $("carEmpty").hidden=shown.length>0;
   $("cards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCar(b.dataset.id));
 }
@@ -1094,6 +1113,28 @@ function propState(p){const a=pAns(p),d=p.deposit?fmt(p.deposit)+" €":"";
   if(a==="zanima") return {t:"Zanima ga: dodaj slike i opis iz oglasa",c:"ans-da",act:"photos"};
   if(a==="ne") return {t:"✗ Ne zanima ga",c:"ans-ne"};
   return {t:"čeka odgovor",c:"ans-wait"};}
+const LSTEPS=["Upit","Predlozi","Slike","Kapara","Pregled","Kupljeno","U Srbiji","Predato"];
+function leadFlow(l,n){const props=l.proposals||[],car=l.carId?CARS.find(c=>c._id===l.carId):null,A=pAns;
+  const sold=car?.status==="prodat"||["predato","kupio"].includes(l.status);
+  const live=props.filter(p=>A(p)!=="ne"&&(p.insp!=="ne"||!p.choice||(p.choice==="refund"&&!p.depositRefundAt)));
+  const d=[true,props.length>0||!!car,live.some(p=>p.photosAt)||!!car,live.some(p=>p.depositPaidAt)||!!car,live.some(p=>p.insp)||!!car,!!car,!!car&&["carinjen","garaza","prodaja","prodat"].includes(car.status),sold];
+  const i=d.indexOf(false);let next="",who="";const dep=p=>p&&p.deposit?fmt(p.deposit)+" €":"";
+  const pf=f=>props.find(f);
+  if(l.status==="odustao"){next="Upit je zatvoren.";who="";}
+  else if(sold){next="Auto je predato. Upit je završen.";who="";}
+  else if(car){const t=TODO[car.status];next=t?`${t} (Naša auta → ${car.model})`:"Auto je u radu.";who="Tim";}
+  else if(pf(p=>p.choice==="refund"&&!p.depositRefundAt)){next=`Vratite kaparu ${dep(pf(p=>p.choice==="refund"&&!p.depositRefundAt))} i kliknite „Kapara vraćena“.`;who="Vi";}
+  else if(pf(p=>p.insp==="ne"&&!p.choice)){next="Auto nije prošlo pregled. Čekamo da izabere: kapara nazad ili drugo auto.";who="Potražilac";}
+  else if(pf(p=>p.depositPaidAt&&!p.insp)){next="Stefan gleda auto (Asistent pretraga → Idemo da gledamo), pa kupuje ili odustaje.";who="Stefan";}
+  else if(pf(p=>A(p)==="zelim"&&!p.depositPaidAt)){next=`Čekamo kaparu ${dep(pf(p=>A(p)==="zelim"&&!p.depositPaidAt))}. Kad legne, kliknite „Kapara primljena“.`;who="Potražilac";}
+  else if(pf(p=>A(p)==="zanima"&&!p.photosAt)){next="Dodajte slike i opis iz oglasa (dugme ispod).";who="Vi";}
+  else if(pf(p=>A(p)==="zanima"&&p.photosAt)){next="Slike su poslate. Čekamo da kaže da li želi auto.";who="Potražilac";}
+  else if(pf(p=>!A(p))){next="Predlozi su poslati. Čekamo da kaže šta ga zanima.";who="Potražilac";}
+  else if(l.demo){next="Demo upit: asistent ne obrađuje izmišljene upite.";who="";}
+  else if(!l.aiCheckedAt){next="Asistent proverava tržište i šalje 3 predloga (do 1 h, 7–21 h).";who="Asistent";}
+  else if(n){next="Asistent šalje nove predloge (do 1 h).";who="Asistent";}
+  else {next="Asistent traži dalje i javlja čim nađe dobar oglas.";who="Asistent";}
+  return {d,i:i<0?LSTEPS.length:i,next,who};}
 function leadStage(l,n){
   const car=l.carId?CARS.find(c=>c._id===l.carId):null, props=l.proposals||[], last=props[props.length-1];
   if(l.status==="odustao") return {t:"Zatvoren",c:"s-done",done:true};
@@ -1106,6 +1147,7 @@ function leadStage(l,n){
   if(props.some(p=>pAns(p)==="zanima"&&!p.photosAt)) return {t:"Zanima ga – dodajte slike",c:"s-new"};
   if(props.some(p=>pAns(p)==="zanima"&&p.photosAt)) return {t:"Slike poslate – čeka odluku",c:"s-wait"};
   if(props.some(p=>!pAns(p))) return {t:"Čeka odgovor na predloge",c:"s-wait"};
+  if(l.demo) return {t:"Demo upit",c:"s-wait"};
   if(n) return {t:"Asistent šalje nove predloge (do 1 h)",c:"s-wait"};
   if(l.aiCheckedAt) return {t:"Asistent još nema dobar oglas – traži dalje",c:"s-new"};
   return l.demo?{t:"Demo – asistent ne obrađuje izmišljene upite",c:"s-wait"}:{t:"Novo – asistent proverava (do 1 h)",c:"s-new"};
@@ -1122,7 +1164,10 @@ function renderLeads(){
     const wa=(l.phone||"").replace(/[^0-9+]/g,"").replace(/^00/,"+");
     const sv=x=>x&&x!=="Svejedno"?x:"";
     const want=[l.budget?`do ${fmt(l.budget)} €`:"",l.yearFrom?`od ${l.yearFrom}.`:"",sv(l.fuel),sv(l.body),l.drive==="4x4"?"4x4":"",sv(l.gearbox),l.mileage&&l.mileage!=="Nije presudno"?l.mileage.toLowerCase():"",(l.equip||[]).length?"oprema: "+l.equip.join(", "):"",l.when].filter(Boolean).map(esc).join(" · ");
-    const head=`<div class="lhd"><div><h3>${esc(l.name||l.contact||"Bez imena")}${l.demo?' <span class="pill">demo</span>':""}</h3><span class="sub">${[l.city||(l.where&&l.where!=="Sajt"?l.where:""),l.source==="web"?"sa sajta":"telefonom / uživo",l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):"",l.source!=="web"&&l.payer?"uneo "+l.payer:""].filter(Boolean).map(esc).join(" · ")}</span></div><span class="stage ${st.c}">${esc(st.t)}</span></div>`;
+    const fl=leadFlow(l,fs.length);
+    const head=`<div class="lhd"><div><h3>${esc(l.name||l.contact||"Bez imena")}${l.demo?' <span class="pill">demo</span>':""}</h3><span class="sub">${[l.city||(l.where&&l.where!=="Sajt"?l.where:""),l.source==="web"?"sa sajta":"telefonom / uživo",l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):"",l.source!=="web"&&l.payer?"uneo "+l.payer:""].filter(Boolean).map(esc).join(" · ")}</span></div>${fl.who?`<span class="who w-${fl.who==="Vi"?"vi":"x"}">Na potezu: <b>${esc(fl.who)}</b></span>`:`<span class="stage ${st.c}">${esc(st.t)}</span>`}</div>
+      <ol class="lsteps">${LSTEPS.map((x,j)=>`<li class="${fl.d[j]?"done":j===fl.i&&l.status!=="odustao"?"cur":""}">${fl.d[j]?"✓ ":""}${x}</li>`).join("")}</ol>
+      <div class="lnext ${fl.who==="Vi"?"mine":""}"><b>Sledeće:</b> ${esc(fl.next)}</div>`;
     const contact=`<div class="lcontact">${l.phone?`<a href="tel:${esc(wa)}">📞 ${esc(l.phone)}</a>${wa.length>6?`<a href="https://wa.me/${esc(wa.replace("+",""))}" target="_blank" rel="noopener">WhatsApp</a>`:""}`:""}${l.email?`<a href="mailto:${esc(l.email)}">✉ ${esc(l.email)}</a>`:""}${!l.phone&&!l.email&&l.contact?esc(l.contact):""}</div>`;
     const pli=p=>{let ps=propState(p);if(car&&["zanima","zelim"].includes(pAns(p)))ps={t:"✓ Kupljeno",c:"ans-da"};const f=p.findId?FINDS.find(x=>x._id===p.findId):null;const url=f&&f.url;
       return `<li><span>${url?`<a href="${esc(url)}" target="_blank" rel="noopener" title="Otvori švajcarski oglas">${esc(p.title)}</a>`:esc(p.title)}${p.year?" · "+p.year:""}${p.km?" · "+fmt(p.km)+" km":""} · <b>${p.price?fmt(p.price)+" €":"cena po dogovoru"}</b> <span class="note">${p.at?new Date(p.at).toLocaleDateString("sr-Latn-RS"):""}${p.by?", "+esc(who(p.by)):""}</span>${p.answerNote?`<span class="sub">„${esc(p.answerNote)}“</span>`:""}${(p.photos||[]).length&&p.photosAt?`<span class="sub">${p.photos.length} ${p.photos.length===1?"slika poslata":"slika poslato"}${p.adNote?" · "+esc(p.adNote.slice(0,80)):""}</span>`:""}</span>
@@ -1302,7 +1347,7 @@ $("leadForm").addEventListener("submit",async e=>{e.preventDefault();if(!db)retu
 const genPw=()=>{const a="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";const r=new Uint32Array(10);crypto.getRandomValues(r);return "Sc-"+Array.from(r,x=>a[x%a.length]).join("");};
 async function loadMembers(){try{MEMBERS=await SC.members();}catch(e){console.warn(e);}renderUsers();fillSettings();render();}
 function renderUsers(){const admin=me?.role==="admin";
-  $("newUserBox").hidden=!admin;
+  $("nuBtn").hidden=!admin;if(!admin)$("newUserBox").hidden=true;
   $("usersTbl").tBodies[0].innerHTML=MEMBERS.map(m=>`<tr><td>${esc(m.name)}${m.user_id===me?.id?' <span class="sub">(ti)</span>':""}</td><td>${esc(m.email)}</td><td>${esc(m.location||"")}</td><td>${m.role==="admin"?"Administrator":"Član"}${m.active?"":' · <span class="neg">isključen</span>'}</td><td>${admin&&m.user_id!==me?.id?`<div class="btns"><button class="b small" type="button" data-upw="${esc(m.user_id)}">Nova lozinka</button><button class="b small" type="button" data-uact="${esc(m.user_id)}">${m.active?"Isključi":"Uključi"}</button></div>`:""}</td></tr>`).join("");
   $("usersTbl").querySelectorAll("[data-upw]").forEach(b=>b.onclick=async()=>{const m=MEMBERS.find(x=>x.user_id===b.dataset.upw);const pw=genPw();b.disabled=true;
     try{await SC.updateMember(m.user_id,m.name,m.location,m.role,m.active,pw);$("usersMsg").innerHTML=`Nova lozinka za ${esc(m.name)}: <span class="pwshow">${pw}</span> Pošalji je njemu; stara više ne važi.`;}catch(e){$("usersMsg").textContent=e.message;}finally{b.disabled=false;}});
@@ -1327,18 +1372,27 @@ $("logout").onclick=()=>SC.signOut();
 /* ---------- settings ---------- */
 function fillSettings(){
   if(!$("setForm").contains(document.activeElement)){
-    $("setGrid").innerHTML=SETF.map(([k,l,s])=>`<div class="field"><label for="s_${k}">${l}</label><input id="s_${k}" type="number" step="${s}" value="${SET[k]}"></div>`).join("");
+    $("setGrid").innerHTML=SETF.filter(([k])=>k!=="depositPct").map(([k,l,s,t])=>`<div class="field"><label for="s_${k}" title="${esc(t||l)}">${l}</label><input id="s_${k}" type="number" step="${s}" value="${SET[k]}" title="${esc(t||l)}"></div>`).join("");
+    $("s_depositPct").value=SET.depositPct??10;
     $("s_pay").value=SET.payInfo||"";
     $("s_team").value=team().filter(p=>!MEMBERS.some(m=>m.name===p.name)).map(p=>p.name+(p.location?", "+p.location:"")).join("\n");
   }
   const opts=team().map(p=>`<option>${esc(p.name)}</option>`).join("")+`<option value="">${esc(me?.name||"vlasnik")}</option>`;
   if($("iam").dataset.sig!==opts){$("iam").innerHTML=opts;$("iam").dataset.sig=opts;$("iam").value=IAM;}
 }
+let podPanel="users";
+function renderPodTiles(){const d=isDemo(),payOk=!!(SET.payInfo||"").trim(),others=team().filter(p=>!MEMBERS.some(m=>m.name===p.name)).length;
+  const T=[["users","Nalozi tima",`${MEMBERS.length} ${MEMBERS.length===1?"nalog":"naloga"}`],["nums","Brojke za račun",`min. zarada ${fmt(SET.cilj)} €`],["pay","Kapara i uplata",`${SET.depositPct??10}% · ${payOk?"podaci upisani":"bez podataka"}`],["payers","Ko još plaća",others?`${others} bez naloga`:"niko"]].concat(d?[["demo","Demo podaci","obriši"]]:[]).concat([["pw","Moja lozinka","promeni"]]);
+  if(!T.some(t=>t[0]===podPanel))podPanel="users";
+  $("podTiles").innerHTML=T.map(([k,l,v])=>`<button type="button" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="k">${l}</span><span class="v">${esc(v)}</span></button>`).join("");
+  $("podTiles").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>{podPanel=b.dataset.pt;renderPodTiles();});
+  document.querySelectorAll("#t-pod .ppanel").forEach(p=>p.hidden=p.dataset.pp!==podPanel);}
+$("nuBtn").onclick=()=>{$("newUserBox").hidden=!$("newUserBox").hidden;if(!$("newUserBox").hidden)$("u_name").focus();};
 $("iam").onchange=()=>{IAM=$("iam").value;try{localStorage.setItem("sc_iam",IAM);}catch(e){}render();};
 $("setForm").addEventListener("submit",async e=>{e.preventDefault();const body={};SETF.forEach(([k])=>{const v=parseFloat($("s_"+k).value);body[k]=isNaN(v)?DEF[k]:v;});
   body.payInfo=$("s_pay").value.trim();
   body.team=$("s_team").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const [n,...r]=l.split(",");return {name:n.trim(),location:r.join(",").trim()};});
-  try{await db.doc("settings/main").set(body);toast("Podešavanja sačuvana");}catch(err){fail(err);}});
+  try{await db.doc("settings/main").set(body);toast("Sačuvano");}catch(err){fail(err);}});
 $("delDemo").addEventListener("click",async()=>{const b=$("delDemo");
   if(!b.dataset.armed){b.dataset.armed=1;b.textContent="Klikni ponovo da obrišeš sve demo podatke";setTimeout(()=>{delete b.dataset.armed;b.textContent="Obriši demo podatke";},4000);return;}
   b.disabled=true;try{for(const [col,arr] of [["events",EVENTS],["costs",COSTS],["cars",CARS],["leads",LEADS]])for(const x of arr.filter(x=>x.demo))await db.doc(col+"/"+x._id).delete();toast("Demo podaci obrisani");closeCar();}catch(e){fail(e);}finally{b.disabled=false;b.textContent="Obriši demo podatke";delete b.dataset.armed;}
