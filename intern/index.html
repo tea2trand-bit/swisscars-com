@@ -91,7 +91,7 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .cards{display:grid;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .cards:empty{display:none}
-.card,.cardh{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.2fr) 170px 205px 110px 100px;gap:6px 14px;align-items:center;padding:10px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;font:inherit;color:inherit}
+.card,.cardh{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.2fr) 160px 195px 105px 115px 95px;gap:6px 14px;align-items:center;padding:10px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;font:inherit;color:inherit}
 .card:last-child{border-bottom:0}
 .resv{border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:8px}
 .resv .on{background:var(--warn-soft);border-radius:8px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
@@ -643,6 +643,10 @@ function fail(e){console.warn(e);const c=e&&e.code;
 
 /* ---------- money ---------- */
 function toEUR(a,cur){return cur==="CHF"?a*SET.rate:cur==="RSD"?a/SET.rsd:a;}
+function orderPrice(c){if(!c.orderId)return null;const l=LEADS.find(x=>x._id===c.orderId);if(!l)return null;
+  if(l.agreedPrice)return +l.agreedPrice;const ps=l.proposals||[];
+  const p=ps.find(p=>p.findId&&p.findId===c.fromFind)||ps.find(p=>p.depositPaidAt)||ps.find(p=>p.answer==="zelim"||p.answer==="da");
+  return p&&p.price?+p.price:(l.budget?+l.budget:null);}
 function carCalc(c){
   const vf=c.seller==="dealer"?1+SET.vat/100:1;
   const paid=(c.buyChf||0)*SET.rate, buy=paid/vf;
@@ -652,12 +656,14 @@ function carCalc(c){
   const borderVat=(buy+freight)*SET.pdv/100;
   const cost=buy+extra, g=1+SET.pdv/100, keep=1-SET.porez/100;
   const sold=c.status==="prodat"&&c.salePrice>0;
-  const sale=sold?c.salePrice:(c.askEur||0)*(1-SET.popust/100);
+  const op=orderPrice(c);
+  const sale=sold?c.salePrice:op?op:(c.askEur||0)*(1-SET.popust/100);
+  const price=sold?c.salePrice:op||c.askEur||null, priceKind=sold?"prodato":op?"dogovoreno":c.askEur?"tražena":"";
   const pre=sale?sale/g-cost:null, post=pre==null?null:(pre>0?pre*keep:pre);
   const breakEven=cost*g;                                  // real sale price with zero profit
   const goal=(cost+SET.cilj/keep)*g;                       // real sale price that leaves "cilj" after tax
   const askFor=x=>x/(1-SET.popust/100);                    // asking price that still lands there after haggling
-  return {paid,buy,refund:paid-buy,extra,borderVat,cost,tied:paid+extra+borderVat,sold,sale,pre,post,breakEven,goal,askBreak:askFor(breakEven),askGoal:askFor(goal),days:days(c.boughtDate,c.soldDate),n:cs.length};
+  return {price,priceKind,paid,buy,refund:paid-buy,extra,borderVat,cost,tied:paid+extra+borderVat,sold,sale,pre,post,breakEven,goal,askBreak:askFor(breakEven),askGoal:askFor(goal),days:days(c.boughtDate,c.soldDate),n:cs.length};
 }
 function maxBuy(gross,haggle,profit){ // max Swiss ad price (CHF) so a sale at `gross` (€) still leaves `profit` after tax
   const sale=haggle?gross*(1-SET.popust/100):gross, p=profit==null?SET.cilj:profit;
@@ -758,10 +764,11 @@ function renderCards(){
       <span class="cst"><span class="pill s-${esc(c.status)}">${SL[c.status]||esc(c.status)}</span></span>
       <span class="cnext">${st?"→ "+esc(TODO[c.status]||st.title):"—"}</span>
       <span class="cn cinv">${fmt(r.cost)} €</span>
+      <span class="cn cinv">${r.price?fmt(r.price)+" €":"—"}${r.priceKind?`<span class="sub" style="text-align:right">${r.priceKind}</span>`:""}</span>
       <span class="cn cprof ${r.post==null?"":r.post>=0?"pos":"neg"}">${r.post==null?"—":sgn(r.post)+" €"}</span></button>`;};
   const isRes=c=>!c.orderId&&c.reservation&&c.reservation.name;
   const ord=shown.filter(c=>c.orderId), res=shown.filter(isRes), own=shown.filter(c=>!c.orderId&&!isRes(c));
-  const head=`<div class="cardh"><span>Auto</span><span>Za koga</span><span>Trenutna faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Zarada</span></div>`;
+  const head=`<div class="cardh"><span>Auto</span><span>Za koga</span><span>Trenutna faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Cena</span><span class="cn">Zarada</span></div>`;
   $("cards").innerHTML=shown.length?head+(ord.length?`<div class="cardg g-ord">Naručena · ${ord.length}</div>`+ord.map(row).join(""):"")+(res.length?`<div class="cardg">Rezervisana · ${res.length}</div>`+res.map(row).join(""):"")+(own.length?`<div class="cardg">Na sajtu za prodaju · ${own.length}</div>`+own.map(row).join(""):""):"";
   $("carEmpty").hidden=shown.length>0;
   $("cards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCar(b.dataset.id));
