@@ -92,8 +92,9 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .cards{display:grid;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .cards:empty{display:none}
-.card,.cardh{display:grid;grid-template-columns:minmax(0,2.2fr) 70px 170px minmax(0,1.5fr) 130px 100px;gap:6px 14px;align-items:center;padding:10px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;font:inherit;color:inherit}
+.card,.cardh{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) 170px minmax(0,1.3fr) 120px 100px;gap:6px 14px;align-items:center;padding:10px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;font:inherit;color:inherit}
 .card:last-child{border-bottom:0}
+.cardg{padding:8px 14px;font-weight:600;font-size:14px;border-bottom:1px solid var(--line);background:var(--paper);color:var(--accent)}
 .cardh{font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;padding-top:8px;padding-bottom:8px;background:var(--soft)}
 .card{cursor:pointer}
 .card:hover{background:var(--soft)}
@@ -101,7 +102,7 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .card .cm b{display:block}
 .card .cn{font-family:var(--f-num);text-align:right;white-space:nowrap}
 .cardh .cn{text-align:right}
-@media (max-width:760px){.cardh{display:none}.card{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"m p" "n z"}.card .cm{grid-area:m}.card .cst{grid-area:p;text-align:right}.card .cnext{grid-area:n}.card .cprof{grid-area:z}.card .cinv,.card .cup{display:none}}
+@media (max-width:760px){.cardh{display:none}.card{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"m p" "u u" "n z"}.card .cm{grid-area:m}.card .cst{grid-area:p;text-align:right}.card .cnext{grid-area:n}.card .cprof{grid-area:z}.card .cinv{display:none}.card .cup{grid-area:u}}
 .pipe button.st{font:inherit;font-size:14px;color:var(--ink);background:var(--paper);cursor:pointer}
 #soldBtn[aria-pressed=true]{border-color:var(--accent);background:var(--soft)}
 .pipe button.st:disabled{opacity:.55;cursor:default}
@@ -252,8 +253,8 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <nav class="tabs" role="tablist">
     <button role="tab" data-t="auta" aria-selected="true">Naša auta</button>
-    <button role="tab" data-t="ai" aria-selected="false">Asistent pretraga</button>
     <button role="tab" data-t="narudzbine" aria-selected="false">Upiti</button>
+    <button role="tab" data-t="ai" aria-selected="false">Asistent pretraga</button>
     <button role="tab" data-t="novac" aria-selected="false">Novac i obračun</button>
     <button role="tab" data-t="istorija" aria-selected="false">Istorija</button>
     <span class="sp"></span>
@@ -678,14 +679,18 @@ function renderCards(){
   $("pipe").innerHTML=FLOW.filter(([st])=>st!=="prodat").map(([st,l])=>{const n=list.filter(c=>c.status===st).length;return `<button type="button" class="st" data-pf="${st}" aria-pressed="${pipeF===st}" ${n||pipeF===st?"":"disabled"}><span class="pill s-${st}">${l}</span><b>${n}</b></button>`;}).join("");
   $("pipe").querySelectorAll("[data-pf]").forEach(b=>b.onclick=()=>{pipeF=pipeF===b.dataset.pf?null:b.dataset.pf;renderCards();});
   const shown=pipeF?list.filter(c=>c.status===pipeF):list;
-  $("cards").innerHTML=shown.length?`<div class="cardh"><span>Auto</span><span style="text-align:center" title="Otvoreni upiti za ovaj model">Upiti</span><span>Faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Zarada</span></div>`+shown.map(c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c);
+  const ordOf=c=>c.orderId?LEADS.find(l=>l._id===c.orderId):null;
+  const row=c=>{const r=carCalc(c),st=stepFor(c),nb=buyersFor(c),ld=ordOf(c);
     return `<button type="button" class="card${c._id===curId?" sel":""}" data-id="${esc(c._id)}">
       <span class="cm"><b>${esc(c.model)}</b><span class="sub">${c.year||""}${c.km?" · "+fmt(c.km)+" km":""}</span></span>
-      <span class="cup" style="text-align:center;font-family:var(--f-num)">${nb||"—"}</span>
+      <span class="cup">${ld||c.orderId?`<b>${esc(ld?.name||"potražilac")}</b>${ld?.city?`<span class="sub">${esc(ld.city)}</span>`:""}`:`<span class="note">${nb?`${nb} ${nb===1?"zainteresovan":"zainteresovana"} (upiti)`:"—"}</span>`}</span>
       <span class="cst"><span class="pill s-${esc(c.status)}">${SL[c.status]||esc(c.status)}</span></span>
       <span class="note cnext">${st?esc(st.title):"—"}</span>
       <span class="cn cinv">${fmt(r.cost)} €</span>
-      <span class="cn cprof ${r.post==null?"":r.post>=0?"pos":"neg"}">${r.post==null?"—":sgn(r.post)+" €"}</span></button>`;}).join(""):"";
+      <span class="cn cprof ${r.post==null?"":r.post>=0?"pos":"neg"}">${r.post==null?"—":sgn(r.post)+" €"}</span></button>`;};
+  const ord=shown.filter(c=>c.orderId), own=shown.filter(c=>!c.orderId);
+  const head=`<div class="cardh"><span>Auto</span><span>Za koga</span><span>Faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Zarada</span></div>`;
+  $("cards").innerHTML=shown.length?head+(ord.length?`<div class="cardg">Naručena, za potražioce · ${ord.length}</div>`+ord.map(row).join(""):"")+(own.length?`<div class="cardg">Naša, za prodaju · ${own.length}</div>`+own.map(row).join(""):""):"";
   $("carEmpty").hidden=soldView||shown.length>0;
   $("cards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCar(b.dataset.id));
 }
