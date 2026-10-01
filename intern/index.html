@@ -339,7 +339,6 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <details class="intro"><summary>ⓘ Kako radi</summary><p>Asistent svakog ponedeljka (i kad zatražite proveru) traži u Švajcarskoj auta koja nama donose <b>bar <span class="minp"></span> € zarade</b>. Svaki oglas ide u četiri koraka: <b>Novo → Idemo da gledamo → Pogledano, razmišljamo → Kupljeno</b>. Kupljeno auto samo prelazi u „Naša auta“. Oglasi koje asistent nađe za nekog potražioca su u kartici tog upita.</p><p>Automatska provera je svakog ponedeljka oko 7:00; zatražena provera i novi upiti se rade u roku od sat vremena (7–21 h). Već upisani oglasi se ne upisuju ponovo, osim posle reseta. Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
     <div class="toolrow" id="aiTools">
       <button class="b" type="button" data-panel="pFind">+ Našao sam oglas sam</button>
-      <button class="b" type="button" data-panel="pShop">Šta tražimo i do koje cene</button>
       <button class="b" type="button" data-panel="pModels">Modeli koje asistent prati</button>
     </div>
     <div class="sheet" id="pFind" hidden><h2>Oglas koji sam našao (javi Stefanu)</h2>
@@ -357,10 +356,6 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <p class="note" id="f_prev"></p>
           <button class="b primary" type="submit">Javi Stefanu</button>
         </form>
-    </div>
-    <div class="sheet" id="pShop" hidden><h2>Šta tražimo i do koje cene</h2>
-      <p class="note" style="margin-top:10px">Za svaki model: za koliko se prodaje u Srbiji i koliko Stefan najviše sme da plati u Švajcarskoj da ostane bar minimalna zarada.</p>
-      <div class="scroll"><table class="shop" id="shopTbl"><thead><tr><th>Model</th><th>Cena u Srbiji, izvor</th><th class="n">Prodaja u RS</th><th class="n">Min. zarada</th><th class="n">Najviše, trgovac</th><th class="n">Privatno lice</th><th>Isplativih</th></tr></thead><tbody></tbody></table></div>
     </div>
     <div class="sheet" id="pModels" hidden><h2>Modeli koje asistent prati</h2>
       <div class="split two" style="margin-top:12px">
@@ -811,7 +806,7 @@ function shopRows(){
 function findsFor(r){return FINDS.filter(f=>(r.ids||[r.id]).includes(f.priceRef)||(!f.priceRef&&r.key.length&&r.key.every(w=>(f.model||"").toLowerCase().includes(w))));}
 function renderShop(){
   const cell=v=>v>0?`<b>${fmt(v)} CHF</b>`:'<span class="neg">ne isplati se</span>';
-  $("shopTbl").tBodies[0].innerHTML=shopRows().map(r=>{const fs=findsFor(r).filter(f=>(f.status||"novo")==="novo").filter(f=>{const p=findProfit(f);return !p||p.post>=p.min;});
+  if($("shopTbl"))$("shopTbl").tBodies[0].innerHTML=shopRows().map(r=>{const fs=findsFor(r).filter(f=>(f.status||"novo")==="novo").filter(f=>{const p=findProfit(f);return !p||p.post>=p.min;});
     return `<tr><td>${esc(r.label)}${r.range?`<span class="sub">${esc(r.range)}</span>`:""}</td><td><span class="sub" style="margin:0">${esc(r.src)}</span></td><td class="n">${r.rs?fmt(r.rs)+" €":"—"}</td><td class="n">${fmt(r.profit)} €</td><td class="n">${r.mb.pending?'<span class="note">čeka asistenta</span>':cell(r.mb.dealer)}</td><td class="n">${r.mb.pending?"—":r.mb.priv>0?fmt(r.mb.priv)+" CHF":'<span class="neg">ne isplati se</span>'}</td><td>${fs.length?`<span class="match">${fs.length} ${fs.length===1?"oglas":"oglasa"}</span>`:'<span class="note">—</span>'}</td></tr>`;}).join("")||`<tr><td colspan="7" class="note">Dodaj model koji asistent prati ili upit, pa se ovde pojavi koliko Stefan sme da plati.</td></tr>`;
   renderPrices(); renderFinds(); renderRun();
 }
