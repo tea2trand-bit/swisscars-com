@@ -13,17 +13,17 @@
 /* Layout: a step-by-step car ledger — header with "Ja sam", tabs (Auta / Potražnja / Pregled / Istorija / Podešavanja). Each car advances through one big "next step" button; colors and type follow the SWISCARS website. */
 :root{
   --bg:#f6f5f2; --paper:#ffffff; --ink:#16191d; --muted:#5d666e; --line:#e6e2da; --soft:#eeece7;
-  --accent:#9a6f2f; --accent-ink:#ffffff; --pos:#1f7a4c; --pos-soft:#e2f2e8; --neg:#a3362b; --neg-soft:#f8e4e1; --warn:#8a6200; --warn-soft:#f6ecd2; --info:#2c5d8f; --info-soft:#e3ecf7;
+  --accent:#9a6f2f; --accent-ink:#ffffff; --pos:#1f7a4c; --pos-soft:#e2f2e8; --neg:#a3362b; --neg-soft:#f8e4e1; --warn:#8a6200; --warn-soft:#f6ecd2; --info:#2c5d8f; --info-soft:#e3ecf7; --btn:#2f6690; --next-bg:#f3f7fb; --next-line:#a9c3d9;
   --f-display:Fraunces,Georgia,serif;
   --f-body:Inter,"Segoe UI",Arial,sans-serif;
   --f-num:"PT Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#161b21; --paper:#1d242b; --ink:#ece8e1; --muted:#a3a9b0; --line:#313a44; --soft:#262e37;
-  --accent:#d7ad64; --accent-ink:#161b21; --pos:#5cc48d; --pos-soft:#17301f; --neg:#ef8a7e; --neg-soft:#3a1d1a; --warn:#e2b04a; --warn-soft:#3a2f14; --info:#8ab8ec; --info-soft:#1d2b3d; color-scheme:dark}}
+  --accent:#d7ad64; --accent-ink:#161b21; --pos:#5cc48d; --pos-soft:#17301f; --neg:#ef8a7e; --neg-soft:#3a1d1a; --warn:#e2b04a; --warn-soft:#3a2f14; --info:#8ab8ec; --info-soft:#1d2b3d; --btn:#6fa3d0; --next-bg:#1a2531; --next-line:#3d5770; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#161b21; --paper:#1d242b; --ink:#ece8e1; --muted:#a3a9b0; --line:#313a44; --soft:#262e37;
-  --accent:#d7ad64; --accent-ink:#161b21; --pos:#5cc48d; --pos-soft:#17301f; --neg:#ef8a7e; --neg-soft:#3a1d1a; --warn:#e2b04a; --warn-soft:#3a2f14; --info:#8ab8ec; --info-soft:#1d2b3d; color-scheme:dark}
+  --accent:#d7ad64; --accent-ink:#161b21; --pos:#5cc48d; --pos-soft:#17301f; --neg:#ef8a7e; --neg-soft:#3a1d1a; --warn:#e2b04a; --warn-soft:#3a2f14; --info:#8ab8ec; --info-soft:#1d2b3d; --btn:#6fa3d0; --next-bg:#1a2531; --next-line:#3d5770; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);padding-inline:16px;padding-block:20px 48px}
@@ -59,9 +59,8 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--soft)}
 tr.sel td{background:var(--soft)}
 .sub{display:block;font-size:13px;color:var(--muted)}
 .pill{display:inline-block;font:13px var(--f-body);padding:2px 9px;border-radius:999px;white-space:nowrap;background:var(--soft);color:var(--ink)}
-.pill.s-pregledan{background:var(--soft)} .pill.s-kupljen,.pill.s-transport,.pill.s-carinjen{background:var(--info-soft);color:var(--info)}
-.pill.s-garaza{background:var(--warn-soft);color:var(--warn)} .pill.s-prodaja{background:var(--accent);color:var(--accent-ink)}
-.pill.s-prodat{background:var(--pos-soft);color:var(--pos)} .pill.s-odustao{background:var(--soft);color:var(--muted);text-decoration:line-through}
+.pill[class*=" s-"]{background:none;color:var(--ink);padding:0;border-radius:0;font-size:14px}
+.pill.s-odustao{color:var(--muted);text-decoration:line-through}
 .pos{color:var(--pos)} .neg{color:var(--neg)}
 form{display:grid;gap:12px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px 14px}
@@ -73,7 +72,7 @@ textarea{min-height:60px;resize:vertical}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 button.b{font:15px var(--f-body);border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:7px;padding:7px 14px;cursor:pointer}
-button.b.primary,a.b.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.b.primary,a.b.primary{background:var(--btn);color:#fff;border-color:var(--btn)}
 button.b.primary:hover{filter:brightness(1.08)}
 button.b.danger{color:var(--neg)}
 button.b.small{padding:4px 10px;font-size:14px}
@@ -102,6 +101,7 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .card:hover{background:var(--soft)}
 .card.sel{background:var(--soft);box-shadow:inset 4px 0 0 var(--accent)}
 .card .cm b{display:block}
+.card .cnext{color:var(--btn);opacity:.75;font-size:14px}
 .card .cn{font-family:var(--f-num);text-align:right;white-space:nowrap}
 .cardh .cn{text-align:right}
 @media (max-width:760px){.cardh{display:none}.card{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"m p" "u u" "n z"}.card .cm{grid-area:m}.card .cst{grid-area:p;text-align:right}.card .cnext{grid-area:n}.card .cprof{grid-area:z}.card .cinv{display:none}.card .cup{grid-area:u}}
@@ -112,10 +112,13 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .chips button{font:14px var(--f-body);border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
 .chips button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .stepper{display:flex;gap:4px;overflow-x:auto;padding-bottom:2px}
-.stepper span{flex:1 0 auto;font-size:12px;padding:6px 8px;border-radius:6px;background:var(--soft);color:var(--muted);white-space:nowrap;text-align:center}
-.stepper span.done{background:var(--pos-soft);color:var(--pos)}
-.stepper span.cur{background:var(--accent);color:var(--accent-ink);font-weight:700}
-.next{border:2px solid var(--accent);border-radius:10px;padding:14px;display:grid;gap:12px}
+.stepper span{flex:1 0 auto;font-size:12px;padding:6px 8px;border-radius:6px;border:1px solid transparent;color:var(--muted);white-space:nowrap;text-align:center;opacity:.6}
+.stepper span.done{background:var(--soft);color:var(--ink);opacity:1}
+.stepper span.done::before{content:"✓ "}
+.stepper span.cur{background:var(--btn);color:#fff;font-weight:700;opacity:1}
+.stepper span.nx{border:1px dashed var(--btn);color:var(--btn);opacity:1}
+.next{border:2px dashed var(--next-line);background:var(--next-bg);border-radius:10px;padding:14px;display:grid;gap:12px}
+.next h3{color:var(--btn)}
 .next h3{display:flex;gap:8px;align-items:center}
 .costrow{display:grid;grid-template-columns:minmax(0,1fr) 7.5em;gap:8px;align-items:center}
 .big{font:700 28px var(--f-num)}
@@ -632,6 +635,7 @@ async function addCost(carId,what,amount,category,currency,receipt){
 }
 
 /* ---------- steps ---------- */
+const TODO={kupljen:"Predati na transport",transport:"Ocariniti u Srbiji",carinjen:"Dovesti u garažu",garaza:"Pripremiti za prodaju",prodaja:"Prodati"};
 function stepFor(c){
   const s=c.status;
   if(s==="pregledan") return {to:"kupljen",title:"Auto je kupljen",fields:[["buyChf","Plaćeno, CHF","number",c.buyChf||""],["seller","Prodavac","seller",c.seller||"dealer"],["boughtDate","Datum kupovine","date",today()]]};
@@ -651,7 +655,7 @@ function renderNext(c){
     if(t==="garage") return `<div class="field"><label for="x_${k}">${l}</label><select id="x_${k}">${["Niš","Sremčica","Ostalo"].map(o=>`<option ${o===v?"selected":""}>${o}</option>`).join("")}</select></div>`;
     return `<div class="field"><label for="x_${k}">${l}</label><input id="x_${k}" type="${t}" value="${esc(v)}" ${t==="number"?'step="50" min="0"':""}></div>`;}).join("");
   const cs=(st.costs||[]).map(([w,a],i)=>`<div class="costrow"><label for="x_cost${i}">${esc(w)}</label><input id="x_cost${i}" type="number" min="0" step="1" value="${a}"></div>`).join("");
-  box.innerHTML=`<h3>Sledeći korak: ${esc(st.title)}</h3>${f?`<div class="grid">${f}</div>`:""}${cs?`<div style="display:grid;gap:6px"><span class="note">Troškovi ovog koraka (€), plaća ${esc(actor())}. Stavi 0 ako nema troška.</span>${cs}</div>`:""}${st.hint?`<p class="note">${esc(st.hint)}</p>`:""}<div class="btns"><button class="b primary" type="button" id="doStep">✓ ${esc(st.title)}</button>${c.status==="pregledan"?'<button class="b" type="button" id="dropCar">Odustajemo od ovog auta</button>':""}</div>`;
+  box.innerHTML=`<h3>Sledeći korak: ${esc(TODO[c.status]||st.title)}</h3>${f?`<div class="grid">${f}</div>`:""}${cs?`<div style="display:grid;gap:6px"><span class="note">Troškovi ovog koraka (€), plaća ${esc(actor())}. Stavi 0 ako nema troška.</span>${cs}</div>`:""}${st.hint?`<p class="note">${esc(st.hint)}</p>`:""}<div class="btns"><button class="b primary" type="button" id="doStep">✓ Urađeno: ${esc(st.title.charAt(0).toLowerCase()+st.title.slice(1))}</button>${c.status==="pregledan"?'<button class="b" type="button" id="dropCar">Odustajemo od ovog auta</button>':""}</div>`;
   $("doStep").onclick=()=>doStep(c,st);
   if($("dropCar")) $("dropCar").onclick=async()=>{try{await db.doc("cars/"+c._id).update({status:"odustao",updated:Date.now()});await logEvent(c._id,"status","Odustali od auta");}catch(e){fail(e);}};
 }
@@ -692,12 +696,12 @@ function renderCards(){
       <span class="cm"><b>${esc(c.model)}</b><span class="sub">${c.year||""}${c.km?" · "+fmt(c.km)+" km":""}</span></span>
       <span class="cup">${ld||c.orderId?`<b>${esc(ld?.name||"potražilac")}</b>${ld?.city?`<span class="sub">${esc(ld.city)}</span>`:""}`:(c.reservation&&c.reservation.name?`<b>${esc(c.reservation.name)}</b><span class="sub">rezervisao${c.reservation.deposit?` · kapara ${fmt(c.reservation.deposit)} €`:""}</span>`:`<span class="note">${c.hidePublic?"skriveno sa sajta":"na sajtu"}</span>`)}</span>
       <span class="cst"><span class="pill s-${esc(c.status)}">${SL[c.status]||esc(c.status)}</span></span>
-      <span class="note cnext">${st?esc(st.title):"—"}</span>
+      <span class="cnext">${st?"→ "+esc(TODO[c.status]||st.title):"—"}</span>
       <span class="cn cinv">${fmt(r.cost)} €</span>
       <span class="cn cprof ${r.post==null?"":r.post>=0?"pos":"neg"}">${r.post==null?"—":sgn(r.post)+" €"}</span></button>`;};
   const isRes=c=>!c.orderId&&c.reservation&&c.reservation.name;
   const ord=shown.filter(c=>c.orderId), res=shown.filter(isRes), own=shown.filter(c=>!c.orderId&&!isRes(c));
-  const head=`<div class="cardh"><span>Auto</span><span>Za koga</span><span>Faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Zarada</span></div>`;
+  const head=`<div class="cardh"><span>Auto</span><span>Za koga</span><span>Trenutna faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Zarada</span></div>`;
   $("cards").innerHTML=shown.length?head+(ord.length?`<div class="cardg">Naručena, za potražioce · ${ord.length}</div>`+ord.map(row).join(""):"")+(res.length?`<div class="cardg">Rezervisana · ${res.length}</div>`+res.map(row).join(""):"")+(own.length?`<div class="cardg">Naša, na sajtu za prodaju · ${own.length}</div>`+own.map(row).join(""):""):"";
   $("carEmpty").hidden=shown.length>0;
   $("cards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCar(b.dataset.id));
@@ -724,7 +728,7 @@ function renderDetail(){
   const c=CARS.find(x=>x._id===curId); if(!c){ if(curId){$("detail").hidden=true;curId=null;} return; }
   $("dTitle").textContent=c.model; $("dSub").textContent=[c.year,c.km?fmt(c.km)+" km":"",c.gear,c.seller==="dealer"?"od trgovca":"privatno",c.place].filter(Boolean).join(" · ");
   const i=idx(c.status);
-  $("stepper").innerHTML=FLOW.map(([s,l],j)=>`<span class="${c.status==="odustao"?"":j<i?"done":j===i?"cur":""}">${l}</span>`).join("");
+  $("stepper").innerHTML=FLOW.map(([s,l],j)=>`<span class="${c.status==="odustao"?"":j<i?"done":j===i?"cur":j===i+1?"nx":""}" ${j===i+1?'title="Sledeći korak"':""}>${l}</span>`).join("");
   if(document.activeElement?.closest?.("#nextBox")==null) renderNext(c);
   if(document.activeElement?.closest?.("#resvBox")==null) renderResv(c);
   renderSpec(c);
