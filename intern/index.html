@@ -406,7 +406,8 @@ a.b{display:inline-block;font:14px var(--f-body);border:1px solid var(--line);ba
           <div class="field"><label for="pw1">Nova lozinka (bar 8 znakova)</label><input id="pw1" type="password" minlength="8" autocomplete="new-password" required></div>
           <div class="field"><label for="pw2">Ponovi lozinku</label><input id="pw2" type="password" minlength="8" autocomplete="new-password" required></div>
         </div>
-        <div class="btns"><button class="b primary" type="submit">Promeni lozinku</button></div>
+        <div class="btns"><button class="b primary" type="submit" id="pwBtn">Promeni lozinku</button></div>
+        <p class="note" id="pwMsg" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
@@ -454,7 +455,7 @@ const actor=()=>me?.name||"vlasnik";
 const locOf=name=>team().find(p=>p.name===name)?.location||"Ostalo";
 const isDemo=()=>[...CARS,...COSTS,...LEADS,...EVENTS].some(x=>x.demo);
 const idx=s=>FLOW.findIndex(f=>f[0]===s);
-function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2600);}
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,4500);}
 function fail(e){console.warn(e);const c=e&&e.code;
   if(c==="invalid_argument"||c==="not_granted"||c==="42501"){canWrite=false;applyWrite();toast("Nemaš dozvolu za upis. Javi se Ivanu.");}
   else if(c==="PGRST301"||/JWT/.test(e&&e.message||"")){toast("Prijava je istekla. Prijavi se ponovo.");setTimeout(()=>location.reload(),1500);}
@@ -822,9 +823,13 @@ $("userForm").addEventListener("submit",async e=>{e.preventDefault();const btn=e
     $("usersMsg").innerHTML=`Nalog „${esc(name)}“ je napravljen. Pošalji: adresa <b>swiscars.com/intern</b>, email <b>${esc(email.toLowerCase())}</b>, lozinka <span class="pwshow">${esc(pw)}</span>`;
     e.target.reset();$("u_pw").value=genPw();await loadMembers();}
   catch(err){$("usersMsg").textContent=err.message;}finally{btn.disabled=false;}});
-$("pwForm").addEventListener("submit",async e=>{e.preventDefault();
-  if($("pw1").value!==$("pw2").value){toast("Lozinke se ne poklapaju");return;}
-  try{await SC.changePassword($("pw1").value);e.target.reset();toast("Lozinka promenjena");}catch(err){toast(err.message);}});
+$("pwForm").addEventListener("submit",async e=>{e.preventDefault();const m=$("pwMsg"),b=$("pwBtn");
+  const say=(t,ok)=>{m.textContent=t;m.className="note "+(ok?"pos":"neg");};
+  if($("pw1").value!==$("pw2").value){say("Lozinke se ne poklapaju. Upiši istu lozinku u oba polja.",false);return;}
+  b.disabled=true;b.textContent="Čuvam…";
+  try{await SC.changePassword($("pw1").value);e.target.reset();say(`✓ Lozinka je promenjena (${new Date().toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}). Od sada se prijavljuješ novom lozinkom.`,true);toast("Lozinka promenjena");}
+  catch(err){say(/different|same/i.test(err.message)?"Nova lozinka mora biti drugačija od stare.":/weak|short|characters/i.test(err.message)?"Lozinka je preslaba. Uzmi bar 8 znakova, sa slovima i brojevima.":"Lozinka nije promenjena: "+err.message,false);}
+  finally{b.disabled=false;b.textContent="Promeni lozinku";}});
 $("logout").onclick=()=>SC.signOut();
 
 /* ---------- settings ---------- */
