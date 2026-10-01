@@ -1,0 +1,72 @@
+/* ── Cars on offer (/auta) ── */
+[hidden] { display: none !important }
+.cars-head { padding: 64px 0 18px; background: linear-gradient(180deg, #fff, var(--bg)); border-bottom: 1px solid var(--line) }
+.cars-head h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; margin: 10px 0 12px; letter-spacing: -.01em }
+.cars-lead { max-width: 62ch; color: var(--muted); font-size: 17px; margin: 0 0 26px }
+.cars-filter { display: flex; flex-wrap: wrap; gap: 8px }
+.cars-filter button { font: 600 14px Inter, 'Segoe UI', sans-serif; border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 999px; padding: 9px 16px; cursor: pointer }
+.cars-filter button b { font-weight: 600; color: var(--muted); margin-left: 4px }
+.cars-filter button[aria-pressed="true"] { background: var(--charcoal); border-color: var(--charcoal); color: #fff }
+.cars-filter button[aria-pressed="true"] b { color: var(--gold2) }
+
+.cars-list { padding: 34px 0 80px }
+.cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px }
+.car-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; cursor: pointer; transition: transform .2s, box-shadow .2s; text-align: left; padding: 0; font: inherit; color: inherit }
+.car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md) }
+.car-card:focus-visible { outline: 3px solid var(--gold2); outline-offset: 2px }
+.car-photo { position: relative; aspect-ratio: 4 / 3; background: var(--soft); overflow: hidden }
+.car-photo img { width: 100%; height: 100%; object-fit: cover; display: block }
+.car-photo .ph { position: absolute; inset: 0; display: grid; place-items: center; color: #b9b2a6 }
+.car-photo .ph svg { width: 42%; height: auto }
+.car-photo .count { position: absolute; right: 10px; bottom: 10px; background: rgba(22,25,29,.72); color: #fff; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px }
+.car-badge { position: absolute; left: 10px; top: 10px; font-size: 12px; font-weight: 700; letter-spacing: .03em; padding: 5px 11px; border-radius: 999px; background: #fff; color: var(--charcoal); box-shadow: 0 2px 8px rgba(0,0,0,.12) }
+.car-badge.ready { background: linear-gradient(120deg, var(--gold2), var(--gold)); color: #1a1205 }
+.car-info { padding: 16px 18px 18px; display: grid; gap: 8px; flex: 1 }
+.car-info h2 { font-family: Inter, 'Segoe UI', sans-serif; font-size: 19px; font-weight: 700; margin: 0; line-height: 1.25 }
+.car-meta { color: var(--muted); font-size: 14px; margin: 0 }
+.car-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line) }
+.car-price { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 24px; margin: 0; color: var(--text) }
+.car-price.ask { font-family: Inter, 'Segoe UI', sans-serif; font-size: 15px; font-weight: 600; color: var(--muted) }
+.car-more { font-size: 13px; font-weight: 600; color: var(--gold) }
+
+.car-track { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px }
+.car-track li { font-size: 11px; line-height: 1.3; color: #9a948a; padding-top: 7px; border-top: 3px solid var(--line) }
+.car-track li.done { color: var(--muted); border-top-color: var(--gold2) }
+.car-track li.now { color: var(--text); font-weight: 700; border-top-color: var(--gold) }
+
+.cars-empty { text-align: center; padding: 50px 20px; background: #fff; border: 1px dashed var(--line); border-radius: var(--r-md); display: grid; gap: 12px; justify-items: center }
+.cars-empty h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; margin: 0 }
+.cars-empty p { margin: 0; color: var(--muted); max-width: 52ch }
+.cars-note { color: var(--muted); font-size: 14px; margin: 26px 0 0; max-width: 70ch }
+
+.car-dlg { border: 0; padding: 0; border-radius: var(--r-lg); width: min(980px, 94vw); max-height: 92vh; box-shadow: var(--shadow-lg); background: #fff; color: var(--text) }
+.car-dlg::backdrop { background: rgba(18,22,28,.6); backdrop-filter: blur(3px) }
+.dlg-inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); max-height: 92vh }
+.dlg-close { position: absolute; right: 12px; top: 10px; z-index: 2; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); font-size: 26px; line-height: 1; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.15) }
+.dlg-gallery { background: var(--soft); overflow-y: auto; max-height: 92vh; display: grid; gap: 4px; align-content: start }
+.dlg-gallery img { width: 100%; display: block; aspect-ratio: 4 / 3; object-fit: cover }
+.dlg-gallery .ph { aspect-ratio: 4 / 3; display: grid; place-items: center; color: #b9b2a6 }
+.dlg-gallery .ph svg { width: 40% }
+.dlg-body { padding: 28px 26px; overflow-y: auto; max-height: 92vh; display: grid; gap: 12px; align-content: start }
+.dlg-body h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 28px; line-height: 1.15; margin: 0; padding-right: 36px }
+.dlg-body h3 { margin: 8px 0 0; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted) }
+.car-stage { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gold) }
+.car-specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin: 6px 0 0 }
+.car-specs div { display: grid }
+.car-specs dt { font-size: 12px; color: var(--muted) }
+.car-specs dd { margin: 0; font-weight: 600 }
+.car-equip { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px }
+.car-equip li { font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 11px; background: var(--bg) }
+.dlg-body .btn { margin-top: 8px; justify-self: start }
+
+@media (max-width: 760px) {
+  .cars-head { padding: 40px 0 14px }
+  .cars-lead { font-size: 15.5px }
+  .cars-grid { grid-template-columns: 1fr; gap: 16px }
+  .dlg-inner { grid-template-columns: 1fr; max-height: none }
+  .car-dlg { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; margin: 0 }
+  .dlg-gallery { max-height: none; grid-auto-flow: column; grid-auto-columns: 88%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory }
+  .dlg-gallery img, .dlg-gallery .ph { scroll-snap-align: start }
+  .dlg-body { max-height: none; padding: 20px 16px 28px }
+  .dlg-inner { overflow-y: auto; height: 100% }
+}
