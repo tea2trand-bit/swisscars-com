@@ -94,6 +94,8 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .cards:empty{display:none}
 .card,.cardh{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) 170px minmax(0,1.3fr) 120px 100px;gap:6px 14px;align-items:center;padding:10px 14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;font:inherit;color:inherit}
 .card:last-child{border-bottom:0}
+.resv{border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:8px}
+.resv .on{background:var(--warn-soft);border-radius:8px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
 .cardg{padding:8px 14px;font-weight:600;font-size:14px;border-bottom:1px solid var(--line);background:var(--paper);color:var(--accent)}
 .cardh{font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;padding-top:8px;padding-bottom:8px;background:var(--soft)}
 .card{cursor:pointer}
@@ -298,6 +300,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <div class="top"><div><h2 id="dTitle"></h2><span class="sub" id="dSub"></span></div><button class="b small" type="button" id="dClose">Zatvori</button></div>
           <div class="stepper" id="stepper"></div>
           <div class="next" id="nextBox"></div>
+          <div class="resv" id="resvBox" hidden></div>
         </div>
         <div class="sheet" id="specBox">
           <h3>Kartica auta</h3>
@@ -683,14 +686,15 @@ function renderCards(){
   const row=c=>{const r=carCalc(c),st=stepFor(c),ld=ordOf(c);
     return `<button type="button" class="card${c._id===curId?" sel":""}" data-id="${esc(c._id)}">
       <span class="cm"><b>${esc(c.model)}</b><span class="sub">${c.year||""}${c.km?" · "+fmt(c.km)+" km":""}</span></span>
-      <span class="cup">${ld||c.orderId?`<b>${esc(ld?.name||"potražilac")}</b>${ld?.city?`<span class="sub">${esc(ld.city)}</span>`:""}`:`<span class="note">naše</span>`}</span>
+      <span class="cup">${ld||c.orderId?`<b>${esc(ld?.name||"potražilac")}</b>${ld?.city?`<span class="sub">${esc(ld.city)}</span>`:""}`:(c.reservation&&c.reservation.name?`<b>${esc(c.reservation.name)}</b><span class="sub">rezervisao${c.reservation.deposit?` · kapara ${fmt(c.reservation.deposit)} €`:""}</span>`:`<span class="note">${c.hidePublic?"skriveno sa sajta":"na sajtu"}</span>`)}</span>
       <span class="cst"><span class="pill s-${esc(c.status)}">${SL[c.status]||esc(c.status)}</span></span>
       <span class="note cnext">${st?esc(st.title):"—"}</span>
       <span class="cn cinv">${fmt(r.cost)} €</span>
       <span class="cn cprof ${r.post==null?"":r.post>=0?"pos":"neg"}">${r.post==null?"—":sgn(r.post)+" €"}</span></button>`;};
-  const ord=shown.filter(c=>c.orderId), own=shown.filter(c=>!c.orderId);
+  const isRes=c=>!c.orderId&&c.reservation&&c.reservation.name;
+  const ord=shown.filter(c=>c.orderId), res=shown.filter(isRes), own=shown.filter(c=>!c.orderId&&!isRes(c));
   const head=`<div class="cardh"><span>Auto</span><span>Za koga</span><span>Faza</span><span>Sledeći korak</span><span class="cn">Uloženo</span><span class="cn">Zarada</span></div>`;
-  $("cards").innerHTML=shown.length?head+(ord.length?`<div class="cardg">Naručena, za potražioce · ${ord.length}</div>`+ord.map(row).join(""):"")+(own.length?`<div class="cardg">Naša, za prodaju · ${own.length}</div>`+own.map(row).join(""):""):"";
+  $("cards").innerHTML=shown.length?head+(ord.length?`<div class="cardg">Naručena, za potražioce · ${ord.length}</div>`+ord.map(row).join(""):"")+(res.length?`<div class="cardg">Rezervisana · ${res.length}</div>`+res.map(row).join(""):"")+(own.length?`<div class="cardg">Naša, na sajtu za prodaju · ${own.length}</div>`+own.map(row).join(""):""):"";
   $("carEmpty").hidden=soldView||shown.length>0;
   $("cards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCar(b.dataset.id));
 }
@@ -698,12 +702,27 @@ function openCar(id){curId=id;$("detail").hidden=false;fillCarForm();render();$(
 function closeCar(){curId=null;$("detail").hidden=true;render();}
 $("dClose").onclick=closeCar;
 
+function renderResv(c){const box=$("resvBox");
+  if(["prodat","odustao"].includes(c.status)){box.hidden=true;return;}
+  box.hidden=false;
+  if(c.orderId){const l=LEADS.find(x=>x._id===c.orderId);box.innerHTML=`<div class="on"><span>Naručeno za: <b>${esc(l?.name||"potražioca")}</b>${l?.phone?" · "+esc(l.phone):""}</span></div>`;return;}
+  const r=c.reservation;
+  if(r&&r.name){box.innerHTML=`<div class="on"><span>Rezervisao: <b>${esc(r.name)}</b>${r.phone?" · "+esc(r.phone):""}${r.deposit?` · kapara ${fmt(r.deposit)} €`:""}<span class="sub">${r.at?new Date(r.at).toLocaleDateString("sr-Latn-RS"):""}${r.by?", upisao "+esc(r.by):""} · na sajtu piše „Rezervisano“</span></span><button class="b small" type="button" id="rvDel">Ukloni rezervaciju</button></div>`;
+    $("rvDel").onclick=async()=>{const b=$("rvDel");if(!b.dataset.armed){b.dataset.armed=1;b.textContent="Potvrdi: ukloni";setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent="Ukloni rezervaciju";}},5000);return;}
+      b.disabled=true;try{await db.doc("cars/"+c._id).update({reservation:null,updated:Date.now()});await logEvent(c._id,"status",`Uklonjena rezervacija (${r.name})`);toast("Rezervacija uklonjena");}catch(e){b.disabled=false;fail(e);}};
+    return;}
+  box.innerHTML=`<details class="more"><summary>Rezerviši ovo auto (kupac unapred, pre oglasa u Srbiji)</summary><form id="rvForm" autocomplete="off" style="margin-top:8px;display:grid;gap:8px"><div class="grid"><div class="field"><label for="rv_name">Ime i prezime</label><input id="rv_name" required></div><div class="field"><label for="rv_phone">Telefon</label><input id="rv_phone" type="tel"></div><div class="field"><label for="rv_dep">Kapara, € (ako je data)</label><input id="rv_dep" type="number" min="0" step="50"></div></div><div class="btns"><button class="b primary" type="submit">Sačuvaj rezervaciju</button></div></form></details>`;
+  $("rvForm").onsubmit=async e=>{e.preventDefault();const name=$("rv_name").value.trim();if(!name)return;const dep=+$("rv_dep").value||null;
+    try{await db.doc("cars/"+c._id).update({reservation:{name,phone:$("rv_phone").value.trim(),deposit:dep,at:Date.now(),by:actor()},updated:Date.now()});
+      await logEvent(c._id,"status",`Rezervisao ${name}${dep?", kapara "+fmt(dep)+" €":""}`);document.activeElement?.blur?.();toast("Rezervacija sačuvana. Na sajtu piše „Rezervisano“.");}catch(err){fail(err);}};
+}
 function renderDetail(){
   const c=CARS.find(x=>x._id===curId); if(!c){ if(curId){$("detail").hidden=true;curId=null;} return; }
   $("dTitle").textContent=c.model; $("dSub").textContent=[c.year,c.km?fmt(c.km)+" km":"",c.gear,c.seller==="dealer"?"od trgovca":"privatno",c.place].filter(Boolean).join(" · ");
   const i=idx(c.status);
   $("stepper").innerHTML=FLOW.map(([s,l],j)=>`<span class="${c.status==="odustao"?"":j<i?"done":j===i?"cur":""}">${l}</span>`).join("");
   if(document.activeElement?.closest?.("#nextBox")==null) renderNext(c);
+  if(document.activeElement?.closest?.("#resvBox")==null) renderResv(c);
   renderSpec(c);
   const r=carCalc(c), m=MARKET[c.model];
   let sale="";

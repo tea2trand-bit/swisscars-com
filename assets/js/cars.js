@@ -8,15 +8,15 @@
   const photoUrl = p => /^https?:/.test(p) ? p : `${SB_URL}/storage/v1/object/public/sc-photos/${p.split("/").map(encodeURIComponent).join("/")}`;
 
   const L = {
-    sr: { stage: { kupljen: "Kupljen u Švajcarskoj", transport: "Na putu ka Srbiji", carinjen: "Na carini", garaza: "Priprema u Srbiji", prodaja: "Spremno za prodaju" },
+    sr: { reserved: "Rezervisano", stage: { kupljen: "Kupljen u Švajcarskoj", transport: "Na putu ka Srbiji", carinjen: "Na carini", garaza: "Priprema u Srbiji", prodaja: "Spremno za prodaju" },
       track: ["Kupljen", "Transport", "Carina", "Priprema", "Spremno"], ask: "Cena na upit", soon: "Cena uskoro", photos: "fotografija", details: "Detalji →",
       spec: { year: "Godište", firstReg: "Prva registracija", km: "Kilometraža", engine: "Motor", power: "Snaga", fuel: "Gorivo", gear: "Menjač", body: "Karoserija", drive: "Pogon", doors: "Vrata", euro: "Emisiona klasa", color: "Boja", keys: "Ključeva", serviceBook: "Servisna knjiga" },
       close: "Zatvori", noEquip: "Oprema po dogovoru — pitajte nas." , locale: "sr-Latn-RS" },
-    de: { stage: { kupljen: "In der Schweiz gekauft", transport: "Unterwegs nach Serbien", carinjen: "Beim Zoll", garaza: "Aufbereitung in Serbien", prodaja: "Verkaufsbereit" },
+    de: { reserved: "Reserviert", stage: { kupljen: "In der Schweiz gekauft", transport: "Unterwegs nach Serbien", carinjen: "Beim Zoll", garaza: "Aufbereitung in Serbien", prodaja: "Verkaufsbereit" },
       track: ["Gekauft", "Transport", "Zoll", "Aufbereitung", "Bereit"], ask: "Preis auf Anfrage", soon: "Preis folgt", photos: "Fotos", details: "Details →",
       spec: { year: "Baujahr", firstReg: "Erstzulassung", km: "Kilometer", engine: "Motor", power: "Leistung", fuel: "Treibstoff", gear: "Getriebe", body: "Karosserie", drive: "Antrieb", doors: "Türen", euro: "Abgasnorm", color: "Farbe", keys: "Schlüssel", serviceBook: "Serviceheft" },
       close: "Schliessen", noEquip: "Ausstattung auf Anfrage.", locale: "de-CH" },
-    en: { stage: { kupljen: "Bought in Switzerland", transport: "On the way to Serbia", carinjen: "At customs", garaza: "Being prepared in Serbia", prodaja: "Ready for sale" },
+    en: { reserved: "Reserved", stage: { kupljen: "Bought in Switzerland", transport: "On the way to Serbia", carinjen: "At customs", garaza: "Being prepared in Serbia", prodaja: "Ready for sale" },
       track: ["Bought", "Transport", "Customs", "Preparation", "Ready"], ask: "Price on request", soon: "Price coming soon", photos: "photos", details: "Details →",
       spec: { year: "Year", firstReg: "First registration", km: "Mileage", engine: "Engine", power: "Power", fuel: "Fuel", gear: "Gearbox", body: "Body", drive: "Drive", doors: "Doors", euro: "Emission class", color: "Colour", keys: "Keys", serviceBook: "Service book" },
       close: "Close", noEquip: "Equipment on request.", locale: "en-GB" },
@@ -48,6 +48,7 @@
       return `<button type="button" class="car-card" data-car="${esc(c.id)}" aria-label="${esc(c.model)}">
         <div class="car-photo">${ph.length ? `<img src="${esc(photoUrl(ph[0]))}" alt="" loading="lazy">` : `<div class="ph">${PH}</div>`}
           <span class="car-badge ${c.stage === "ready" ? "ready" : ""}">${esc(T().stage[c.status] || "")}</span>
+          ${c.reserved ? `<span class="car-badge res">${esc(T().reserved)}</span>` : ""}
           ${ph.length > 1 ? `<span class="count">${ph.length} ${esc(T().photos)}</span>` : ""}</div>
         <div class="car-info"><h2>${esc(c.model)}</h2><p class="car-meta">${esc(meta(c))}</p>
           <ol class="car-track" aria-hidden="true">${track(c)}</ol>
@@ -62,7 +63,7 @@
     const c = CARS.find(x => x.id === id); if (!c) return;
     const t = T(), ph = c.photos || [];
     $("dlgGallery").innerHTML = ph.length ? ph.map((p, i) => `<img src="${esc(photoUrl(p))}" alt="${esc(c.model)} ${i + 1}" loading="${i < 2 ? "eager" : "lazy"}">`).join("") : `<div class="ph">${PH}</div>`;
-    $("dlgStage").textContent = t.stage[c.status] || "";
+    $("dlgStage").textContent = (t.stage[c.status] || "") + (c.reserved ? " · " + t.reserved : "");
     $("dlgTitle").textContent = c.model;
     $("dlgPrice").textContent = price(c); $("dlgPrice").className = "car-price" + (c.price ? "" : " ask");
     $("dlgTrack").innerHTML = track(c);

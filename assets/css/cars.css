@@ -20,6 +20,7 @@
 .car-photo .ph svg { width: 42%; height: auto }
 .car-photo .count { position: absolute; right: 10px; bottom: 10px; background: rgba(22,25,29,.72); color: #fff; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px }
 .car-badge { position: absolute; left: 10px; top: 10px; font-size: 12px; font-weight: 700; letter-spacing: .03em; padding: 5px 11px; border-radius: 999px; background: #fff; color: var(--charcoal); box-shadow: 0 2px 8px rgba(0,0,0,.12) }
+.car-badge.res { left: auto; right: 10px; background: #8a2c22; color: #fff }
 .car-badge.ready { background: linear-gradient(120deg, var(--gold2), var(--gold)); color: #1a1205 }
 .car-info { padding: 16px 18px 18px; display: grid; gap: 8px; flex: 1 }
 .car-info h2 { font-family: Inter, 'Segoe UI', sans-serif; font-size: 19px; font-weight: 700; margin: 0; line-height: 1.25 }
