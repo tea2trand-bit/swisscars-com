@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Auta iz Švajcarske | SWISCARS GmbH</title>
-<meta name="description" content="Proverena auta iz Švajcarske: spremna za prodaju u Srbiji ili na putu. Fotografije, oprema i prodajna cena bez provizije.">
+<title>Vaš upit | SWISCARS GmbH</title>
+<meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
@@ -38,49 +38,32 @@
 <main class="cars-page">
 <section class="cars-head">
   <div class="container">
-    <p class="section-kicker" data-i18n="carsKicker">Ponuda</p>
-    <h1 data-i18n="carsTitle">Auta iz Švajcarske</h1>
-    <p class="cars-lead" data-i18n="carsLead">Vozila koja smo izabrali i proverili u Švajcarskoj. Neka su već u Srbiji i spremna za prodaju, a neka su na putu, pa uvek vidite gde je auto u ovom trenutku.</p>
-    <div class="cars-filter" role="group" aria-label="Filter">
-      <button type="button" data-f="all" aria-pressed="true"><span data-i18n="carsAll">Sva auta</span> <b id="n-all"></b></button>
-      <button type="button" data-f="ready" aria-pressed="false"><span data-i18n="carsReady">Spremno za prodaju</span> <b id="n-ready"></b></button>
-      <button type="button" data-f="onway" aria-pressed="false"><span data-i18n="carsOnway">Na putu</span> <b id="n-onway"></b></button>
-    </div>
+    <p class="section-kicker" id="u_kicker">Vaš upit</p>
+    <h1 id="u_title">Vaš upit</h1>
+    <p class="cars-lead" id="u_lead"></p>
   </div>
 </section>
-
 <section class="cars-list">
-  <div class="container">
-    <div id="cars" class="cars-grid" aria-live="polite"></div>
-    <div id="carsEmpty" class="cars-empty" hidden>
-      <h2 data-i18n="carsEmptyTitle">Trenutno nema auta u ovoj grupi</h2>
-      <p data-i18n="carsEmptyText">Recite nam koji model, budžet i kilometražu tražite. Pronaći ćemo ga i proveriti u Švajcarskoj.</p>
-      <a class="btn btn-gold" href="/#contact" data-i18n="carsAsk">Javite šta tražite</a>
+  <div class="container up-wrap">
+    <div id="u_err" class="cars-empty" hidden><h2 id="u_errT"></h2><p id="u_errP"></p><a class="btn btn-gold" href="/#contact" id="u_errB"></a></div>
+    <div id="u_body" hidden>
+      <div class="up-card">
+        <ol class="up-track" id="u_track"></ol>
+        <p class="up-now" id="u_now"></p>
+        <dl class="car-specs" id="u_req"></dl>
+      </div>
+      <div id="u_car"></div>
+      <div id="u_props"></div>
+      <div class="up-card up-contact">
+        <h2 id="u_qT"></h2>
+        <p id="u_qP"></p>
+        <div class="hero-actions" style="margin:0"><a class="btn btn-gold" href="https://wa.me/41799056164" target="_blank" rel="noopener">WhatsApp</a><a class="btn btn-outline up-out" href="mailto:info@swiscars.com">info@swiscars.com</a><a class="btn btn-outline up-out" href="tel:+41799056164">+41 79 905 61 64</a></div>
+      </div>
     </div>
-    <p id="carsErr" class="cars-empty" hidden data-i18n="carsErr">Ponuda trenutno ne može da se učita. Osvežite stranicu za minut.</p>
-    <p class="cars-note" data-i18n="carsNote">Prikazana cena je prodajna cena u Srbiji, bez dodatne provizije. Za svako auto dobijate podatke o kupovini, servisnu istoriju i fotografije.</p>
   </div>
 </section>
 </main>
 
-<dialog id="carDlg" class="car-dlg" aria-labelledby="dlgTitle">
-  <div class="dlg-inner">
-    <button type="button" class="dlg-close" id="dlgClose" aria-label="Zatvori">×</button>
-    <div class="dlg-gallery" id="dlgGallery"></div>
-    <div class="dlg-body">
-      <p class="car-stage" id="dlgStage"></p>
-      <h2 id="dlgTitle"></h2>
-      <p class="car-price" id="dlgPrice"></p>
-      <ol class="car-track" id="dlgTrack"></ol>
-      <dl class="car-specs" id="dlgSpecs"></dl>
-      <h3 data-i18n="carsEquip">Oprema</h3>
-      <ul class="car-equip" id="dlgEquip"></ul>
-      <a class="btn btn-gold" id="dlgAsk" href="/#contact" data-i18n="carsAskCar">Pitajte za ovo auto</a>
-    </div>
-  </div>
-</dialog>
-
 <footer><div class="brand footer-brand"><span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span><span><strong>SWISCARS</strong><small>Premium Selection</small></span></div><div class="footer-company"><strong>SWISCARS GmbH</strong><span data-i18n="footerText">Vaš tehnički ekspert za proverena vozila iz Švajcarske.</span><span>Switzerland</span></div><div class="footer-social"><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none"/></svg></a><a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M14 9V7.2c0-.8.5-1.2 1.3-1.2H17V3h-2.4C12 3 11 4.7 11 6.8V9H9v3h2v9h3v-9h2.2l.5-3H14z" fill="currentColor" stroke="none"/></svg></a><a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="2" y="5.5" width="20" height="13" rx="3.5"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor" stroke="none"/></svg></a></div><div class="footer-legal"><a href="/impressum" data-i18n="navImpressum">Impresum</a><a href="/agb" data-i18n="navAgb">Uslovi</a><a href="/intern/" data-i18n="navTeam" rel="nofollow">Za tim</a></div><small>&copy; 2026 SWISCARS GmbH. <span data-i18n="footerRights">Sva prava zadržana.</span></small></footer>
-
-<script src="/assets/js/translations.js"></script><script src="/assets/js/main.js"></script><script src="/assets/js/cars.js"></script>
+<script src="/assets/js/translations.js"></script><script src="/assets/js/main.js"></script><script src="/assets/js/upit.js"></script>
 </body></html>
