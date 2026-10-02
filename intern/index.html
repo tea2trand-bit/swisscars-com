@@ -126,6 +126,8 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .dtiles button .k{font-size:12px;color:var(--muted)}
 .dtiles button .v{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dtiles button[aria-pressed=true]{border-color:var(--btn);box-shadow:inset 0 -3px 0 var(--btn);background:var(--soft)}
+#usersTbl td:last-child{text-align:right}
+#usersTbl td:last-child .btns{justify-content:flex-end}
 #podTiles button.only{align-content:center}
 #podTiles{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 #podTiles button{min-height:48px}
@@ -525,7 +527,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <h2 style="margin:0">Administracija</h2>
     <div class="dtiles" id="podTiles"></div>
     <div class="sheet ppanel" data-pp="users" id="usersBox">
-      <div class="top"><h2>Tim</h2><div class="btns"><button class="b small" type="button" id="pwToggle">Lozinka</button><button class="b small primary" type="button" id="nuBtn" hidden>+ Novi nalog</button></div></div>
+      <div class="top"><h2>Tim</h2><div class="btns"><button class="b small primary" type="button" id="nuBtn" hidden>+ Novi nalog</button></div></div>
       <div class="subpanel" id="pwBox" hidden><p class="note" style="margin:0">Promena tvoje lozinke.</p><form id="pwForm" autocomplete="off">
         <div class="grid">
           <div class="field"><label for="pw1">Nova lozinka (bar 8 znakova)</label><input id="pw1" type="password" minlength="8" autocomplete="new-password" required></div>
@@ -1350,7 +1352,8 @@ const genPw=()=>{const a="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ2345678
 async function loadMembers(){try{MEMBERS=await SC.members();}catch(e){console.warn(e);}renderUsers();fillSettings();render();}
 function renderUsers(){const admin=me?.role==="admin";
   $("nuBtn").hidden=!admin;if(!admin)$("newUserBox").hidden=true;
-  $("usersTbl").tBodies[0].innerHTML=MEMBERS.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.email)}</td><td>${esc(m.location||"")}</td><td>${m.role==="admin"?"Administrator":"Član"}${m.active?"":' · <span class="neg">isključen</span>'}</td><td>${admin&&m.user_id!==me?.id?`<div class="btns"><button class="b small" type="button" data-upw="${esc(m.user_id)}">Nova lozinka</button><button class="b small" type="button" data-uact="${esc(m.user_id)}">${m.active?"Isključi":"Uključi"}</button></div>`:""}</td></tr>`).join("");
+  $("usersTbl").tBodies[0].innerHTML=MEMBERS.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.email)}</td><td>${esc(m.location||"")}</td><td>${m.role==="admin"?"Administrator":"Član"}${m.active?"":' · <span class="neg">isključen</span>'}</td><td>${admin&&m.user_id!==me?.id?`<div class="btns"><button class="b small" type="button" data-upw="${esc(m.user_id)}">Nova lozinka</button><button class="b small" type="button" data-uact="${esc(m.user_id)}">${m.active?"Isključi":"Uključi"}</button></div>`:m.user_id===me?.id?`<div class="btns" style="justify-content:flex-end"><button class="b small" type="button" data-mypw>Lozinka</button></div>`:""}</td></tr>`).join("");
+  $("usersTbl").querySelectorAll("[data-mypw]").forEach(b=>b.onclick=()=>{$("pwBox").hidden=!$("pwBox").hidden;$("newUserBox").hidden=true;if(!$("pwBox").hidden)$("pw1").focus();});
   $("usersTbl").querySelectorAll("[data-upw]").forEach(b=>b.onclick=async()=>{const m=MEMBERS.find(x=>x.user_id===b.dataset.upw);const pw=genPw();b.disabled=true;
     try{await SC.updateMember(m.user_id,m.name,m.location,m.role,m.active,pw);$("usersMsg").innerHTML=`Nova lozinka za ${esc(m.name)}: <span class="pwshow">${pw}</span> Pošalji je njemu; stara više ne važi.`;}catch(e){$("usersMsg").textContent=e.message;}finally{b.disabled=false;}});
   $("usersTbl").querySelectorAll("[data-uact]").forEach(b=>b.onclick=async()=>{const m=MEMBERS.find(x=>x.user_id===b.dataset.uact);b.disabled=true;
@@ -1388,7 +1391,6 @@ function renderPodTiles(){const d=isDemo();
   $("podTiles").innerHTML=T.map(([k,l,v])=>v?`<button type="button" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="k">${l}</span><span class="v">${esc(v)}</span></button>`:`<button type="button" class="only" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="v">${l}</span></button>`).join("");
   $("podTiles").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>{podPanel=b.dataset.pt;renderPodTiles();});
   document.querySelectorAll("#t-pod .ppanel").forEach(p=>p.hidden=p.dataset.pp!==podPanel);}
-$("pwToggle").onclick=()=>{$("pwBox").hidden=!$("pwBox").hidden;$("newUserBox").hidden=true;if(!$("pwBox").hidden)$("pw1").focus();};
 $("nuBtn").onclick=()=>{$("pwBox").hidden=true;$("newUserBox").hidden=!$("newUserBox").hidden;if(!$("newUserBox").hidden)$("u_name").focus();};
 $("iam").onchange=()=>{IAM=$("iam").value;try{localStorage.setItem("sc_iam",IAM);}catch(e){}render();};
 $("setForm").addEventListener("submit",async e=>{e.preventDefault();const body={};SETF.forEach(([k])=>{const v=parseFloat($("s_"+k).value);body[k]=isNaN(v)?DEF[k]:v;});
