@@ -184,6 +184,7 @@ details.intro summary::-webkit-details-marker{display:none}
 details.intro[open] summary{margin-bottom:4px}
 details.intro p{margin:0 0 4px}
 #runInfo{margin:0}
+.prog{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:3px;font-size:13px;color:var(--muted)}.prog li.ok{color:var(--ink)}.prog li.wait{color:var(--btn)}.prog .tm{display:inline-block;min-width:44px;font-variant-numeric:tabular-nums}
 .intro b{color:var(--ink)}
 .user{display:flex;gap:10px;align-items:center;font-size:14px}
 .user .nm{display:flex;gap:6px;align-items:center;font:500 14px var(--f-body);color:var(--ink);background:none;border:1px solid transparent;border-radius:7px;padding:4px 8px;cursor:pointer}
@@ -427,9 +428,9 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
             <div class="angrid"><div class="field"><label for="anCnt">Koliko modela</label><select id="anCnt"><option>3</option><option selected>5</option><option>8</option><option>10</option></select></div>
             <div class="field"><label for="anMar">Zarada od, €</label><input id="anMar" type="number" min="0" step="100"></div>
             <div class="field"><label for="anAge">Starost</label><select id="anAge"><option value="mix">Mešano</option><option value="0-5">Do 5 godina</option><option value="5-10">5–10 godina</option><option value="10-15">10–15 godina</option></select></div></div>
-            <p class="note" id="anInfo" style="margin:0"></p></div>
+            <div class="note" id="anInfo"></div></div>
           <form id="priceForm" class="addbox" autocomplete="off" hidden>
-          <h3>Traži ove modele</h3><p class="note" style="margin:0">Upiši model, npr. VW Golf 6 1.6 TDI, 2010–2012, i klikni „Traži“. Može i više modela, jedan po jedan. Asistent u roku od sat vremena (7–21 h) traži oglase samo za te modele.</p><p class="note" id="tgInfo" style="margin:0" hidden></p>
+          <h3>Traži ove modele</h3><p class="note" style="margin:0">Upiši model, npr. VW Golf 6 1.6 TDI, 2010–2012, i klikni „Traži“. Može i više modela, jedan po jedan. Asistent u roku od sat vremena (7–21 h) traži oglase samo za te modele.</p><div class="note" id="tgInfo" hidden></div>
           <div class="field"><label for="p_model">Model i motor</label><input id="p_model" list="models" required placeholder="npr. VW Golf 6 1.6 TDI"></div>
           <div class="grid">
             <div class="field"><label for="p_y1">Godište od</label><input id="p_y1" type="number" min="1995" max="2030"></div>
@@ -450,7 +451,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     </div>
     <div class="sheet">
       <div class="top"><h2 id="findTitle">Oglasi u Švajcarskoj</h2><div class="btns"><button class="b" type="button" id="resetBtn">Resetuj pretragu</button><button class="b primary" type="button" id="runBtn">Zatraži proveru tržišta</button></div></div>
-      <p class="note" id="runInfo"></p>
+      <p class="note" id="runInfo"></p><div id="runProg"></div>
       <div class="fsteps" id="fSteps">
         <button type="button" data-ff="novo" aria-pressed="true"><span class="k">1</span><span class="l">Novo</span><span class="c" data-cnt="novo">0</span></button>
         <button type="button" data-ff="izabrano" aria-pressed="false"><span class="k">2</span><span class="l">Idemo da gledamo</span><span class="c" data-cnt="izabrano">0</span></button>
@@ -966,18 +967,35 @@ function leadStep(l){const ps=l.proposals||[];if(l.carId)return "kup";
   if(ps.some(p=>pAns(p)==="zelim"&&!p.depositPaidAt))return "kap";return "pred";}
 const AN_AGE={mix:"mešano","0-5":"do 5 god.","5-10":"5–10 god.","10-15":"10–15 god."};
 const anDesc=r=>r&&r.count?`${r.count} modela · zarada od ${fmt(r.margin)} € · ${AN_AGE[r.age]||"mešano"}`:"";
+const ZFMT=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Zurich",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
+function nextAssistantRun(){let t=Math.ceil(Date.now()/60000)*60000;for(let i=0;i<1600;i++,t+=60000){const [h,m]=ZFMT.format(t).split(":").map(Number);if(m===5&&h>=7&&h<=21)return t;}return null;}
+const hm=t=>new Date(t).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"});
+const dayHm=t=>{const d=new Date(t),n=new Date(),tm=new Date(n);tm.setDate(n.getDate()+1);return (d.toDateString()===n.toDateString()?"danas":d.toDateString()===tm.toDateString()?"sutra":d.toLocaleDateString("sr-Latn-RS"))+" u "+hm(t);};
+// request doc (lock / analysis / target) + finished run → step list the team can follow
+function progressHtml(req,done,extra){if(!req||!req.startedAt)return "";const li=(c,tm,t)=>`<li class="${c}"><span class="tm">${tm}</span> ${t}</li>`;
+  const out=[li("ok",hm(req.startedAt),`✓ Zatražio ${esc(req.by||"")}${extra?" · "+esc(extra):""}`)];
+  if(req.workingAt) out.push(li("ok",hm(req.workingAt),"✓ Asistent je počeo"));
+  else if(!done){const nx=nextAssistantRun();out.push(li("wait","…",`Asistent počinje ${nx?dayHm(nx):"uskoro"} (radi svakog sata od 7 do 21 h)`));}
+  (req.progress||[]).slice(-10).forEach(p=>out.push(li("",p.at?hm(p.at):"",esc(p.t||""))));
+  if(done) out.push(li("ok",hm(done.at),`✓ Gotovo${done.note?": "+esc(done.note):""}`));
+  else if(req.workingAt) out.push(li("wait","…","radi, ova lista se sama osvežava"));
+  return `<ul class="prog">${out.join("")}</ul>`;}
+const btnBusy=(sel,base,busy)=>{const b=document.querySelector(sel);if(b)b.textContent=busy?base+" · u toku":base;};
 function targetPending(){const tg=RUNS.find(r=>r._id==="target"),done=RUNS.filter(r=>r.mode==="ciljano"&&r.at).sort((a,b)=>b.at-a.at)[0];
   return tg&&tg.requested&&(!done||done.at<tg.startedAt)?tg:null;}
 function renderTarget(){const tg=targetPending(),e=$("tgInfo");if(!e)return;
-  if(!tg){e.hidden=true;return;}
+  const last=RUNS.find(r=>r._id==="target"),done=RUNS.filter(r=>r.mode==="ciljano"&&r.at).sort((a,b)=>b.at-a.at)[0];
+  btnBusy('[data-mbox=priceForm]',"Traži ove modele",!!tg);
+  if(!tg){if(last&&done&&done.at>=last.startedAt&&Date.now()-done.at<12*3600000){e.hidden=false;e.innerHTML="<b>Poslednja pretraga ovih modela</b>"+progressHtml(last,done);}else e.hidden=true;return;}
   const names=(tg.ids||[]).map(id=>{const p=PRICES.find(x=>x._id===id);return p?[p.model,p.yearFrom&&p.yearTo?p.yearFrom+"–"+p.yearTo:p.yearFrom||""].filter(Boolean).join(" "):null;}).filter(Boolean);
-  e.hidden=false;e.innerHTML=`<b>Čeka asistenta:</b> ${esc(names.join(", ")||"—")} · zatražio ${esc(tg.by||"")} u ${new Date(tg.startedAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}`;}
+  e.hidden=false;e.innerHTML=`<b>Traži se:</b> ${esc(names.join(", ")||"—")}`+progressHtml(tg,null);}
 function renderAnalysis(){renderTarget();const lk=RUNS.find(r=>r._id==="analysis"),done=RUNS.filter(r=>r.mode==="analiza"&&r.at).sort((a,b)=>b.at-a.at)[0];
   const pending=lk&&lk.requested&&(!done||done.at<lk.startedAt);
   if(!$("anMar").value)$("anMar").value=(lk&&lk.margin)||SET.cilj;
   ["anCnt","anMar","anAge"].forEach(i=>$(i).disabled=!!pending);
   $("anBtn").disabled=!!pending;$("anBtn").textContent=pending?"Analiza zatražena":"Predloži modele za pretragu";
-  $("anInfo").textContent=pending?`Zatražio ${lk.by||""} u ${new Date(lk.startedAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}${lk.count?" ("+anDesc(lk)+")":""}. Asistent radi analizu u roku od sat vremena (7–21 h); novi modeli se sami pojave ispod.`:done?`Poslednja analiza ${new Date(done.at).toLocaleString("sr-Latn-RS",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"})}: ${done.note||""}`:"Asistent pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz. Ti ih posle možeš obrisati ili zadržati.";}
+  btnBusy('[data-mbox=anBox]',"Asistent analiza",!!pending);
+  $("anInfo").innerHTML=pending?progressHtml(lk,null,anDesc(lk)):(lk&&done&&done.at>=lk.startedAt?"<b>Poslednja analiza</b>"+progressHtml(lk,done,anDesc(lk)):"Asistent pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz. Ti ih posle možeš obrisati ili zadržati.");}
 $("anBtn").addEventListener("click",async()=>{const b=$("anBtn");b.disabled=true;const count=+$("anCnt").value||5,margin=Math.max(0,+$("anMar").value||SET.cilj),age=$("anAge").value,y=new Date().getFullYear(),
     rng={mix:[y-15,y],"0-5":[y-5,y],"5-10":[y-10,y-5],"10-15":[y-15,y-10]}[age]||[y-15,y];
   try{await db.doc("runs/analysis").set({requested:true,startedAt:Date.now(),by:actor(),count,margin,age,yearFrom:rng[0],yearTo:rng[1]});toast("Analiza zatražena. Rezultat za najviše sat vremena.");}catch(e){b.disabled=false;fail(e);}});
@@ -1126,6 +1144,7 @@ function renderRun(){
   let s=last?`Poslednja provera ${dt(last.at)}${last.newFinds!=null?` · ${last.newFinds} ${last.newFinds===1?"nov oglas":"novih"}`:""} · sledeća ${nx}`:`Još nije bilo provere · sledeća ${nx}`;
   if(pending) s=`Provera zatražena (${lock?.by||actor()}, ${new Date(reqAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}) · rezultati za najviše sat vremena`;
   $("runInfo").textContent=s;
+  $("runProg").innerHTML=pending&&lock&&lock.startedAt>=reqAt-1000?progressHtml(lock,null):"";
   $("runInfo").title=last?.note||"";
   const b=$("runBtn");
   b.disabled=!!(pending||recent);
@@ -1140,7 +1159,7 @@ $("runBtn").addEventListener("click",async()=>{const b=$("runBtn");
   try{await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true});runStarted=now;renderRun();toast("Provera zatražena");}
   catch(e){b.disabled=false;fail(e);}
 });
-setInterval(()=>{if(document.visibilityState==="visible")renderRun();},60000);
+setInterval(()=>{if(document.visibilityState==="visible"){renderRun();renderAnalysis();}},60000);
 function findPreview(){const r=shopRows().find(x=>x.id===$("f_ref").value), p=+$("f_price").value;
   $("f_prev").textContent=r&&p?(p<=r.mb.dealer?`U limitu: ${fmt(r.mb.dealer-p)} CHF ispod najviše cene (${fmt(r.mb.dealer)} CHF od trgovca).`:`${fmt(p-r.mb.dealer)} CHF iznad limita (${fmt(r.mb.dealer)} CHF). Vredi samo ako se može cenjkati.`):"";}
 ["f_ref","f_price"].forEach(id=>$(id).addEventListener("input",findPreview));
