@@ -27,9 +27,9 @@ const COMMON = {
 // subject + body per kind; {n} {title} {price} {model} are filled in
 const MSG: Record<string, Record<Lang, [string, string]>> = {
   welcome: {
-    sr: ["Primili smo vaš upit – SWISCARS", "hvala na upitu za {model}. Primili smo ga i krećemo u potragu za vozilom u Švajcarskoj. Kada pronađemo auto koje odgovara vašim željama i budžetu, javljamo vam se sa predlogom. Kako radimo: šaljemo vam predloge, a za auto koje vas zanima šaljemo slike i opis. Kada izaberete auto, uplaćujete kaparu od 10% cene, i tek tada naš čovek u Švajcarskoj ide da ga pregleda. Ako auto na pregledu nije dobro, kapara vam se vraća ili tražimo drugo. Status upita uvek vidite na svom linku."],
-    de: ["Wir haben Ihre Anfrage erhalten – SWISCARS", "vielen Dank für Ihre Anfrage zu {model}. Wir beginnen mit der Suche in der Schweiz. Sobald wir ein passendes Auto in Ihrem Budget finden, melden wir uns mit einem Vorschlag. So arbeiten wir: Wir senden Ihnen Vorschläge, zu Autos, die Sie interessieren, schicken wir Fotos und Beschreibung. Wenn Sie sich für ein Auto entscheiden, leisten Sie eine Anzahlung von 10 % des Preises, erst dann prüft unser Mitarbeiter in der Schweiz das Auto vor Ort. Ist es nicht in Ordnung, erhalten Sie die Anzahlung zurück oder wir suchen weiter. Den Stand sehen Sie jederzeit über Ihren Link."],
-    en: ["We received your request – SWISCARS", "thank you for your request for {model}. We are starting the search in Switzerland. As soon as we find a car that matches your wishes and budget, we will come back with a proposal. How we work: we send you proposals, and for cars you are interested in we send photos and a description. When you choose a car, you pay a 10% deposit, and only then does our person in Switzerland inspect it on site. If the car is not right, you get the deposit back or we keep searching. You can always see the status via your link."],
+    sr: ["Primili smo vaš upit – SWISCARS", "hvala na upitu za {model}. Naš asistent pretražuje švajcarsko tržište i u roku od sat vremena (7–21 h) šalje vam do 3 predloga sa linkom na oglas i procenom ukupne cene u Srbiji.\n\nKako radimo: za auto koje vas zanima uplaćujete kaparu od 10%, i tek tada naš čovek pregleda auto na licu mesta. Posle pregleda dobijate slike i mišljenje i odlučujete. Ako kupujete, kapara je deo cene, a ostatak plaćate kad auto stigne u Srbiju. Ako ne kupujete, zadržavamo samo trošak pregleda (100 CHF do 50 km, 200 CHF do 100 km od St. Gallena), a ostatak kapare vam vraćamo. Naša provizija je 1.000 CHF i uračunata je u procenu cene."],
+    de: ["Wir haben Ihre Anfrage erhalten – SWISCARS", "vielen Dank für Ihre Anfrage zu {model}. Unser Assistent durchsucht den Schweizer Markt und sendet Ihnen innerhalb einer Stunde (7–21 Uhr) bis zu 3 Vorschläge mit Link zum Inserat und geschätztem Gesamtpreis in Serbien.\n\nSo arbeiten wir: Für ein Auto, das Sie interessiert, leisten Sie eine Anzahlung von 10 %, erst dann prüft unser Mitarbeiter das Auto vor Ort. Danach erhalten Sie Fotos und seine Einschätzung und entscheiden. Wenn Sie kaufen, ist die Anzahlung Teil des Preises, den Rest zahlen Sie bei Ankunft in Serbien. Wenn nicht, behalten wir nur die Prüfkosten (100 CHF bis 50 km, 200 CHF bis 100 km ab St. Gallen) und zahlen den Rest zurück. Unsere Provision beträgt 1'000 CHF und ist im geschätzten Preis enthalten."],
+    en: ["We received your request – SWISCARS", "thank you for your request for {model}. Our assistant searches the Swiss market and within an hour (7am–9pm) sends you up to 3 proposals with a link to the listing and an estimated total price in Serbia.\n\nHow we work: for a car you like, you pay a 10% deposit, and only then does our person inspect it on site. After the inspection you get photos and his opinion and decide. If you buy, the deposit is part of the price and you pay the rest when the car arrives in Serbia. If not, we keep only the inspection cost (100 CHF up to 50 km, 200 CHF up to 100 km from St. Gallen) and refund the rest. Our commission is 1,000 CHF and is included in the estimate."],
   },
   check_yes: {
     sr: ["Prva provera tržišta je gotova – SWISCARS", "naš asistent je završio prvu proveru tržišta za {model}: u Švajcarskoj smo pronašli {n} vozila koja bi mogla da odgovaraju vašem budžetu. Naš tim ih sada proverava i javlja vam se sa konkretnim predlogom."],
@@ -47,9 +47,9 @@ const MSG: Record<string, Record<Lang, [string, string]>> = {
     en: ["We have a proposal for you – SWISCARS", "we have a proposal for you: {title}, price in Serbia {price}. See the details via your link and tell us with one click whether it suits you or we should keep searching."],
   },
   proposals: {
-    sr: ["Imamo {n} predloga za vas – SWISCARS", "pronašli smo {n} auta koja odgovaraju vašem upitu za {model}. Pogledajte ih na svom linku i za svako kliknite „Zanima me“ (šaljemo vam slike i opis) ili „Ne zanima me“ (tražimo dalje)."],
-    de: ["Wir haben {n} Vorschläge für Sie – SWISCARS", "wir haben {n} Autos gefunden, die zu Ihrer Anfrage für {model} passen. Sehen Sie sie über Ihren Link an und klicken Sie bei jedem auf „Interessiert mich“ (wir senden Fotos und Beschreibung) oder „Nicht interessiert“ (wir suchen weiter)."],
-    en: ["We have {n} proposals for you – SWISCARS", "we found {n} cars that match your request for {model}. See them via your link and for each click “I'm interested” (we send photos and a description) or “Not interested” (we keep searching)."],
+    sr: ["Imamo {n} predloga za vas – SWISCARS", "pronašli smo {n} auta za vaš upit za {model}. Na svom linku za svako vidite oglas sa slikama, procenu ukupne cene u Srbiji i cenu pregleda. Za auto koje vas zanima kliknite „Želim pregled“, a za ostala „Ne zanima me“, pa tražimo dalje."],
+    de: ["Wir haben {n} Vorschläge für Sie – SWISCARS", "wir haben {n} Autos für Ihre Anfrage zu {model} gefunden. Über Ihren Link sehen Sie zu jedem das Inserat mit Fotos, den geschätzten Gesamtpreis in Serbien und die Prüfkosten. Für ein Auto, das Sie interessiert, klicken Sie „Prüfung gewünscht“, für die anderen „Nicht interessiert“, dann suchen wir weiter."],
+    en: ["We have {n} proposals for you – SWISCARS", "we found {n} cars for your request for {model}. Via your link you see for each the listing with photos, the estimated total price in Serbia and the inspection cost. For a car you like click “I want an inspection”, for the others “Not interested”, and we keep searching."],
   },
   photos: {
     sr: ["Slike i opis su stigli – SWISCARS", "poslali smo slike i opis za {title}, cena u Srbiji {price}. Pogledajte ih na svom linku. Ako vam auto odgovara, kliknite „Želim ovo auto“."],
@@ -57,14 +57,19 @@ const MSG: Record<string, Record<Lang, [string, string]>> = {
     en: ["Photos and description are ready – SWISCARS", "we added photos and a description for {title}, price in Serbia {price}. See them via your link. If the car suits you, click “I want this car”."],
   },
   deposit_req: {
-    sr: ["Kapara za vaše auto – SWISCARS", "hvala, izabrali ste {title}. Da bismo krenuli, molimo uplatite kaparu od {dep}.\n\n{pay}\n\nČim kapara legne, naš čovek u Švajcarskoj ide da pregleda auto. Ako auto nije dobro, kapara vam se vraća ili tražimo drugo."],
-    de: ["Anzahlung für Ihr Auto – SWISCARS", "danke, Sie haben {title} gewählt. Damit wir starten können, überweisen Sie bitte die Anzahlung von {dep}.\n\n{pay}\n\nSobald sie eingegangen ist, prüft unser Mitarbeiter in der Schweiz das Auto vor Ort. Ist es nicht in Ordnung, erhalten Sie die Anzahlung zurück oder wir suchen weiter."],
-    en: ["Deposit for your car – SWISCARS", "thank you, you chose {title}. To start, please pay the deposit of {dep}.\n\n{pay}\n\nAs soon as it arrives, our person in Switzerland inspects the car on site. If it is not right, you get the deposit back or we keep searching."],
+    sr: ["Kapara za pregled auta – SWISCARS", "hvala, želite pregled za {title}. Da bi naš čovek krenuo, molimo uplatite kaparu od {dep}.\n\n{pay}\n\nAko posle pregleda kupite auto, kapara je deo cene. Ako ne kupite, zadržavamo samo trošak pregleda, a ostatak vam vraćamo."],
+    de: ["Anzahlung für die Prüfung – SWISCARS", "danke, Sie möchten eine Prüfung für {title}. Damit unser Mitarbeiter losfährt, überweisen Sie bitte die Anzahlung von {dep}.\n\n{pay}\n\nKaufen Sie das Auto nach der Prüfung, ist die Anzahlung Teil des Preises. Wenn nicht, behalten wir nur die Prüfkosten und zahlen den Rest zurück."],
+    en: ["Deposit for the inspection – SWISCARS", "thank you, you want an inspection of {title}. For our person to go, please pay the deposit of {dep}.\n\n{pay}\n\nIf you buy the car after the inspection, the deposit is part of the price. If not, we keep only the inspection cost and refund the rest."],
   },
   deposit_ok: {
-    sr: ["Kapara je primljena – SWISCARS", "primili smo vašu kaparu od {dep} za {title}. Naš čovek u Švajcarskoj sada ide da pregleda auto, a vi o rezultatu dobijate obaveštenje."],
-    de: ["Anzahlung erhalten – SWISCARS", "wir haben Ihre Anzahlung von {dep} für {title} erhalten. Unser Mitarbeiter in der Schweiz prüft das Auto jetzt vor Ort, Sie erhalten das Ergebnis per Nachricht."],
-    en: ["Deposit received – SWISCARS", "we received your deposit of {dep} for {title}. Our person in Switzerland is now inspecting the car on site, and you will be notified of the result."],
+    sr: ["Kapara je primljena – SWISCARS", "primili smo kaparu od {dep} za {title}. Naš čovek ide na pregled, a vi dobijate slike i njegovo mišljenje čim pogleda auto."],
+    de: ["Anzahlung erhalten – SWISCARS", "wir haben die Anzahlung von {dep} für {title} erhalten. Unser Mitarbeiter fährt zur Prüfung; Sie erhalten Fotos und seine Einschätzung, sobald er das Auto gesehen hat."],
+    en: ["Deposit received – SWISCARS", "we received the deposit of {dep} for {title}. Our person is going to inspect the car, and you will get photos and his opinion as soon as he has seen it."],
+  },
+  insp_report: {
+    sr: ["Pregled je gotov – SWISCARS", "naš čovek je pregledao {title}: {note}\n\nSlike i detalje vidite na svom linku. Tamo kliknite „Kupujem“ ili „Ne kupujem“."],
+    de: ["Die Prüfung ist abgeschlossen – SWISCARS", "unser Mitarbeiter hat {title} geprüft: {note}\n\nFotos und Details sehen Sie über Ihren Link. Dort klicken Sie „Ich kaufe“ oder „Ich kaufe nicht“."],
+    en: ["The inspection is done – SWISCARS", "our person inspected {title}: {note}\n\nPhotos and details are on your link. There click “I'm buying” or “I'm not buying”."],
   },
   insp_no: {
     sr: ["Auto nije prošlo pregled – SWISCARS", "naš čovek je pregledao {title} i auto nije onakvo kakvo treba: {note}\n\nNa svom linku izaberite: da vam vratimo kaparu ili da tražimo drugo auto (kapara ostaje za sledeće)."],
@@ -72,9 +77,9 @@ const MSG: Record<string, Record<Lang, [string, string]>> = {
     en: ["The car did not pass inspection – SWISCARS", "our person inspected {title} and the car is not as expected: {note}\n\nChoose via your link: deposit back, or we look for another car (the deposit stays for it)."],
   },
   refund_done: {
-    sr: ["Kapara je vraćena – SWISCARS", "vratili smo vam kaparu od {dep}. Hvala na strpljenju. Ako želite, i dalje tražimo auto za vas."],
-    de: ["Anzahlung zurückgezahlt – SWISCARS", "wir haben Ihnen die Anzahlung von {dep} zurückgezahlt. Danke für Ihre Geduld. Gerne suchen wir weiter für Sie."],
-    en: ["Deposit refunded – SWISCARS", "we refunded your deposit of {dep}. Thank you for your patience. We are happy to keep searching for you."],
+    sr: ["Kapara je vraćena – SWISCARS", "vratili smo vam {ref} od kapare (kapara umanjena za trošak pregleda). Hvala na poverenju. Ako želite, i dalje tražimo auto za vas."],
+    de: ["Anzahlung zurückgezahlt – SWISCARS", "wir haben Ihnen {ref} der Anzahlung zurückgezahlt (Anzahlung abzüglich Prüfkosten). Danke für Ihr Vertrauen. Gerne suchen wir weiter für Sie."],
+    en: ["Deposit refunded – SWISCARS", "we refunded {ref} of your deposit (deposit minus the inspection cost). Thank you for your trust. We are happy to keep searching for you."],
   },
   car_kupljen: {
     sr: ["Auto je kupljeno za vas – SWISCARS", "auto je kupljeno za vas u Švajcarskoj. Sledi transport do Srbije, carina i priprema. Na svom linku uvek vidite gde je auto."],
@@ -103,7 +108,7 @@ const MSG: Record<string, Record<Lang, [string, string]>> = {
   },
 };
 
-function compose(kind: string, l: Record<string, any>, payload: Record<string, any>, car: Record<string, any> | null, pay = "") {
+function compose(kind: string, l: Record<string, any>, payload: Record<string, any>, car: Record<string, any> | null, pay = "", rate = 1.057) {
   const lang: Lang = (["sr", "de", "en"].includes(l.lang) ? l.lang : "sr") as Lang;
   const key = kind === "check" ? ((payload?.n ?? 0) > 0 ? "check_yes" : "check_no") : kind;
   const m = MSG[key]?.[lang]; if (!m) return null;
@@ -112,9 +117,10 @@ function compose(kind: string, l: Record<string, any>, payload: Record<string, a
   const title = [p.title || car?.model, p.year || car?.year].filter(Boolean).join(" ");
   const price = p.price ? `${num(p.price)} €` : (lang === "de" ? "nach Absprache" : lang === "en" ? "on request" : "po dogovoru");
   const dep = p.deposit ? `${num(p.deposit)} €` : "";
+  const ref = p.deposit ? `${num(Math.max(0, Number(p.deposit) - Math.round(Number(p.inspFee || 0) * rate)))} €` : "";
   const payTxt = pay || (lang === "de" ? "Die Zahlungsangaben senden wir Ihnen persönlich." : lang === "en" ? "We will send you the payment details personally." : "Podatke za uplatu šaljemo vam lično.");
   const body = m[1].replace("{model}", l.model || "").replace("{n}", String(p.n ?? "")).replace("{title}", title).replace("{price}", price)
-    .replace("{dep}", dep).replace("{pay}", payTxt).replace("{note}", p.inspNote || "");
+    .replace("{dep}", dep).replace("{ref}", ref).replace("{pay}", payTxt).replace("{note}", p.inspNote || "");
   const first = String(l.name || "").split(" ")[0] || "";
   const link = `https://swiscars.com/upit/#${l.token}`;
   const text = `${c.hello.replace("{name}", first)}\n\n${body}\n\n${c.btn}: ${link}\n\n${c.sign}\n\nSWISCARS GmbH · info@swiscars.com · +41 79 905 61 64 · swiscars.com\n${c.foot}`;
@@ -160,7 +166,7 @@ Deno.serve(async (req) => {
         let car = null;
         if (l.carId) { const { data: cr } = await sb.from("sc_docs").select("data").eq("collection", "cars").eq("id", l.carId).maybeSingle(); car = cr?.data ?? null; }
         const { data: sr } = await sb.from("sc_docs").select("data").eq("collection", "settings").eq("id", "main").maybeSingle();
-        const msg = compose(r.kind, l, r.payload, car, String((sr?.data as any)?.payInfo || ""));
+        const msg = compose(r.kind, l, r.payload, car, String((sr?.data as any)?.payInfo || ""), Number((sr?.data as any)?.rate) || 1.057);
         if (!msg) err = "unknown_kind";
         else {
           await client.send({ from: `SWISCARS <${user}>`, to: l.email, replyTo: user, subject: msg.subject, content: msg.text, html: msg.html });
