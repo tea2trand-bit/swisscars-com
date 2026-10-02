@@ -421,7 +421,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <div class="chips" id="leadSSteps"></div>
       <div class="scroll"><table id="leadSTbl"><thead><tr><th>Potražilac</th><th>Korak</th><th>Traži</th><th class="n">Budžet</th><th class="n">Asistent traži do</th><th class="n">Našao</th><th class="n">Poslato</th><th>Poslednja provera</th></tr></thead><tbody></tbody></table></div>
     </div>
-    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2><div class="btns" id="mTools"><button class="b small" type="button" data-mbox="anBox" aria-pressed="false">Asistent analiza</button><button class="b small" type="button" data-mbox="priceForm" aria-pressed="false">+ Dodaj model</button></div></div>
+    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2><div class="btns" id="mTools"><button class="b small" type="button" data-mbox="anBox" aria-pressed="false">Asistent analiza</button><button class="b small" type="button" data-mbox="priceForm" aria-pressed="false">+ Ručno dodaj model</button></div></div>
       <div style="display:grid;gap:10px;margin-top:12px;min-width:0">
           <div class="subpanel" id="anBox" hidden><div class="top"><b>Asistent analiza</b><button class="b small primary" type="button" id="anBtn">Predloži modele za pretragu</button></div>
             <div class="angrid"><div class="field"><label for="anCnt">Koliko modela</label><select id="anCnt"><option>3</option><option selected>5</option><option>8</option><option>10</option></select></div>
@@ -429,7 +429,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
             <div class="field"><label for="anAge">Starost</label><select id="anAge"><option value="mix">Mešano</option><option value="0-5">Do 5 godina</option><option value="5-10">5–10 godina</option><option value="10-15">10–15 godina</option></select></div></div>
             <p class="note" id="anInfo" style="margin:0"></p></div>
           <form id="priceForm" class="addbox" autocomplete="off" hidden>
-          <h3>Dodaj model u asistent pretragu</h3>
+          <h3>Ručno dodaj model</h3><p class="note" style="margin:0">Upiši model koji želiš da kupujemo, npr. VW Golf 6 1.6 TDI, 2010–2012. Asistent sam nađe njegovu cenu u Srbiji i od tada traži oglase za njega u Švajcarskoj.</p>
           <div class="field"><label for="p_model">Model i motor</label><input id="p_model" list="models" required placeholder="npr. VW Golf 6 1.6 TDI"></div>
           <div class="grid">
             <div class="field"><label for="p_y1">Godište od</label><input id="p_y1" type="number" min="1995" max="2030"></div>
