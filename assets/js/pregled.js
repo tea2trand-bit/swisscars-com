@@ -24,8 +24,8 @@
       name: "Ime i prezime", phone: "Telefon / WhatsApp", email: "E-mail (za link i izveštaj)", notes: "Napomena (npr. kada je prodavac dostupan, šta vas posebno zanima)",
       send: "Naruči pregled", sending: "Šaljem…",
       qFee: "{ort} ({k}) · ~{d} km od St. Gallena · pregled {f} CHF", qAgree: "{ort} ({k}) · ~{d} km od St. Gallena · cena po dogovoru, javićemo vam se", qNo: "Mesto nije pronađeno. Upišite poštanski broj (npr. 8000).",
-      need: "Upišite link oglasa, mesto, ime i telefon ili email.",
-      ok: "Hvala! Narudžbina je primljena. Javićemo vam se u roku od 24 sata. Status i izveštaj pratite ovde:", okLink: "Moj pregled →",
+      need: "Upišite link oglasa, mesto, ime i email.",
+      ok: "Hvala! Narudžbina je primljena. Javićemo vam se u roku od 24 sata. Link za praćenje šaljemo i na vaš mejl. Status i izveštaj možete otvoriti i odmah:", okLink: "Moj pregled →",
       saveHint: "Sačuvajte link i za drugi uređaj:", wa: "Pošalji sebi na WhatsApp", copy: "Kopiraj link", copied: "Kopirano ✓", waText: "Moj SWISCARS pregled:",
       err: "Slanje nije uspelo. Pokušajte ponovo ili nam pišite na WhatsApp.",
       last: "Vaša poslednja narudžbina pregleda →",
@@ -51,8 +51,8 @@
       name: "Vor- und Nachname", phone: "Telefon / WhatsApp", email: "E-Mail (für Link und Bericht)", notes: "Bemerkung (z. B. wann der Verkäufer erreichbar ist, was Sie besonders interessiert)",
       send: "Prüfung bestellen", sending: "Wird gesendet…",
       qFee: "{ort} ({k}) · ~{d} km ab St. Gallen · Prüfung {f} CHF", qAgree: "{ort} ({k}) · ~{d} km ab St. Gallen · Preis nach Absprache, wir melden uns", qNo: "Ort nicht gefunden. Bitte Postleitzahl eingeben (z. B. 8000).",
-      need: "Bitte Inserat-Link, Ort, Name und Telefon oder E-Mail angeben.",
-      ok: "Danke! Die Bestellung ist eingegangen. Wir melden uns innerhalb von 24 Stunden. Status und Bericht sehen Sie hier:", okLink: "Meine Prüfung →",
+      need: "Bitte Inserat-Link, Ort, Name und E-Mail angeben.",
+      ok: "Danke! Die Bestellung ist eingegangen. Wir melden uns innerhalb von 24 Stunden. Den Link zum Status senden wir Ihnen auch per E-Mail. Status und Bericht sehen Sie auch gleich hier:", okLink: "Meine Prüfung →",
       saveHint: "Speichern Sie den Link auch für ein anderes Gerät:", wa: "Per WhatsApp an mich senden", copy: "Link kopieren", copied: "Kopiert ✓", waText: "Meine SWISCARS-Prüfung:",
       err: "Senden fehlgeschlagen. Bitte erneut versuchen oder per WhatsApp schreiben.",
       last: "Ihre letzte Prüfungsbestellung →",
@@ -78,8 +78,8 @@
       name: "Full name", phone: "Phone / WhatsApp", email: "E-mail (for the link and report)", notes: "Note (e.g. when the seller is available, what you care about most)",
       send: "Order inspection", sending: "Sending…",
       qFee: "{ort} ({k}) · ~{d} km from St. Gallen · inspection {f} CHF", qAgree: "{ort} ({k}) · ~{d} km from St. Gallen · price on request, we will contact you", qNo: "Place not found. Please enter the postal code (e.g. 8000).",
-      need: "Please enter the listing link, place, name and phone or e-mail.",
-      ok: "Thank you! Your order has been received. We will get back to you within 24 hours. Follow the status and report here:", okLink: "My inspection →",
+      need: "Please enter the listing link, place, name and e-mail.",
+      ok: "Thank you! Your order has been received. We will get back to you within 24 hours. We also email you the tracking link. You can open the status and report right away:", okLink: "My inspection →",
       saveHint: "Save the link for another device too:", wa: "Send to myself on WhatsApp", copy: "Copy link", copied: "Copied ✓", waText: "My SWISCARS inspection:",
       err: "Sending failed. Please try again or write to us on WhatsApp.",
       last: "Your last inspection order →",
@@ -136,7 +136,7 @@
   $("pgForm").addEventListener("submit", async e => {
     e.preventDefault(); const t = T(), st = $("pg_status"), btn = $("pg_send");
     const v = id => $(id).value.trim();
-    if (!(v("pg_url") || v("pg_car")) || !v("pg_place") || !v("pg_name") || !(v("pg_phone") || v("pg_email"))) { st.hidden = false; st.className = "form-status err"; st.textContent = t.need; return; }
+    if (!(v("pg_url") || v("pg_car")) || !v("pg_place") || !v("pg_name") || !v("pg_email")) { st.hidden = false; st.className = "form-status err"; st.textContent = t.need; return; }
     btn.disabled = true; btn.textContent = t.sending;
     try {
       const r = await rpc("sc_submit_inspection", { p: { url: v("pg_url"), car: v("pg_car"), place: v("pg_place"), name: v("pg_name"), phone: v("pg_phone"), email: v("pg_email"), notes: v("pg_notes"), website: $("pgForm").website.value, lang: lang() } });
