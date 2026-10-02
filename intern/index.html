@@ -674,7 +674,7 @@ async function addCost(carId,what,amount,category,currency,receipt){
   if(!db||!what||!(amount>0)) return;
   const payer=actor();
   await db.collection("costs").add({carId:carId||null,what,amount,category,currency:currency||"EUR",location:locOf(payer),payer,date:today(),receipt:receipt||null,by:me?.id||null,created:Date.now()});
-  await logEvent(carId||null,"cost",`Trošak: ${what}, ${fmt(amount)} ${currency||"EUR"}${carId?"":" (opšti, bez auta)"}`);
+  await logEvent(carId||null,"cost",`Trošak: ${what}, ${fmt(amount)} ${currency||"EUR"}${carId?"":" (ostali troškovi)"}`);
 }
 
 /* ---------- steps ---------- */
@@ -911,7 +911,7 @@ $("csvBtn").addEventListener("click",()=>{const mk=$("ocMonth").value.slice(2),[
   const cs=COSTS.filter(k=>costAt(k)>=from&&costAt(k)<to).sort((a,b)=>costAt(a)-costAt(b));
   const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
   const lines=[["Datum","Ko je platio","Mesto","Auto","Vrsta","Opis","Iznos","Valuta","Iznos EUR","Račun"].map(q).join(";")]
-    .concat(cs.map(k=>{const c=k.carId?CARS.find(x=>x._id===k.carId):null;return [k.date||new Date(costAt(k)).toISOString().slice(0,10),k.payer||"",k.location||"",c?`${c.model}${c.year?" "+c.year:""}${c.vin?" VIN "+c.vin:""}`:"opšti trošak",k.category||"",k.what||"",String(k.amount??"").replace(".",","),k.currency||"EUR",toEUR(k.amount||0,k.currency).toFixed(2).replace(".",","),k.receipt?SC.photoUrl(k.receipt):""].map(q).join(";");}));
+    .concat(cs.map(k=>{const c=k.carId?CARS.find(x=>x._id===k.carId):null;return [k.date||new Date(costAt(k)).toISOString().slice(0,10),k.payer||"",k.location||"",c?`${c.model}${c.year?" "+c.year:""}${c.vin?" VIN "+c.vin:""}`:"ostali troškovi",k.category||"",k.what||"",String(k.amount??"").replace(".",","),k.currency||"EUR",toEUR(k.amount||0,k.currency).toFixed(2).replace(".",","),k.receipt?SC.photoUrl(k.receipt):""].map(q).join(";");}));
   const blob=new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`swiscars-troskovi-${mk}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);});
 $("settleBtn").addEventListener("click",async()=>{const b=$("settleBtn");const mk=$("ocMonth").value.slice(2),[from,to]=mRange(mk);
   const W={};COSTS.filter(k=>costAt(k)>=from&&costAt(k)<to).forEach(k=>{const p=k.payer||"—";W[p]=W[p]||{n:0,s:0};W[p].n++;W[p].s+=toEUR(k.amount||0,k.currency);});
@@ -1257,8 +1257,8 @@ document.querySelectorAll("#leadFilter button").forEach(b=>b.onclick=()=>{leadFi
 /* ---------- quick cost ---------- */
 function openQuickCost(){
   $("qc_cat").innerHTML=CATS.map(c=>`<option>${c}</option>`).join("");
-  const act=CARS.filter(c=>!["prodat","odustao"].includes(c.status));
-  $("qc_car").innerHTML=`<option value="">Bez auta (opšti trošak)</option>`+act.map(c=>`<option value="${esc(c._id)}" ${c._id===curId?"selected":""}>${esc(c.model)}${c.year?" "+c.year:""} · ${SL[c.status]}</option>`).join("");
+  const act=CARS.filter(c=>!c.moved&&["kupljen","transport","carinjen","garaza","prodaja"].includes(c.status));
+  $("qc_car").innerHTML=`<option value="">Ostali troškovi (nije za auto)</option>`+act.map(c=>`<option value="${esc(c._id)}" ${c._id===curId?"selected":""}>${esc(c.model)}${c.year?" "+c.year:""} · ${SL[c.status]}</option>`).join("");
   $("qcNote").textContent=`Upisuje se kao trošak koji je platio/la ${actor()}.`;
   $("qcForm").reset();if(curId&&act.some(c=>c._id===curId))$("qc_car").value=curId;
   $("qcDlg").showModal();setTimeout(()=>$("qc_amt").focus(),50);
