@@ -127,7 +127,8 @@ ul.steps{margin:0;padding-left:20px;display:grid;gap:6px;max-width:72ch}
 .dtiles button .v{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dtiles button[aria-pressed=true]{border-color:var(--btn);box-shadow:inset 0 -3px 0 var(--btn);background:var(--soft)}
 #podTiles button.only{align-content:center}
-#podTiles{grid-template-columns:repeat(auto-fill,minmax(175px,1fr))}
+#podTiles{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+#podTiles button{min-height:48px}
 .subpanel{background:var(--soft);border-radius:10px;padding:12px 14px;display:grid;gap:10px}
 .setgrid .field label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .next{border:2px dashed var(--next-line);background:var(--next-bg);border-radius:10px;padding:14px;display:grid;gap:12px}
@@ -548,7 +549,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         <div class="grid setgrid" id="setGrid"></div>
       </div>
       <div class="sheet ppanel" data-pp="pay" hidden>
-        <div class="top"><h2>Kapara i uplata</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
+        <div class="top"><h2>Kapara</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
         <div class="grid setgrid"><div class="field"><label for="s_depositPct">Kapara, % od cene</label><input id="s_depositPct" type="number" step="1" min="0" max="100"></div></div>
         <div class="field"><label for="s_pay">Podaci za uplatu (prazno = „šaljemo vam lično“)</label><textarea id="s_pay" rows="4" placeholder="Primalac: …&#10;IBAN: …&#10;Banka: …&#10;Svrha: kapara + ime"></textarea></div>
       </div>
@@ -1390,7 +1391,7 @@ function fillSettings(){
 }
 let podPanel="users";
 function renderPodTiles(){const d=isDemo(),payOk=!!(SET.payInfo||"").trim(),others=team().filter(p=>!MEMBERS.some(m=>m.name===p.name)).length;
-  const T=[["users","Tim",""],["nums","Podešavanja",""],["pay","Kapara i uplata",`${SET.depositPct??10}% · ${payOk?"podaci upisani":"bez podataka"}`],["payers","Ko još plaća",others?`${others} bez naloga`:"niko"]].concat(d?[["demo","Demo podaci","obriši"]]:[]).concat([["pw","Moja lozinka","promeni"]]);
+  const T=[["users","Tim",""],["nums","Podešavanja",""],["pay","Kapara",""],["payers","Ko još plaća",""]].concat(d?[["demo","Demo podaci",""]]:[]).concat([["pw","Moja lozinka",""]]);
   if(!T.some(t=>t[0]===podPanel))podPanel="users";
   $("podTiles").innerHTML=T.map(([k,l,v])=>v?`<button type="button" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="k">${l}</span><span class="v">${esc(v)}</span></button>`:`<button type="button" class="only" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="v">${l}</span></button>`).join("");
   $("podTiles").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>{podPanel=b.dataset.pt;renderPodTiles();});
