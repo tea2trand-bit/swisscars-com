@@ -111,3 +111,17 @@
   .up-prop { grid-template-columns: 1fr }
   .up-card { padding: 16px }
 }
+/* inspection on order */
+.pg-checks { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px }
+.pg-checks li { background: var(--bg); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px }
+.pg-checks b { font-size: 15px }
+.pg-checks span { color: var(--muted); font-size: 14px }
+.pg-track { grid-template-columns: repeat(4, minmax(0, 1fr)) }
+.pg-rep { display: grid; gap: 10px }
+.pg-rep h3 { margin: 0; font-size: 16px }
+.pg-rep p { white-space: pre-line }
+.pg-verdict { font-weight: 700; padding: 10px 14px; border-radius: 8px; background: var(--bg) }
+.pg-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px }
+.pg-photos img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; display: block }
+#pgForm { grid-template-columns: 1fr 1fr }
+@media (max-width: 640px) { #pgForm { grid-template-columns: 1fr } }
