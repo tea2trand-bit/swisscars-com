@@ -421,7 +421,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <div class="chips" id="leadSSteps"></div>
       <div class="scroll"><table id="leadSTbl"><thead><tr><th>Potražilac</th><th>Korak</th><th>Traži</th><th class="n">Budžet</th><th class="n">Asistent traži do</th><th class="n">Našao</th><th class="n">Poslato</th><th>Poslednja provera</th></tr></thead><tbody></tbody></table></div>
     </div>
-    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2><div class="btns" id="mTools"><button class="b small" type="button" data-mbox="anBox" aria-pressed="false">Asistent analiza</button><button class="b small" type="button" data-mbox="priceForm" aria-pressed="false">+ Ručno dodaj model</button></div></div>
+    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2><div class="btns" id="mTools"><button class="b small" type="button" data-mbox="anBox" aria-pressed="false">Asistent analiza</button><button class="b small" type="button" data-mbox="priceForm" aria-pressed="false">Traži ove modele</button></div></div>
       <div style="display:grid;gap:10px;margin-top:12px;min-width:0">
           <div class="subpanel" id="anBox" hidden><div class="top"><b>Asistent analiza</b><button class="b small primary" type="button" id="anBtn">Predloži modele za pretragu</button></div>
             <div class="angrid"><div class="field"><label for="anCnt">Koliko modela</label><select id="anCnt"><option>3</option><option selected>5</option><option>8</option><option>10</option></select></div>
@@ -429,7 +429,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
             <div class="field"><label for="anAge">Starost</label><select id="anAge"><option value="mix">Mešano</option><option value="0-5">Do 5 godina</option><option value="5-10">5–10 godina</option><option value="10-15">10–15 godina</option></select></div></div>
             <p class="note" id="anInfo" style="margin:0"></p></div>
           <form id="priceForm" class="addbox" autocomplete="off" hidden>
-          <h3>Ručno dodaj model</h3><p class="note" style="margin:0">Upiši model koji želiš da kupujemo, npr. VW Golf 6 1.6 TDI, 2010–2012. Asistent sam nađe njegovu cenu u Srbiji i od tada traži oglase za njega u Švajcarskoj.</p>
+          <h3>Traži ove modele</h3><p class="note" style="margin:0">Upiši model, npr. VW Golf 6 1.6 TDI, 2010–2012, i klikni „Traži“. Može i više modela, jedan po jedan. Asistent u roku od sat vremena (7–21 h) traži oglase samo za te modele.</p><p class="note" id="tgInfo" style="margin:0" hidden></p>
           <div class="field"><label for="p_model">Model i motor</label><input id="p_model" list="models" required placeholder="npr. VW Golf 6 1.6 TDI"></div>
           <div class="grid">
             <div class="field"><label for="p_y1">Godište od</label><input id="p_y1" type="number" min="1995" max="2030"></div>
@@ -442,7 +442,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
             <div class="field"><label for="p_min">Minimalna zarada, € (prazno = iz podešavanja)</label><input id="p_min" type="number" min="0" step="50"></div>
           </div></details>
           <p class="note" id="p_prev"></p>
-          <div class="btns"><button class="b primary" type="submit" id="p_ai">Dodaj u pretragu</button></div>
+          <div class="btns"><button class="b primary" type="submit" id="p_ai">Traži</button></div>
         </form>
           <p class="note">Za ove modele asistent traži oglase u Švajcarskoj. Cenu u Srbiji sam računa sa polovniautomobili.com. Ako je neko od vas upisao svoju cenu, uzima se niža.</p>
           <div class="scroll"><table id="priceTbl"><thead><tr><th>Model</th><th class="n">Cena u RS</th><th>Izvor</th><th></th></tr></thead><tbody></tbody></table></div>
@@ -966,7 +966,13 @@ function leadStep(l){const ps=l.proposals||[];if(l.carId)return "kup";
   if(ps.some(p=>pAns(p)==="zelim"&&!p.depositPaidAt))return "kap";return "pred";}
 const AN_AGE={mix:"mešano","0-5":"do 5 god.","5-10":"5–10 god.","10-15":"10–15 god."};
 const anDesc=r=>r&&r.count?`${r.count} modela · zarada od ${fmt(r.margin)} € · ${AN_AGE[r.age]||"mešano"}`:"";
-function renderAnalysis(){const lk=RUNS.find(r=>r._id==="analysis"),done=RUNS.filter(r=>r.mode==="analiza"&&r.at).sort((a,b)=>b.at-a.at)[0];
+function targetPending(){const tg=RUNS.find(r=>r._id==="target"),done=RUNS.filter(r=>r.mode==="ciljano"&&r.at).sort((a,b)=>b.at-a.at)[0];
+  return tg&&tg.requested&&(!done||done.at<tg.startedAt)?tg:null;}
+function renderTarget(){const tg=targetPending(),e=$("tgInfo");if(!e)return;
+  if(!tg){e.hidden=true;return;}
+  const names=(tg.ids||[]).map(id=>{const p=PRICES.find(x=>x._id===id);return p?[p.model,p.yearFrom&&p.yearTo?p.yearFrom+"–"+p.yearTo:p.yearFrom||""].filter(Boolean).join(" "):null;}).filter(Boolean);
+  e.hidden=false;e.innerHTML=`<b>Čeka asistenta:</b> ${esc(names.join(", ")||"—")} · zatražio ${esc(tg.by||"")} u ${new Date(tg.startedAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}`;}
+function renderAnalysis(){renderTarget();const lk=RUNS.find(r=>r._id==="analysis"),done=RUNS.filter(r=>r.mode==="analiza"&&r.at).sort((a,b)=>b.at-a.at)[0];
   const pending=lk&&lk.requested&&(!done||done.at<lk.startedAt);
   if(!$("anMar").value)$("anMar").value=(lk&&lk.margin)||SET.cilj;
   ["anCnt","anMar","anAge"].forEach(i=>$(i).disabled=!!pending);
@@ -1106,7 +1112,7 @@ document.querySelectorAll("#mTools [data-mbox]").forEach(b=>b.onclick=()=>{const
 const LOCK_H=24, PEND_MIN=8*60;
 function nextMonday(){const d=new Date();d.setHours(7,0,0,0);let add=(8-d.getDay())%7;if(add===0&&Date.now()>=d.getTime())add=7;d.setDate(d.getDate()+add);return d;}
 function runState(){
-  const last=RUNS.filter(r=>r.at&&r.mode!=="brzi"&&r.mode!=="analiza").sort((a,b)=>b.at-a.at)[0];
+  const last=RUNS.filter(r=>r.at&&!["brzi","analiza","ciljano"].includes(r.mode)).sort((a,b)=>b.at-a.at)[0];
   const lock=RUNS.find(r=>r._id==="lock");
   const reqAt=Math.max(runStarted||0,lock?.startedAt||0);
   const pending=reqAt&&(!last||last.at<reqAt)&&Date.now()-reqAt<PEND_MIN*60000;
@@ -1151,10 +1157,12 @@ async function savePrice(source){if(!db)return;const num=v=>v===""?null:+v;
   if(source==="manual"&&!rs){toast("Upiši cenu iz oglasa u Srbiji");$("p_rs").focus();return;}
   const base={model:$("p_model").value.trim(),yearFrom:num($("p_y1").value),yearTo:num($("p_y2").value),kmMax:num($("p_km").value),minProfit:num($("p_min").value),note:$("p_note").value.trim(),by:me?.id||null,at:Date.now()};
   try{
-    if(source==="ai"){const exists=PRICES.some(p=>p.source==="ai"&&gkey(p)===gkey(base));
-      if(!exists) await db.collection("prices").add({...base,source:"ai",priceRs:null,n:null,kmMedian:null,checkedAt:null,actor:"Asistent",requestedBy:actor()});
+    if(source==="ai"){const ex=PRICES.find(p=>p.source==="ai"&&gkey(p)===gkey(base));let pid=ex&&ex._id;
+      if(!ex){const ref=await db.collection("prices").add({...base,source:"ai",priceRs:null,n:null,kmMedian:null,checkedAt:null,actor:"Asistent",requestedBy:actor()});pid=ref&&ref.id;}
       if(rs) await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});
-      toast(exists?"Ovaj model je već u pretrazi":"Dodato u pretragu. Asistent ga traži pri sledećoj proveri.");}
+      const tg=targetPending();const ids=[...new Set([...(tg?tg.ids||[]:[]),pid].filter(Boolean))];
+      await db.doc("runs/target").set({requested:true,startedAt:Date.now(),by:actor(),ids});
+      toast("Asistent u roku od sat vremena traži oglase za "+(ids.length>1?ids.length+" modela":"ovaj model")+".");}
     else{await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});toast("Tvoja cena je sačuvana");}
     $("priceForm").reset();pricePreview();
   }catch(err){fail(err);}
