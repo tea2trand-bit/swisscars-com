@@ -623,7 +623,7 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const today=()=>new Date().toISOString().slice(0,10);
 const days=(a,b)=>{if(!a)return null;return Math.max(0,Math.round((new Date(b||today())-new Date(a))/864e5));};
 let MEMBERS=[];
-const team=()=>{const m=MEMBERS.filter(x=>x.active).map(x=>({name:x.name,location:x.location||""}));const extra=(Array.isArray(SET.team)?SET.team:[]).filter(t=>t&&t.name&&!m.some(x=>x.name===t.name));return [...m,...extra];};
+const team=()=>MEMBERS.filter(x=>x.active).map(x=>({name:x.name,location:x.location||""}));
 const actor=()=>me?.name||"vlasnik";
 const who=n=>n==="Claude"?"Asistent":n;
 const locOf=name=>team().find(p=>p.name===name)?.location||"Ostalo";
@@ -1393,7 +1393,7 @@ $("nuBtn").onclick=()=>{$("pwBox").hidden=true;$("newUserBox").hidden=!$("newUse
 $("iam").onchange=()=>{IAM=$("iam").value;try{localStorage.setItem("sc_iam",IAM);}catch(e){}render();};
 $("setForm").addEventListener("submit",async e=>{e.preventDefault();const body={};SETF.forEach(([k])=>{const v=parseFloat($("s_"+k).value);body[k]=isNaN(v)?DEF[k]:v;});
   body.payInfo=$("s_pay").value.trim();
-  body.team=SET.team||[];
+  body.team=[];
   try{await db.doc("settings/main").set(body);toast("Sačuvano");}catch(err){fail(err);}});
 $("delDemo").addEventListener("click",async()=>{const b=$("delDemo");
   if(!b.dataset.armed){b.dataset.armed=1;b.textContent="Klikni ponovo da obrišeš sve demo podatke";setTimeout(()=>{delete b.dataset.armed;b.textContent="Obriši demo podatke";},4000);return;}
