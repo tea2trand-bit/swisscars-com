@@ -980,12 +980,17 @@ function progressHtml(req,done,extra){if(!req||!req.startedAt)return "";const li
   if(done) out.push(li("ok",hm(done.at),`✓ Gotovo${done.note?": "+esc(done.note):""}`));
   else if(req.workingAt) out.push(li("wait","…","radi, ova lista se sama osvežava"));
   return `<ul class="prog">${out.join("")}</ul>`;}
-const btnBusy=(sel,base,busy)=>{const b=document.querySelector(sel);if(b)b.textContent=busy?base+" · u toku":base;};
+// button label tells the state: waiting for the assistant (and when it starts) or working right now
+const btnBusy=(sel,base,req)=>{const b=document.querySelector(sel);if(!b)return;
+  if(!req){b.textContent=base;b.title="";return;}
+  if(req.workingAt){b.textContent=base+" · KI radi";b.title="KI upravo radi; klikni da vidiš šta je do sada uradio.";return;}
+  const nx=nextAssistantRun();b.textContent=base+" · počinje "+(nx?dayHm(nx).replace("danas u ",""):"uskoro");
+  b.title="Zahtev je primljen. KI radi svakog sata od 7 do 21 h i tada počinje.";};
 function targetPending(){const tg=RUNS.find(r=>r._id==="target"),done=RUNS.filter(r=>r.mode==="ciljano"&&r.at).sort((a,b)=>b.at-a.at)[0];
   return tg&&tg.requested&&(!done||done.at<tg.startedAt)?tg:null;}
 function renderTarget(){const tg=targetPending(),e=$("tgInfo");if(!e)return;
   const last=RUNS.find(r=>r._id==="target"),done=RUNS.filter(r=>r.mode==="ciljano"&&r.at).sort((a,b)=>b.at-a.at)[0];
-  btnBusy('[data-mbox=priceForm]',"Traži ove modele",!!tg);
+  btnBusy('[data-mbox=priceForm]',"Traži ove modele",tg);
   if(!tg){if(last&&done&&done.at>=last.startedAt&&Date.now()-done.at<12*3600000){e.hidden=false;e.innerHTML="<b>Poslednja pretraga ovih modela</b>"+progressHtml(last,done);}else e.hidden=true;return;}
   const names=(tg.ids||[]).map(id=>{const p=PRICES.find(x=>x._id===id);return p?[p.model,p.yearFrom&&p.yearTo?p.yearFrom+"–"+p.yearTo:p.yearFrom||""].filter(Boolean).join(" "):null;}).filter(Boolean);
   e.hidden=false;e.innerHTML=`<b>Traži se:</b> ${esc(names.join(", ")||"—")}`+progressHtml(tg,null);}
@@ -994,7 +999,7 @@ function renderAnalysis(){renderTarget();const lk=RUNS.find(r=>r._id==="analysis
   if(!$("anMar").value)$("anMar").value=(lk&&lk.margin)||SET.cilj;
   ["anCnt","anMar","anAge"].forEach(i=>$(i).disabled=!!pending);
   $("anBtn").disabled=!!pending;$("anBtn").textContent=pending?"Analiza zatražena":"Predloži modele za pretragu";
-  btnBusy('[data-mbox=anBox]',"KI predlog modela",!!pending);
+  btnBusy('[data-mbox=anBox]',"KI predlog modela",pending?lk:null);
   $("anInfo").innerHTML=pending?progressHtml(lk,null,anDesc(lk)):(lk&&done&&done.at>=lk.startedAt?"<b>Poslednji KI predlog</b>"+progressHtml(lk,done,anDesc(lk)):"Asistent pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz. Ti ih posle možeš obrisati ili zadržati.");}
 $("anBtn").addEventListener("click",async()=>{const b=$("anBtn");b.disabled=true;const count=+$("anCnt").value||5,margin=Math.max(0,+$("anMar").value||SET.cilj),age=$("anAge").value,y=new Date().getFullYear(),
     rng={mix:[y-15,y],"0-5":[y-5,y],"5-10":[y-10,y-5],"10-15":[y-15,y-10]}[age]||[y-15,y];
