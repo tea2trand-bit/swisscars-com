@@ -913,7 +913,10 @@ function freeMoney(){if(!(SET.kapital>0))return null;
   const tied=act.reduce((s,c)=>s+carCalc(c).tied,0), prof=sold.reduce((s,c)=>s+(carCalc(c).post||0),0);
   const other=COSTS.filter(k=>!k.carId).reduce((s,k)=>s+toEUR(k.amount||0,k.currency),0);
   const res=Math.max(0,SET.rezervaKap||0);
-  return {free:Math.round(SET.kapital+prof-tied-other-res),tied,prof,other,res};}
+  // costs still to come until each car is sold (not booked yet): transport, customs fees, repairs/preparation up to the per-car reserve
+  const pend=act.reduce((s,c)=>{const cs=COSTS.filter(k=>k.carId===c._id),sum=cat=>cs.filter(k=>cat.includes(k.category)).reduce((x,k)=>x+toEUR(k.amount||0,k.currency),0);
+    return s+(sum(["Prevoz"])?0:SET.prevoz)+(sum(["Carina i takse"])?0:SET.izvoz+SET.eko)+Math.max(0,SET.rezerva-sum(["Popravka i delovi","Rad (garaža, električar)","Pranje i priprema"]));},0);
+  return {free:Math.round(SET.kapital+prof-tied-pend-other-res),tied,prof,other,res,pend:Math.round(pend)};}
 function perRange(v){const now=new Date(),pad=n=>String(n).padStart(2,"0"),ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()),Y=now.getFullYear(),M=now.getMonth();
   return v==="m0"?[ymd(new Date(Y,M,1)),"9999"]:v==="m1"?[ymd(new Date(Y,M-1,1)),ymd(new Date(Y,M,1))]:v==="6m"?[ymd(new Date(Y,M-6,now.getDate())),"9999"]:v==="y0"?[Y+"-01-01","9999"]:v==="y1"?[(Y-1)+"-01-01",Y+"-01-01"]:["","9999"];}
 function renderReports(){if(!$("repKpis"))return;const [sf,st]=perRange($("repPer").value),inP=d=>(d||"")>=sf&&(d||"")<st,dOf=t=>t?new Date(t).toISOString().slice(0,10):"";
@@ -946,7 +949,7 @@ function renderKpis(){
   const exp=act.filter(c=>c.askEur).reduce((s,c)=>s+(carCalc(c).post||0),0);
   const adm=me?.role==="admin";
   $("kpis").innerHTML=`<div class="kpi${adm?" click":""}" id="kapTile"${adm?' title="Klikni da upišeš ili promeniš"':""}><span class="l">Početni kapital</span><span class="v">${SET.kapital>0?fmt(SET.kapital)+" €":"—"}</span><span class="s">${SET.rezervaKap>0?"rezerva "+fmt(SET.rezervaKap)+" € ostaje uvek · ":"bez rezerve · "}${adm?(SET.kapital>0?"klikni da promeniš":"klikni da upišeš"):"upisuje administrator"}</span></div>`+[["Novac u autima",fmt(tied)+" €",`${act.length} auta kupljeno, još neprodato`],["Zarađeno",`<span class="${prof>=0?"pos":"neg"}">${sgn(prof)} €</span>`,`${sold.length} prodatih auta, posle poreza`],["Još se očekuje",`<span class="${exp>=0?"pos":"neg"}">${sgn(exp)} €</span>`,"od auta koja imaju traženu cenu"]]
-    .concat((()=>{const fm=freeMoney();return [fm?["Slobodno za kupovinu",`<span class="${fm.free>=0?"pos":"neg"}">${fmt(fm.free)} €</span>`,`početni kapital + zarađeno − u autima${fm.other?" − ostali troškovi":""}${fm.res?" − rezerva":""}; ovo vidi i KI`]:["Slobodno za kupovinu","—","upiši početni kapital (prva kartica)"]];})())
+    .concat((()=>{const fm=freeMoney();return [fm?["Slobodno za kupovinu",`<span class="${fm.free>=0?"pos":"neg"}">${fmt(fm.free)} €</span>`,`početni kapital + zarađeno − u autima${fm.pend?" − troškovi do prodaje (~"+fmt(fm.pend)+" €)":""}${fm.other?" − ostali troškovi":""}${fm.res?" − rezerva":""}; ovo vidi i KI`]:["Slobodno za kupovinu","—","upiši početni kapital (prva kartica)"]];})())
     .map(([l,v,s])=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
   if(adm)$("kapTile").onclick=()=>{const t=$("kapTile");if(t.querySelector("input"))return;
     t.innerHTML=`<label class="l" for="kapIn">Početni kapital, €</label><input id="kapIn" type="number" min="0" step="1000" value="${SET.kapital||""}"><label class="l" for="kapRes" title="Novac koji uvek ostaje na računu">Rezerva, €</label><input id="kapRes" type="number" min="0" step="500" value="${SET.rezervaKap||""}" placeholder="npr. 5000"><span class="btns"><button class="b small primary" type="button" id="kapSave">Sačuvaj</button><button class="b small" type="button" id="kapX">Odustani</button></span>`;
