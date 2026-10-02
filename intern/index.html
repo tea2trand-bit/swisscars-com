@@ -462,7 +462,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         
         <button type="button" data-ff="kupljeno" aria-pressed="false"><span class="k">3</span><span class="l">Kupljeno</span><span class="c" data-cnt="kupljeno">0</span></button>
       </div>
-      <div class="fsub"><p class="note" id="fStepNote" style="margin:0"></p><div class="chips" id="fMore"><button type="button" data-ff="odbijeno" aria-pressed="false">Obrisano (<span data-cnt="odbijeno">0</span>)</button><button type="button" data-ff="arhiva" aria-pressed="false">Sklonjeno resetom (<span data-cnt="arhiva">0</span>)</button></div></div>
+      <div class="fsub"><p class="note" id="fStepNote" style="margin:0"></p></div>
       <div class="flist" id="findList"></div>
       <p class="note" id="findEmpty" hidden></p>
       <p class="note" id="findHidden"></p>
@@ -1123,7 +1123,7 @@ function renderFinds(){
   const ok=x=>x.p!=null&&x.p.post>=x.p.min;
   const cnt={};all.forEach(x=>{if(x.st==="novo"&&!ok(x))return;cnt[x.st]=(cnt[x.st]||0)+1;});
   document.querySelectorAll("[data-cnt]").forEach(e=>e.textContent=cnt[e.dataset.cnt]||0);
-  document.querySelectorAll("#fSteps button,#fMore button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.ff===findFilter));
+  document.querySelectorAll("#fSteps button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.ff===findFilter));
   $("fStepNote").textContent=FSTEP_NOTE[findFilter]||"";
   const inStep=all.filter(x=>x.st===findFilter);
   const list=(findFilter==="novo"?inStep.filter(ok):inStep).sort((a,b)=>findFilter==="novo"?(b.p?.post??-1e9)-(a.p?.post??-1e9):((b.f.stepAt||b.f.foundAt||0)-(a.f.stepAt||a.f.foundAt||0)));
@@ -1185,7 +1185,7 @@ async function moveFind(id,to,btn,extra){const f=FINDS.find(x=>x._id===id);if(!f
       if(l){const p=l.proposals.find(p=>p.findId===id);await updProp(l,p.id,{insp:"ne",inspNote:(extra&&extra.seenNote)||f.seenNote||"Auto na pregledu nije bilo onakvo kakvo treba.",inspAt:Date.now()});toast(`${l.name||"Potražilac"} dobija obaveštenje i bira: kapara nazad ili drugo auto.`);}}if(FSTEP_LOG[to])await logEvent(null,"status",`${FSTEP_LOG[to]}: ${f.title||f.model}, ${fmt(f.priceChf)} CHF`);fOpen=null;
     toast(to==="izabrano"?"Prebačeno u „Idemo da gledamo“":to==="pogledano"?"Prebačeno u „Pogledano“":to==="odbijeno"?"Obrisano":"Vraćeno");}
   catch(e){if(btn)btn.disabled=false;fail(e);}}
-document.querySelectorAll("#fSteps button,#fMore button").forEach(b=>b.onclick=()=>{findFilter=b.dataset.ff;fOpen=null;renderFinds();});
+document.querySelectorAll("#fSteps button").forEach(b=>b.onclick=()=>{findFilter=b.dataset.ff;fOpen=null;renderFinds();});
 $("resetBtn").addEventListener("click",async()=>{const b=$("resetBtn");
   const nov=FINDS.filter(f=>fStage(f)==="novo");
   if(!b.dataset.armed){b.dataset.armed=1;b.textContent=`Potvrdi: skloni ${nov.length} ${nov.length===1?"oglas":"oglasa"} iz „Novo“`;setTimeout(()=>{delete b.dataset.armed;b.textContent="Resetuj pretragu";},6000);return;}
