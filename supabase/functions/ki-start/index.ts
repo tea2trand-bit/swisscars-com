@@ -13,7 +13,7 @@ const CORS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...CORS, "Content-Type": "application/json" } });
-const KINDS: Record<string, string> = { analysis: "KI predlog modela", target: "Traži ove modele", lock: "provera tržišta" };
+const KINDS: Record<string, string> = { analysis: "KI predlog modela", target: "Traži ove modele", lock: "provera tržišta", lead: "novi upit sa telefona" };
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -34,9 +34,9 @@ Deno.serve(async (req) => {
   if (!KINDS[kind]) return json({ ok: false, reason: "kind" }, 400);
 
   // only start when that request is really waiting, and not twice within 20 s (double click)
-  const { data: d } = await sb.from("sc_docs").select("data").eq("collection", "runs").eq("id", kind).maybeSingle();
+  const { data: d } = await sb.from("sc_docs").select("data").eq("collection", "runs").eq("id", kind === "lead" ? "leadkick" : kind).maybeSingle();
   const r = (d?.data || {}) as Record<string, any>;
-  if (!r.requested) return json({ ok: false, reason: "no_request" });
+  if (kind !== "lead" && !r.requested) return json({ ok: false, reason: "no_request" });
   const now = Date.now();
   if (r.kickedAt && now - Number(r.kickedAt) < 20000) return json({ ok: true, skipped: "recent" });
 
@@ -46,6 +46,7 @@ Deno.serve(async (req) => {
     body: JSON.stringify({ text: `Pokrenuto iz aplikacije: ${KINDS[kind]} (${m.name || "tim"}). Uradi ono što je zatraženo u bazi, kao i inače.` }),
   });
   if (!res.ok) return json({ ok: false, reason: "fire", status: res.status, detail: (await res.text()).slice(0, 300) }, 502);
-  await sb.from("sc_docs").update({ data: { ...r, kickedAt: now } }).eq("collection", "runs").eq("id", kind);
+  if (kind === "lead") await sb.from("sc_docs").upsert({ collection: "runs", id: "leadkick", data: { kickedAt: now } }, { onConflict: "collection,id" });
+  else await sb.from("sc_docs").update({ data: { ...r, kickedAt: now } }).eq("collection", "runs").eq("id", kind);
   return json({ ok: true });
 });

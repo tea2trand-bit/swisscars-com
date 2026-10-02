@@ -1460,7 +1460,7 @@ $("delCar").addEventListener("click",async()=>{const b=$("delCar");
 $("leadForm").addEventListener("submit",async e=>{e.preventDefault();if(!db)return;
   const nm=$("l_name").value.trim(),ph=$("l_phone").value.trim(),em=$("l_email").value.trim().toLowerCase();$("leadNewBox").hidden=true;
   const body={model:$("l_model").value.trim(),budget:+$("l_budget").value||null,where:$("l_where").value,name:nm,phone:ph,email:em,contact:[nm,ph,em].filter(Boolean).join(" · "),note:$("l_note").value.trim(),status:"novo",payer:actor(),source:"rucno",token:newToken(),proposals:[],lang:"sr",by:me?.id||null,created:Date.now()};
-  try{await db.collection("leads").add(body);e.target.reset();toast("Upit sačuvan. Asistent traži to auto u roku od sat vremena.");}catch(err){fail(err);}
+  try{await db.collection("leads").add(body);e.target.reset();kiStart("lead");toast(em?"Upit sačuvan. KI traži auta i šalje mu predloge na email.":"Upit sačuvan. KI traži auta; bez emaila mu link pošalji na WhatsApp (dugme na upitu).");}catch(err){fail(err);}
 });
 
 /* ---------- accounts ---------- */
