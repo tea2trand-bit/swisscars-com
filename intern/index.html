@@ -561,10 +561,6 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         <div class="grid setgrid"><div class="field"><label for="s_depositPct">Kapara, % od cene</label><input id="s_depositPct" type="number" step="1" min="0" max="100"></div></div>
         <div class="field"><label for="s_pay">Podaci za uplatu (prazno = „šaljemo vam lično“)</label><textarea id="s_pay" rows="4" placeholder="Primalac: …&#10;IBAN: …&#10;Banka: …&#10;Svrha: kapara + ime"></textarea></div>
       </div>
-      <div class="sheet ppanel" data-pp="payers" hidden>
-        <div class="top"><h2>Ko još plaća troškove</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
-        <div class="field"><label for="s_team">Bez naloga, jedna osoba po redu: ime, mesto</label><textarea id="s_team" rows="4"></textarea></div>
-      </div>
     </form>
     <div class="sheet ppanel" data-pp="demo" id="demoBox" hidden>
       <h2>Demo podaci</h2>
@@ -1381,14 +1377,13 @@ function fillSettings(){
     $("setGrid").innerHTML=SETF.filter(([k])=>k!=="depositPct").map(([k,l,s,t])=>`<div class="field"><label for="s_${k}" title="${esc(t||l)}">${l}</label><input id="s_${k}" type="number" step="${s}" value="${SET[k]}" title="${esc(t||l)}"></div>`).join("");
     $("s_depositPct").value=SET.depositPct??10;
     $("s_pay").value=SET.payInfo||"";
-    $("s_team").value=team().filter(p=>!MEMBERS.some(m=>m.name===p.name)).map(p=>p.name+(p.location?", "+p.location:"")).join("\n");
   }
   const opts=team().map(p=>`<option>${esc(p.name)}</option>`).join("")+`<option value="">${esc(me?.name||"vlasnik")}</option>`;
   if($("iam").dataset.sig!==opts){$("iam").innerHTML=opts;$("iam").dataset.sig=opts;$("iam").value=IAM;}
 }
 let podPanel="users";
-function renderPodTiles(){const d=isDemo(),payOk=!!(SET.payInfo||"").trim(),others=team().filter(p=>!MEMBERS.some(m=>m.name===p.name)).length;
-  const T=[["users","Tim",""],["nums","Podešavanja",""],["pay","Kapara",""],["payers","Ko još plaća",""]].concat(d?[["demo","Demo podaci",""]]:[]);
+function renderPodTiles(){const d=isDemo();
+  const T=[["users","Tim",""],["nums","Podešavanja",""],["pay","Kapara",""]].concat(d?[["demo","Demo podaci",""]]:[]);
   if(!T.some(t=>t[0]===podPanel))podPanel="users";
   $("podTiles").innerHTML=T.map(([k,l,v])=>v?`<button type="button" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="k">${l}</span><span class="v">${esc(v)}</span></button>`:`<button type="button" class="only" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="v">${l}</span></button>`).join("");
   $("podTiles").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>{podPanel=b.dataset.pt;renderPodTiles();});
@@ -1398,7 +1393,7 @@ $("nuBtn").onclick=()=>{$("pwBox").hidden=true;$("newUserBox").hidden=!$("newUse
 $("iam").onchange=()=>{IAM=$("iam").value;try{localStorage.setItem("sc_iam",IAM);}catch(e){}render();};
 $("setForm").addEventListener("submit",async e=>{e.preventDefault();const body={};SETF.forEach(([k])=>{const v=parseFloat($("s_"+k).value);body[k]=isNaN(v)?DEF[k]:v;});
   body.payInfo=$("s_pay").value.trim();
-  body.team=$("s_team").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const [n,...r]=l.split(",");return {name:n.trim(),location:r.join(",").trim()};});
+  body.team=SET.team||[];
   try{await db.doc("settings/main").set(body);toast("Sačuvano");}catch(err){fail(err);}});
 $("delDemo").addEventListener("click",async()=>{const b=$("delDemo");
   if(!b.dataset.armed){b.dataset.armed=1;b.textContent="Klikni ponovo da obrišeš sve demo podatke";setTimeout(()=>{delete b.dataset.armed;b.textContent="Obriši demo podatke";},4000);return;}
