@@ -395,7 +395,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- AI PRETRAGA -->
   <section id="t-ai" class="wrap" style="gap:16px" hidden>
-    <details class="intro"><summary>ⓘ Kako radi</summary><p>Asistent svakog ponedeljka (i kad zatražite proveru) traži u Švajcarskoj auta koja nama donose <b>bar <span class="minp"></span> € zarade</b>. Svaki oglas ide u četiri koraka: <b>Novo → Idemo da gledamo → Pogledano, razmišljamo → Kupljeno</b>. Kupljeno auto samo prelazi u „Naša auta“. Oglasi koje asistent nađe za nekog potražioca su u kartici tog upita.</p><p>Automatska provera je svakog ponedeljka oko 7:00; zatražena provera i novi upiti se rade u roku od sat vremena (7–21 h). Već upisani oglasi se ne upisuju ponovo, osim posle reseta. Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
+    <details class="intro"><summary>ⓘ Kako radi</summary><p>KI traži samo kad kliknete: „Zatraži proveru tržišta“ (svi naši modeli), „Traži ove modele“ (samo upisani) ili „KI predlog modela“ (novi modeli). Kreće odmah, a tok rada vidite ispod dugmeta. Za našu pretragu prikazuju se oglasi koji donose <b>bar <span class="minp"></span> € zarade</b>.</p><p>Svaki oglas ide kroz korake <b>Novo → Idemo da gledamo → Kupljeno</b>; kupljeno auto prelazi u „Naša auta“. Za upite sa sajta KI sam šalje predloge potražiocu (provera svakog sata 7–21 h). Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
     <div class="toolrow" id="aiTools">
       <button class="b" type="button" data-panel="pModels">Naša KI pretraga</button>
       <button class="b" type="button" data-panel="pLeadS">Upit KI pretraga</button>
@@ -975,15 +975,19 @@ const dayHm=t=>{const d=new Date(t),n=new Date(),tm=new Date(n);tm.setDate(n.get
 function progressHtml(req,done,extra){if(!req||!req.startedAt)return "";const li=(c,tm,t)=>`<li class="${c}"><span class="tm">${tm}</span> ${t}</li>`;
   const out=[li("ok",hm(req.startedAt),`✓ Zatražio ${esc(req.by||"")}${extra?" · "+esc(extra):""}`)];
   if(req.workingAt) out.push(li("ok",hm(req.workingAt),"✓ Asistent je počeo"));
+  else if(!done&&req.kickedAt) out.push(li("ok",hm(req.kickedAt),"✓ KI je pokrenut, počinje za 1–2 minuta"));
   else if(!done){const nx=nextAssistantRun();out.push(li("wait","…",`Asistent počinje ${nx?dayHm(nx):"uskoro"} (radi svakog sata od 7 do 21 h)`));}
   (req.progress||[]).slice(-10).forEach(p=>out.push(li("",p.at?hm(p.at):"",esc(p.t||""))));
   if(done) out.push(li("ok",hm(done.at),`✓ Gotovo${done.note?": "+esc(done.note):""}`));
   else if(req.workingAt) out.push(li("wait","…","radi, ova lista se sama osvežava"));
   return `<ul class="prog">${out.join("")}</ul>`;}
 // button label tells the state: waiting for the assistant (and when it starts) or working right now
+// start the KI right away (edge function fires the routine); without the token the hourly check still picks it up
+async function kiStart(kind){try{const r=await SC.sb.functions.invoke("ki-start",{body:{kind}});return r&&r.data;}catch(e){console.warn(e);return null;}}
 const btnBusy=(sel,base,req)=>{const b=document.querySelector(sel);if(!b)return;
   if(!req){b.textContent=base;b.title="";return;}
   if(req.workingAt){b.textContent=base+" · KI radi";b.title="KI upravo radi; klikni da vidiš šta je do sada uradio.";return;}
+  if(req.kickedAt){b.textContent=base+" · KI se pokreće";b.title="KI je pokrenut i počinje za 1–2 minuta.";return;}
   const nx=nextAssistantRun();b.textContent=base+" · počinje "+(nx?dayHm(nx).replace("danas u ",""):"uskoro");
   b.title="Zahtev je primljen. KI radi svakog sata od 7 do 21 h i tada počinje.";};
 function targetPending(){const tg=RUNS.find(r=>r._id==="target"),done=RUNS.filter(r=>r.mode==="ciljano"&&r.at).sort((a,b)=>b.at-a.at)[0];
@@ -1003,7 +1007,7 @@ function renderAnalysis(){renderTarget();const lk=RUNS.find(r=>r._id==="analysis
   $("anInfo").innerHTML=pending?progressHtml(lk,null,anDesc(lk)):(lk&&done&&done.at>=lk.startedAt?"<b>Poslednji KI predlog</b>"+progressHtml(lk,done,anDesc(lk)):"Asistent pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz. Ti ih posle možeš obrisati ili zadržati.");}
 $("anBtn").addEventListener("click",async()=>{const b=$("anBtn");b.disabled=true;const count=+$("anCnt").value||5,margin=Math.max(0,+$("anMar").value||SET.cilj),age=$("anAge").value,y=new Date().getFullYear(),
     rng={mix:[y-15,y],"0-5":[y-5,y],"5-10":[y-10,y-5],"10-15":[y-15,y-10]}[age]||[y-15,y];
-  try{await db.doc("runs/analysis").set({requested:true,startedAt:Date.now(),by:actor(),count,margin,age,yearFrom:rng[0],yearTo:rng[1]});toast("Analiza zatražena. Rezultat za najviše sat vremena.");}catch(e){b.disabled=false;fail(e);}});
+  try{await db.doc("runs/analysis").set({requested:true,startedAt:Date.now(),by:actor(),count,margin,age,yearFrom:rng[0],yearTo:rng[1]});kiStart("analysis");toast("Analiza zatražena. Rezultat za najviše sat vremena.");}catch(e){b.disabled=false;fail(e);}});
 function renderLeadSearch(){
   renderAnalysis();const sv=x=>x&&x!=="Svejedno"?x:"",rows=shopRows();
   const all=openLeads().concat(LEADS.filter(l=>l.carId&&!["predato","kupio","odustao"].includes(l.status)&&!openLeads().includes(l)));
@@ -1120,7 +1124,7 @@ $("resetBtn").addEventListener("click",async()=>{const b=$("resetBtn");
   if(!b.dataset.armed){b.dataset.armed=1;b.textContent=`Potvrdi: skloni ${nov.length} ${nov.length===1?"oglas":"oglasa"} iz „Novo“`;setTimeout(()=>{delete b.dataset.armed;b.textContent="Resetuj pretragu";},6000);return;}
   b.disabled=true;const now=Date.now();
   try{for(const f of nov)await db.doc("finds/"+f._id).update({status:"arhiva",archivedAt:now});
-    await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true,reset:true});runStarted=now;
+    await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true,reset:true});runStarted=now;kiStart("lock");
     await logEvent(null,"status",`Resetovana pretraga asistenta: ${nov.length} oglasa sklonjeno, asistent traži ispočetka`);
     findFilter="novo";renderFinds();renderRun();toast("Pretraga resetovana. Asistent traži ispočetka u roku od sat vremena.");}
   catch(e){fail(e);}finally{b.disabled=false;delete b.dataset.armed;b.textContent="Resetuj pretragu";}
@@ -1145,8 +1149,7 @@ function runState(){
 function renderRun(){
   const {last,lock,reqAt,pending,recent}=runState();
   const dt=t=>new Date(t).toLocaleString("sr-Latn-RS",{weekday:"short",day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"});
-  const nx=dt(nextMonday());
-  let s=last?`Poslednja provera ${dt(last.at)}${last.newFinds!=null?` · ${last.newFinds} ${last.newFinds===1?"nov oglas":"novih"}`:""} · sledeća ${nx}`:`Još nije bilo provere · sledeća ${nx}`;
+  let s=last?`Poslednja provera ${dt(last.at)}${last.newFinds!=null?` · ${last.newFinds} ${last.newFinds===1?"nov oglas":"novih"}`:""} · nova samo na klik`:`Još nije bilo provere · KI traži samo kad kliknete „Zatraži proveru tržišta“`;
   if(pending) s=`Provera zatražena (${lock?.by||actor()}, ${new Date(reqAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}) · rezultati za najviše sat vremena`;
   $("runInfo").textContent=s;
   $("runProg").innerHTML=pending&&lock&&lock.startedAt>=reqAt-1000?progressHtml(lock,null):"";
@@ -1161,7 +1164,7 @@ function renderRun(){
 $("runBtn").addEventListener("click",async()=>{const b=$("runBtn");
   const st=runState(); if(st.pending||st.recent||b.disabled){renderRun();return;}
   b.disabled=true; const now=Date.now();
-  try{await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true});runStarted=now;renderRun();toast("Provera zatražena");}
+  try{await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true});runStarted=now;kiStart("lock");renderRun();toast("Provera zatražena");}
   catch(e){b.disabled=false;fail(e);}
 });
 setInterval(()=>{if(document.visibilityState==="visible"){renderRun();renderAnalysis();}},60000);
@@ -1185,7 +1188,7 @@ async function savePrice(source){if(!db)return;const num=v=>v===""?null:+v;
       if(!ex){const ref=await db.collection("prices").add({...base,source:"ai",priceRs:null,n:null,kmMedian:null,checkedAt:null,actor:"Asistent",requestedBy:actor()});pid=ref&&ref.id;}
       if(rs) await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});
       const tg=targetPending();const ids=[...new Set([...(tg?tg.ids||[]:[]),pid].filter(Boolean))];
-      await db.doc("runs/target").set({requested:true,startedAt:Date.now(),by:actor(),ids});
+      await db.doc("runs/target").set({requested:true,startedAt:Date.now(),by:actor(),ids});kiStart("target");
       toast("Asistent u roku od sat vremena traži oglase za "+(ids.length>1?ids.length+" modela":"ovaj model")+".");}
     else{await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});toast("Tvoja cena je sačuvana");}
     $("priceForm").reset();pricePreview();
