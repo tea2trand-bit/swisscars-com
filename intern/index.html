@@ -398,7 +398,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- AI PRETRAGA -->
   <section id="t-ai" class="wrap" style="gap:16px" hidden>
-    <details class="intro"><summary>ⓘ Kako radi</summary><p>KI traži samo kad kliknete: „Zatraži proveru tržišta“ (svi naši modeli), „Traži ove modele“ (samo upisani) ili „KI predlog modela“ (novi modeli). Kreće odmah, a tok rada vidite ispod dugmeta. Za našu pretragu prikazuju se oglasi koji donose <b>bar <span class="minp"></span> € zarade</b>.</p><p>Svaki oglas ide kroz korake <b>Novo → Idemo da gledamo → Kupljeno</b>; kupljeno auto prelazi u „Naša auta“. Za upite sa sajta KI sam šalje predloge potražiocu (provera dva puta dnevno, oko 8 i 17 h). Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
+    <details class="intro"><summary>ⓘ Kako radi</summary><p>KI traži samo kad kliknete: „Zatraži proveru tržišta“ (svi naši modeli), „Traži ove modele“ (samo upisani) ili „KI predlog modela“ (novi modeli). Kreće odmah, a tok rada vidite ispod dugmeta. Za našu pretragu prikazuju se oglasi koji donose <b>bar <span class="minp"></span> € zarade</b>.</p><p>Svaki oglas ide kroz korake <b>Novo → Idemo da gledamo → Kupljeno</b>; kupljeno auto prelazi u „Naša auta“. Za upite sa sajta KI sam šalje predloge potražiocu (provera dva puta dnevno, oko 9 i 21 h). Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
     <div class="toolrow" id="aiTools">
       <button class="b" type="button" data-panel="pModels">Naša KI pretraga</button>
       <button class="b" type="button" data-panel="pLeadS">Upit KI pretraga</button>
@@ -471,7 +471,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 
   <!-- UPITI -->
   <section id="t-narudzbine" class="wrap" style="gap:16px" hidden>
-    <details class="intro"><summary>ⓘ Kako radi</summary><p><b>Upit</b> = neko traži određeno auto. Sa sajta stiže sam. KI proverava upite dva puta dnevno (oko 8 i 17 h) i sam šalje predloge; potražiocu obećavamo odgovor u roku od 24 sata. Upit sa telefona KI preuzima odmah. Faza upita se menja sama.</p></details>
+    <details class="intro"><summary>ⓘ Kako radi</summary><p><b>Upit</b> = neko traži određeno auto. Sa sajta stiže sam. KI proverava upite dva puta dnevno (oko 9 i 21 h) i sam šalje predloge; potražiocu obećavamo odgovor u roku od 24 sata. Upit sa telefona KI preuzima odmah. Faza upita se menja sama.</p></details>
     <div class="top">
       <div class="chips" id="leadFilter"><button type="button" data-lf="open" aria-pressed="true">Otvoreni</button><button type="button" data-lf="done" aria-pressed="false">Završeni</button></div>
       <button class="b" type="button" id="leadNewBtn">+ Upit sa telefona</button>
@@ -1023,7 +1023,7 @@ function leadStep(l){const ps=l.proposals||[];if(l.carId)return "kup";
 const AN_AGE={mix:"mešano","0-5":"do 5 god.","5-10":"5–10 god.","10-15":"10–15 god."};
 const anDesc=r=>r&&r.count?`${r.count} modela${r.budget?" · budžet "+fmt(r.budget)+" €":""} · zarada od ${fmt(r.margin)} € · ${AN_AGE[r.age]||"mešano"}`:"";
 const ZFMT=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Zurich",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
-function nextAssistantRun(){let t=Math.ceil(Date.now()/60000)*60000;for(let i=0;i<1600;i++,t+=60000){const [h,m]=ZFMT.format(t).split(":").map(Number);if(m===55&&(h===7||h===16))return t;}return null;}
+function nextAssistantRun(){let t=Math.ceil(Date.now()/60000)*60000;for(let i=0;i<1600;i++,t+=60000){const [h,m]=ZFMT.format(t).split(":").map(Number);if(m===55&&(h===8||h===20))return t;}return null;}
 const hm=t=>new Date(t).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"});
 const dayHm=t=>{const d=new Date(t),n=new Date(),tm=new Date(n);tm.setDate(n.getDate()+1);return (d.toDateString()===n.toDateString()?"danas":d.toDateString()===tm.toDateString()?"sutra":d.toLocaleDateString("sr-Latn-RS"))+" u "+hm(t);};
 // request doc (lock / analysis / target) + finished run → step list the team can follow
@@ -1045,7 +1045,7 @@ const btnBusy=(sel,base,req)=>{const b=document.querySelector(sel);if(!b)return;
   if(req.workingAt){b.textContent=base+" · KI radi";b.title="KI upravo radi; klikni da vidiš šta je do sada uradio.";return;}
   if(req.kickedAt){b.textContent=base+" · KI se pokreće";b.title="KI je pokrenut i počinje za 1–2 minuta.";return;}
   const nx=nextAssistantRun();b.textContent=base+" · počinje "+(nx?dayHm(nx).replace("danas u ",""):"uskoro");
-  b.title=kiOff?"Pokretanje na klik nije podešeno (ključ ROUTINE_TOKEN u Supabase). Do tada KI kreće pri redovnoj proveri, oko 8 i 17 h.":"Zahtev je primljen; KI počinje pri sledećoj proveri.";};
+  b.title=kiOff?"Pokretanje na klik nije podešeno (ključ ROUTINE_TOKEN u Supabase). Do tada KI kreće pri redovnoj proveri, oko 9 i 21 h.":"Zahtev je primljen; KI počinje pri sledećoj proveri.";};
 function targetPending(){const tg=RUNS.find(r=>r._id==="target"),done=RUNS.filter(r=>r.mode==="ciljano"&&r.at).sort((a,b)=>b.at-a.at)[0];
   return tg&&tg.requested&&(!done||done.at<tg.startedAt)?tg:null;}
 function renderTarget(){const tg=targetPending(),e=$("tgInfo");if(!e)return;
@@ -1293,8 +1293,8 @@ function leadFlow(l,n){const props=l.proposals||[],car=l.carId?CARS.find(c=>c._i
   else if(pf(p=>A(p)==="zanima"&&p.photosAt)){next="Slike su poslate. Čekamo da kaže da li želi auto.";who="Potražilac";}
   else if(pf(p=>!A(p))){next="Predlozi su poslati (link oglasa i procena cene). Čekamo da izabere auto za pregled.";who="Potražilac";}
   else if(l.demo){next="Demo upit: asistent ne obrađuje izmišljene upite.";who="";}
-  else if(!l.aiCheckedAt){next="KI proverava tržište i šalje 3 predloga (provera oko 8 i 17 h; obećano u roku od 24 h).";who="Asistent";}
-  else if(n){next="KI šalje nove predloge (pri sledećoj proveri, oko 8 ili 17 h).";who="Asistent";}
+  else if(!l.aiCheckedAt){next="KI proverava tržište i šalje 3 predloga (provera oko 9 i 21 h; obećano u roku od 24 h).";who="Asistent";}
+  else if(n){next="KI šalje nove predloge (pri sledećoj proveri, oko 9 ili 21 h).";who="Asistent";}
   else {next="Asistent traži dalje i javlja čim nađe dobar oglas.";who="Asistent";}
   return {d,i:i<0?LSTEPS.length:i,next,who};}
 function leadStage(l,n){
@@ -1312,9 +1312,9 @@ function leadStage(l,n){
   if(props.some(p=>pAns(p)==="zanima"&&p.photosAt)) return {t:"Slike poslate – čeka odluku",c:"s-wait"};
   if(props.some(p=>!pAns(p))) return {t:"Čeka odgovor na predloge",c:"s-wait"};
   if(l.demo) return {t:"Demo upit",c:"s-wait"};
-  if(n) return {t:"KI šalje nove predloge (8 ili 17 h)",c:"s-wait"};
+  if(n) return {t:"KI šalje nove predloge (9 ili 21 h)",c:"s-wait"};
   if(l.aiCheckedAt) return {t:"Asistent još nema dobar oglas – traži dalje",c:"s-new"};
-  return l.demo?{t:"Demo – asistent ne obrađuje izmišljene upite",c:"s-wait"}:{t:"Novo – KI proverava (8 ili 17 h)",c:"s-new"};
+  return l.demo?{t:"Demo – asistent ne obrađuje izmišljene upite",c:"s-wait"}:{t:"Novo – KI proverava (9 ili 21 h)",c:"s-new"};
 }
 let leadBusy=false,openReport=null;
 function renderLeads(){
