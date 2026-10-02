@@ -19,6 +19,13 @@ if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=sendLabel}})}
 
 const orderFormPanel = document.getElementById('order-form-panel');
 if (orderFormPanel) {
+  const orderFormMobile = window.matchMedia('(max-width: 760px)');
+  const syncOrderForm = () => {
+    if (!orderFormMobile.matches) orderFormPanel.open = true;
+    else if (!orderFormPanel.querySelector('.form-status.ok')) orderFormPanel.open = location.hash === '#contact';
+  };
+  syncOrderForm();
+  orderFormMobile.addEventListener('change', syncOrderForm);
   const openOrderForm = () => { orderFormPanel.open = true; };
   document.querySelectorAll('a[href="#contact"]').forEach(link => link.addEventListener('click', openOrderForm));
   if (location.hash === '#contact') openOrderForm();

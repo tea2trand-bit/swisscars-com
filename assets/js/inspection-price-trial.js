@@ -29,7 +29,7 @@
     controller = new AbortController();
     const currentController = controller;
     const timeout = setTimeout(() => currentController.abort(), 10000);
-    status.textContent = 'Računamo udaljenost i probnu cenu…';
+    status.textContent = 'Računamo okvirnu cenu pregleda…';
     try {
       const response = await fetch(endpoint, {
         method: 'POST', headers: { apikey: publicKey, 'Content-Type': 'application/json' },
