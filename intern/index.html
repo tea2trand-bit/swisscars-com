@@ -974,7 +974,7 @@ let fOpen=null;
 function renderFinds(){
   document.querySelectorAll(".minp").forEach(e=>e.textContent=fmt(SET.cilj));document.querySelectorAll(".popp").forEach(e=>e.textContent=SET.popust);
   const all=FINDS.map(f=>({f,p:findProfit(f),st:fStage(f)}));
-  const ok=x=>x.p==null||x.p.post>=x.p.min;
+  const ok=x=>x.p!=null&&x.p.post>=x.p.min;
   const cnt={};all.forEach(x=>{if(x.st==="novo"&&!ok(x))return;cnt[x.st]=(cnt[x.st]||0)+1;});
   document.querySelectorAll("[data-cnt]").forEach(e=>e.textContent=cnt[e.dataset.cnt]||0);
   document.querySelectorAll("#fSteps button,#fMore button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.ff===findFilter));
@@ -1005,7 +1005,7 @@ function renderFinds(){
       ${form(f)}<div class="fact">${actions(f)}</div></div>`;}).join("");
   $("findEmpty").hidden=list.length>0;
   $("findEmpty").textContent=findFilter==="novo"?`Trenutno nema novih oglasa koji donose bar ${fmt(SET.cilj)} € zarade.`:"Ovde trenutno nema oglasa.";
-  $("findHidden").textContent=hidden?`${hidden} ${hidden===1?"oglas donosi":"oglasa donose"} manje od ${fmt(SET.cilj)} € zarade po sadašnjim cenama, pa se ne prikazuju.`:"";
+  $("findHidden").textContent=hidden?`${hidden} ${hidden===1?"oglas se ne prikazuje":"oglasa se ne prikazuje"}: zarada ispod ${fmt(SET.cilj)} € ili nema cene u Srbiji za taj model.`:"";
   const L=$("findList");
   L.querySelectorAll("[data-fgo]").forEach(b=>b.onclick=()=>{const [id,to]=b.dataset.fgo.split("|");moveFind(id,to,b);});
   L.querySelectorAll("[data-fopen]").forEach(b=>b.onclick=()=>{const [id,kind]=b.dataset.fopen.split("|");fOpen={id,kind};renderFinds();const t=$("findList").querySelector(".fform textarea,.fform input");t&&t.focus();});
