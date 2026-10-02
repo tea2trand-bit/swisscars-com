@@ -592,7 +592,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         <div class="grid setgrid" id="setGrid"></div>
         <fieldset id="inspectionPriceSettings" style="margin:24px 0 0;padding:18px;border:1px solid var(--line);border-radius:12px">
           <legend>Obračun pregleda po kilometru</legend>
-          <p class="note">Polazak: St. Gallen, centar. Računamo odlazak i povratak. Ove vrednosti koriste novi zahtevi za pregled i novi predlozi vozila. Ranije sačuvane cene ostaju iste.</p>
+          <p class="note">Polazak: St. Gallen, centar. Računamo odlazak i povratak. Cena se zaokružuje na najbližih 10 CHF. Ove vrednosti koriste novi zahtevi za pregled i novi predlozi vozila.</p>
           <div class="grid setgrid">
             <div class="field"><label for="s_inspKmRate">Cena po pređenom kilometru, CHF</label><input id="s_inspKmRate" type="number" min="0" max="100" step="0.05" value="1.5"></div>
             <div class="field"><label for="s_inspBaseFee">Pregled i pisani izveštaj, CHF</label><input id="s_inspBaseFee" type="number" min="0" max="10000" step="1" value="100"></div>
@@ -1389,7 +1389,7 @@ function renderInsp(){const L=$("pgList");if(!L)return;
       <textarea data-pgk="papiri" placeholder="Papirologija (saobraćajna, servisna knjiga, MFK, broj vlasnika)"></textarea>
       <textarea data-pgk="tehnika" placeholder="Tehničko stanje (motor, menjač, kočnice, gume, test vožnja)"></textarea>
       <textarea data-pgk="zakljucak" placeholder="Zaključak za kupca"></textarea>
-      <label class="note">Slike (može više odjednom)<input type="file" accept="image/*" multiple data-pgph></label>
+      <div class="btns"><button class="b small" type="button" data-pgchoose>+ Dodaj fotografije</button><input type="file" accept="image/*" multiple data-pgph hidden><span class="note" data-pgphcount>Još nema fotografija. Možete izabrati više slika sa telefona.</span></div>
       <div class="acts"><button class="b primary" type="button" data-pgsend="${id}">Pošalji izveštaj kupcu</button><button class="b" type="button" data-pgx>Odustani</button></div></div>`:"";
     return `<div class="pgc"><div class="h"><b>${esc(x.name||"—")}</b><span class="note">${[x.phone,x.email].filter(Boolean).map(esc).join(" · ")}</span><span class="note">${x.created?new Date(x.created).toLocaleDateString("sr-Latn-RS"):""}</span></div>
       <div>${esc(x.car||"")}${x.url?` <a href="${esc(x.url)}" target="_blank" rel="noopener">oglas ↗</a>`:""} · ${esc(x.ort||x.place||"")}${x.dist!=null?` (~${x.dist} km od St. Gallena)`:""} · <b>${x.fee!=null?fmt(x.fee)+" CHF":"cena po dogovoru"}</b>${x.note?`<span class="sub">„${esc(x.note)}“</span>`:""}</div>
@@ -1403,6 +1403,8 @@ function renderInsp(){const L=$("pgList");if(!L)return;
   L.querySelectorAll("[data-pgfeesave]").forEach(b=>b.onclick=()=>{const v=+L.querySelector(`[data-pgfee="${CSS.escape(b.dataset.pgfeesave)}"]`).value;if(!(v>0)){toast("Upiši cenu u CHF");return;}upd(b.dataset.pgfeesave,{fee:v},`Cena pregleda ${fmt(v)} CHF: `+nameOf(b.dataset.pgfeesave));});
   L.querySelectorAll("[data-pgplansave]").forEach(b=>b.onclick=()=>{const v=L.querySelector(`[data-pgplan="${CSS.escape(b.dataset.pgplansave)}"]`).value.trim();if(!v){toast("Upiši termin");return;}upd(b.dataset.pgplansave,{plannedAt:v},`Termin pregleda ${v}: `+nameOf(b.dataset.pgplansave));});
   L.querySelectorAll("[data-pgrep]").forEach(b=>b.onclick=()=>{pgOpen=b.dataset.pgrep;L.innerHTML="";renderInsp();});
+  L.querySelectorAll("[data-pgchoose]").forEach(b=>b.onclick=()=>b.closest(".pgform").querySelector("[data-pgph]").click());
+  L.querySelectorAll("[data-pgph]").forEach(input=>input.onchange=()=>{input.closest(".pgform").querySelector("[data-pgphcount]").textContent=input.files.length?`Izabrano fotografija: ${input.files.length}`:"Još nema fotografija. Možete izabrati više slika sa telefona.";});
   L.querySelectorAll("[data-pgx]").forEach(b=>b.onclick=()=>{pgOpen=null;L.innerHTML="";renderInsp();});
   L.querySelectorAll("[data-pgsend]").forEach(b=>b.onclick=async()=>{const id=b.dataset.pgsend,F=L.querySelector(`[data-pgform="${CSS.escape(id)}"]`);
     const rep={ocena:F.querySelector("[data-pgo]").value};F.querySelectorAll("[data-pgk]").forEach(t=>{const v=t.value.trim();if(v)rep[t.dataset.pgk]=v;});
