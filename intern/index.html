@@ -398,7 +398,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <button class="b" type="button" data-panel="pModels">Modeli u pretrazi</button>
       <button class="b" type="button" data-panel="pFind" style="margin-left:auto">+ Našao sam oglas</button>
     </div>
-    <div class="sheet" id="pFind" hidden><h2>Oglas koji sam našao (javi Stefanu)</h2>
+    <div class="sheet" id="pFind" hidden><h2>Oglas koji sam našao</h2><p class="note" style="margin:0">Upisuje se pod imenom: <b class="meName"></b></p>
         <form id="findForm" autocomplete="off" >
           <div class="field"><label for="f_url">Link oglasa</label><input id="f_url" type="url" required placeholder="https://www.autoscout24.ch/…"></div>
           <div class="grid">
@@ -972,6 +972,7 @@ function fStage(f){const st=(f.status==="pogledano"?"izabrano":f.status)||"novo"
 const FSTEP_NOTE={novo:"Oglasi koje je asistent našao. Ako vam se neki sviđa: „Idemo da gledamo“.",izabrano:"Stefan pregleda ova auta. Posle pregleda: „Kupljeno“ ili „Nije kupljeno“ (oglas se tada uklanja).",pogledano:"Pogledana auta. Odlučite: kupujemo ili ne.",kupljeno:"Kupljena auta su u „Naša auta“, odakle ide transport, carina i prodaja.",odbijeno:"Obrisani oglasi. Ako treba, vrati ih u „Novo“.",arhiva:"Oglasi sklonjeni resetom pretrage. Možeš ih vratiti u „Novo“."};
 let fOpen=null;
 function renderFinds(){
+  document.querySelectorAll(".meName").forEach(e=>e.textContent=actor());
   document.querySelectorAll(".minp").forEach(e=>e.textContent=fmt(SET.cilj));document.querySelectorAll(".popp").forEach(e=>e.textContent=SET.popust);
   const all=FINDS.map(f=>({f,p:findProfit(f),st:fStage(f)}));
   const ok=x=>x.p!=null&&x.p.post>=x.p.min;
@@ -1000,7 +1001,7 @@ function renderFinds(){
     const steps=[f.pickedBy?`gledanje: ${esc(who(f.pickedBy))} ${dd(f.pickedAt)}`:"",f.seenBy?`pogledao: ${esc(who(f.seenBy))} ${dd(f.seenAt)}`:"",f.boughtAt?`kupljeno ${dd(f.boughtAt)}${f.paidChf?" za "+fmt(f.paidChf)+" CHF":""}`:""].filter(Boolean).join(" · ");
     return `<div class="frow"><div class="ft">${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.title||f.model)}</a>`:`<b>${esc(f.title||f.model)}</b>`}
       <span class="sub">${[f.year,f.km?fmt(f.km)+" km":"",f.ps?f.ps+" KS":"",f.gear,f.place].filter(Boolean).map(esc).join(" · ")}</span>
-      <span class="sub">${ln?`<span class="match">za upit: ${esc(ln)}</span> `:""}${esc(p?.row?.label||f.model)} · našao ${esc(who(f.actor||"—"))}${f.foundAt?", "+dd(f.foundAt):""}${steps?" · "+steps:""}</span>
+      <span class="sub">${ln?`<span class="match">za upit: ${esc(ln)}</span> `:""}${esc(p?.row?.label||f.model)} · našao ${f.actor&&f.actor!=="Claude"&&f.actor!=="Asistent"?`<b>${esc(f.actor)}</b>`:esc(who(f.actor||"—"))}${f.foundAt?", "+dd(f.foundAt):""}${steps?" · "+steps:""}</span>
       ${f.note?`<span class="sub">⚠ ${esc(f.note)}</span>`:""}${f.seenNote?`<span class="seen">👀 ${esc(f.seenNote)}</span>`:""}</div>
       <div class="fnum"><span class="big">${fmt(f.priceChf)} CHF</span><span class="sub">${p?`prodaja u RS ~${fmt(p.sale)} €`:""}</span><span class="sub">${p?`zarada <span class="profit ${p.post>=0?"pos":"neg"}">${sgn(p.post)} €</span>`:'<span class="note">bez procene</span>'}</span></div>
       ${form(f)}<div class="fact">${actions(f)}</div></div>`;}).join("");
