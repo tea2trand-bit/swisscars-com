@@ -41,8 +41,10 @@
   const track = c => { const i = ORDER.indexOf(c.status); return T().track.map((t, k) => `<li class="${k < i ? "done" : k === i ? "now" : ""}">${esc(t)}</li>`).join(""); };
 
   function render() {
-    const list = CARS.filter(c => filter === "all" || c.stage === filter);
-    $("n-all").textContent = CARS.length; $("n-ready").textContent = CARS.filter(c => c.stage === "ready").length; $("n-onway").textContent = CARS.filter(c => c.stage === "onway").length;
+    // where the car is: still in Switzerland (bought / on the way) or already in Serbia (customs, preparation, for sale)
+    const loc = c => ["kupljen", "transport"].includes(c.status) ? "ch" : "rs";
+    const list = CARS.filter(c => filter === "all" || loc(c) === filter);
+    $("n-all").textContent = CARS.length; $("n-ch").textContent = CARS.filter(c => loc(c) === "ch").length; $("n-rs").textContent = CARS.filter(c => loc(c) === "rs").length;
     $("cars").innerHTML = list.map(c => {
       const ph = c.photos || [];
       return `<button type="button" class="car-card" data-car="${esc(c.id)}" aria-label="${esc(c.model)}">

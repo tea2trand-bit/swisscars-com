@@ -6,7 +6,23 @@ const ours=fetch(SC_URL+'/rest/v1/rpc/sc_submit_order',{method:'POST',headers:{a
 const [okN,res]=await Promise.all([netlify,ours]);
 if(status){status.hidden=false}
 if(res&&res.token){const link='https://swiscars.com/upit/#'+res.token;fetch(SC_URL+'/functions/v1/order-mail',{method:'POST',headers:{apikey:SC_KEY,'Content-Type':'application/json'},body:JSON.stringify({token:res.token})}).catch(()=>{});
-  if(status){status.className='form-status ok';status.innerHTML='';const p1=document.createElement('span');p1.textContent=(d.formSuccessTrack||d.formSuccess)+' ';const a=document.createElement('a');a.href=link;a.textContent=d.formTrackLink||link;a.style.textDecoration='underline';status.appendChild(p1);status.appendChild(a)}contactForm.reset()}
+  if(status){status.className='form-status ok';status.innerHTML='';const p1=document.createElement('span');p1.textContent=(d.formSuccessTrack||d.formSuccess)+' ';const a=document.createElement('a');a.href=link;a.textContent=d.formTrackLink||link;a.style.textDecoration='underline';status.appendChild(p1);status.appendChild(a);
+    const p2=document.createElement('p');p2.style.margin='10px 0 0';p2.textContent=d.formSaveHint||'';status.appendChild(p2);
+    const row=document.createElement('p');row.style.cssText='margin:6px 0 0;display:flex;flex-wrap:wrap;gap:8px';
+    const wa=document.createElement('a');wa.href='https://wa.me/?text='+encodeURIComponent((d.formWaText||'')+' '+link);wa.target='_blank';wa.rel='noopener';wa.className='btn btn-outline';wa.textContent=d.formWa||'WhatsApp';
+    const cp=document.createElement('button');cp.type='button';cp.className='btn btn-outline';cp.textContent=d.formCopy||'Copy';cp.onclick=()=>{(navigator.clipboard?navigator.clipboard.writeText(link):Promise.reject()).then(()=>{cp.textContent=d.formCopied||'OK'}).catch(()=>{window.prompt('',link)})};
+    row.appendChild(wa);row.appendChild(cp);status.appendChild(row);
+    if(window.scSaveUpit)window.scSaveUpit(res.token)}contactForm.reset()}
 else if(okN||(res&&res.ok)){if(status){status.className='form-status ok';status.textContent=d.formSuccess}contactForm.reset()}
 else if(status){status.className='form-status err';status.textContent=d.formError}
 if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=sendLabel}})}
+
+// remember the requester's tracking link on this device and show "Moj upit" in the menu
+(function(){const K='sc_my_upit';const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'null')}catch(e){return null}};
+function addMy(){const m=get(),nav=document.querySelector('.nav');if(!m||!m.t||!nav||nav.querySelector('[data-my-upit]'))return;
+  const a=document.createElement('a');a.href='/upit/#'+m.t;a.dataset.myUpit='1';a.setAttribute('data-i18n','navMyUpit');
+  const lang=localStorage.getItem('swiscars-lang')||'sr';a.textContent=((typeof translations!=='undefined'&&(translations[lang]||translations.sr))||{}).navMyUpit||'Moj upit';nav.appendChild(a);}
+window.scSaveUpit=t=>{if(!/^[a-f0-9]{24}$/.test(t||''))return;try{localStorage.setItem(K,JSON.stringify({t,at:Date.now()}))}catch(e){}addMy()};
+addMy();
+if(location.pathname.indexOf('/upit')===0){const h=location.hash.slice(1);if(/^[a-f0-9]{24}$/.test(h))window.scSaveUpit(h);}
+})();
