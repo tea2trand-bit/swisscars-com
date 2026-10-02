@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="sr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Proba cene pregleda | SWISCARS</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    body { background:#f5f3ef }
+    .trial { max-width:720px; margin:0 auto; padding:20px 16px 36px }
+    .trial-header { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:16px }
+    .trial-header a { font-size:14px; text-decoration:underline }
+    .trial-badge { display:inline-block; padding:6px 12px; background:#fff0c8; border-radius:20px; font-size:13px; font-weight:700; color:#664500 }
+    .trial h1 { font-size:clamp(26px,5vw,38px); line-height:1.2; margin:16px 0 }
+    .trial-lead { color:#54616b; line-height:1.6 }
+    .trial-card { background:white; border:1px solid #dfdad1; border-radius:16px; padding:24px; margin-top:16px }
+    .trial-card label { display:block; font-weight:700; margin-bottom:8px }
+    .trial-card input { margin-bottom:8px }
+    .trial-small { font-size:13px; line-height:1.5; color:#626b73 }
+    .trial-start { padding:12px 14px; background:#f5f3ef; border-radius:8px; margin-bottom:20px }
+    .trial-card .btn { margin-top:12px; width:100%; justify-content:center }
+    .trial-total { display:flex; justify-content:space-between; gap:16px; padding:20px 0 8px; font-size:21px; font-weight:700 }
+    .trial-result { border-top:1px solid #eee9e1; margin-top:16px; padding-top:12px }
+    .trial-result h2 { font-size:20px; margin:0 }
+    .trial-result .trial-total { padding-top:12px }
+    .trial-note { padding:14px; background:#fff6df; border-radius:8px; font-size:13px; line-height:1.55 }
+    #trial-status { margin-bottom:0; min-height:1.5em; color:#54616b }
+    @media(max-width:480px) { .trial-card { padding:18px } .trial-total { font-size:19px } }
+  </style>
+</head>
+<body>
+<main class="trial">
+  <div class="trial-header"><strong>SWISCARS</strong><a href="/pregled/">Postojeća usluga pregleda</a></div>
+  <span class="trial-badge">PROBNI OBRAČUN — nije važeći cenovnik</span>
+  <h1>Koliko bi koštao pregled?</h1>
+  <p class="trial-lead">Unesite grad ili poštanski broj vozila u Švajcarskoj. Prikazaćemo okvirnu cenu pregleda i pisanog izveštaja.</p>
+  <form id="trial-form" class="trial-card" novalidate>
+    <div class="trial-start">Polazak i povratak: <strong>St. Gallen, centar</strong></div>
+    <label for="trial-postcode">Poštanski broj ili grad gde se vozilo nalazi</label>
+    <input id="trial-postcode" name="place" type="text" autocomplete="address-level2" maxlength="80" placeholder="Na primer 8000 ili Zürich" required>
+    <p class="trial-small">Proverite naziv mesta uz rezultat. Za precizniji izbor unesite poštanski broj.</p>
+  <section id="trial-result" class="trial-result" aria-label="Rezultat probnog obračuna" hidden>
+    <h2 id="trial-destination"></h2>
+    <div class="trial-total"><span>Cena pregleda</span><span id="trial-total"></span></div>
+    <p class="trial-note">Okvirna cena za pregled na navedenoj lokaciji. Tačnu cenu potvrđujemo pre uplate. Ova proba ne šalje zahtev za pregled.</p>
+  </section>
+    <button class="btn btn-gold" id="trial-button" type="submit">Izračunaj probnu cenu</button>
+    <p id="trial-status" role="status" aria-live="polite"></p>
+  </form>
+</main>
+<script src="/assets/js/inspection-price-trial.js"></script>
+</body>
+</html>
