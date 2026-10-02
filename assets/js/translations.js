@@ -4,3 +4,6 @@ Object.assign(translations.en, {color:'Colour',colorPh:'Colour (e.g. black, grey
 Object.assign(translations.sr, {footerCountry:'Švajcarska'});
 Object.assign(translations.de, {footerCountry:'Schweiz'});
 Object.assign(translations.en, {footerCountry:'Switzerland'});
+Object.assign(translations.sr, {aboutSubtext:'Naš tim vodi nabavku, tehničku proveru i transport vozila — od Švajcarske do vaše adrese.'});
+Object.assign(translations.de, {aboutSubtext:'Unser Team begleitet Fahrzeugbeschaffung, technische Prüfung und Transport — von der Schweiz bis zu Ihrer Adresse.'});
+Object.assign(translations.en, {aboutSubtext:'Our team handles vehicle sourcing, technical inspection and transport — from Switzerland to your address.'});
