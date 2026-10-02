@@ -574,6 +574,12 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <p class="note">Izmišljeni podaci da se vidi kako radi. Pre pravog rada ih obriši; pravi unosi i tim ostaju.</p>
       <div class="btns"><button class="b danger" type="button" id="delDemo">Obriši demo podatke</button></div>
     </div>
+    <div class="sheet ppanel" data-pp="reset" hidden>
+      <h2>Reset</h2>
+      <p class="note">Briše <b>sve podatke</b>: auta, upite, troškove, oglase asistenta, modele u pretrazi, istoriju i obračune. Ostaju podešavanja i nalozi tima. Koristi se za testiranje i pre pravog rada. Ne može se vratiti.</p>
+      <div class="grid"><div class="field"><label for="rsConfirm">Za potvrdu upiši RESET</label><input id="rsConfirm" autocomplete="off" placeholder="RESET"></div></div>
+      <div class="btns"><button class="b danger" type="button" id="rsBtn" disabled>Obriši sve podatke</button><span class="note" id="rsMsg" role="status"></span></div>
+    </div>
   </section>
 </div>
 
@@ -1402,7 +1408,7 @@ function fillSettings(){
 }
 let podPanel="users";
 function renderPodTiles(){const d=isDemo();
-  const T=[["users","Tim",""],["nums","Podešavanja",""],["pay","Kapara",""]].concat(d?[["demo","Demo podaci",""]]:[]);
+  const T=[["users","Tim",""],["nums","Podešavanja",""],["pay","Kapara",""]].concat(d?[["demo","Demo podaci",""]]:[]).concat(me?.role==="admin"?[["reset","Reset",""]]:[]);
   if(!T.some(t=>t[0]===podPanel))podPanel="users";
   $("podTiles").innerHTML=T.map(([k,l,v])=>v?`<button type="button" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="k">${l}</span><span class="v">${esc(v)}</span></button>`:`<button type="button" class="only" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="v">${l}</span></button>`).join("");
   $("podTiles").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>{podPanel=b.dataset.pt;renderPodTiles();});
@@ -1413,6 +1419,14 @@ $("setForm").addEventListener("submit",async e=>{e.preventDefault();const body={
   body.payInfo=$("s_pay").value.trim();
   body.team=[];
   try{await db.doc("settings/main").set(body);toast("Sačuvano");}catch(err){fail(err);}});
+$("rsConfirm").oninput=()=>{$("rsBtn").disabled=$("rsConfirm").value.trim()!=="RESET";};
+$("rsBtn").addEventListener("click",async()=>{const b=$("rsBtn");if($("rsConfirm").value.trim()!=="RESET")return;b.disabled=true;
+  const sets=[["cars",CARS],["costs",COSTS],["leads",LEADS],["events",EVENTS],["finds",FINDS],["prices",PRICES],["runs",RUNS],["settlements",SETTLES]];
+  const total=sets.reduce((s,[,a])=>s+a.length,0);let n=0;
+  try{for(const [col,arr] of sets)for(const x of [...arr]){await db.doc(col+"/"+x._id).delete();n++;if(n%10===0)$("rsMsg").textContent=`Brišem ${n}/${total}…`;}
+    $("rsMsg").textContent=`Obrisano ${n} stavki.`;$("rsConfirm").value="";closeCar();toast("Reset gotov. Evidencija je prazna.");}
+  catch(e){fail(e);$("rsMsg").textContent=`Obrisano ${n}/${total}, pa je stalo. Pokušaj ponovo.`;}
+  finally{b.disabled=true;}});
 $("delDemo").addEventListener("click",async()=>{const b=$("delDemo");
   if(!b.dataset.armed){b.dataset.armed=1;b.textContent="Klikni ponovo da obrišeš sve demo podatke";setTimeout(()=>{delete b.dataset.armed;b.textContent="Obriši demo podatke";},4000);return;}
   b.disabled=true;try{for(const [col,arr] of [["events",EVENTS],["costs",COSTS],["cars",CARS],["leads",LEADS]])for(const x of arr.filter(x=>x.demo))await db.doc(col+"/"+x._id).delete();toast("Demo podaci obrisani");closeCar();}catch(e){fail(e);}finally{b.disabled=false;b.textContent="Obriši demo podatke";delete b.dataset.armed;}
