@@ -422,9 +422,9 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <div class="chips" id="leadSSteps"></div>
       <div class="scroll"><table id="leadSTbl"><thead><tr><th>Potražilac</th><th>Korak</th><th>Traži</th><th class="n">Budžet</th><th class="n">Asistent traži do</th><th class="n">Našao</th><th class="n">Poslato</th><th>Poslednja provera</th></tr></thead><tbody></tbody></table></div>
     </div>
-    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2><div class="btns" id="mTools"><button class="b small" type="button" data-mbox="anBox" aria-pressed="false">Asistent analiza</button><button class="b small" type="button" data-mbox="priceForm" aria-pressed="false">Traži ove modele</button></div></div>
+    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2><div class="btns" id="mTools"><button class="b small" type="button" data-mbox="anBox" aria-pressed="false">KI predlog modela</button><button class="b small" type="button" data-mbox="priceForm" aria-pressed="false">Traži ove modele</button></div></div>
       <div style="display:grid;gap:10px;margin-top:12px;min-width:0">
-          <div class="subpanel" id="anBox" hidden><div class="top"><b>Asistent analiza</b><button class="b small primary" type="button" id="anBtn">Predloži modele za pretragu</button></div>
+          <div class="subpanel" id="anBox" hidden><div class="top"><b>KI predlog modela</b><button class="b small primary" type="button" id="anBtn">Predloži modele za pretragu</button></div>
             <div class="angrid"><div class="field"><label for="anCnt">Koliko modela</label><select id="anCnt"><option>3</option><option selected>5</option><option>8</option><option>10</option></select></div>
             <div class="field"><label for="anMar">Zarada od, €</label><input id="anMar" type="number" min="0" step="100"></div>
             <div class="field"><label for="anAge">Starost</label><select id="anAge"><option value="mix">Mešano</option><option value="0-5">Do 5 godina</option><option value="5-10">5–10 godina</option><option value="10-15">10–15 godina</option></select></div></div>
@@ -994,8 +994,8 @@ function renderAnalysis(){renderTarget();const lk=RUNS.find(r=>r._id==="analysis
   if(!$("anMar").value)$("anMar").value=(lk&&lk.margin)||SET.cilj;
   ["anCnt","anMar","anAge"].forEach(i=>$(i).disabled=!!pending);
   $("anBtn").disabled=!!pending;$("anBtn").textContent=pending?"Analiza zatražena":"Predloži modele za pretragu";
-  btnBusy('[data-mbox=anBox]',"Asistent analiza",!!pending);
-  $("anInfo").innerHTML=pending?progressHtml(lk,null,anDesc(lk)):(lk&&done&&done.at>=lk.startedAt?"<b>Poslednja analiza</b>"+progressHtml(lk,done,anDesc(lk)):"Asistent pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz. Ti ih posle možeš obrisati ili zadržati.");}
+  btnBusy('[data-mbox=anBox]',"KI predlog modela",!!pending);
+  $("anInfo").innerHTML=pending?progressHtml(lk,null,anDesc(lk)):(lk&&done&&done.at>=lk.startedAt?"<b>Poslednji KI predlog</b>"+progressHtml(lk,done,anDesc(lk)):"Asistent pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz. Ti ih posle možeš obrisati ili zadržati.");}
 $("anBtn").addEventListener("click",async()=>{const b=$("anBtn");b.disabled=true;const count=+$("anCnt").value||5,margin=Math.max(0,+$("anMar").value||SET.cilj),age=$("anAge").value,y=new Date().getFullYear(),
     rng={mix:[y-15,y],"0-5":[y-5,y],"5-10":[y-10,y-5],"10-15":[y-15,y-10]}[age]||[y-15,y];
   try{await db.doc("runs/analysis").set({requested:true,startedAt:Date.now(),by:actor(),count,margin,age,yearFrom:rng[0],yearTo:rng[1]});toast("Analiza zatražena. Rezultat za najviše sat vremena.");}catch(e){b.disabled=false;fail(e);}});
