@@ -589,6 +589,16 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <div class="sheet ppanel" data-pp="nums" hidden>
         <div class="top"><h2>Podešavanja</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
         <div class="grid setgrid" id="setGrid"></div>
+        <fieldset id="inspectionPriceSettings" style="margin:24px 0 0;padding:18px;border:1px solid var(--line);border-radius:12px">
+          <legend>Probni obračun pregleda po kilometru</legend>
+          <p class="note">Polazak: St. Gallen, centar. Računamo odlazak i povratak. Ove vrednosti koristi samo probni kalkulator; postojeći cenovnik pregleda ostaje važeći.</p>
+          <div class="grid setgrid">
+            <div class="field"><label for="s_inspKmRate">Cena po pređenom kilometru, CHF</label><input id="s_inspKmRate" type="number" min="0" max="100" step="0.05" value="1.5"></div>
+            <div class="field"><label for="s_inspBaseFee">Pregled i pisani izveštaj, CHF</label><input id="s_inspBaseFee" type="number" min="0" max="10000" step="1" value="100"></div>
+          </div>
+          <div class="btns"><button id="saveInspectionPrice" class="b primary small" type="button">Sačuvaj probni obračun</button><a class="b small" href="/proba-pregleda/" target="_blank" rel="noopener">Otvori probni kalkulator</a></div>
+          <p id="inspectionPriceStatus" class="note" role="status" aria-live="polite"></p>
+        </fieldset>
       </div>
       <div class="sheet ppanel" data-pp="pay" hidden>
         <div class="top"><h2>Kapara</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
@@ -1619,7 +1629,13 @@ $("pwForm").addEventListener("submit",async e=>{e.preventDefault();const m=$("pw
 $("logout").onclick=()=>SC.signOut();
 
 /* ---------- settings ---------- */
+let savingInspectionPrice=false;
 function fillSettings(){
+  if(!$("inspectionPriceSettings").contains(document.activeElement)){
+    $("s_inspKmRate").value=SET.inspKmRate??1.5;
+    $("s_inspBaseFee").value=SET.inspBaseFee??100;
+  }
+  $("inspectionPriceSettings").querySelectorAll("input,button").forEach(el=>el.disabled=savingInspectionPrice||!canWrite||me?.role!=="admin");
   if(!$("setForm").contains(document.activeElement)){
     $("setGrid").innerHTML=SETF.filter(([k])=>k!=="depositPct").map(([k,l,s,t])=>`<div class="field"><label for="s_${k}" title="${esc(t||l)}">${l}</label><input id="s_${k}" type="number" step="${s}" value="${SET[k]}" title="${esc(t||l)}"></div>`).join("");
     $("s_depositPct").value=SET.depositPct??10;
@@ -1639,8 +1655,18 @@ $("nuBtn").onclick=()=>{$("pwBox").hidden=true;$("newUserBox").hidden=!$("newUse
 $("iam").onchange=()=>{IAM=$("iam").value;try{localStorage.setItem("sc_iam",IAM);}catch(e){}render();};
 $("setForm").addEventListener("submit",async e=>{e.preventDefault();const body={};SETF.forEach(([k])=>{const v=parseFloat($("s_"+k).value);body[k]=isNaN(v)?DEF[k]:v;});
   body.payInfo=$("s_pay").value.trim();
-  body.team=[];
-  try{await db.doc("settings/main").set(body);toast("Sačuvano");}catch(err){fail(err);}});
+  try{await db.doc("settings/main").update(body);toast("Sačuvano");}catch(err){fail(err);}});
+$("saveInspectionPrice").addEventListener("click",async()=>{
+  if(savingInspectionPrice||!db||!canWrite||me?.role!=="admin")return;
+  const rateInput=$("s_inspKmRate"),baseInput=$("s_inspBaseFee"),status=$("inspectionPriceStatus"),button=$("saveInspectionPrice");
+  if(!rateInput.value.trim()||!baseInput.value.trim()||!rateInput.reportValidity()||!baseInput.reportValidity())return;
+  const kmRate=Number(rateInput.value),baseFee=Number(baseInput.value);
+  if(!Number.isFinite(kmRate)||kmRate<0||kmRate>100||!Number.isFinite(baseFee)||baseFee<0||baseFee>10000)return;
+  savingInspectionPrice=true;button.disabled=true;status.textContent="Čuvamo probni obračun…";
+  try{await db.doc("settings/main").update({inspKmRate:kmRate,inspBaseFee:baseFee});status.textContent="Probni obračun je sačuvan. Kalkulator koristi ove vrednosti.";toast("Probni obračun sačuvan");}
+  catch(err){status.textContent="Čuvanje nije uspelo. Pokušaj ponovo.";fail(err);}
+  finally{savingInspectionPrice=false;fillSettings();}
+});
 $("rsConfirm").oninput=()=>{$("rsBtn").disabled=$("rsConfirm").value.trim()!=="RESET";};
 $("rsBtn").addEventListener("click",async()=>{const b=$("rsBtn");if($("rsConfirm").value.trim()!=="RESET")return;b.disabled=true;
   const sets=[["cars",CARS],["costs",COSTS],["leads",LEADS],["events",EVENTS],["finds",FINDS],["prices",PRICES],["runs",RUNS],["settlements",SETTLES],["inspections",INSPS]];
