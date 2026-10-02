@@ -25,7 +25,7 @@
       sRefund: "Kapara od {d} € vam se vraća.", sRefunded: "✓ Kapara od {d} € je vraćena.", sContinue: "Tražimo drugo auto za vas, kapara ostaje za sledeće.",
       nowZanima: "Pripremamo slike i opis auta koje vas zanima.", nowPhotos: "Slike i opis su spremni. Pogledajte ispod i javite da li želite auto.", nowDep: "Čekamo vašu kaparu, zatim naš čovek pregleda auto.", nowInsp: "Kapara je primljena, pregled auta je u toku.", nowFail: "Auto nije prošlo pregled. Izaberite ispod šta dalje.",
       cAd: "Pogledaj oglas (slike i opis) ↗", cEst: "Procena ukupne cene u Srbiji", cEstSub: "auto {chf} CHF + prevoz, carina i PDV + naša provizija {com} CHF", cInsp: "Pregled na licu mesta: {fee}", cInspDist: "~{d} km od St. Gallena", cInspDeal: "po dogovoru",
-      aPregled: "Želim pregled ovog auta", pregHint: "Kapara {d} € (10%). Ako posle pregleda ne kupite, vraćamo {r} €.",
+      aPregled: "Želim pregled ovog auta", pregHint: "Kapara {d} € ({p}%). Ako posle pregleda ne kupite, vraćamo {r} €.", avansW: "Avans", avansHint: "Za ovo auto plaća se avans od 50% umesto kapare od 10%. Ako posle pregleda ne kupite, avans vam vraćamo umanjen samo za trošak pregleda.",
       sZelim2: "Želite pregled. Molimo uplatite kaparu od {d} €.", payNext2: "Čim kapara legne, naš čovek ide na pregled.", sPaid2: "✓ Kapara od {d} € je primljena. Pregled auta je u toku.",
       repT: "Izveštaj sa pregleda", aKupujem: "Kupujem", aNeKupujem: "Ne kupujem", decHint: "Ako ne kupite, vraćamo {r} € (kapara umanjena za pregled).",
       sBuy: "✓ Kupujete ovo auto. Kupujemo ga za vas; ostatak cene plaćate kad auto stigne u Srbiju.", sRefund2: "Ne kupujete. Vraćamo vam {r} €.", sRefunded2: "✓ Vraćeno vam je {r} €.",
@@ -48,7 +48,7 @@
       sRefund: "Die Anzahlung von {d} € wird zurückgezahlt.", sRefunded: "✓ Die Anzahlung von {d} € wurde zurückgezahlt.", sContinue: "Wir suchen ein anderes Auto für Sie, die Anzahlung bleibt bestehen.",
       nowZanima: "Wir bereiten Fotos und Beschreibung des Autos vor, das Sie interessiert.", nowPhotos: "Fotos und Beschreibung sind bereit. Sehen Sie unten nach und sagen Sie uns, ob Sie das Auto möchten.", nowDep: "Wir warten auf Ihre Anzahlung, danach prüft unser Mitarbeiter das Auto.", nowInsp: "Anzahlung erhalten, die Prüfung des Autos läuft.", nowFail: "Das Auto hat die Prüfung nicht bestanden. Bitte wählen Sie unten, wie es weitergeht.",
       cAd: "Inserat ansehen (Fotos und Beschreibung) ↗", cEst: "Geschätzter Gesamtpreis in Serbien", cEstSub: "Auto {chf} CHF + Transport, Zoll und MwSt. + unsere Provision {com} CHF", cInsp: "Prüfung vor Ort: {fee}", cInspDist: "~{d} km ab St. Gallen", cInspDeal: "nach Absprache",
-      aPregled: "Prüfung gewünscht", pregHint: "Anzahlung {d} € (10 %). Kaufen Sie nach der Prüfung nicht, zahlen wir {r} € zurück.",
+      aPregled: "Prüfung gewünscht", pregHint: "Anzahlung {d} € ({p} %). Kaufen Sie nach der Prüfung nicht, zahlen wir {r} € zurück.", avansW: "Vorauszahlung", avansHint: "Für dieses Auto gilt eine Vorauszahlung von 50 % statt 10 % Anzahlung. Kaufen Sie nach der Prüfung nicht, zahlen wir sie abzüglich der Prüfkosten zurück.",
       sZelim2: "Sie möchten eine Prüfung. Bitte überweisen Sie die Anzahlung von {d} €.", payNext2: "Sobald die Anzahlung eingegangen ist, fährt unser Mitarbeiter zur Prüfung.", sPaid2: "✓ Anzahlung von {d} € erhalten. Die Prüfung läuft.",
       repT: "Prüfbericht", aKupujem: "Ich kaufe", aNeKupujem: "Ich kaufe nicht", decHint: "Wenn Sie nicht kaufen, zahlen wir {r} € zurück (Anzahlung abzüglich Prüfung).",
       sBuy: "✓ Sie kaufen dieses Auto. Wir kaufen es für Sie; den Rest zahlen Sie bei Ankunft in Serbien.", sRefund2: "Sie kaufen nicht. Wir zahlen Ihnen {r} € zurück.", sRefunded2: "✓ {r} € wurden zurückgezahlt.",
@@ -71,7 +71,7 @@
       sRefund: "Your deposit of {d} € is being refunded.", sRefunded: "✓ Your deposit of {d} € has been refunded.", sContinue: "We are looking for another car for you, the deposit stays for it.",
       nowZanima: "We are preparing photos and a description of the car you are interested in.", nowPhotos: "Photos and description are ready. Look below and tell us if you want the car.", nowDep: "We are waiting for your deposit, then our person inspects the car.", nowInsp: "Deposit received, the car inspection is in progress.", nowFail: "The car did not pass inspection. Please choose below what happens next.",
       cAd: "View listing (photos and description) ↗", cEst: "Estimated total price in Serbia", cEstSub: "car {chf} CHF + transport, customs and VAT + our commission {com} CHF", cInsp: "On-site inspection: {fee}", cInspDist: "~{d} km from St. Gallen", cInspDeal: "by arrangement",
-      aPregled: "I want an inspection", pregHint: "Deposit {d} € (10%). If you don't buy after the inspection, we refund {r} €.",
+      aPregled: "I want an inspection", pregHint: "Deposit {d} € ({p}%). If you don't buy after the inspection, we refund {r} €.", avansW: "Advance", avansHint: "For this car a 50% advance applies instead of the 10% deposit. If you don't buy after the inspection, we refund it minus the inspection cost.",
       sZelim2: "You want an inspection. Please pay the deposit of {d} €.", payNext2: "As soon as the deposit arrives, our person goes to inspect the car.", sPaid2: "✓ Deposit of {d} € received. The inspection is in progress.",
       repT: "Inspection report", aKupujem: "I'm buying", aNeKupujem: "I'm not buying", decHint: "If you don't buy, we refund {r} € (deposit minus the inspection).",
       sBuy: "✓ You are buying this car. We buy it for you; you pay the rest when it arrives in Serbia.", sRefund2: "You are not buying. We refund you {r} €.", sRefunded2: "✓ {r} € has been refunded.",
@@ -140,8 +140,8 @@
         if (p.depositPaidAt && !p.insp) return `<p class="up-ok">${esc(t.sPaid2.replace("{d}", dep(p)))}</p>`;
         if (p.answer === "zelim" && !p.depositPaidAt) return `<div class="up-box"><p><b>${esc(t.sZelim2.replace("{d}", dep(p)))}</b></p><p class="car-meta">${esc(t.payT)}</p><p class="up-pay">${esc(d.pay || t.payNone)}</p><p class="car-meta">${esc(t.payNext2)}</p></div>`;
         if (p.answer === "ne") return `<p class="up-no">${esc(t.sNe)}</p>`;
-        if (!p.answer) { const dd = p.price ? Math.ceil(p.price * pct / 1000) * 10 : 0, rr = Math.max(0, dd - Math.round((p.inspFee || 0) * 1.057));
-          return `<p class="car-meta">${esc(t.pregHint.replace("{d}", num(dd)).replace("{r}", num(rr)))}</p><div class="up-ans">${btn(p, "zelim", t.aPregled, true)}${btn(p, "ne", t.aNe)}</div>`; }
+        if (!p.answer) { const pp = +p.depositPct || pct, dd = p.price ? Math.ceil(p.price * pp / 1000) * 10 : 0, rr = Math.max(0, dd - Math.round((p.inspFee || 0) * 1.057));
+          return `${pp >= 50 ? `<p class="car-meta"><b>${esc(t.avansHint)}</b></p>` : ""}<p class="car-meta">${esc((pp >= 50 ? t.pregHint.replace(/^\S+/, t.avansW) : t.pregHint).replace("{d}", num(dd)).replace("{r}", num(rr)).replace("{p}", pp))}</p><div class="up-ans">${btn(p, "zelim", t.aPregled, true)}${btn(p, "ne", t.aNe)}</div>`; }
       }
       if (p.depositRefundAt) return `<p class="up-ok">${esc(t.sRefunded.replace("{d}", dep(p)))}</p>`;
       if (p.choice === "refund") return `<p class="up-wait">${esc(t.sRefund.replace("{d}", dep(p)))}</p>`;
