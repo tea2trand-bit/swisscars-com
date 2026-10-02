@@ -398,7 +398,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <details class="intro"><summary>ⓘ Kako radi</summary><p>Asistent svakog ponedeljka (i kad zatražite proveru) traži u Švajcarskoj auta koja nama donose <b>bar <span class="minp"></span> € zarade</b>. Svaki oglas ide u četiri koraka: <b>Novo → Idemo da gledamo → Pogledano, razmišljamo → Kupljeno</b>. Kupljeno auto samo prelazi u „Naša auta“. Oglasi koje asistent nađe za nekog potražioca su u kartici tog upita.</p><p>Automatska provera je svakog ponedeljka oko 7:00; zatražena provera i novi upiti se rade u roku od sat vremena (7–21 h). Već upisani oglasi se ne upisuju ponovo, osim posle reseta. Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
     <div class="toolrow" id="aiTools">
       <button class="b" type="button" data-panel="pModels">Naša KI pretraga</button>
-      <button class="b" type="button" data-panel="pLeadS">Upit pretraga</button>
+      <button class="b" type="button" data-panel="pLeadS">Upit KI pretraga</button>
       <button class="b" type="button" data-panel="pFind" style="margin-left:auto">+ Našao sam oglas</button>
     </div>
     <div class="sheet" id="pFind" hidden><h2>Oglas koji sam našao</h2><p class="note" style="margin:0">Upisuje se pod imenom: <b class="meName"></b></p>
@@ -417,7 +417,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <button class="b primary" type="submit">Javi Stefanu</button>
         </form>
     </div>
-    <div class="sheet" id="pLeadS" hidden><h2>Upit pretraga</h2>
+    <div class="sheet" id="pLeadS" hidden><h2>Upit KI pretraga</h2>
       <p class="note" style="margin:0">Za svaki otvoren upit asistent traži auto po njegovim željama, do cene pri kojoj ukupna cena u Srbiji, sa našom provizijom, staje u njegov budžet.</p>
       <div class="chips" id="leadSSteps"></div>
       <div class="scroll"><table id="leadSTbl"><thead><tr><th>Potražilac</th><th>Korak</th><th>Traži</th><th class="n">Budžet</th><th class="n">Asistent traži do</th><th class="n">Našao</th><th class="n">Poslato</th><th>Poslednja provera</th></tr></thead><tbody></tbody></table></div>
