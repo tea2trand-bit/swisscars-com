@@ -986,8 +986,8 @@ function renderFinds(){
   const dd=t=>t?new Date(t).toLocaleDateString("sr-Latn-RS"):"";
   const actions=f=>{const id=esc(f._id);const st=fStage(f);
     if(st==="novo") return `<button class="b small" type="button" data-fgo="${id}|odbijeno">Obriši</button><button class="b small primary" type="button" data-fgo="${id}|izabrano">Idemo da gledamo →</button>`;
-    if(st==="izabrano") return `<button class="b small" type="button" data-fgo="${id}|novo">↩ Vrati u Novo</button><button class="b small" type="button" data-fgo="${id}|odbijeno">Obriši</button><button class="b small primary" type="button" data-fopen="${id}|seen">Pogledano →</button>`;
-    if(st==="pogledano") return `<button class="b small" type="button" data-fgo="${id}|izabrano">↩ Vrati u „Idemo da gledamo“</button><button class="b small" type="button" data-fgo="${id}|odbijeno">Ne kupujemo</button><button class="b small primary" type="button" data-fopen="${id}|buy">Kupljeno →</button>`;
+    if(st==="izabrano") return `<button class="b small" type="button" data-fgo="${id}|odbijeno">Obriši</button><button class="b small primary" type="button" data-fopen="${id}|seen">Pogledano →</button>`;
+    if(st==="pogledano") return `<button class="b small" type="button" data-fgo="${id}|odbijeno">Ne kupujemo</button><button class="b small primary" type="button" data-fopen="${id}|buy">Kupljeno →</button>`;
     if(st==="kupljeno") return f.carId&&CARS.some(c=>c._id===f.carId)?`<button class="b small" type="button" data-fcar="${esc(f.carId)}">Otvori u „Naša auta“</button>`:"";
     if(st==="odbijeno"||st==="arhiva") return `<button class="b small" type="button" data-fgo="${id}|novo">Vrati u „Novo“</button>`;
     return "";};
