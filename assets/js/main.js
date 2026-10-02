@@ -2,7 +2,7 @@ const buttons=document.querySelectorAll('[data-lang]');const navToggle=document.
 const SC_URL='https://qghrrnqsvsrcwdhgufkv.supabase.co',SC_KEY='sb_publishable_ouwn1r_BvZS9nWyg3vJHAQ_ApUagfSP';
 const contactForm=document.getElementById('contact-form');if(contactForm){const status=contactForm.querySelector('.form-status');const submitBtn=contactForm.querySelector('button[type="submit"]');contactForm.addEventListener('submit',async function(e){e.preventDefault();const lang=localStorage.getItem('swiscars-lang')||'sr';const d=translations[lang]||translations.sr;const sendLabel=submitBtn?submitBtn.textContent:'';if(submitBtn){submitBtn.disabled=true;submitBtn.textContent=d.formSending||'...'}const fd=new FormData(contactForm);const v=k=>(fd.get(k)||'').toString();
 const netlify=fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(fd).toString()}).then(r=>r.ok).catch(()=>false);
-const ours=fetch(SC_URL+'/rest/v1/rpc/sc_submit_order',{method:'POST',headers:{apikey:SC_KEY,'Content-Type':'application/json'},body:JSON.stringify({p:{name:v('name'),phone:v('phone'),email:v('email'),city:v('city'),budget:v('budget'),brand:v('brand'),model:v('model'),yearFrom:v('yearFrom'),fuel:v('fuel'),gearbox:v('gearbox'),body:v('body'),drive:v('drive'),mileage:v('mileage'),when:v('when'),equip:fd.getAll('equip').map(String),notes:v('notes'),website:v('bot-field'),lang}})}).then(async r=>r.ok?r.json():null).catch(()=>null);
+const ours=fetch(SC_URL+'/rest/v1/rpc/sc_submit_order',{method:'POST',headers:{apikey:SC_KEY,'Content-Type':'application/json'},body:JSON.stringify({p:{name:v('name'),phone:v('phone'),email:v('email'),city:v('city'),budget:v('budget'),brand:v('brand'),model:v('model'),yearFrom:v('yearFrom'),fuel:v('fuel'),gearbox:v('gearbox'),body:v('body'),drive:v('drive'),color:v('color'),mileage:v('mileage'),when:v('when'),equip:fd.getAll('equip').map(String),notes:v('notes'),website:v('bot-field'),lang}})}).then(async r=>r.ok?r.json():null).catch(()=>null);
 const [okN,res]=await Promise.all([netlify,ours]);
 if(status){status.hidden=false}
 if(res&&res.token){const link='https://swiscars.com/upit/#'+res.token;fetch(SC_URL+'/functions/v1/order-mail',{method:'POST',headers:{apikey:SC_KEY,'Content-Type':'application/json'},body:JSON.stringify({token:res.token})}).catch(()=>{});
@@ -12,17 +12,63 @@ if(res&&res.token){const link='https://swiscars.com/upit/#'+res.token;fetch(SC_U
     const wa=document.createElement('a');wa.href='https://wa.me/?text='+encodeURIComponent((d.formWaText||'')+' '+link);wa.target='_blank';wa.rel='noopener';wa.className='btn btn-outline';wa.textContent=d.formWa||'WhatsApp';
     const cp=document.createElement('button');cp.type='button';cp.className='btn btn-outline';cp.textContent=d.formCopy||'Copy';cp.onclick=()=>{(navigator.clipboard?navigator.clipboard.writeText(link):Promise.reject()).then(()=>{cp.textContent=d.formCopied||'OK'}).catch(()=>{window.prompt('',link)})};
     row.appendChild(wa);row.appendChild(cp);status.appendChild(row);
-    if(window.scSaveUpit)window.scSaveUpit(res.token)}contactForm.reset()}
+    if(window.scSaveUpit)window.scSaveUpit(res.token,{model:v('model'),created:Date.now()})}contactForm.reset()}
 else if(okN||(res&&res.ok)){if(status){status.className='form-status ok';status.textContent=d.formSuccess}contactForm.reset()}
 else if(status){status.className='form-status err';status.textContent=d.formError}
 if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=sendLabel}})}
 
-// remember the requester's tracking link on this device and show "Moj upit" in the menu
-(function(){const K='sc_my_upit';const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'null')}catch(e){return null}};
-function addMy(){const m=get(),nav=document.querySelector('.nav');if(!m||!m.t||!nav||nav.querySelector('[data-my-upit]'))return;
-  const a=document.createElement('a');a.href='/upit/#'+m.t;a.dataset.myUpit='1';a.setAttribute('data-i18n','navMyUpit');
-  const lang=localStorage.getItem('swiscars-lang')||'sr';a.textContent=((typeof translations!=='undefined'&&(translations[lang]||translations.sr))||{}).navMyUpit||'Moj upit';nav.appendChild(a);}
-window.scSaveUpit=t=>{if(!/^[a-f0-9]{24}$/.test(t||''))return;try{localStorage.setItem(K,JSON.stringify({t,at:Date.now()}))}catch(e){}addMy()};
-addMy();
-if(location.pathname.indexOf('/upit')===0){const h=location.hash.slice(1);if(/^[a-f0-9]{24}$/.test(h))window.scSaveUpit(h);}
+// Saved tracking links belong to this browser, without a customer account.
+(function () {
+  const key = 'sc_my_upiti', legacyKey = 'sc_my_upit';
+  const valid = x => x && /^[a-f0-9]{24}$/.test(x.t || '');
+  let saved = [];
+  try {
+    const stored = JSON.parse(localStorage.getItem(key) || '[]');
+    saved = Array.isArray(stored) ? stored.filter(valid) : [];
+    const legacy = JSON.parse(localStorage.getItem(legacyKey) || 'null');
+    if (valid(legacy) && !saved.some(x => x.t === legacy.t)) saved.push(legacy);
+  } catch (e) {}
+  saved = saved.filter((x, i, all) => all.findIndex(y => y.t === x.t) === i);
+  function renderSaved() {
+    const nav = document.querySelector('.nav');
+    if (!nav || !saved.length) return;
+    const old = nav.querySelector('[data-my-upit]'); if (old) old.remove();
+    const lang = document.documentElement.lang || 'sr';
+    const labels = {
+      sr: { title: 'Moji upiti', request: 'Upit', device: 'Sačuvano u ovom browseru', menu: 'Otvori meni' },
+      de: { title: 'Meine Anfragen', request: 'Anfrage', device: 'In diesem Browser gespeichert', menu: 'Menü öffnen' },
+      en: { title: 'My requests', request: 'Request', device: 'Saved in this browser', menu: 'Open menu' }
+    }[lang] || { title: 'Moji upiti', request: 'Upit', device: 'Sačuvano u ovom browseru' };
+    const toggle = document.querySelector('.nav-toggle');
+    if (toggle) {
+      let badge = toggle.querySelector('.nav-request-count');
+      if (!badge) { badge = document.createElement('span'); badge.className = 'nav-request-count'; badge.setAttribute('aria-hidden', 'true'); toggle.appendChild(badge); }
+      badge.textContent = saved.length;
+      toggle.setAttribute('aria-label', `${labels.menu || 'Otvori meni'}; ${labels.title}: ${saved.length}`);
+    }
+    const menu = document.createElement('details'); menu.className = 'nav-requests'; menu.dataset.myUpit = '1';
+    const summary = document.createElement('summary'); summary.textContent = `${labels.title} (${saved.length})`;
+    menu.appendChild(summary);
+    const list = document.createElement('div'); list.className = 'nav-requests-list';
+    const hint = document.createElement('small'); hint.textContent = labels.device; list.appendChild(hint);
+    saved.slice().sort((a, b) => (b.created || b.at || 0) - (a.created || a.at || 0)).forEach((item, i) => {
+      const link = document.createElement('a'); link.href = '/upit/#' + item.t;
+      link.textContent = item.model || `${labels.request} ${saved.length - i}`;
+      if (location.pathname.indexOf('/upit') === 0 && location.hash.slice(1) === item.t) link.setAttribute('aria-current', 'page');
+      list.appendChild(link);
+    });
+    menu.appendChild(list); nav.appendChild(menu);
+  }
+  window.scSaveUpit = (token, info = {}) => {
+    if (!/^[a-f0-9]{24}$/.test(token || '')) return;
+    const previous = saved.find(x => x.t === token);
+    if (previous) {
+      if (info.model) previous.model = String(info.model).slice(0, 160);
+      if (info.created) previous.created = Number(info.created);
+    } else saved.push({ t: token, at: Date.now(), model: String(info.model || '').slice(0, 160), created: Number(info.created) || 0 });
+    try { localStorage.setItem(key, JSON.stringify(saved)); localStorage.setItem(legacyKey, JSON.stringify({ t: token, at: Date.now() })); } catch (e) {}
+    renderSaved();
+  };
+  document.querySelectorAll('[data-lang]').forEach(button => button.addEventListener('click', renderSaved));
+  renderSaved();
 })();

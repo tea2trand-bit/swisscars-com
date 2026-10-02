@@ -27,9 +27,9 @@ const COMMON = {
 // subject + body per kind; {n} {title} {price} {model} are filled in
 const MSG: Record<string, Record<Lang, [string, string]>> = {
   welcome: {
-    sr: ["Primili smo vaš upit – SWISCARS", "hvala na upitu za {model}. Pretražujemo švajcarsko tržište i u roku od 24 sata šaljemo vam do 3 predloga sa linkom na oglas i procenom ukupne cene u Srbiji.\n\nKako radimo: za auto koje vas zanima uplaćujete kaparu od 10%, i tek tada naš čovek pregleda auto na licu mesta. Posle pregleda dobijate slike i mišljenje i odlučujete. Ako kupujete, kapara je deo cene, a ostatak plaćate kad auto stigne u Srbiju. Ako ne kupujete, zadržavamo samo trošak pregleda (100 CHF do 50 km, 200 CHF do 100 km od St. Gallena), a ostatak kapare vam vraćamo. Naša provizija je 1.000 CHF i uračunata je u procenu cene."],
-    de: ["Wir haben Ihre Anfrage erhalten – SWISCARS", "vielen Dank für Ihre Anfrage zu {model}. Wir durchsuchen den Schweizer Markt und senden Ihnen innerhalb von 24 Stunden bis zu 3 Vorschläge mit Link zum Inserat und geschätztem Gesamtpreis in Serbien.\n\nSo arbeiten wir: Für ein Auto, das Sie interessiert, leisten Sie eine Anzahlung von 10 %, erst dann prüft unser Mitarbeiter das Auto vor Ort. Danach erhalten Sie Fotos und seine Einschätzung und entscheiden. Wenn Sie kaufen, ist die Anzahlung Teil des Preises, den Rest zahlen Sie bei Ankunft in Serbien. Wenn nicht, behalten wir nur die Prüfkosten (100 CHF bis 50 km, 200 CHF bis 100 km ab St. Gallen) und zahlen den Rest zurück. Unsere Provision beträgt 1'000 CHF und ist im geschätzten Preis enthalten."],
-    en: ["We received your request – SWISCARS", "thank you for your request for {model}. We search the Swiss market and within 24 hours send you up to 3 proposals with a link to the listing and an estimated total price in Serbia.\n\nHow we work: for a car you like, you pay a 10% deposit, and only then does our person inspect it on site. After the inspection you get photos and his opinion and decide. If you buy, the deposit is part of the price and you pay the rest when the car arrives in Serbia. If not, we keep only the inspection cost (100 CHF up to 50 km, 200 CHF up to 100 km from St. Gallen) and refund the rest. Our commission is 1,000 CHF and is included in the estimate."],
+    sr: ["SWISCARS | Potvrda upita za {model}", "Hvala na upitu za {model}. Primili smo vaše uslove i javićemo vam se u roku od 24 sata sa do 3 predloga vozila i procenom ukupne cene u Srbiji.\n\nStatus, svoje uslove i predloge pratite preko linka ispod. Ako želite nešto da dopunite, odgovorite na ovaj mejl."],
+    de: ["SWISCARS | Bestätigung Ihrer Anfrage für {model}", "Vielen Dank für Ihre Anfrage zu {model}. Wir haben Ihre Wünsche erhalten und melden uns innerhalb von 24 Stunden mit bis zu 3 Fahrzeugvorschlägen und einer Schätzung des Gesamtpreises in Serbien.\n\nÜber den Link unten sehen Sie den Status, Ihre Wünsche und die Vorschläge. Für Ergänzungen antworten Sie auf diese E-Mail."],
+    en: ["SWISCARS | Confirmation of your request for {model}", "Thank you for your request for {model}. We have received your requirements and will contact you within 24 hours with up to 3 vehicle proposals and an estimated total price in Serbia.\n\nUse the link below to view your status, requirements and proposals. Reply to this email if you would like to add anything."],
   },
   check_yes: {
     sr: ["Prva provera tržišta je gotova – SWISCARS", "naš asistent je završio prvu proveru tržišta za {model}: u Švajcarskoj smo pronašli {n} vozila koja bi mogla da odgovaraju vašem budžetu. Naš tim ih sada proverava i javlja vam se sa konkretnim predlogom."],
@@ -171,15 +171,17 @@ function compose(kind: string, l: Record<string, any>, payload: Record<string, a
     .replace("{dep}", dep).replace("{ref}", ref).replace("{pay}", payTxt).replace("{note}", p.inspNote || "");
   const first = String(l.name || "").split(" ")[0] || "";
   const link = `https://swiscars.com/upit/#${l.token}`;
-  const text = `${c.hello.replace("{name}", first)}\n\n${body}\n\n${c.btn}: ${link}\n\n${c.sign}\n\nSWISCARS GmbH · info@swiscars.com · +41 79 905 61 64 · swiscars.com\n${c.foot}`;
+  const greeting = key === "welcome" ? "" : c.hello.replace("{name}", first);
+  const signature = key === "welcome" ? "SWISCARS" : "SWISCARS GmbH";
+  const text = `${greeting ? greeting + "\n\n" : ""}${body}\n\n${c.btn}:\n${link}\n\n${c.sign}\n\n${signature} · info@swiscars.com · +41 79 905 61 64 · swiscars.com\n${c.foot}`;
   const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#16191d;max-width:560px">
 <p style="font-size:20px;font-weight:bold;color:#9a6f2f;letter-spacing:1px;margin:0 0 18px">SWISCARS</p>
-<p>${esc(c.hello.replace("{name}", first))}</p><p style="white-space:pre-line">${esc(body)}</p>
+${greeting ? `<p>${esc(greeting)}</p>` : ""}<p style="white-space:pre-line">${esc(body)}</p>
 <p><a href="${link}" style="display:inline-block;background:#b7863d;color:#1a1205;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:8px">${esc(c.btn)}</a></p>
 <p style="font-size:13px;color:#5d666e">${esc(link)}</p>
 <p style="white-space:pre-line">${esc(c.sign)}</p>
-<p style="font-size:12px;color:#5d666e;border-top:1px solid #e6e2da;padding-top:10px">SWISCARS GmbH · info@swiscars.com · +41 79 905 61 64 · swiscars.com<br>${esc(c.foot)}</p></div>`;
-  return { subject: m[0].replace("{n}", String(p.n ?? "")), text, html };
+<p style="font-size:12px;color:#5d666e;border-top:1px solid #e6e2da;padding-top:10px">${signature} · info@swiscars.com · +41 79 905 61 64 · swiscars.com<br>${esc(c.foot)}</p></div>`;
+  return { subject: m[0].replace("{n}", String(p.n ?? "")).replace("{model}", String(l.model || "").replace(/[\r\n]/g, " ").slice(0, 160)), text, html };
 }
 
 Deno.serve(async (req) => {
@@ -235,7 +237,7 @@ Deno.serve(async (req) => {
         const msg = compose(r.kind, l, r.payload, car, String((sr?.data as any)?.payInfo || ""), Number((sr?.data as any)?.rate) || 1.057);
         if (!msg) err = "unknown_kind";
         else {
-          await client.send({ from: `SWISCARS <${user}>`, to: l.email, replyTo: user, subject: msg.subject, content: msg.text, html: msg.html });
+          await client.send({ from: `SWISCARS - Upiti za vozila <${user}>`, to: l.email, replyTo: user, subject: msg.subject, content: msg.text, html: msg.html });
           if (r.kind === "welcome") {
             const team = `Novi upit sa sajta\n\nIme: ${l.name}\nTelefon: ${l.phone || "—"}\nEmail: ${l.email || "—"}\nModel: ${l.model}\nBudžet: ${l.budget || "—"} €\nKilometraža: ${l.mileage || "—"}\nMenjač: ${l.gearbox || "—"}\nNapomena: ${l.note || "—"}\n\nU evidenciji: https://swiscars.com/intern/ (kartica Upiti)\nLink potražioca: https://swiscars.com/upit/#${l.token}`;
             await client.send({ from: `SWISCARS sajt <${user}>`, to: user, replyTo: l.email, subject: `Novi upit: ${l.model} (${l.name})`, content: team });

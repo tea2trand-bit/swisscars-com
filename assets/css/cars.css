@@ -125,3 +125,5 @@
 .pg-photos img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; display: block }
 #pgForm { grid-template-columns: 1fr 1fr }
 @media (max-width: 640px) { #pgForm { grid-template-columns: 1fr } }
+#u_req .up-req-wide { grid-column: 1 / -1; }
+#u_req dd { overflow-wrap: anywhere; white-space: pre-line; }

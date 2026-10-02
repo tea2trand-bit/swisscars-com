@@ -12,11 +12,11 @@
   const PH = '<svg viewBox="0 0 120 50" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M8 36v-8l10-4 14-12h40l18 12 18 4v8"/><path d="M8 36h12m20 0h40m20 0h12"/><circle cx="30" cy="38" r="8"/><circle cx="90" cy="38" r="8"/><path d="M36 24h56M62 12v12"/></svg>';
 
   const L = {
-    sr: { kicker: "Vaš upit", title: "Zdravo{n}, evo gde je vaš upit", lead: "Ovde vidite šta se dešava sa vašim upitom: dok tražimo, kad imamo predlog i, ako kupite, gde je auto u svakom trenutku.",
+    sr: { kicker: "Vaš upit", title: "Vaš upit za {model}", lead: "Ovde pratite status upita, svoje uslove i predloge vozila.",
       track: ["Primljeno", "Tražimo", "Kapara i pregled", "Kupljeno", "Transport", "Carina", "Priprema", "Predato"],
       now: ["Primili smo vaš upit. Javićemo vam se sa predlozima u roku od 24 sata.", "Tražimo auto u Švajcarskoj koje odgovara vašim željama. Predloge dobijate u roku od 24 sata.", "Imamo predlog za vas. Pogledajte ispod i javite nam da li vam odgovara.", "Auto je kupljeno za vas u Švajcarskoj.", "Auto je na putu za Srbiju.", "Auto je na carini u Srbiji.", "Auto se priprema: servis, provera i pranje.", "Auto je predato. Hvala na poverenju i srećna vožnja!"],
       ready: "Auto je spremno za preuzimanje.", aiYes: "Prva provera tržišta ({d}): u Švajcarskoj smo našli {n} vozila koja bi mogla da odgovaraju vašem budžetu. Predloge šaljemo ovde i na vaš email.", aiNo: "Prva provera tržišta ({d}): trenutno nema vozila koja odgovaraju budžetu. Pratimo tržište i javljamo vam se čim se pojavi nešto dobro.", closed: "Ovaj upit je zatvoren. Ako i dalje tražite auto, javite nam se.",
-      req: { model: "Tražite", yearFrom: "Godište od", fuel: "Gorivo", body: "Karoserija", budget: "Budžet", mileage: "Kilometraža", gearbox: "Menjač", equip: "Oprema", created: "Upit poslat" },
+      req: { model: "Tražite", brand: "Marka", yearFrom: "Godište od", fuel: "Gorivo", body: "Karoserija", drive: "Pogon", color: "Boja", budget: "Budžet", mileage: "Kilometraža", gearbox: "Menjač", equip: "Oprema", when: "Kada vam treba auto", city: "Grad", note: "Vaše napomene", created: "Upit poslat" }, any: "Svejedno", notSpecified: "Nije navedeno",
       how: ["Asistent vam šalje predloge sa linkom na oglas i procenom ukupne cene u Srbiji (sa našom provizijom od 1.000 CHF).", "Za auto koje vas zanima uplaćujete kaparu od {p}%, i tek tada naš čovek pregleda auto na licu mesta.", "Posle pregleda dobijate slike i mišljenje i odlučujete: kupujem ili ne kupujem.", "Ako kupite, kapara je deo cene, a ostatak plaćate kad auto stigne u Srbiju. Ako ne kupite, zadržavamo samo trošak pregleda (100 CHF do 50 km, 200 CHF do 100 km od St. Gallena)."], howT: "Kako radimo",
       aZanima: "Zanima me – pošaljite slike", aNe: "Ne zanima me", aZelim: "Želim ovo auto", aNeHvala: "Ne, hvala", aRefund: "Vratite mi kaparu", aContinue: "Tražite drugo auto",
       sZanima: "✓ Šaljemo vam slike i opis ovog auta, obično istog dana.", sNe: "Rekli ste da vas ne zanima. Tražimo dalje.", adT: "Iz oglasa", zelimHint: "Kapara: {d} € ({p}% cene). Ostatak plaćate kad auto stigne.",
@@ -35,11 +35,11 @@
       carT: "Vaše auto", qT: "Pitanja?", qP: "Javite nam se kad god želite, najbrže preko WhatsApp-a.",
       e404T: "Upit nije pronađen", e404P: "Proverite da li ste otvorili ceo link iz emaila. Ako problem ostane, javite nam se.", eBtn: "Pošaljite novi upit",
       km: "km", gear: { "Automatik": "Automatik", "Manuelni": "Manuelni" }, locale: "sr-Latn-RS" },
-    de: { kicker: "Ihre Anfrage", title: "Hallo{n}, hier steht Ihre Anfrage", lead: "Hier sehen Sie, was mit Ihrer Anfrage passiert: während wir suchen, wenn wir einen Vorschlag haben und – falls Sie kaufen – wo sich das Auto gerade befindet.",
+    de: { kicker: "Ihre Anfrage", title: "Ihre Anfrage für {model}", lead: "Hier sehen Sie den Status, Ihre Wünsche und unsere Fahrzeugvorschläge.",
       track: ["Erhalten", "Suche", "Anzahlung & Prüfung", "Gekauft", "Transport", "Zoll", "Aufbereitung", "Übergeben"],
       now: ["Wir haben Ihre Anfrage erhalten. Wir melden uns innerhalb von 24 Stunden mit Vorschlägen.", "Wir suchen in der Schweiz ein Auto, das zu Ihren Wünschen passt. Vorschläge erhalten Sie innerhalb von 24 Stunden.", "Wir haben einen Vorschlag für Sie. Bitte sehen Sie unten nach und sagen Sie uns, ob er passt.", "Das Auto wurde für Sie in der Schweiz gekauft.", "Das Auto ist unterwegs nach Serbien.", "Das Auto ist beim Zoll in Serbien.", "Das Auto wird vorbereitet: Service, Prüfung und Reinigung.", "Das Auto wurde übergeben. Danke für Ihr Vertrauen und gute Fahrt!"],
       ready: "Das Auto ist abholbereit.", aiYes: "Erste Marktprüfung ({d}): Wir haben in der Schweiz {n} Fahrzeuge gefunden, die zu Ihrem Budget passen könnten. Die Vorschläge erscheinen hier und per E-Mail.", aiNo: "Erste Marktprüfung ({d}): Derzeit gibt es keine passenden Fahrzeuge in Ihrem Budget. Wir beobachten den Markt und melden uns, sobald etwas Gutes auftaucht.", closed: "Diese Anfrage ist abgeschlossen. Wenn Sie weiterhin ein Auto suchen, melden Sie sich.",
-      req: { model: "Gesucht", yearFrom: "Baujahr ab", fuel: "Treibstoff", body: "Karosserie", budget: "Budget", mileage: "Kilometerstand", gearbox: "Getriebe", equip: "Ausstattung", created: "Anfrage gesendet" },
+      req: { model: "Gesucht", brand: "Marke", yearFrom: "Baujahr ab", fuel: "Treibstoff", body: "Karosserie", drive: "Antrieb", color: "Farbe", budget: "Budget", mileage: "Kilometerstand", gearbox: "Getriebe", equip: "Ausstattung", when: "Gewünschter Zeitpunkt", city: "Ort", note: "Ihre Anmerkungen", created: "Anfrage gesendet" }, any: "Egal", notSpecified: "Nicht angegeben",
       how: ["Unser Assistent sendet Ihnen Vorschläge mit Link zum Inserat und geschätztem Gesamtpreis in Serbien (inkl. unserer Provision von 1'000 CHF).", "Für ein Auto, das Sie interessiert, leisten Sie eine Anzahlung von {p} %, erst dann prüft unser Mitarbeiter es vor Ort.", "Nach der Prüfung erhalten Sie Fotos und seine Einschätzung und entscheiden: kaufen oder nicht.", "Kaufen Sie, ist die Anzahlung Teil des Preises, den Rest zahlen Sie bei Ankunft in Serbien. Wenn nicht, behalten wir nur die Prüfkosten (100 CHF bis 50 km, 200 CHF bis 100 km ab St. Gallen)."], howT: "So arbeiten wir",
       aZanima: "Interessiert mich – Fotos senden", aNe: "Nicht interessiert", aZelim: "Ich möchte dieses Auto", aNeHvala: "Nein, danke", aRefund: "Anzahlung zurück", aContinue: "Anderes Auto suchen",
       sZanima: "✓ Wir senden Ihnen Fotos und Beschreibung dieses Autos, meist am selben Tag.", sNe: "Sie sind nicht interessiert. Wir suchen weiter.", adT: "Aus dem Inserat", zelimHint: "Anzahlung: {d} € ({p} % des Preises). Den Rest zahlen Sie bei Ankunft des Autos.",
@@ -58,11 +58,11 @@
       carT: "Ihr Auto", qT: "Fragen?", qP: "Melden Sie sich jederzeit, am schnellsten per WhatsApp.",
       e404T: "Anfrage nicht gefunden", e404P: "Bitte prüfen Sie, ob Sie den ganzen Link aus der E-Mail geöffnet haben. Sonst melden Sie sich bei uns.", eBtn: "Neue Anfrage senden",
       km: "km", gear: { "Automatik": "Automatik", "Manuelni": "Manuell" }, locale: "de-CH" },
-    en: { kicker: "Your request", title: "Hello{n}, here is your request", lead: "Here you can see what is happening with your request: while we search, when we have a proposal and – if you buy – where the car is at any moment.",
+    en: { kicker: "Your request", title: "Your request for {model}", lead: "Track your request, requirements and our vehicle proposals here.",
       track: ["Received", "Searching", "Deposit & inspection", "Bought", "Transport", "Customs", "Preparation", "Handed over"],
       now: ["We received your request. We will get back to you with proposals within 24 hours.", "We are searching Switzerland for a car that matches your wishes. You will get proposals within 24 hours.", "We have a proposal for you. Please look below and tell us if it suits you.", "The car has been bought for you in Switzerland.", "The car is on its way to Serbia.", "The car is at customs in Serbia.", "The car is being prepared: service, inspection and cleaning.", "The car has been handed over. Thank you for your trust and enjoy the drive!"],
       ready: "The car is ready for pick-up.", aiYes: "First market check ({d}): we found {n} cars in Switzerland that could match your budget. Proposals appear here and by email.", aiNo: "First market check ({d}): there are no matching cars in your budget right now. We keep watching the market and will contact you as soon as something good appears.", closed: "This request is closed. If you are still looking for a car, get in touch.",
-      req: { model: "Looking for", yearFrom: "Year from", fuel: "Fuel", body: "Body type", budget: "Budget", mileage: "Mileage", gearbox: "Gearbox", equip: "Equipment", created: "Request sent" },
+      req: { model: "Looking for", brand: "Brand", yearFrom: "Year from", fuel: "Fuel", body: "Body type", drive: "Drive", color: "Colour", budget: "Budget", mileage: "Mileage", gearbox: "Gearbox", equip: "Equipment", when: "When you need the car", city: "City", note: "Your notes", created: "Request sent" }, any: "Any", notSpecified: "Not specified",
       how: ["Our assistant sends you proposals with a link to the listing and an estimated total price in Serbia (including our 1,000 CHF commission).", "For a car you like you pay a {p}% deposit, and only then does our person inspect it on site.", "After the inspection you get photos and his opinion and decide: buy or not.", "If you buy, the deposit is part of the price and you pay the rest when the car arrives in Serbia. If not, we keep only the inspection cost (100 CHF up to 50 km, 200 CHF up to 100 km from St. Gallen)."], howT: "How we work",
       aZanima: "I'm interested – send photos", aNe: "Not interested", aZelim: "I want this car", aNeHvala: "No, thanks", aRefund: "Refund my deposit", aContinue: "Find another car",
       sZanima: "✓ We are sending you photos and a description of this car, usually the same day.", sNe: "You are not interested. We keep searching.", adT: "From the listing", zelimHint: "Deposit: {d} € ({p}% of the price). You pay the rest when the car arrives.",
@@ -82,7 +82,7 @@
       e404T: "Request not found", e404P: "Please check that you opened the full link from the email. If it still does not work, contact us.", eBtn: "Send a new request",
       km: "km", gear: { "Automatik": "Automatic", "Manuelni": "Manual" }, locale: "en-GB" },
   };
-  let DATA = null, lang = "sr";
+  let DATA = null, lang = "sr", initialLanguageApplied = false, languageSelected = false;
   const T = () => L[lang];
   const num = n => Math.round(+n).toLocaleString(T().locale);
   const CAR_STAGE = { pregledan: 3, kupljen: 3, transport: 4, carinjen: 5, garaza: 6, prodaja: 6, prodat: 7 };
@@ -107,7 +107,8 @@
       return;
     }
     $("u_err").hidden = true; $("u_body").hidden = false;
-    $("u_title").textContent = t.title.replace("{n}", d.name ? " " + d.name : "");
+    $("u_title").textContent = d.model ? t.title.replace("{model}", d.model) : t.kicker;
+    if (window.scSaveUpit) window.scSaveUpit(token, { model: d.model, created: d.created });
     $("u_lead").textContent = t.lead;
     const st = stage(d);
     $("u_track").innerHTML = t.track.map((x, i) => `<li class="${st < 0 ? "" : i < st ? "done" : i === st ? "now" : ""}">${esc(x)}</li>`).join("");
@@ -119,9 +120,9 @@
     $("u_how").hidden = !!d.car;
     $("u_ai").hidden = !(d.aiAt && st >= 0 && st <= 2 && !(d.proposals || []).length);
     if (d.aiAt) $("u_ai").textContent = (d.aiN > 0 ? t.aiYes : t.aiNo).replace("{d}", new Date(d.aiAt).toLocaleDateString(t.locale)).replace("{n}", d.aiN);
-    const sv = x => x === "Svejedno" ? "" : x;
-    const rq = [["model", d.model + (d.drive === "4x4" ? " 4x4" : "")], ["yearFrom", d.yearFrom || ""], ["fuel", sv(d.fuel)], ["body", sv(d.body)], ["budget", d.budget ? num(d.budget) + " €" : ""], ["mileage", d.mileage], ["gearbox", t.gear[sv(d.gearbox)] || sv(d.gearbox)], ["equip", (d.equip || []).join(", ")], ["created", d.created ? new Date(d.created).toLocaleDateString(t.locale) : ""]];
-    $("u_req").innerHTML = rq.filter(r => r[1]).map(([k, v]) => `<div><dt>${esc(t.req[k])}</dt><dd>${esc(v)}</dd></div>`).join("");
+    const choice = x => x === "Svejedno" ? t.any : (x || t.notSpecified);
+    const rq = [["model", d.model], ["brand", d.brand], ["yearFrom", choice(d.yearFrom)], ["fuel", choice(d.fuel)], ["gearbox", t.gear[d.gearbox] || choice(d.gearbox)], ["body", choice(d.body)], ["drive", choice(d.drive)], ["color", choice(d.color)], ["budget", d.budget ? num(d.budget) + " €" : t.notSpecified], ["mileage", choice(d.mileage)], ["when", d.when], ["city", d.city], ["equip", (d.equip || []).join(", ")], ["note", d.note], ["created", d.created ? new Date(d.created).toLocaleDateString(t.locale) : ""]];
+    $("u_req").innerHTML = rq.filter(r => r[1]).map(([k, v]) => `<div${k === "note" || k === "equip" ? ' class="up-req-wide"' : ""}><dt>${esc(t.req[k])}</dt><dd>${esc(v)}</dd></div>`).join("");
     const c = d.car;
     $("u_car").innerHTML = c ? `<div class="up-card"><h2>${esc(t.carT)}: ${esc(c.model)}${c.year ? " " + c.year : ""}</h2>
       <p>${[c.km ? num(c.km) + " km" : "", c.fuel, t.gear[c.gear] || c.gear, c.kw ? Math.round(c.kw * 1.36) + (lang === "en" ? " hp" : lang === "de" ? " PS" : " KS") : "", c.color].filter(Boolean).map(esc).join(" · ")}</p>
@@ -182,11 +183,14 @@
     if (!/^[a-f0-9]{24}$/.test(token)) { DATA = null; render(); return; }
     try { const r = await rpc("sc_order_view", { p_token: token }); DATA = r.ok ? await r.json() : null; }
     catch (e) { console.warn(e); DATA = null; }
-    if (DATA && !localStorage.getItem("swiscars-lang") && L[DATA.lang]) { lang = DATA.lang; document.querySelector(`[data-lang="${lang}"]`)?.click(); }
+    if (DATA && !initialLanguageApplied) {
+      initialLanguageApplied = true;
+      if (!languageSelected) { lang = L[DATA.lang] ? DATA.lang : "sr"; document.querySelector(`[data-lang="${lang}"]`)?.click(); }
+    }
     render();
   }
   try { const s = localStorage.getItem("swiscars-lang"); if (L[s]) lang = s; } catch (e) { }
-  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setTimeout(() => { lang = L[b.dataset.lang] ? b.dataset.lang : "sr"; render(); }, 0)));
+  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => { languageSelected = true; setTimeout(() => { lang = L[b.dataset.lang] ? b.dataset.lang : "sr"; render(); }, 0); }));
   window.addEventListener("hashchange", () => location.reload());
   load();
   setInterval(() => { if (document.visibilityState === "visible" && DATA && document.activeElement?.tagName !== "TEXTAREA") load(); }, 60000);
