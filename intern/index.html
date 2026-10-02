@@ -524,7 +524,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
     <h2 style="margin:0">Administracija</h2>
     <div class="dtiles" id="podTiles"></div>
     <div class="sheet ppanel" data-pp="users" id="usersBox">
-      <div class="top"><h2>Nalozi tima</h2><button class="b small primary" type="button" id="nuBtn" hidden>+ Novi nalog</button></div>
+      <div class="top"><h2>Tim</h2><button class="b small primary" type="button" id="nuBtn" hidden>+ Novi nalog</button></div>
       <div class="subpanel" id="newUserBox" hidden>
         <p class="note" style="margin:0">Korisničko ime je email. Prvu lozinku upisuješ ti, a on je posle sam menja.</p>
         <form id="userForm" autocomplete="off">
@@ -1390,7 +1390,7 @@ function fillSettings(){
 }
 let podPanel="users";
 function renderPodTiles(){const d=isDemo(),payOk=!!(SET.payInfo||"").trim(),others=team().filter(p=>!MEMBERS.some(m=>m.name===p.name)).length;
-  const T=[["users","Nalozi tima",`${MEMBERS.length} ${MEMBERS.length===1?"nalog":"naloga"}`],["nums","Podešavanja",""],["pay","Kapara i uplata",`${SET.depositPct??10}% · ${payOk?"podaci upisani":"bez podataka"}`],["payers","Ko još plaća",others?`${others} bez naloga`:"niko"]].concat(d?[["demo","Demo podaci","obriši"]]:[]).concat([["pw","Moja lozinka","promeni"]]);
+  const T=[["users","Tim",""],["nums","Podešavanja",""],["pay","Kapara i uplata",`${SET.depositPct??10}% · ${payOk?"podaci upisani":"bez podataka"}`],["payers","Ko još plaća",others?`${others} bez naloga`:"niko"]].concat(d?[["demo","Demo podaci","obriši"]]:[]).concat([["pw","Moja lozinka","promeni"]]);
   if(!T.some(t=>t[0]===podPanel))podPanel="users";
   $("podTiles").innerHTML=T.map(([k,l,v])=>v?`<button type="button" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="k">${l}</span><span class="v">${esc(v)}</span></button>`:`<button type="button" class="only" data-pt="${k}" aria-pressed="${podPanel===k}"><span class="v">${l}</span></button>`).join("");
   $("podTiles").querySelectorAll("[data-pt]").forEach(b=>b.onclick=()=>{podPanel=b.dataset.pt;renderPodTiles();});
