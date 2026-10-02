@@ -942,6 +942,11 @@ function renderReports(){if(!$("repKpis"))return;const [sf,st]=perRange($("repPe
   const act=CARS.filter(c=>!["prodat","odustao","pregledan"].includes(c.status)&&c.boughtDate).map(c=>({c,d:Math.floor((Date.now()-new Date(c.boughtDate))/864e5)})).sort((a,b)=>b.d-a.d).slice(0,8);
   $("repOld").tBodies[0].innerHTML=act.map(({c,d})=>`<tr class="click" data-id="${esc(c._id)}"><td>${esc(c.model)}<span class="sub">${c.year||""}</span></td><td>${esc((STATUS.find(s=>s[0]===c.status)||[,c.status])[1])}</td><td class="n">${d}</td><td class="n">${fmt(carCalc(c).tied)} €</td></tr>`).join("")||`<tr><td colspan="4" class="note">Nema auta u radu.</td></tr>`;
   $("repOld").querySelectorAll("tr[data-id]").forEach(tr=>tr.onclick=()=>{switchTab("auta");openCar(tr.dataset.id);});}
+// highest Swiss ad price (CHF) we can finance now for a requester's car (same as sc_lead_cash_max_chf in the database)
+function leadCashMax(){const fm=freeMoney();if(!fm)return null;
+  const committed=LEADS.filter(l=>!l.demo&&!l.carId&&!["odustao","predato","kupio"].includes(l.status)).flatMap(l=>l.proposals||[])
+    .filter(p=>(p.answer==="zelim"||p.depositPaidAt)&&p.choice!=="refund"&&!p.depositRefundAt&&p.insp!=="ne").reduce((x,p)=>x+(+p.price||0)-(+p.commission||0)*SET.rate,0);
+  return Math.floor((fm.free-committed-SET.prevoz*(1+SET.pdv/100)-SET.izvoz-SET.eko)/(SET.rate*(1+SET.pdv/100)));}
 function renderKpis(){
   const act=CARS.filter(c=>!["prodat","odustao","pregledan"].includes(c.status)), sold=CARS.filter(c=>c.status==="prodat");
   const tied=act.reduce((s,c)=>s+carCalc(c).tied,0), prof=sold.reduce((s,c)=>s+(carCalc(c).post||0),0);
@@ -1076,9 +1081,9 @@ function renderLeadSearch(){
   $("leadSSteps").innerHTML=LSS.map(([k,t],i)=>`<button type="button" data-lss="${k}" aria-pressed="${lssF===k}">${i+1} · ${t} (${cnt[k]||0})</button>`).join("");
   $("leadSSteps").querySelectorAll("[data-lss]").forEach(b=>b.onclick=()=>{lssF=lssF===b.dataset.lss?"":b.dataset.lss;renderLeadSearch();});
   const ls=all.filter(l=>!lssF||leadStep(l)===lssF);
-  $("leadSTbl").tBodies[0].innerHTML=ls.map(l=>{const mx=l.budget?leadMaxChf(+l.budget):null,fs=leadFindsOf(l,rows),sent=(l.proposals||[]).length;
+  $("leadSTbl").tBodies[0].innerHTML=ls.map(l=>{const cm=leadCashMax(),mx0=l.budget?leadMaxChf(+l.budget):null,mx=mx0!=null&&cm!=null?Math.min(mx0,cm):mx0,fs=leadFindsOf(l,rows),sent=(l.proposals||[]).length;
     const want=[l.yearFrom?"od "+l.yearFrom:"",sv(l.fuel),sv(l.gearbox),sv(l.body),l.drive==="4x4"?"4x4":"",l.mileage&&l.mileage!=="Nije presudno"?l.mileage.toLowerCase():""].filter(Boolean).join(" · ");
-    return `<tr><td>${esc(l.name||"—")}${l.demo?' <span class="pill">demo</span>':""}</td><td>${esc((LSS.find(x=>x[0]===leadStep(l))||[,""])[1])}</td><td>${esc(l.model||"")}${want?`<span class="sub">${esc(want)}</span>`:""}</td><td class="n">${l.budget?fmt(l.budget)+" €":"—"}</td><td class="n">${mx>0?"<b>"+fmt(mx)+" CHF</b>":'<span class="note">budžet premali</span>'}</td><td class="n">${fs.length}</td><td class="n">${sent}</td><td>${l.demo?'<span class="note">ne traži (demo)</span>':l.aiCheckedAt?new Date(l.aiCheckedAt).toLocaleString("sr-Latn-RS",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):'<span class="note">čeka (do 1 h)</span>'}</td></tr>`;}).join("")||`<tr><td colspan="8" class="note">${lssF?"Nema upita u ovom koraku.":"Nema otvorenih upita."}</td></tr>`;}
+    return `<tr><td>${esc(l.name||"—")}${l.demo?' <span class="pill">demo</span>':""}</td><td>${esc((LSS.find(x=>x[0]===leadStep(l))||[,""])[1])}</td><td>${esc(l.model||"")}${want?`<span class="sub">${esc(want)}</span>`:""}</td><td class="n">${l.budget?fmt(l.budget)+" €":"—"}</td><td class="n">${mx>0?"<b>"+fmt(mx)+" CHF</b>"+(cm!=null&&mx0>cm?'<span class="sub">ograničeno našim novcem</span>':""):(cm!=null&&mx0>0?'<span class="note">čeka slobodan novac</span>':'<span class="note">budžet premali</span>')}</td><td class="n">${fs.length}</td><td class="n">${sent}</td><td>${l.demo?'<span class="note">ne traži (demo)</span>':l.aiCheckedAt?new Date(l.aiCheckedAt).toLocaleString("sr-Latn-RS",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):'<span class="note">čeka (do 1 h)</span>'}</td></tr>`;}).join("")||`<tr><td colspan="8" class="note">${lssF?"Nema upita u ovom koraku.":"Nema otvorenih upita."}</td></tr>`;}
 function renderShop(){
   renderLeadSearch();
   const cell=v=>v>0?`<b>${fmt(v)} CHF</b>`:'<span class="neg">ne isplati se</span>';
