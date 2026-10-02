@@ -619,8 +619,8 @@ const CATS=["Prevoz","Carina i takse","Popravka i delovi","Rad (garaža, elektri
 const LOCS=["Švajcarska","Niš","Sremčica","Ostalo"];
 // Serbian asking-price medians from the market check (polovniautomobili.com, 1 Oct 2026)
 const MARKET={"VW Golf 6 1.6 TDI":5999,"VW Passat B7 2.0 TDI":7575,"VW Polo 1.2–1.6 TDI":5485,"Škoda Octavia III TDI":7375,"Audi A4 B8 2.0 TDI":9295,"Audi A3 8V TDI":10499,"VW Golf 7 2.0 TDI":12500,"Peugeot 3008 BlueHDi":13999,"VW Tiguan II 2.0 TDI":17050,"Kia Sportage CRDi":13000,"Toyota Yaris Hybrid":9500,"Audi A6 C7 TDI":15995,"BMW 520d F10/F11":12500,"Audi Q5 8R TDI":15250,"Škoda Superb III 2.0 TDI":14745,"Mercedes C 220 d W205":16950};
-const DEF={provizija:1000,pregled50:100,pregled100:200,depositPct:10,payInfo:"",rate:1.057,vat:8.1,rsd:117,pdv:20,popust:7,porez:15,cilj:1000,rezerva:300,prevoz:500,izvoz:100,eko:155,team:[]};
-const SETF=[["rate","Kurs CHF → €",0.001,"Koliko evra vredi 1 CHF"],["vat","PDV CH (vraća se), %",0.1,"Švajcarski PDV koji se vraća pri izvozu"],["rsd","Kurs € → dinar",0.1,"Koliko dinara vredi 1 €"],["pdv","PDV Srbija, %",1,"PDV u Srbiji"],["popust","Popust pri prodaji, %",1,"Koliko se obično spusti pri cenkanju"],["porez","Porez na dobit, %",1,"Porez na dobit u Srbiji"],["cilj","Min. zarada po autu, €",50,"Asistent ne prikazuje oglase ispod ove zarade"],["rezerva","Rezerva za popravke, €",50,"Rezerva po autu za popravke"],["prevoz","Prevoz, €",10,"Predlog troška prevoza do Srbije"],["izvoz","Izvozna deklaracija, €",10,"Predlog troška izvozne deklaracije"],["eko","Eko taksa, €",5,"Predlog eko takse"],["depositPct","Kapara, % od cene",1,"Kapara od potražioca"],["provizija","Provizija za upit, CHF",50,"Naša provizija kad potražilac kupi auto"],["pregled50","Pregled do 50 km, CHF",10,"Cena pregleda do 50 km od St. Gallena"],["pregled100","Pregled do 100 km, CHF",10,"Cena pregleda do 100 km od St. Gallena"]];
+const DEF={kapital:0,provizija:1000,pregled50:100,pregled100:200,depositPct:10,payInfo:"",rate:1.057,vat:8.1,rsd:117,pdv:20,popust:7,porez:15,cilj:1000,rezerva:300,prevoz:500,izvoz:100,eko:155,team:[]};
+const SETF=[["kapital","Kapital firme, €",100,"Novac firme za kupovinu auta. Iz njega se računa „Slobodno za kupovinu“ koje vidi i KI"],["rate","Kurs CHF → €",0.001,"Koliko evra vredi 1 CHF"],["vat","PDV CH (vraća se), %",0.1,"Švajcarski PDV koji se vraća pri izvozu"],["rsd","Kurs € → dinar",0.1,"Koliko dinara vredi 1 €"],["pdv","PDV Srbija, %",1,"PDV u Srbiji"],["popust","Popust pri prodaji, %",1,"Koliko se obično spusti pri cenkanju"],["porez","Porez na dobit, %",1,"Porez na dobit u Srbiji"],["cilj","Min. zarada po autu, €",50,"Asistent ne prikazuje oglase ispod ove zarade"],["rezerva","Rezerva za popravke, €",50,"Rezerva po autu za popravke"],["prevoz","Prevoz, €",10,"Predlog troška prevoza do Srbije"],["izvoz","Izvozna deklaracija, €",10,"Predlog troška izvozne deklaracije"],["eko","Eko taksa, €",5,"Predlog eko takse"],["depositPct","Kapara, % od cene",1,"Kapara od potražioca"],["provizija","Provizija za upit, CHF",50,"Naša provizija kad potražilac kupi auto"],["pregled50","Pregled do 50 km, CHF",10,"Cena pregleda do 50 km od St. Gallena"],["pregled100","Pregled do 100 km, CHF",10,"Cena pregleda do 100 km od St. Gallena"]];
 
 const SPEC=[
  ["Auto",[["model","Model","text",{list:"models",req:1,ph:"npr. VW Golf 6 1.6 TDI"}],["year","Godište","number"],["firstReg","Prva registracija","month"],["km","Kilometraža","number",{step:1000}],["engine","Motor","text",{ph:"npr. 1.6 TDI"}],["kw","Snaga, kW","number"],["fuel","Gorivo","select",["","Dizel","Benzin","Hibrid","Električni","Gas"]],["gear","Menjač","select",["","Manuelni 5","Manuelni 6","Automatik","DSG / S-tronic"]],["body","Karoserija","select",["","Hečbek","Karavan","Limuzina","SUV","Monovolumen","Kupe","Kabriolet"]],["drive","Pogon","select",["","Prednji","4x4","Zadnji"]],["doors","Vrata","select",["","4/5","2/3"]],["euro","Emisiona klasa","select",["","Euro 6","Euro 6d","Euro 5","Euro 4"]],["color","Boja","text"],["vin","Broj šasije (VIN)","text",{max:17}]]],
@@ -893,12 +893,19 @@ const costAt=k=>k.created||(k.date?Date.parse(k.date):0);
 const lastSettle=()=>SETTLES.filter(x=>x.at).sort((a,b)=>b.at-a.at)[0]||null;
 const dShort=t=>new Date(t).toLocaleDateString("sr-Latn-RS",{day:"numeric",month:"numeric",year:"numeric"});
 function owed(since){const W={};COSTS.filter(k=>costAt(k)>since).forEach(k=>{const p=k.payer||"—";W[p]=W[p]||{n:0,s:0};W[p].n++;W[p].s+=toEUR(k.amount||0,k.currency);});return W;}
+// money the company can spend right now: capital + profit of sold cars − money in cars not sold yet − costs not tied to a car
+function freeMoney(){if(!(SET.kapital>0))return null;
+  const act=CARS.filter(c=>!["prodat","odustao","pregledan"].includes(c.status)), sold=CARS.filter(c=>c.status==="prodat");
+  const tied=act.reduce((s,c)=>s+carCalc(c).tied,0), prof=sold.reduce((s,c)=>s+(carCalc(c).post||0),0);
+  const other=COSTS.filter(k=>!k.carId).reduce((s,k)=>s+toEUR(k.amount||0,k.currency),0);
+  return {free:Math.round(SET.kapital+prof-tied-other),tied,prof,other};}
 function renderKpis(){
   const act=CARS.filter(c=>!["prodat","odustao","pregledan"].includes(c.status)), sold=CARS.filter(c=>c.status==="prodat");
   const tied=act.reduce((s,c)=>s+carCalc(c).tied,0), prof=sold.reduce((s,c)=>s+(carCalc(c).post||0),0);
   const dd=sold.map(c=>carCalc(c).days).filter(x=>x!=null), avgD=dd.length?dd.reduce((a,b)=>a+b,0)/dd.length:null;
   const exp=act.filter(c=>c.askEur).reduce((s,c)=>s+(carCalc(c).post||0),0);
   $("kpis").innerHTML=[["Novac u autima",fmt(tied)+" €",`${act.length} auta kupljeno, još neprodato`],["Zarađeno",`<span class="${prof>=0?"pos":"neg"}">${sgn(prof)} €</span>`,`${sold.length} prodatih auta, posle poreza`],["Još se očekuje",`<span class="${exp>=0?"pos":"neg"}">${sgn(exp)} €</span>`,"od auta koja imaju traženu cenu"],["Prosečno do prodaje",avgD==null?"—":fmt(avgD)+" dana","od kupovine do prodaje"]]
+    .concat((()=>{const fm=freeMoney();return [fm?["Slobodno za kupovinu",`<span class="${fm.free>=0?"pos":"neg"}">${fmt(fm.free)} €</span>`,`kapital + zarađeno − u autima${fm.other?" − ostali troškovi":""}; ovo vidi i KI`]:["Slobodno za kupovinu","—","upiši kapital firme u Administracija → Podešavanja"]];})())
     .map(([l,v,s])=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
   const sp=$("soldPer").value, now=new Date(), pad=n=>String(n).padStart(2,"0"), ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
   const [sf,st]=sp==="m0"?[ymd(new Date(now.getFullYear(),now.getMonth(),1)),"9999"]:sp==="m1"?[ymd(new Date(now.getFullYear(),now.getMonth()-1,1)),ymd(new Date(now.getFullYear(),now.getMonth(),1))]:sp==="6m"?[ymd(new Date(now.getFullYear(),now.getMonth()-6,now.getDate())),"9999"]:sp==="y0"?[now.getFullYear()+"-01-01","9999"]:sp==="y1"?[(now.getFullYear()-1)+"-01-01",now.getFullYear()+"-01-01"]:["","9999"];
@@ -1002,13 +1009,13 @@ function renderTarget(){const tg=targetPending(),e=$("tgInfo");if(!e)return;
 function renderAnalysis(){renderTarget();const lk=RUNS.find(r=>r._id==="analysis"),done=RUNS.filter(r=>r.mode==="analiza"&&r.at).sort((a,b)=>b.at-a.at)[0];
   const pending=lk&&lk.requested&&(!done||done.at<lk.startedAt);
   if(!$("anMar").value)$("anMar").value=(lk&&lk.margin)||SET.cilj;
-  if(!$("anBud").value&&lk&&lk.budget)$("anBud").value=lk.budget;
+  {const fm=freeMoney();$("anBud").placeholder=fm?"slobodno "+fmt(fm.free):"bez limita";}
   const busy=!!(pending&&(lk.workingAt||lk.kickedAt&&Date.now()-lk.kickedAt<10*60000));
   ["anCnt","anBud","anMar","anAge"].forEach(i=>$(i).disabled=busy);
   $("anBtn").disabled=busy;$("anBtn").textContent=busy?"KI radi":pending?"Pokreni sada":"Predloži modele za pretragu";
   btnBusy('[data-mbox=anBox]',"KI predlog modela",pending?lk:null);
   $("anInfo").innerHTML=pending?progressHtml(lk,null,anDesc(lk)):(lk&&done&&done.at>=lk.startedAt?"<b>Poslednji KI predlog</b>"+progressHtml(lk,done,anDesc(lk)):"KI pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz i staju u budžet. Ti ih posle možeš obrisati ili zadržati.");}
-$("anBtn").addEventListener("click",async()=>{const b=$("anBtn");b.disabled=true;const budget=Math.max(0,+$("anBud").value||0)||null,count=+$("anCnt").value||5,margin=Math.max(0,+$("anMar").value||SET.cilj),age=$("anAge").value,y=new Date().getFullYear(),
+$("anBtn").addEventListener("click",async()=>{const b=$("anBtn");b.disabled=true;const fm=freeMoney(),budget=Math.max(0,+$("anBud").value||0)||(fm&&fm.free>0?fm.free:null),count=+$("anCnt").value||5,margin=Math.max(0,+$("anMar").value||SET.cilj),age=$("anAge").value,y=new Date().getFullYear(),
     rng={mix:[y-15,y],"0-5":[y-5,y],"5-10":[y-10,y-5],"10-15":[y-15,y-10]}[age]||[y-15,y];
   try{await db.doc("runs/analysis").set({requested:true,startedAt:Date.now(),by:actor(),count,budget,margin,age,yearFrom:rng[0],yearTo:rng[1]});kiStart("analysis");toast("Zatraženo. Tok rada vidiš ispod.");}catch(e){b.disabled=false;fail(e);}});
 function renderLeadSearch(){
@@ -1127,7 +1134,7 @@ $("resetBtn").addEventListener("click",async()=>{const b=$("resetBtn");
   if(!b.dataset.armed){b.dataset.armed=1;b.textContent=`Potvrdi: skloni ${nov.length} ${nov.length===1?"oglas":"oglasa"} iz „Novo“`;setTimeout(()=>{delete b.dataset.armed;b.textContent="Resetuj pretragu";},6000);return;}
   b.disabled=true;const now=Date.now();
   try{for(const f of nov)await db.doc("finds/"+f._id).update({status:"arhiva",archivedAt:now});
-    await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true,reset:true});runStarted=now;kiStart("lock");
+    await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true,reset:true,budget:freeMoney()?.free??null});runStarted=now;kiStart("lock");
     await logEvent(null,"status",`Resetovana pretraga asistenta: ${nov.length} oglasa sklonjeno, asistent traži ispočetka`);
     findFilter="novo";renderFinds();renderRun();toast("Pretraga resetovana. Asistent traži ispočetka u roku od sat vremena.");}
   catch(e){fail(e);}finally{b.disabled=false;delete b.dataset.armed;b.textContent="Resetuj pretragu";}
@@ -1167,7 +1174,7 @@ function renderRun(){
 $("runBtn").addEventListener("click",async()=>{const b=$("runBtn");
   const st=runState(); if(st.pending||st.recent||b.disabled){renderRun();return;}
   b.disabled=true; const now=Date.now();
-  try{await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true});runStarted=now;kiStart("lock");renderRun();toast("Provera zatražena");}
+  try{await db.doc("runs/lock").set({startedAt:now,by:actor(),requested:true,budget:freeMoney()?.free??null});runStarted=now;kiStart("lock");renderRun();toast("Provera zatražena");}
   catch(e){b.disabled=false;fail(e);}
 });
 setInterval(()=>{if(document.visibilityState==="visible"){renderRun();renderAnalysis();}},60000);
@@ -1191,7 +1198,7 @@ async function savePrice(source){if(!db)return;const num=v=>v===""?null:+v;
       if(!ex){const ref=await db.collection("prices").add({...base,source:"ai",priceRs:null,n:null,kmMedian:null,checkedAt:null,actor:"Asistent",requestedBy:actor()});pid=ref&&ref.id;}
       if(rs) await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});
       const tg=targetPending();const ids=[...new Set([...(tg?tg.ids||[]:[]),pid].filter(Boolean))];
-      await db.doc("runs/target").set({requested:true,startedAt:Date.now(),by:actor(),ids});kiStart("target");
+      {const fm=freeMoney();await db.doc("runs/target").set({requested:true,startedAt:Date.now(),by:actor(),ids,budget:fm&&fm.free>0?fm.free:null});}kiStart("target");
       toast("Asistent u roku od sat vremena traži oglase za "+(ids.length>1?ids.length+" modela":"ovaj model")+".");}
     else{await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});toast("Tvoja cena je sačuvana");}
     $("priceForm").reset();pricePreview();
