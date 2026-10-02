@@ -420,9 +420,10 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <div class="chips" id="leadSSteps"></div>
       <div class="scroll"><table id="leadSTbl"><thead><tr><th>Potražilac</th><th>Korak</th><th>Traži</th><th class="n">Budžet</th><th class="n">Asistent traži do</th><th class="n">Našao</th><th class="n">Poslato</th><th>Poslednja provera</th></tr></thead><tbody></tbody></table></div>
     </div>
-    <div class="sheet" id="pModels" hidden><h2>Naša pretraga – modeli</h2>
+    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2></div>
       <div class="split two" style="margin-top:12px">
         <div style="display:grid;gap:10px;min-width:0">
+          <div class="subpanel"><div class="top"><b>Asistent analiza</b><button class="b small primary" type="button" id="anBtn">Predloži modele za pretragu</button></div><p class="note" id="anInfo" style="margin:0">Asistent pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz. Ti ih posle možeš obrisati ili zadržati.</p></div>
           <p class="note">Za ove modele asistent traži oglase u Švajcarskoj. Cenu u Srbiji sam računa sa polovniautomobili.com. Ako je neko od vas upisao svoju cenu, uzima se niža.</p>
           <div class="scroll"><table id="priceTbl"><thead><tr><th>Model</th><th class="n">Cena u RS</th><th>Izvor</th><th></th></tr></thead><tbody></tbody></table></div>
         </div>
@@ -960,7 +961,13 @@ function leadStep(l){const ps=l.proposals||[];if(l.carId)return "kup";
   if(ps.some(p=>p.choice==="buy"||(p.inspAt&&!p.choice&&p.insp!=="ne")))return "odl";
   if(ps.some(p=>p.depositPaidAt&&!p.inspAt&&!p.insp))return "preg";
   if(ps.some(p=>pAns(p)==="zelim"&&!p.depositPaidAt))return "kap";return "pred";}
-function renderLeadSearch(){const sv=x=>x&&x!=="Svejedno"?x:"",rows=shopRows();
+function renderAnalysis(){const lk=RUNS.find(r=>r._id==="analysis"),done=RUNS.filter(r=>r.mode==="analiza"&&r.at).sort((a,b)=>b.at-a.at)[0];
+  const pending=lk&&lk.requested&&(!done||done.at<lk.startedAt);
+  $("anBtn").disabled=!!pending;$("anBtn").textContent=pending?"Analiza zatražena":"Predloži modele za pretragu";
+  $("anInfo").textContent=pending?`Zatražio ${lk.by||""} u ${new Date(lk.startedAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}. Asistent radi analizu u roku od sat vremena (7–21 h); novi modeli se sami pojave ispod.`:done?`Poslednja analiza ${new Date(done.at).toLocaleString("sr-Latn-RS",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"})}: ${done.note||""}`:"Asistent pogleda tržište u Srbiji i Švajcarskoj i sam doda modele koji se isplate za uvoz. Ti ih posle možeš obrisati ili zadržati.";}
+$("anBtn").addEventListener("click",async()=>{const b=$("anBtn");b.disabled=true;try{await db.doc("runs/analysis").set({requested:true,startedAt:Date.now(),by:actor()});toast("Analiza zatražena. Rezultat za najviše sat vremena.");}catch(e){b.disabled=false;fail(e);}});
+function renderLeadSearch(){
+  renderAnalysis();const sv=x=>x&&x!=="Svejedno"?x:"",rows=shopRows();
   const all=openLeads().concat(LEADS.filter(l=>l.carId&&!["predato","kupio","odustao"].includes(l.status)&&!openLeads().includes(l)));
   const cnt={};all.forEach(l=>{const k=leadStep(l);cnt[k]=(cnt[k]||0)+1;});
   $("leadSSteps").innerHTML=LSS.map(([k,t],i)=>`<button type="button" data-lss="${k}" aria-pressed="${lssF===k}">${i+1} · ${t} (${cnt[k]||0})</button>`).join("");
@@ -1085,7 +1092,7 @@ document.querySelectorAll("#aiTools [data-panel]").forEach(b=>b.onclick=()=>{con
 const LOCK_H=24, PEND_MIN=8*60;
 function nextMonday(){const d=new Date();d.setHours(7,0,0,0);let add=(8-d.getDay())%7;if(add===0&&Date.now()>=d.getTime())add=7;d.setDate(d.getDate()+add);return d;}
 function runState(){
-  const last=RUNS.filter(r=>r.at&&r.mode!=="brzi").sort((a,b)=>b.at-a.at)[0];
+  const last=RUNS.filter(r=>r.at&&r.mode!=="brzi"&&r.mode!=="analiza").sort((a,b)=>b.at-a.at)[0];
   const lock=RUNS.find(r=>r._id==="lock");
   const reqAt=Math.max(runStarted||0,lock?.startedAt||0);
   const pending=reqAt&&(!last||last.at<reqAt)&&Date.now()-reqAt<PEND_MIN*60000;
