@@ -17,6 +17,14 @@ else if(okN||(res&&res.ok)){if(status){status.className='form-status ok';status.
 else if(status){status.className='form-status err';status.textContent=d.formError}
 if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=sendLabel}})}
 
+const orderFormPanel = document.getElementById('order-form-panel');
+if (orderFormPanel) {
+  const openOrderForm = () => { orderFormPanel.open = true; };
+  document.querySelectorAll('a[href="#contact"]').forEach(link => link.addEventListener('click', openOrderForm));
+  if (location.hash === '#contact') openOrderForm();
+  window.addEventListener('hashchange', () => { if (location.hash === '#contact') openOrderForm(); });
+}
+
 // Saved tracking links belong to this browser, without a customer account.
 (function () {
   const key = 'sc_my_upiti', legacyKey = 'sc_my_upit';

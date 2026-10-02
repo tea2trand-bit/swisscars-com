@@ -746,6 +746,24 @@ a { text-decoration: none; color: inherit }
 .vb { color: #665cac !important }
 .mail { color: var(--gold) !important }
 
+.contact-form-panel { align-self: start; min-width: 0 }
+.contact-form-panel > summary { cursor: pointer; padding: 18px 20px; background: var(--paper); border: 1px solid var(--gold); border-radius: var(--r-sm); font-weight: 700 }
+.contact-form-panel > summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px }
+.contact-form-panel[open] > summary { margin-bottom: 18px }
+.contact-form-panel > form { width: 100%; box-sizing: border-box }
+.services-intro { max-width: 820px; color: var(--muted); margin-bottom: 24px }
+.service-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px }
+.service-options article, .service-tracking { padding: 24px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-md) }
+.service-options .step-num { position: static; display: block; margin-bottom: 12px }
+.service-options h3 { margin: 0 0 12px }
+.service-options p, .service-tracking p { line-height: 1.65 }
+.service-options a { display: inline-block; margin-top: 8px; color: var(--gold); font-weight: 700 }
+.service-note { font-size: 14px; color: var(--muted) }
+.service-tracking { margin-top: 24px }
+.service-tracking h3 { margin-top: 0 }
+.process-subtitle { margin: 32px 0 18px }
+@media (max-width: 700px) { .service-options { grid-template-columns: 1fr } .service-options article, .service-tracking { padding: 20px } }
+
 .contact-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1142,4 +1160,10 @@ footer small { color: #b9b7ba; display: block; margin-top: 4px }
 .nav-toggle { position: relative; }
 .nav-request-count { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--gold); color: #fff; font-size: 10px; font-weight: 700; line-height: 18px; }
 footer .footer-company strong { display: none; }
+footer .footer-company [data-i18n="footerCountry"] { display: none }
+footer { padding: 22px 14px }
+footer .footer-brand { margin-bottom: 8px }
+footer .footer-company { display: block; margin-bottom: 10px }
+footer .footer-company span { font-size: 13px; line-height: 1.5 }
+footer .footer-legal { margin-bottom: 8px }
 @media (max-width: 900px) { .nav-requests summary { padding: 7px 2px; font-size: 16px; } .nav-requests-list { position: static; margin-top: 12px; width: min(300px, calc(100vw - 48px)); } }
