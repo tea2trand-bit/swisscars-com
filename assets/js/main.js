@@ -57,7 +57,7 @@ if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=sendLabel}})}
       if (location.pathname.indexOf('/upit') === 0 && location.hash.slice(1) === item.t) link.setAttribute('aria-current', 'page');
       list.appendChild(link);
     });
-    menu.appendChild(list); nav.appendChild(menu);
+    menu.appendChild(list); nav.insertBefore(menu, nav.querySelector('.nav-team-portal'));
   }
   window.scSaveUpit = (token, info = {}) => {
     if (!/^[a-f0-9]{24}$/.test(token || '')) return;

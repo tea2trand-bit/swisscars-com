@@ -1130,6 +1130,15 @@ footer small { color: #b9b7ba; display: block; margin-top: 4px }
 .nav-requests-list small { color: var(--muted); font-size: 12px; text-transform: none; }
 .nav-requests-list a { overflow-wrap: anywhere; }
 .nav-requests-list a[aria-current='page'] { color: var(--gold); }
+.nav .nav-team-portal { border-left: 1px solid var(--line); padding-left: 18px; }
+@media (min-width: 901px) and (max-width: 1280px) {
+  .site-header { flex-wrap: wrap; gap: 10px; }
+  .site-header .brand { margin-right: auto; }
+  .nav { order: 4; width: 100%; margin-left: 0; justify-content: center; align-items: center; gap: 18px; }
+  .nav > a, .nav-requests summary { white-space: nowrap; }
+  .header-cta { display: none; }
+}
+@media (max-width: 900px) { .nav .nav-team-portal { border-left: 0; border-top: 1px solid var(--line); padding: 10px 2px; margin-top: 8px; } }
 .nav-toggle { position: relative; }
 .nav-request-count { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--gold); color: #fff; font-size: 10px; font-weight: 700; line-height: 18px; }
 footer .footer-company strong { display: none; }
