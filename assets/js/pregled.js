@@ -6,7 +6,7 @@
   const KEY = typeof SC_KEY !== "undefined" ? SC_KEY : "";
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const num = n => Number(n).toLocaleString("de-CH").replace(/[’']/g, ".");
+  const num = n => Number(n).toLocaleString(lang()==="sr"?"sr-Latn-RS":lang()==="de"?"de-CH":"en-GB",{maximumFractionDigits:2});
   const rpc = (fn, body) => fetch(`${URL_}/rest/v1/rpc/${fn}`, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
     .then(async r => { const j = await r.json().catch(() => null); if (!r.ok) throw new Error((j && j.message) || r.status); return j; });
   const photo = p => /^https?:/.test(p) ? p : `${URL_}/storage/v1/object/public/sc-photos/${String(p).split("/").map(encodeURIComponent).join("/")}`;
@@ -15,7 +15,7 @@
   const L = {
     sr: {
       kicker: "Pregled auta", title: "Pregled auta u Švajcarskoj",
-      lead: "Našli ste auto u Švajcarskoj? Pre nego što platite, naš čovek ga pregleda na licu mesta i pošalje vam slike i pisani izveštaj.",
+      lead: "Našli ste auto u Švajcarskoj? Pre nego što platite, naš tim ga pregleda na licu mesta i pošalje vam slike i pisani izveštaj.",
       whatT: "Šta proveravamo",
       what: [["Da li je auto lupan", "Karoserija, debljina laka, zazori, tragovi popravke"], ["Papirologija", "Saobraćajna, servisna knjiga, MFK, broj vlasnika, poreklo"], ["Tehničko stanje", "Motor, menjač, kočnice, gume, test vožnja"], ["Slike i izveštaj", "Detaljne slike i pisano mišljenje: preporučujemo ili ne"]],
       priceT: "Cena pregleda", prices: [["Do 100 km od St. Gallena", "200 CHF"], ["Do 200 km od St. Gallena", "300 CHF"], ["Dalje od 200 km", "po dogovoru"]],
@@ -42,7 +42,7 @@
     },
     de: {
       kicker: "Fahrzeugprüfung", title: "Fahrzeugprüfung in der Schweiz",
-      lead: "Sie haben ein Auto in der Schweiz gefunden? Bevor Sie zahlen, prüft unser Mitarbeiter es vor Ort und sendet Ihnen Fotos und einen schriftlichen Bericht.",
+      lead: "Sie haben ein Auto in der Schweiz gefunden? Bevor Sie zahlen, prüft unser Team es vor Ort und sendet Ihnen Fotos und einen schriftlichen Bericht.",
       whatT: "Was wir prüfen",
       what: [["Unfallschäden", "Karosserie, Lackschichtdicke, Spaltmasse, Reparaturspuren"], ["Papiere", "Fahrzeugausweis, Serviceheft, MFK, Anzahl Halter, Herkunft"], ["Technischer Zustand", "Motor, Getriebe, Bremsen, Reifen, Probefahrt"], ["Fotos und Bericht", "Detailfotos und schriftliche Einschätzung: empfehlenswert oder nicht"]],
       priceT: "Preis der Prüfung", prices: [["Bis 100 km ab St. Gallen", "200 CHF"], ["Bis 200 km ab St. Gallen", "300 CHF"], ["Weiter als 200 km", "nach Absprache"]],
@@ -69,7 +69,7 @@
     },
     en: {
       kicker: "Car inspection", title: "Car inspection in Switzerland",
-      lead: "Found a car in Switzerland? Before you pay, our person inspects it on site and sends you photos and a written report.",
+      lead: "Found a car in Switzerland? Before you pay, our team inspects it on site and sends you photos and a written report.",
       whatT: "What we check",
       what: [["Accident damage", "Body, paint thickness, panel gaps, signs of repair"], ["Paperwork", "Registration, service book, MFK, number of owners, origin"], ["Technical condition", "Engine, gearbox, brakes, tyres, test drive"], ["Photos and report", "Detailed photos and a written opinion: recommended or not"]],
       priceT: "Inspection price", prices: [["Up to 100 km from St. Gallen", "200 CHF"], ["Up to 200 km from St. Gallen", "300 CHF"], ["Further than 200 km", "on request"]],
@@ -95,10 +95,13 @@
       qT: "Questions?", qP: "Write or call us, we answer quickly."
     }
   };
+  Object.assign(L.sr, {"prices":[],"priceNote":"Unesite grad ili poštanski broj vozila u obrazac ispod i videćete okvirnu ukupnu cenu pregleda. Polazimo iz centra St. Gallena. Cenu potvrđujemo pre uplate; nakon uplate dogovaramo termin sa prodavcem.","place":"Poštanski broj ili grad gde se vozilo nalazi","qFee":"{ort} ({plz}) · Okvirna cena pregleda: {f} CHF","qAgree":"{ort} ({plz}) · Cena se potvrđuje po dogovoru","qNo":"Mesto nije pronađeno. Proverite naziv grada ili unesite poštanski broj (npr. 8000).","qLoading":"Računamo okvirnu cenu pregleda…","qError":"Cena trenutno nije dostupna. Pokušajte ponovo.","priceChanged":"Cena pregleda je promenjena. Proverite novu cenu iznad, pa ponovo pošaljite zahtev.","nowAgree":"Narudžbina je primljena. Javićemo vam se da potvrdimo cenu pregleda."});
+  Object.assign(L.de, {"prices":[],"priceNote":"Geben Sie Ort oder Postleitzahl des Fahrzeugs unten ein, um den ungefähren Gesamtpreis zu sehen. Abfahrt ab dem Zentrum von St. Gallen. Wir bestätigen den Preis vor Zahlung; danach vereinbaren wir einen Termin.","place":"Postleitzahl oder Ort des Fahrzeugs","qFee":"{ort} ({plz}) · Geschätzter Prüfpreis: {f} CHF","qAgree":"{ort} ({plz}) · Preis nach Absprache","qNo":"Ort nicht gefunden. Prüfen Sie den Ortsnamen oder geben Sie die Postleitzahl ein (z. B. 8000).","qLoading":"Prüfpreis wird berechnet…","qError":"Preis momentan nicht verfügbar. Bitte erneut versuchen.","priceChanged":"Der Prüfpreis hat sich geändert. Bitte prüfen Sie den neuen Preis oben und senden Sie die Anfrage erneut.","nowAgree":"Bestellung erhalten. Wir melden uns zur Preisbestätigung."});
+  Object.assign(L.en, {"prices":[],"priceNote":"Enter the vehicle’s town or postal code below to see an estimated total inspection price. We start from central St. Gallen. We confirm the price before payment, then arrange a time with the seller.","place":"Postal code or town where the vehicle is located","qFee":"{ort} ({plz}) · Estimated inspection price: {f} CHF","qAgree":"{ort} ({plz}) · Price to be confirmed","qNo":"Place not found. Check the town name or enter the postal code (e.g. 8000).","qLoading":"Calculating the estimated inspection price…","qError":"Price temporarily unavailable. Please try again.","priceChanged":"The inspection price has changed. Check the new price above and submit your request again.","nowAgree":"Order received. We will contact you to confirm the inspection price."});
   const T = () => L[lang()];
   const tokenOf = () => { const h = location.hash.slice(1); return /^[a-f0-9]{24}$/.test(h) ? h : null; };
   const KEYLS = "sc_my_pregled";
-  let view = null, quote = null, qTimer = null;
+  let view = null, quote = null, qTimer = null, quotePlace = "", quoteSeq = 0;
 
   function common() {
     const t = T();
@@ -124,22 +127,34 @@
   function showQuote() {
     const t = T(), q = quote, el = $("pg_quote");
     if (!q) { el.textContent = ""; return; }
-    el.textContent = !q.found ? t.qNo : (q.fee != null ? t.qFee : t.qAgree).replace("{ort}", q.ort).replace("{k}", q.kanton || "").replace("{d}", q.dist).replace("{f}", num(q.fee || 0));
+    el.textContent = !q.found ? t.qNo : (q.fee != null ? t.qFee : t.qAgree).replace("{ort}", q.ort).replace("{plz}", q.plz || "").replace("{f}", num(q.fee || 0));
   }
 
-  $("pg_place").addEventListener("input", () => {
-    clearTimeout(qTimer); const v = $("pg_place").value.trim();
-    if (v.length < 3) { quote = null; showQuote(); return; }
-    qTimer = setTimeout(() => rpc("sc_insp_quote", { p_place: v }).then(q => { quote = q; showQuote(); }).catch(() => {}), 350);
+  async function calculateQuote() {
+    clearTimeout(qTimer);const value=$("pg_place").value.trim(),sequence=++quoteSeq;
+    quote=null;quotePlace="";showQuote();
+    if(value.length<3)return null;
+    $("pg_quote").textContent=T().qLoading;
+    try { const q=await rpc("sc_insp_quote",{p_place:value});
+      if(sequence!==quoteSeq||value!==$("pg_place").value.trim())return null;
+      quote=q;quotePlace=value;showQuote();return q;
+    } catch {if(sequence===quoteSeq)$("pg_quote").textContent=T().qError;return null;}
+  }
+  $("pg_place").addEventListener("input",()=>{
+    ++quoteSeq;clearTimeout(qTimer);quote=null;quotePlace="";showQuote();
+    if($("pg_place").value.trim().length>=3)qTimer=setTimeout(calculateQuote,350);
   });
 
   $("pgForm").addEventListener("submit", async e => {
     e.preventDefault(); const t = T(), st = $("pg_status"), btn = $("pg_send");
     const v = id => $(id).value.trim();
     if (!(v("pg_url") || v("pg_car")) || !v("pg_place") || !v("pg_name") || !v("pg_email")) { st.hidden = false; st.className = "form-status err"; st.textContent = t.need; return; }
+    if(btn.disabled)return;
+    if(!quote||quotePlace!==v("pg_place")){await calculateQuote();return;}
+    if(!quote.found||quote.fee==null){st.hidden=false;st.className="form-status err";st.textContent=quote.found?t.qError:t.qNo;return;}
     btn.disabled = true; btn.textContent = t.sending;
     try {
-      const r = await rpc("sc_submit_inspection", { p: { url: v("pg_url"), car: v("pg_car"), place: v("pg_place"), name: v("pg_name"), phone: v("pg_phone"), email: v("pg_email"), notes: v("pg_notes"), website: $("pgForm").website.value, lang: lang() } });
+      const r = await rpc("sc_submit_inspection", { p: { url: v("pg_url"), car: v("pg_car"), place: v("pg_place"), name: v("pg_name"), phone: v("pg_phone"), email: v("pg_email"), notes: v("pg_notes"), website: $("pgForm").website.value, expectedFee: quote.fee, lang: lang() } });
       if (!r || !r.token) throw new Error("no token");
       const link = `https://swiscars.com/pregled/#${r.token}`;
       try { localStorage.setItem(KEYLS, JSON.stringify({ t: r.token, at: Date.now() })); } catch (e2) {}
@@ -150,7 +165,7 @@
         <span style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"><a class="btn btn-outline" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(t.waText + " " + link)}">${esc(t.wa)}</a><button type="button" class="btn btn-outline" id="pg_copy">${esc(t.copy)}</button></span>`;
       $("pg_copy").onclick = () => (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => { $("pg_copy").textContent = t.copied; }).catch(() => window.prompt("", link));
       $("pgForm").reset(); quote = null; $("pg_quote").textContent = "";
-    } catch (err) { console.warn(err); st.hidden = false; st.className = "form-status err"; st.textContent = t.err; }
+    } catch (err) { console.warn(err); st.hidden = false; st.className = "form-status err"; st.textContent = err.message==="price_changed"?t.priceChanged:t.err; if(err.message==="price_changed")await calculateQuote(); }
     btn.disabled = false; btn.textContent = t.send;
   });
 
@@ -159,7 +174,7 @@
     const step = d.status === "gotovo" || d.reportAt ? 3 : d.plannedAt ? 2 : d.paidAt ? 1 : 0;
     $("v_track").innerHTML = t.track.map((x, k) => `<li class="${k < step ? "done" : k === step ? "now" : ""}">${esc(x)}</li>`).join("");
     $("v_now").textContent = d.status === "otkazano" ? t.cancelled : step === 0 && d.fee == null ? t.nowAgree : t.now[step].replace("{p}", d.plannedAt || "");
-    const rows = [[t.rCar, d.car], [t.rPlace, [d.ort || d.place, d.dist != null ? `~${d.dist} km` : ""].filter(Boolean).join(" · ")], [t.rFee, d.fee != null ? num(d.fee) + " CHF" : t.agree]];
+    const rows = [[t.rCar, d.car], [t.rPlace, d.ort || d.place], [t.rFee, d.fee != null ? num(d.fee) + " CHF" : t.agree]];
     $("v_req").innerHTML = rows.filter(r => r[1]).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")
       + (d.url ? `<div><dt>${esc(t.rAd)}</dt><dd><a href="${esc(d.url)}" target="_blank" rel="noopener nofollow">${esc(t.open)}</a></dd></div>` : "");
     const pay = $("v_pay");

@@ -1,0 +1,18 @@
+.sc-conversation { display:grid; gap:12px; min-width:0; margin-top:12px }
+.sc-conversation h2,.sc-conversation h4 { margin:0; font-size:20px }
+.sc-conversation .sc-chat-hint,.sc-conversation .sc-chat-status { margin:0; font-size:14px; color:var(--muted,#5d666e) }
+.sc-chat-list { display:grid; gap:10px; max-height:480px; overflow-y:auto; overscroll-behavior:contain; padding:2px; margin:0; list-style:none }
+.sc-chat-message { border:1px solid var(--line,#e6e2da); background:var(--bg,#f6f5f2); border-radius:10px; padding:12px 14px; min-width:0 }
+.sc-chat-message.sc-chat-team { border-left:3px solid #9a6f2f }
+.sc-chat-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; font-size:12px; color:var(--muted,#5d666e); margin-bottom:6px }
+.sc-chat-body { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.5 }
+.sc-chat-form { display:grid; gap:8px; margin:0 }
+.sc-chat-form label { font-size:14px; font-weight:600 }
+.sc-chat-form textarea { box-sizing:border-box; width:100%; min-height:100px; resize:vertical; padding:10px 12px; font:inherit; color:var(--ink,var(--text,#16191d)); background:var(--paper,#fff); border:1px solid var(--line,#e6e2da); border-radius:8px }
+.sc-chat-actions { display:flex; flex-wrap:wrap; align-items:center; gap:10px }
+.sc-chat-button { font:600 14px/1.4 Inter,"Segoe UI",Arial,sans-serif; padding:10px 16px; background:#2f6690; color:white; border:0; border-radius:8px; cursor:pointer }
+.sc-chat-button:disabled { opacity:.55; cursor:default }
+.sc-chat-older { justify-self:start; background:none; color:var(--ink,var(--text,#16191d)); border:1px solid var(--line,#e6e2da) }
+.sc-chat-status[data-error=true] { color:#a3362b }
+.sc-chat-notice { color:#a3362b; font-weight:700 }
+@media(max-width:640px) { .sc-chat-list{max-height:380px} .sc-chat-actions .sc-chat-button{width:100%} }
