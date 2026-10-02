@@ -74,6 +74,15 @@
   <div class="container">
     <p class="section-kicker" data-i18n="processKicker">Proces</p>
     <h2 data-i18n="processTitle">Kako radimo</h2>
+    <p class="services-intro" data-i18n="servicesIntro">Izaberite uslugu koja vam odgovara. Naša digitalna platforma povezuje izbor vozila, rad našeg tima i praćenje svakog koraka, bez vašeg putovanja u Švajcarsku.</p>
+    <div class="service-options">
+      <article><span class="step-num">01</span><h3 data-i18n="serviceStockTitle">Vozila iz naše ponude</h3><p data-i18n="serviceStockText">Birajte vozila koja smo kupili za svoju ponudu. Uz svako vozilo pratite da li je kupljeno u Švajcarskoj, na transportu, na carini, u pripremi u Srbiji ili spremno za prodaju.</p><a href="/auta/" data-i18n="serviceStockCta">Pogledajte ponudu vozila →</a></article>
+      <article><span class="step-num">02</span><h3 data-i18n="serviceInspectionTitle">Pregled auta koji ste pronašli</h3><p data-i18n="serviceInspectionText">Pošaljite link oglasa. Tim iz St. Gallena proverava vozilo i dostupnu dokumentaciju i dostavlja fotografije i pisani nalaz. Do 100 km cena je 200 CHF, do 200 km 300 CHF, a dalje po dogovoru. Nakon pregleda sami odlučujete o kupovini i prevozu.</p><a href="/pregled/" data-i18n="standaloneCta">Zatražite pregled auta</a></article>
+      <article><span class="step-num">03</span><h3 data-i18n="serviceSwissTitle">Kupovina izabranog auta: paket u Švajcarskoj</h3><p data-i18n="serviceSwissText">Za 900 CHF naš tim obavlja pregled, povratak po vozilo, preuzimanje i predaju na mesto polaska transporta, uz pripremu dokumentacije. Prethodno plaćeni pregled uračunava se u tih 900 CHF: ako je pregled koštao 200 CHF, za paket doplaćujete 700 CHF.</p><p class="service-note" data-i18n="serviceSwissCosts">Cena auta, međunarodni transport, carina, porezi, registracija i druge naknade obračunavaju se posebno. Obim usluge i troškove potvrđujemo pre kupovine.</p><a href="#contact" data-i18n="serviceSwissCta">Dogovorite pomoć pri kupovini →</a></article>
+      <article><span class="step-num">04</span><h3 data-i18n="serviceBudgetTitle">Potraga i uvoz prema vašem budžetu</h3><p data-i18n="serviceBudgetText">Navedite budžet i uslove. Tražimo odgovarajuća vozila kroz oglase, poslovne platforme i kontakte i dajemo ponudu sa ukupnom cenom u Srbiji. Nakon dogovora i kapare organizujemo kupovinu, dokumentaciju, transport, carinjenje i završnu proveru pre predaje. Registraciju na vaše ime možete posebno dogovoriti.</p><p class="service-note" data-i18n="serviceBudgetCosts">Ova usluga ima pojedinačnu ponudu prema vozilu i dogovorenom obimu. Paket od 900 CHF odnosi se na auto koji ste sami izabrali.</p><a href="#contact" data-i18n="formOpen">Pošaljite upit za auto</a></article>
+    </div>
+    <div class="service-tracking"><h3 data-i18n="trackingTitle">Sve informacije o vašem upitu na jednom mestu</h3><p data-i18n="trackingText">Posle slanja upita dobijate lični link mejlom. Preko njega pratite svoje uslove, status, predloge vozila i, kada tim završi pregled, pisani izveštaj i fotografije. Na istom uređaju svoje sačuvane upite otvarate kroz „Moji upiti“ u meniju. Link sačuvajte i delite samo sa osobama kojima želite da omogućite uvid.</p></div>
+    <h3 class="process-subtitle" data-i18n="processStepsTitle">Od prvog dogovora do predaje vozila</h3>
     <div class="steps">
       <article><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span class="step-num">01</span><h3 data-i18n="step1Title">Konsultacije</h3><p data-i18n="step1Text">Definišemo budžet, željeni model, kilometražu i realne potrebe.</p></article>
       <article><span class="step-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg></span><span class="step-num">02</span><h3 data-i18n="step2Title">Selekcija</h3><p data-i18n="step2Text">Tražimo vozila kroz proverene izvore, aukcije i kontakte.</p></article>
@@ -131,6 +140,8 @@
         <a class="mail" href="mailto:info@swiscars.com" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm8 8 8-5H4l8 5Zm0 2L4 10v7h16v-7l-8 5Z"/></svg>Email</a>
       </div>
     </div>
+    <details class="contact-form-panel" id="order-form-panel">
+    <summary data-i18n="formOpen">Pošaljite upit za auto</summary>
     <form class="contact-form" id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="contact">
       <p class="hidden-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
@@ -170,10 +181,11 @@
       <label class="sr-only" for="cf-email" data-i18n="email">E-mail</label>
       <input id="cf-email" name="email" type="email" required data-i18n-placeholder="email" placeholder="E-mail">
       <p class="cf-hint" data-i18n="cfHint">Na email dobijate link na kom pratite svoj upit.</p>
-      <p class="cf-hint" data-i18n="cfHow">Kako radimo: asistent vam šalje predloge sa linkom na oglas i procenom ukupne cene u Srbiji (sa našom provizijom od 1.000 CHF). Za auto koje vas zanima uplaćujete kaparu od 10%, i tek tada naš čovek pregleda auto. Posle pregleda odlučujete: ako kupite, ostatak plaćate kad auto stigne u Srbiju; ako ne, zadržavamo samo trošak pregleda (100–200 CHF).</p>
+      <p class="cf-hint" data-i18n="cfHow">Dobijate predloge i procenu ukupne cene u Srbiji. Pre uplate potvrđujemo cenu, obim usluge i uslove kapare. Pregled radi naš tim, a odluku o kupovini donosite nakon izveštaja.</p>
       <button class="btn btn-gold" type="submit" data-i18n="send">Pošalji upit</button>
       <p class="form-status" role="status" aria-live="polite" hidden></p>
     </form>
+    </details>
   </div>
 </section>
 </main>
