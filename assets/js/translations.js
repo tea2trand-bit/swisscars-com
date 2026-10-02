@@ -27,3 +27,8 @@ Object.assign(translations.en, {"serviceInspectionText":"Send the listing link a
 Object.assign(translations.sr,{serviceInspectionCalc:"Izračunajte cenu pregleda →"});
 Object.assign(translations.de,{serviceInspectionCalc:"Prüfpreis berechnen →"});
 Object.assign(translations.en,{serviceInspectionCalc:"Calculate the inspection price →"});
+
+// Public package price comes from the dedicated service-price setting.
+Object.assign(translations.sr, {serviceSwissText:"Naš tim obavlja pregled, povratak po vozilo, preuzimanje i predaju na mesto polaska transporta, uz pripremu dokumentacije. Cena paketa: {swissPackage}. Prethodno plaćeni pregled uračunava se u cenu paketa."});
+Object.assign(translations.de, {serviceSwissText:"Unser Team prüft das Fahrzeug, fährt erneut zur Abholung, übernimmt es und übergibt es am Transport-Abfahrtsort samt Vorbereitung der Unterlagen. Paketpreis: {swissPackage}. Eine bereits bezahlte Prüfung wird auf den Paketpreis angerechnet."});
+Object.assign(translations.en, {serviceSwissText:"Our team inspects the vehicle, returns to collect it, takes it over and hands it over at the transport departure point, with document preparation. Package price: {swissPackage}. Any inspection already paid is credited towards the package."});

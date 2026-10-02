@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="sr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Kalkulator uvoza — probna verzija | SWISCARS</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/import-calculator.css">
+</head>
+<body>
+<main class="import-wrap">
+  <div class="import-top"><a href="/" class="import-brand">SWISCARS</a><a href="/pregled/">Pregled vozila ↗</a></div>
+  <header class="import-heading">
+    <span class="import-tag">PROBNI KALKULATOR</span>
+    <h1>Koliko košta uvoz?</h1>
+    <p>Unesite cenu auta iz Švajcarske i pogledajte okvirni budžet za uvoz u Srbiju.</p>
+  </header>
+  <div class="import-layout">
+    <form id="import-form" class="import-card" novalidate>
+      <h2>Vaše vozilo</h2>
+      <div class="import-price-row">
+        <div class="import-field"><label for="import-price">Cena koju plaćate prodavcu</label><input id="import-price" type="number" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="Na primer 10000" required aria-describedby="price-help"></div>
+        <div class="import-field"><label for="import-currency">Valuta</label><select id="import-currency"><option value="CHF">CHF</option><option value="EUR">EUR</option></select></div>
+      </div>
+      <p id="price-help" class="import-help">Unesite dogovorenu cenu za izvoz. Povrat švajcarskog PDV-a se ne odbija automatski.</p>
+      <div class="import-field"><label for="import-origin">Dokaz o poreklu vozila</label><select id="import-origin"><option value="unknown">Još ne znam — uporedi obe mogućnosti</option><option value="preferential">Prihvaćen dokaz za povlašćenu carinu (0%)</option><option value="standard">Bez prihvaćenog dokaza (12,5%)</option></select></div>
+      <p class="import-help">Kupovina u Švajcarskoj sama po sebi ne znači da je carina 0%.</p>
+      <details class="import-costs" id="import-assumptions">
+        <summary>Prilagodite kurs i troškove <span aria-hidden="true">+</span></summary>
+        <p class="import-help" id="defaults-status">Učitavamo početne procene…</p>
+        <div class="import-fields">
+          <div class="import-field"><label for="import-rate">Kurs: 1 CHF u evrima</label><input id="import-rate" type="number" min="0.01" max="10" step="0.001" inputmode="decimal" required></div>
+          <div class="import-field"><label for="import-transport">Prevoz do odredišta u Srbiji, €</label><input id="import-transport" type="number" min="0" max="100000" step="0.01" inputmode="decimal" required></div>
+          <div class="import-field"><label for="import-export">Izvozna dokumentacija, €</label><input id="import-export" type="number" min="0" max="100000" step="0.01" inputmode="decimal" required></div>
+          <div class="import-field"><label for="import-eco">Ekološka naknada — procena, €</label><input id="import-eco" type="number" min="0" max="100000" step="0.01" inputmode="decimal" required></div>
+          <div class="import-field"><label for="import-broker">Špediter i carinski postupak, €</label><input id="import-broker" type="number" min="0" max="100000" step="0.01" inputmode="decimal" placeholder="Unesite ako znate"></div>
+          <div class="import-field"><label for="import-testing">Ispitivanje i dokumenta u Srbiji, €</label><input id="import-testing" type="number" min="0" max="100000" step="0.01" inputmode="decimal" placeholder="Unesite ako znate"></div>
+          <div class="import-field"><label for="import-other">Ostali troškovi, €</label><input id="import-other" type="number" min="0" max="100000" step="0.01" inputmode="decimal" placeholder="Unesite ako znate"></div>
+        </div>
+        <p class="import-help">Dodatne usluge unesite kao ukupan iznos sa njihovim porezima. Prazno polje znači da trošak još nije uključen.</p>
+        <details class="import-tax-details"><summary>Podaci za precizniji carinski obračun</summary>
+          <div class="import-field"><label for="import-domestic">Deo unetog prevoza nakon granice Srbije, €</label><input id="import-domestic" type="number" min="0" max="100000" step="0.01" inputmode="decimal" value="0"></div>
+          <div class="import-field"><label for="import-customs">Carinska vrednost koju je potvrdio špediter, €</label><input id="import-customs" type="number" min="1" max="2000000" step="0.01" inputmode="decimal" placeholder="Opciono"></div>
+          <p class="import-help">Bez potvrđene vrednosti koristimo cenu auta, izvozne troškove i prevoz do granice. Carina može utvrditi drugačiju vrednost.</p>
+        </details>
+      </details>
+      <button type="submit" class="btn btn-gold import-submit">Izračunaj troškove uvoza</button>
+      <button type="button" class="import-example" id="import-example">Probajte primer: auto od 10.000 CHF</button>
+      <p id="import-status" class="import-status" role="status" aria-live="polite"></p>
+    </form>
+    <section class="import-card import-result" aria-labelledby="result-title">
+      <span class="import-tag">VAŠ OBRAČUN</span>
+      <h2 id="result-title">Okvirni budžet</h2>
+      <div id="import-empty"><p>Rezultat se pojavljuje čim unesete cenu vozila.</p><div class="import-empty-icon" aria-hidden="true">€</div><p class="import-help">Sve iznose prikazujemo u evrima, uz odvojenu carinu i PDV.</p></div>
+      <div id="import-result" hidden>
+        <p class="import-total" id="import-total"></p>
+        <p class="import-help" id="import-result-hint"></p>
+        <div id="import-scenarios" class="import-scenarios"></div>
+        <dl id="import-breakdown" class="import-breakdown"></dl>
+        <p class="import-missing" id="import-missing"></p>
+        <p class="import-help">Zbir unetih troškova za uvoz. Usluga SWISCARS-a, pregled vozila, popravke i registracija nisu uključeni. Konačnu ponudu potvrđujemo za konkretno vozilo.</p>
+      </div>
+    </section>
+  </div>
+  <details class="import-method"><summary>Šta utiče na procenu?</summary>
+    <p>Kalkulator je namenjen polovnim putničkim automobilima. Prikazuje scenarije carine 0% i 12,5%, uz PDV od 20%. Povlašćena carina zahteva odgovarajuće poreklo i prihvaćenu dokumentaciju.</p>
+    <p>PDV se računa na carinsku vrednost, carinu, unetu ekološku naknadu i prevoz do prvog odredišta u Srbiji koji već nije u carinskoj vrednosti. Ostale unete usluge dodaju se po njihovoj ukupnoj ceni. Naknade i kurs u ovoj probi su promenljive procene.</p>
+    <p>Proverite i mogućnost uvoza konkretnog vozila, potrebne isprave i ispitivanje. Kalkulator ne proverava uslove uvoza niti predstavlja ponudu za kupovinu.</p>
+    <p>Izvori: <a href="https://www.carina.rs/putnici/pitanja-i-odgovori/uvoz-polovnih-vozila.html" target="_blank" rel="noopener">Uprava carina — uvoz polovnih vozila</a> · <a href="https://www.vere.gov.rs/DRead/Upload/SajtoviDownloads/20231103-142103-195_222_99_184-465.pdf" target="_blank" rel="noopener">Zakon o PDV-u, član 19</a></p>
+  </details>
+  <p class="import-footer">Probni obračun ne šalje upit niti rezerviše vozilo.</p>
+</main>
+<script src="/assets/js/service-prices.js"></script>
+<script src="/assets/js/import-calculator.js"></script>
+<script src="/assets/js/import-calculator-page.js"></script>
+</body>
+</html>
