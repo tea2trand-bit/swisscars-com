@@ -395,7 +395,8 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
   <section id="t-ai" class="wrap" style="gap:16px" hidden>
     <details class="intro"><summary>ⓘ Kako radi</summary><p>Asistent svakog ponedeljka (i kad zatražite proveru) traži u Švajcarskoj auta koja nama donose <b>bar <span class="minp"></span> € zarade</b>. Svaki oglas ide u četiri koraka: <b>Novo → Idemo da gledamo → Pogledano, razmišljamo → Kupljeno</b>. Kupljeno auto samo prelazi u „Naša auta“. Oglasi koje asistent nađe za nekog potražioca su u kartici tog upita.</p><p>Automatska provera je svakog ponedeljka oko 7:00; zatražena provera i novi upiti se rade u roku od sat vremena (7–21 h). Već upisani oglasi se ne upisuju ponovo, osim posle reseta. Zarada je procena posle svih troškova i poreza, uz <span class="popp"></span>% popusta pri cenkanju u Srbiji. Stefan pre kupovine uvek proveri godište, generaciju, MFK i istoriju.</p></details>
     <div class="toolrow" id="aiTools">
-      <button class="b" type="button" data-panel="pModels">Modeli u pretrazi</button>
+      <button class="b" type="button" data-panel="pModels">Naša pretraga – modeli</button>
+      <button class="b" type="button" data-panel="pLeadS">Upit pretraga</button>
       <button class="b" type="button" data-panel="pFind" style="margin-left:auto">+ Našao sam oglas</button>
     </div>
     <div class="sheet" id="pFind" hidden><h2>Oglas koji sam našao</h2><p class="note" style="margin:0">Upisuje se pod imenom: <b class="meName"></b></p>
@@ -414,7 +415,11 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <button class="b primary" type="submit">Javi Stefanu</button>
         </form>
     </div>
-    <div class="sheet" id="pModels" hidden><h2>Modeli u asistent pretrazi</h2>
+    <div class="sheet" id="pLeadS" hidden><h2>Upit pretraga</h2>
+      <p class="note" style="margin:0">Za svaki otvoren upit asistent traži auto po njegovim željama, do cene koja nama ostavlja bar minimalnu zaradu kad potražilac plati svoj budžet.</p>
+      <div class="scroll"><table id="leadSTbl"><thead><tr><th>Potražilac</th><th>Traži</th><th class="n">Budžet</th><th class="n">Asistent traži do</th><th class="n">Našao</th><th class="n">Poslato</th><th>Poslednja provera</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="sheet" id="pModels" hidden><h2>Naša pretraga – modeli</h2>
       <div class="split two" style="margin-top:12px">
         <div style="display:grid;gap:10px;min-width:0">
           <p class="note">Za ove modele asistent traži oglase u Švajcarskoj. Cenu u Srbiji sam računa sa polovniautomobili.com. Ako je neko od vas upisao svoju cenu, uzima se niža.</p>
@@ -943,7 +948,13 @@ function shopRows(){
   return rows;
 }
 function findsFor(r){return FINDS.filter(f=>(r.ids||[r.id]).includes(f.priceRef)||(!f.priceRef&&r.key.length&&r.key.every(w=>(f.model||"").toLowerCase().includes(w))));}
+function renderLeadSearch(){const sv=x=>x&&x!=="Svejedno"?x:"",rows=shopRows();
+  const ls=openLeads().filter(l=>!l.carId);
+  $("leadSTbl").tBodies[0].innerHTML=ls.map(l=>{const mb=l.budget?maxBuy(+l.budget,false,null):null,fs=leadFindsOf(l,rows),sent=(l.proposals||[]).length;
+    const want=[l.yearFrom?"od "+l.yearFrom:"",sv(l.fuel),sv(l.gearbox),sv(l.body),l.drive==="4x4"?"4x4":"",l.mileage&&l.mileage!=="Nije presudno"?l.mileage.toLowerCase():""].filter(Boolean).join(" · ");
+    return `<tr><td>${esc(l.name||"—")}${l.demo?' <span class="pill">demo</span>':""}</td><td>${esc(l.model||"")}${want?`<span class="sub">${esc(want)}</span>`:""}</td><td class="n">${l.budget?fmt(l.budget)+" €":"—"}</td><td class="n">${mb&&mb.dealer>0?"<b>"+fmt(mb.dealer)+" CHF</b>":'<span class="note">budžet premali</span>'}</td><td class="n">${fs.length}</td><td class="n">${sent}</td><td>${l.demo?'<span class="note">ne traži (demo)</span>':l.aiCheckedAt?new Date(l.aiCheckedAt).toLocaleString("sr-Latn-RS",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):'<span class="note">čeka (do 1 h)</span>'}</td></tr>`;}).join("")||`<tr><td colspan="7" class="note">Nema otvorenih upita.</td></tr>`;}
 function renderShop(){
+  renderLeadSearch();
   const cell=v=>v>0?`<b>${fmt(v)} CHF</b>`:'<span class="neg">ne isplati se</span>';
   if($("shopTbl"))$("shopTbl").tBodies[0].innerHTML=shopRows().map(r=>{const fs=findsFor(r).filter(f=>(f.status||"novo")==="novo").filter(f=>{const p=findProfit(f);return !p||p.post>=p.min;});
     return `<tr><td>${esc(r.label)}${r.range?`<span class="sub">${esc(r.range)}</span>`:""}</td><td><span class="sub" style="margin:0">${esc(r.src)}</span></td><td class="n">${r.rs?fmt(r.rs)+" €":"—"}</td><td class="n">${fmt(r.profit)} €</td><td class="n">${r.mb.pending?'<span class="note">čeka asistenta</span>':cell(r.mb.dealer)}</td><td class="n">${r.mb.pending?"—":r.mb.priv>0?fmt(r.mb.priv)+" CHF":'<span class="neg">ne isplati se</span>'}</td><td>${fs.length?`<span class="match">${fs.length} ${fs.length===1?"oglas":"oglasa"}</span>`:'<span class="note">—</span>'}</td></tr>`;}).join("")||`<tr><td colspan="7" class="note">Dodaj model koji asistent prati ili upit, pa se ovde pojavi koliko Stefan sme da plati.</td></tr>`;
