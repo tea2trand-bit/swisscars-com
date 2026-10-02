@@ -1008,7 +1008,9 @@ function renderFinds(){
   $("findEmpty").textContent=findFilter==="novo"?`Trenutno nema novih oglasa koji donose bar ${fmt(SET.cilj)} € zarade.`:"Ovde trenutno nema oglasa.";
   $("findHidden").textContent=hidden?`${hidden} ${hidden===1?"oglas se ne prikazuje":"oglasa se ne prikazuje"}: zarada ispod ${fmt(SET.cilj)} € ili nema cene u Srbiji za taj model.`:"";
   const L=$("findList");
-  L.querySelectorAll("[data-fgo]").forEach(b=>b.onclick=()=>{const [id,to]=b.dataset.fgo.split("|");moveFind(id,to,b);});
+  L.querySelectorAll("[data-fgo]").forEach(b=>b.onclick=()=>{const [id,to]=b.dataset.fgo.split("|");
+    if(to==="odbijeno"&&!b.dataset.armed){const t=b.textContent;b.dataset.armed=1;b.classList.add("danger");b.textContent=`Potvrdi: ${t.toLowerCase()}`;setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.classList.remove("danger");b.textContent=t;}},4000);return;}
+    moveFind(id,to,b);});
   L.querySelectorAll("[data-fopen]").forEach(b=>b.onclick=()=>{const [id,kind]=b.dataset.fopen.split("|");fOpen={id,kind};renderFinds();const t=$("findList").querySelector(".fform textarea,.fform input");t&&t.focus();});
   L.querySelectorAll("[data-fclose]").forEach(b=>b.onclick=()=>{fOpen=null;renderFinds();});
   L.querySelectorAll("[data-fcar]").forEach(b=>b.onclick=()=>{switchTab("auta");openCar(b.dataset.fcar);});
