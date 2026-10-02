@@ -14,7 +14,7 @@
     byId('trial-destination').textContent = quote.ort + ' (' + quote.plz + ')';
     byId('trial-total').textContent = amount(Number(quote.price));
     result.hidden = false;
-    status.textContent = 'Probni obračun je prikazan ispod.';
+    status.textContent = 'Prikazana je okvirna cena pregleda.';
   }
 
   async function calculate() {
