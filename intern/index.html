@@ -279,7 +279,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 .addbox{align-self:start;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px;align-content:start}
 .addbox h3{margin:0}
 .toolrow{display:flex;flex-wrap:wrap;gap:8px}
-.toolrow .b[aria-pressed=true]{background:var(--soft);color:var(--ink);border-color:var(--btn);box-shadow:inset 0 -3px 0 var(--btn)}
+.toolrow .b[aria-pressed=true],#mTools .b[aria-pressed=true]{background:var(--soft);color:var(--ink);border-color:var(--btn);box-shadow:inset 0 -3px 0 var(--btn)}
 .match{display:inline-block;font-size:12px;background:var(--info-soft);color:var(--info);border-radius:999px;padding:1px 8px}
 </style>
 </head>
@@ -421,18 +421,14 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <div class="chips" id="leadSSteps"></div>
       <div class="scroll"><table id="leadSTbl"><thead><tr><th>Potražilac</th><th>Korak</th><th>Traži</th><th class="n">Budžet</th><th class="n">Asistent traži do</th><th class="n">Našao</th><th class="n">Poslato</th><th>Poslednja provera</th></tr></thead><tbody></tbody></table></div>
     </div>
-    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2></div>
-      <div class="split two" style="margin-top:12px">
-        <div style="display:grid;gap:10px;min-width:0">
-          <div class="subpanel"><div class="top"><b>Asistent analiza</b><button class="b small primary" type="button" id="anBtn">Predloži modele za pretragu</button></div>
+    <div class="sheet" id="pModels" hidden><div class="top"><h2>Naša pretraga – modeli</h2><div class="btns" id="mTools"><button class="b small" type="button" data-mbox="anBox" aria-pressed="false">Asistent analiza</button><button class="b small" type="button" data-mbox="priceForm" aria-pressed="false">+ Dodaj model</button></div></div>
+      <div style="display:grid;gap:10px;margin-top:12px;min-width:0">
+          <div class="subpanel" id="anBox" hidden><div class="top"><b>Asistent analiza</b><button class="b small primary" type="button" id="anBtn">Predloži modele za pretragu</button></div>
             <div class="angrid"><div class="field"><label for="anCnt">Koliko modela</label><select id="anCnt"><option>3</option><option selected>5</option><option>8</option><option>10</option></select></div>
             <div class="field"><label for="anMar">Zarada od, €</label><input id="anMar" type="number" min="0" step="100"></div>
             <div class="field"><label for="anAge">Starost</label><select id="anAge"><option value="mix">Mešano</option><option value="0-5">Do 5 godina</option><option value="5-10">5–10 godina</option><option value="10-15">10–15 godina</option></select></div></div>
             <p class="note" id="anInfo" style="margin:0"></p></div>
-          <p class="note">Za ove modele asistent traži oglase u Švajcarskoj. Cenu u Srbiji sam računa sa polovniautomobili.com. Ako je neko od vas upisao svoju cenu, uzima se niža.</p>
-          <div class="scroll"><table id="priceTbl"><thead><tr><th>Model</th><th class="n">Cena u RS</th><th>Izvor</th><th></th></tr></thead><tbody></tbody></table></div>
-        </div>
-        <form id="priceForm" class="addbox" autocomplete="off">
+          <form id="priceForm" class="addbox" autocomplete="off" hidden>
           <h3>Dodaj model u asistent pretragu</h3>
           <div class="field"><label for="p_model">Model i motor</label><input id="p_model" list="models" required placeholder="npr. VW Golf 6 1.6 TDI"></div>
           <div class="grid">
@@ -448,6 +444,8 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <p class="note" id="p_prev"></p>
           <div class="btns"><button class="b primary" type="submit" id="p_ai">Dodaj u pretragu</button></div>
         </form>
+          <p class="note">Za ove modele asistent traži oglase u Švajcarskoj. Cenu u Srbiji sam računa sa polovniautomobili.com. Ako je neko od vas upisao svoju cenu, uzima se niža.</p>
+          <div class="scroll"><table id="priceTbl"><thead><tr><th>Model</th><th class="n">Cena u RS</th><th>Izvor</th><th></th></tr></thead><tbody></tbody></table></div>
       </div>
     </div>
     <div class="sheet">
@@ -1102,6 +1100,9 @@ document.querySelectorAll("#aiTools [data-panel]").forEach(b=>b.onclick=()=>{con
   document.querySelectorAll("#aiTools [data-panel]").forEach(x=>{x.setAttribute("aria-pressed","false");$(x.dataset.panel).hidden=true;});
   if(!open){b.setAttribute("aria-pressed","true");$(b.dataset.panel).hidden=false;}
   if(b.dataset.panel!=="pFind"){findScope=open?"":(b.dataset.panel==="pLeadS"?"upit":"nasa");fOpen=null;renderFinds();}});
+document.querySelectorAll("#mTools [data-mbox]").forEach(b=>b.onclick=()=>{const open=b.getAttribute("aria-pressed")==="true";
+  document.querySelectorAll("#mTools [data-mbox]").forEach(x=>{x.setAttribute("aria-pressed","false");$(x.dataset.mbox).hidden=true;});
+  if(!open){b.setAttribute("aria-pressed","true");$(b.dataset.mbox).hidden=false;}});
 const LOCK_H=24, PEND_MIN=8*60;
 function nextMonday(){const d=new Date();d.setHours(7,0,0,0);let add=(8-d.getDay())%7;if(add===0&&Date.now()>=d.getTime())add=7;d.setDate(d.getDate()+add);return d;}
 function runState(){
