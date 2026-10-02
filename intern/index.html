@@ -447,7 +447,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         <button type="button" data-ff="pogledano" aria-pressed="false"><span class="k">3</span><span class="l">Pogledano</span><span class="c" data-cnt="pogledano">0</span></button>
         <button type="button" data-ff="kupljeno" aria-pressed="false"><span class="k">4</span><span class="l">Kupljeno</span><span class="c" data-cnt="kupljeno">0</span></button>
       </div>
-      <div class="fsub"><p class="note" id="fStepNote" style="margin:0"></p><div class="chips" id="fMore"><button type="button" data-ff="odbijeno" aria-pressed="false">Ne zanima nas (<span data-cnt="odbijeno">0</span>)</button><button type="button" data-ff="arhiva" aria-pressed="false">Sklonjeno resetom (<span data-cnt="arhiva">0</span>)</button></div></div>
+      <div class="fsub"><p class="note" id="fStepNote" style="margin:0"></p><div class="chips" id="fMore"><button type="button" data-ff="odbijeno" aria-pressed="false">Obrisano (<span data-cnt="odbijeno">0</span>)</button><button type="button" data-ff="arhiva" aria-pressed="false">Sklonjeno resetom (<span data-cnt="arhiva">0</span>)</button></div></div>
       <div class="flist" id="findList"></div>
       <p class="note" id="findEmpty" hidden></p>
       <p class="note" id="findHidden"></p>
@@ -969,7 +969,7 @@ function fStage(f){const st=f.status||"novo";const lead=isLeadFind(f);
   if(st==="novo") return lead?"upit":"novo";
   if(st==="odbijeno"||st==="arhiva") return lead?"upit-"+st:st;
   return st;}
-const FSTEP_NOTE={novo:"Oglasi koje je asistent našao. Ako vam se neki sviđa: „Idemo da gledamo“.",izabrano:"Stefan ide da pogleda ova auta. Kad pogleda, klikni „Pogledano“ i upiši šta je video.",pogledano:"Pogledana auta. Odlučite: kupujemo ili ne.",kupljeno:"Kupljena auta su u „Naša auta“, odakle ide transport, carina i prodaja.",odbijeno:"Oglasi koji nas ne zanimaju.",arhiva:"Oglasi sklonjeni resetom pretrage. Možeš ih vratiti u „Novo“."};
+const FSTEP_NOTE={novo:"Oglasi koje je asistent našao. Ako vam se neki sviđa: „Idemo da gledamo“.",izabrano:"Stefan ide da pogleda ova auta. Kad pogleda, klikni „Pogledano“ i upiši šta je video.",pogledano:"Pogledana auta. Odlučite: kupujemo ili ne.",kupljeno:"Kupljena auta su u „Naša auta“, odakle ide transport, carina i prodaja.",odbijeno:"Obrisani oglasi. Ako treba, vrati ih u „Novo“.",arhiva:"Oglasi sklonjeni resetom pretrage. Možeš ih vratiti u „Novo“."};
 let fOpen=null;
 function renderFinds(){
   document.querySelectorAll(".minp").forEach(e=>e.textContent=fmt(SET.cilj));document.querySelectorAll(".popp").forEach(e=>e.textContent=SET.popust);
@@ -985,8 +985,8 @@ function renderFinds(){
   const leadName=f=>{const lp=LEADS.find(l=>(l.proposals||[]).some(p=>p.findId===f._id));if(lp)return lp.name||lp.model;if(!isLeadFind(f))return "";const r=rowForFind(f);const k=r?.key?.join(" ");const l=openLeads().find(l=>leadKey(l.model).join(" ")===k);return l?(l.name||l.model):"upit";};
   const dd=t=>t?new Date(t).toLocaleDateString("sr-Latn-RS"):"";
   const actions=f=>{const id=esc(f._id);const st=fStage(f);
-    if(st==="novo") return `<button class="b small" type="button" data-fgo="${id}|odbijeno">Ne zanima</button><button class="b small primary" type="button" data-fgo="${id}|izabrano">Idemo da gledamo →</button>`;
-    if(st==="izabrano") return `<button class="b small" type="button" data-fgo="${id}|novo">↩ Nazad</button><button class="b small" type="button" data-fgo="${id}|odbijeno">Ne zanima</button><button class="b small primary" type="button" data-fopen="${id}|seen">Pogledano →</button>`;
+    if(st==="novo") return `<button class="b small" type="button" data-fgo="${id}|odbijeno">Obriši</button><button class="b small primary" type="button" data-fgo="${id}|izabrano">Idemo da gledamo →</button>`;
+    if(st==="izabrano") return `<button class="b small" type="button" data-fgo="${id}|novo">↩ Nazad</button><button class="b small" type="button" data-fgo="${id}|odbijeno">Obriši</button><button class="b small primary" type="button" data-fopen="${id}|seen">Pogledano →</button>`;
     if(st==="pogledano") return `<button class="b small" type="button" data-fgo="${id}|izabrano">↩ Nazad</button><button class="b small" type="button" data-fgo="${id}|odbijeno">Ne kupujemo</button><button class="b small primary" type="button" data-fopen="${id}|buy">Kupljeno →</button>`;
     if(st==="kupljeno") return f.carId&&CARS.some(c=>c._id===f.carId)?`<button class="b small" type="button" data-fcar="${esc(f.carId)}">Otvori u „Naša auta“</button>`:"";
     if(st==="odbijeno"||st==="arhiva") return `<button class="b small" type="button" data-fgo="${id}|novo">Vrati u „Novo“</button>`;
@@ -1022,13 +1022,13 @@ function renderFinds(){
       if(ld){await db.doc("leads/"+ld._id).update({carId:ref.id,status:"kupljeno"});await logEvent(ref.id,"order",`Auto je kupljeno za: ${ld.name||ld.model}`);}
       fOpen=null;toast(ld?`Kupljeno za ${ld.name||"potražioca"}. Auto je u „Naša auta“ pod „Naručena“.`:"Kupljeno. Auto je sada u „Naša auta“.");}catch(err){btn.disabled=false;fail(err);}});
 }
-const FSTEP_LOG={izabrano:"Idemo da gledamo",pogledano:"Pogledano",odbijeno:"Ne zanima nas",novo:"Vraćeno u Novo"};
+const FSTEP_LOG={izabrano:"Idemo da gledamo",pogledano:"Pogledano",odbijeno:"Obrisano",novo:"Vraćeno u Novo"};
 async function moveFind(id,to,btn,extra){const f=FINDS.find(x=>x._id===id);if(!f||!db)return;if(btn)btn.disabled=true;
   const patch={status:to,stepAt:Date.now(),...(extra||{})};if(to==="izabrano"&&["novo","predlozeno","upit"].includes(fStage(f))){patch.pickedBy=actor();patch.pickedAt=Date.now();}
   try{await db.doc("finds/"+id).update(patch);
     if(to==="odbijeno"){const l=LEADS.find(x=>(x.proposals||[]).some(p=>p.findId===id&&p.depositPaidAt&&!p.insp));
       if(l){const p=l.proposals.find(p=>p.findId===id);await updProp(l,p.id,{insp:"ne",inspNote:f.seenNote||(extra&&extra.seenNote)||"Auto na pregledu nije bilo onakvo kakvo treba.",inspAt:Date.now()});toast(`${l.name||"Potražilac"} dobija obaveštenje i bira: kapara nazad ili drugo auto.`);}}if(FSTEP_LOG[to])await logEvent(null,"status",`${FSTEP_LOG[to]}: ${f.title||f.model}, ${fmt(f.priceChf)} CHF`);fOpen=null;
-    toast(to==="izabrano"?"Prebačeno u „Idemo da gledamo“":to==="pogledano"?"Prebačeno u „Pogledano“":to==="odbijeno"?"Skloneno: ne zanima nas":"Vraćeno");}
+    toast(to==="izabrano"?"Prebačeno u „Idemo da gledamo“":to==="pogledano"?"Prebačeno u „Pogledano“":to==="odbijeno"?"Obrisano":"Vraćeno");}
   catch(e){if(btn)btn.disabled=false;fail(e);}}
 document.querySelectorAll("#fSteps button,#fMore button").forEach(b=>b.onclick=()=>{findFilter=b.dataset.ff;fOpen=null;renderFinds();});
 $("resetBtn").addEventListener("click",async()=>{const b=$("resetBtn");
