@@ -1173,3 +1173,5 @@ footer .footer-company { display: block; margin-bottom: 10px }
 footer .footer-company span { font-size: 13px; line-height: 1.5 }
 footer .footer-legal { margin-bottom: 8px }
 @media (max-width: 900px) { .nav-requests summary { padding: 7px 2px; font-size: 16px; } .nav-requests-list { position: static; margin-top: 12px; width: min(300px, calc(100vw - 48px)); } }
+
+.service-actions{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:auto}.service-actions a{display:inline-block}

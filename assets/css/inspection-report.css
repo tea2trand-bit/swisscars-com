@@ -1,0 +1,20 @@
+.ir-form,.ir-report{margin-top:20px;color:#172a3a;font-family:Arial,sans-serif;font-size:14px;line-height:1.55}
+.ir-form *,.ir-report *{box-sizing:border-box}
+.ir-form h4,.ir-report h3,.ir-report h4{margin:0 0 12px}
+.ir-hint{font-size:13px;color:#657688;margin:8px 0 14px}
+.ir-form details{border:1px solid #e4e0d8;border-radius:10px;margin:10px 0;padding:14px;background:#fff}
+.ir-form summary{cursor:pointer;font-weight:700;margin:0}
+.ir-form details[open]>summary{margin-bottom:15px}
+.ir-form label{display:block;font-size:13px;color:#43596b;margin:10px 0}
+.ir-form input,.ir-form select,.ir-form textarea{display:block;width:100%;padding:10px;margin-top:5px;border:1px solid #d7dce0;border-radius:7px;background:#fff;color:#172a3a;font:inherit;min-height:42px}
+.ir-form textarea{resize:vertical}.ir-form input:focus,.ir-form select:focus,.ir-form textarea:focus{outline:2px solid #b08a49;outline-offset:1px}
+.ir-fields,.ir-meta,.ir-tyres{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ir-meta{padding:16px;background:#f6f4ef;border-radius:10px;margin:16px 0}.ir-meta dt{font-size:12px;color:#657688}.ir-meta dd{margin:2px 0 0;font-weight:700;overflow-wrap:anywhere}
+.ir-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
+.ir-group{padding:16px;border:1px solid #e4e0d8;border-radius:10px;background:#fff;min-width:0}.ir-group h4{font-size:16px;color:#263f52}
+.ir-group dl{margin:0}.ir-result{padding:10px 0;border-top:1px solid #eee;display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:center}.ir-result dt{flex:1 1 150px;font-size:13px}.ir-result dd{margin:0;font-size:12px}
+.ir-state{display:inline-block;padding:4px 8px;border-radius:5px}.ir-ok{background:#e9f2ed;color:#236745}.ir-defect{background:#faece8;color:#983f2e}.ir-attention{background:#fff3d8;color:#805d17}.ir-unseen,.ir-na{background:#eef0f2;color:#627181}
+.ir-findings{white-space:pre-wrap;overflow-wrap:anywhere;padding:10px;border-left:3px solid #b08a49;background:#f9f7f2;font-size:13px;margin:12px 0 0}
+.ir-form>.ir-group{margin:12px 0}
+@media(max-width:600px){.ir-groups,.ir-tyres{grid-template-columns:1fr}.ir-group{padding:14px}.ir-fields{gap:10px}.ir-result{align-items:start}.ir-result dt{flex-basis:100%}}
+@media print{.ir-group,.ir-meta{break-inside:avoid}.ir-form{display:none}}

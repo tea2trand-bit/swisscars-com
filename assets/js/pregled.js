@@ -184,6 +184,7 @@
     rep.hidden = !d.reportAt;
     if (!rep.hidden) rep.innerHTML = `<h2>${esc(t.repT)}</h2>${r.ocena && t.verdict[r.ocena] ? `<p class="pg-verdict">${esc(t.verdict[r.ocena])}</p>` : ""}
       <div class="pg-rep">${["udes", "papiri", "tehnika", "zakljucak"].filter(k => r[k]).map(k => `<div><h3>${esc(t.rep[k])}</h3><p>${esc(r[k])}</p></div>`).join("")}</div>
+      ${window.SCInspectionReport?.render(r.checklist, d.lang || lang()) || ""}
       ${(d.photos || []).length ? `<div class="pg-photos">${d.photos.map(p => `<a href="${esc(photo(p))}" target="_blank" rel="noopener"><img src="${esc(photo(p))}" alt="" loading="lazy"></a>`).join("")}</div>` : ""}`;
   }
 

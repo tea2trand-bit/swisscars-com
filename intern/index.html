@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <link rel="stylesheet" href="/assets/css/conversation.css">
+<link rel="stylesheet" href="/assets/css/inspection-report.css">
 <title>SWISCARS evidencija</title>
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -643,6 +644,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/intern/sc-db.js"></script>
 <script src="/assets/js/conversation.js"></script>
+<script src="/assets/js/inspection-report.js"></script>
 <script>
 const FLOW=[["kupljen","Kupljen"],["transport","U transportu"],["carinjen","Ocarinjen"],["garaza","U garaži"],["prodaja","Spreman za prodaju"],["prodat","Prodat"]];
 const STATUS=[...FLOW,["odustao","Odustali"]];
@@ -1384,11 +1386,8 @@ function renderInsp(){const L=$("pgList");if(!L)return;
       if(st>=1&&!x.reportAt) acts+=`<input data-pgplan="${id}" placeholder="Termin, npr. subota 10:00" value="${esc(x.plannedAt||"")}" style="width:210px"><button class="b small" type="button" data-pgplansave="${id}">Sačuvaj termin</button><button class="b small primary" type="button" data-pgrep="${id}">Pošalji izveštaj</button>`;
       acts+=`<button class="b small danger" type="button" data-pgcancel="${id}" style="margin-left:auto">Otkaži</button>`;}
     const form=pgOpen===x._id?`<div class="pgform" data-pgform="${id}">
-      <label class="note">Ocena<select data-pgo><option value="da">Preporučujemo kupovinu</option><option value="oprez">Kupovina uz oprez</option><option value="ne">Ne preporučujemo</option></select></label>
-      <textarea data-pgk="udes" placeholder="Da li je auto lupan (karoserija, debljina laka, tragovi popravke)"></textarea>
-      <textarea data-pgk="papiri" placeholder="Papirologija (saobraćajna, servisna knjiga, MFK, broj vlasnika)"></textarea>
-      <textarea data-pgk="tehnika" placeholder="Tehničko stanje (motor, menjač, kočnice, gume, test vožnja)"></textarea>
-      <textarea data-pgk="zakljucak" placeholder="Zaključak za kupca"></textarea>
+      <div data-inspection-checklist></div>
+      <textarea data-pgk="zakljucak" placeholder="Dodatna napomena za kupca (nije obavezno)"></textarea>
       <div class="btns"><button class="b small" type="button" data-pgchoose>+ Dodaj fotografije</button><input type="file" accept="image/*" multiple data-pgph hidden><span class="note" data-pgphcount>Još nema fotografija. Možete izabrati više slika sa telefona.</span></div>
       <div class="acts"><button class="b primary" type="button" data-pgsend="${id}">Pošalji izveštaj kupcu</button><button class="b" type="button" data-pgx>Odustani</button></div></div>`:"";
     return `<div class="pgc"><div class="h"><b>${esc(x.name||"—")}</b><span class="note">${[x.phone,x.email].filter(Boolean).map(esc).join(" · ")}</span><span class="note">${x.created?new Date(x.created).toLocaleDateString("sr-Latn-RS"):""}</span></div>
@@ -1403,12 +1402,13 @@ function renderInsp(){const L=$("pgList");if(!L)return;
   L.querySelectorAll("[data-pgfeesave]").forEach(b=>b.onclick=()=>{const v=+L.querySelector(`[data-pgfee="${CSS.escape(b.dataset.pgfeesave)}"]`).value;if(!(v>0)){toast("Upiši cenu u CHF");return;}upd(b.dataset.pgfeesave,{fee:v},`Cena pregleda ${fmt(v)} CHF: `+nameOf(b.dataset.pgfeesave));});
   L.querySelectorAll("[data-pgplansave]").forEach(b=>b.onclick=()=>{const v=L.querySelector(`[data-pgplan="${CSS.escape(b.dataset.pgplansave)}"]`).value.trim();if(!v){toast("Upiši termin");return;}upd(b.dataset.pgplansave,{plannedAt:v},`Termin pregleda ${v}: `+nameOf(b.dataset.pgplansave));});
   L.querySelectorAll("[data-pgrep]").forEach(b=>b.onclick=()=>{pgOpen=b.dataset.pgrep;L.innerHTML="";renderInsp();});
+  L.querySelectorAll(".pgform [data-inspection-checklist]").forEach(el=>SCInspectionReport.mount(el));
   L.querySelectorAll("[data-pgchoose]").forEach(b=>b.onclick=()=>b.closest(".pgform").querySelector("[data-pgph]").click());
   L.querySelectorAll("[data-pgph]").forEach(input=>input.onchange=()=>{input.closest(".pgform").querySelector("[data-pgphcount]").textContent=input.files.length?`Izabrano fotografija: ${input.files.length}`:"Još nema fotografija. Možete izabrati više slika sa telefona.";});
   L.querySelectorAll("[data-pgx]").forEach(b=>b.onclick=()=>{pgOpen=null;L.innerHTML="";renderInsp();});
   L.querySelectorAll("[data-pgsend]").forEach(b=>b.onclick=async()=>{const id=b.dataset.pgsend,F=L.querySelector(`[data-pgform="${CSS.escape(id)}"]`);
-    const rep={ocena:F.querySelector("[data-pgo]").value};F.querySelectorAll("[data-pgk]").forEach(t=>{const v=t.value.trim();if(v)rep[t.dataset.pgk]=v;});
-    if(!rep.zakljucak){toast("Upiši zaključak za kupca");return;}
+    const rep={};F.querySelectorAll("[data-pgk]").forEach(t=>{const v=t.value.trim();if(v)rep[t.dataset.pgk]=v;});
+    const checklist=SCInspectionReport.read(F.querySelector("[data-inspection-checklist]"));if(!checklist)return;checklist.vehicle.by=who(actor());rep.checklist=checklist;rep.ocena=checklist.overall;rep.zakljucak ||= SCInspectionReport.verdicts[checklist.overall];
     const files=[...F.querySelector("[data-pgph]").files];if(!files.length){toast("Dodaj bar jednu sliku");return;}
     b.disabled=true;const ids=[...((INSPS.find(x=>x._id===id)||{}).photos||[])];
     try{let i=0;for(const f of files){i++;b.textContent=`Šaljem slike ${i}/${files.length}…`;const r=await assets.upload(await shrink(f));ids.push(r.id);}
@@ -1441,6 +1441,7 @@ function renderLeads(){renderInsp();
           <div class="pthumbs" data-pthumbs></div>
           <div class="btns"><label class="b small"><input type="file" accept="image/*" multiple data-pfiles hidden>+ Dodaj slike</label><span class="note" data-pcount>Još nema slika</span></div>
           <textarea rows="3" data-pnote placeholder="Opis iz oglasa: npr. servisna knjiga, mala ogrebotina na braniku, nove gume, bez udesa">${esc(p.adNote||"")}</textarea>
+          <div data-inspection-checklist hidden></div>
           <div class="btns"><button class="b primary small" type="button" data-psend>Pošalji mu slike i opis</button><button class="b small" type="button" data-pcancel>Odustani</button></div></div></li>`;};
     const hot=props.filter(p=>["zanima","zelim"].includes(pAns(p))||p.depositPaidAt||p.insp||p.choice), cold=props.filter(p=>!hot.includes(p));
     const coldSum=(()=>{const w=cold.filter(p=>!pAns(p)).length,n=cold.filter(p=>pAns(p)==="ne").length;return [w?`${w} čeka odgovor`:"",n?`${n} ne zanima`:""].filter(Boolean).join(", ");})();
@@ -1471,6 +1472,7 @@ function renderLeads(){renderInsp();
   const lp=v=>{const [lid,pid]=v.split("|");const l=LEADS.find(x=>x._id===lid);return [l,(l?.proposals||[]).find(p=>p.id===pid)];};
   L.querySelectorAll("[data-pph]").forEach(b=>b.onclick=()=>{const box=L.querySelector(`[data-pphbox="${CSS.escape(b.dataset.pph)}"]`);box.hidden=false;b.hidden=true;leadBusy=true;const rep=b.dataset.mode==="report";
     if(rep){box.querySelector("[data-phelp]").textContent="Stefanove slike sa pregleda (telefonom) i njegovo mišljenje. Potražilac to dobija emailom i bira: kupujem ili ne kupujem.";box.querySelector("[data-pnote]").placeholder="npr. dobro stanje, servisna knjiga, mala ogrebotina na braniku, motor radi tiho";box.querySelector("[data-pnote]").value="";box.querySelector("[data-psend]").textContent="Pošalji izveštaj potražiocu";}
+    const checklistRoot=box.querySelector("[data-inspection-checklist]");checklistRoot.hidden=!rep;if(rep)SCInspectionReport.mount(checklistRoot);
     const files=[];const thumbs=box.querySelector("[data-pthumbs]"),cnt=box.querySelector("[data-pcount]");
     const draw=()=>{thumbs.innerHTML=files.map((f,i)=>`<span class="pt"><img src="${URL.createObjectURL(f)}" alt=""><button type="button" data-prm="${i}" aria-label="Ukloni sliku">×</button></span>`).join("");
       cnt.textContent=files.length?`${files.length} ${files.length===1?"slika spremna":"slika spremno"}`:"Još nema slika";
@@ -1482,13 +1484,13 @@ function renderLeads(){renderInsp();
     box.tabIndex=-1;box.focus();
     box.querySelector("[data-pcancel]").onclick=()=>{box.hidden=true;b.hidden=false;leadBusy=false;renderLeads();};
     box.querySelector("[data-psend]").onclick=async e=>{const btn=e.currentTarget;const [l,p]=lp(b.dataset.pph);if(!l||!p)return;
-      const note=box.querySelector("[data-pnote]").value.trim();
+      let note=box.querySelector("[data-pnote]").value.trim();
       const prev=rep?(p.inspPhotos||[]):(p.photos||[]);
       if(!files.length&&!prev.length){toast("Dodaj bar jednu sliku");return;}
-      if(rep&&!note){toast("Upiši kratko mišljenje sa pregleda");return;}
+      const checklist=rep?SCInspectionReport.read(checklistRoot):null;if(rep&&!checklist)return;if(checklist){checklist.vehicle.by=who(actor());note ||= SCInspectionReport.verdicts[checklist.overall];}
       btn.disabled=true;btn.textContent="Šaljem…";const ids=[...prev];
       try{let i=0;for(const f of files){i++;btn.textContent=`Šaljem ${i}/${files.length}…`;const r=await assets.upload(await shrink(f));ids.push(r.id);}
-        await updProp(l,p.id,rep?{inspPhotos:ids,inspNote:note,insp:"ok",inspAt:Date.now(),inspBy:actor()}:{photos:ids,adNote:note,photosAt:Date.now(),photosBy:actor()});
+        await updProp(l,p.id,rep?{inspPhotos:ids,inspNote:note,inspChecklist:checklist,insp:"ok",inspAt:Date.now(),inspBy:actor()}:{photos:ids,adNote:note,photosAt:Date.now(),photosBy:actor()});
         await logEvent(null,"order",rep?`Izveštaj sa pregleda poslat potražiocu ${l.name||""}: ${p.title}`:`Poslate slike potražiocu ${l.name||""}: ${p.title}`);leadBusy=false;renderLeads();toast(rep?"Izveštaj poslat. Potražilac bira: kupujem ili ne kupujem.":"Poslato. Potražilac dobija email sa slikama.");}
       catch(err){btn.disabled=false;btn.textContent="Pošalji mu slike i opis";fail(err);}};});
   L.querySelectorAll("[data-ppaid]").forEach(b=>b.onclick=async()=>{const [l,p]=lp(b.dataset.ppaid);if(!l||!p)return;
