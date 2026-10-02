@@ -1149,7 +1149,7 @@ async function savePrice(source){if(!db)return;const num=v=>v===""?null:+v;
   const base={model:$("p_model").value.trim(),yearFrom:num($("p_y1").value),yearTo:num($("p_y2").value),kmMax:num($("p_km").value),minProfit:num($("p_min").value),note:$("p_note").value.trim(),by:me?.id||null,at:Date.now()};
   try{
     if(source==="ai"){const exists=PRICES.some(p=>p.source==="ai"&&gkey(p)===gkey(base));
-      if(!exists) await db.collection("prices").add({...base,source:"ai",priceRs:null,n:null,kmMedian:null,checkedAt:null,actor:"Claude",requestedBy:actor()});
+      if(!exists) await db.collection("prices").add({...base,source:"ai",priceRs:null,n:null,kmMedian:null,checkedAt:null,actor:"Asistent",requestedBy:actor()});
       if(rs) await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});
       toast(exists?"Ovaj model je već u pretrazi":"Dodato u pretragu. Asistent ga traži pri sledećoj proveri.");}
     else{await db.collection("prices").add({...base,source:"manual",priceRs:rs,actor:actor()});toast("Tvoja cena je sačuvana");}
