@@ -78,8 +78,8 @@
 .up-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-sm); padding: 22px; display: grid; gap: 14px }
 .up-card h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; margin: 0; font-size: 24px }
 .up-card p { margin: 0 }
-.up-track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px }
-.up-track li { font-size: 12px; line-height: 1.4; color: #7c8389; padding: 9px 7px 8px; border-top: 4px solid var(--line); border-radius: 0 0 7px 7px; overflow-wrap: anywhere }
+.up-track { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px }
+.up-track li { flex: 1 0 auto; font-size: 12px; line-height: 1.4; color: #7c8389; padding: 5px 6px 4px; border-top: 4px solid var(--line); border-radius: 0 0 5px 5px; white-space: nowrap; align-self: start }
 .up-track li.done { color: #527564; background: #f1f7f3; border-top-color: #a2c9b1 }
 .up-track li.now { color: #245b40; background: #e1f2e7; font-weight: 600; border-top-color: #65a580; box-shadow: inset 0 0 0 1px #c6e2d0 }
 .up-now { font-size: 17px }
@@ -108,7 +108,7 @@
 .up-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px }
 .up-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; display: block }
 @media (max-width: 760px) {
-  .up-track { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 10px }
+  .up-track li { flex-grow: 0 }
   .up-prop { grid-template-columns: 1fr }
   .up-card { padding: 16px }
 }
