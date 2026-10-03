@@ -85,17 +85,7 @@
   let DATA = null, lang = "sr", initialLanguageApplied = false, languageSelected = false;
   const T = () => L[lang];
   const num = n => Math.round(+n).toLocaleString(T().locale);
-  const CAR_STAGE = { pregledan: 3, kupljen: 3, transport: 4, carinjen: 5, garaza: 6, prodaja: 6, prodat: 7 };
-  function stage(d) {
-    if (d.status === "odustao") return -1;
-    if (d.status === "predato" || d.status === "kupio") return 7;
-    if (d.car && CAR_STAGE[d.car.status] != null) return CAR_STAGE[d.car.status];
-    if (d.status === "kupljeno") return 3;
-    if ((d.proposals || []).some(p => p.choice === "buy")) return 3;
-    if (d.status === "ponudjeno" || (d.proposals || []).some(p => !p.answer || p.answer === "zanima" || p.answer === "zelim")) return 2;
-    if (d.status === "trazimo" || d.aiAt) return 1;
-    return 0;
-  }
+  const stage = d => SCOrderProgress.stage(d);
   function render() {
     const t = T(), d = DATA;
     document.documentElement.lang = lang;
@@ -111,7 +101,8 @@
     if (window.scSaveUpit) window.scSaveUpit(token, { model: d.model, created: d.created });
     $("u_lead").textContent = t.lead;
     const st = stage(d);
-    $("u_track").innerHTML = t.track.map((x, i) => `<li class="${st < 0 ? "" : i < st ? "done" : i === st ? "now" : ""}"${i === st ? ' aria-current="step"' : ''}>${esc(x)}</li>`).join("");
+    $("u_track").classList.add("sc-order-progress");
+    $("u_track").innerHTML = SCOrderProgress.markup(st,t.track,lang==='de'?{done:'Abgeschlossen',now:'Aktuell',next:'Nächster',later:'Noch offen'}:undefined);
     const PS = d.proposals || [];
     const act = !d.car && st >= 0 ? (PS.find(p => p.choice === "buy") ? t.nowBuy : PS.find(p => p.inspAt && !p.choice && p.insp !== "ne") ? t.nowRep : PS.find(p => p.insp === "ne" && !p.choice) ? t.nowFail : PS.find(p => p.depositPaidAt && !p.insp && !p.inspAt) ? t.nowInsp : PS.find(p => p.answer === "zelim" && !p.availAt && p.avail !== "ne") ? t.nowCheck : PS.find(p => p.answer === "zelim" && !p.depositPaidAt && p.avail !== "ne") ? t.nowDep : PS.find(p => p.answer === "zanima" && p.photosAt) ? t.nowPhotos : PS.find(p => p.answer === "zanima") ? t.nowZanima : "") : "";
     $("u_now").textContent = st < 0 ? t.closed : act || (d.car && d.car.status === "prodaja" && st === 6 ? t.ready : t.now[st]);
