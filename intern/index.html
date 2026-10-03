@@ -594,7 +594,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         <fieldset id="swissPackageSettings" style="margin:24px 0 0;padding:18px;border:1px solid var(--line);border-radius:12px">
           <legend>Paket za auto koji je klijent izabrao</legend>
           <p class="note">Rad našeg tima u Švajcarskoj: pregled, preuzimanje vozila, predaja transportu i priprema dokumentacije. Prethodno plaćeni pregled uračunava se u cenu paketa. Cena se prikazuje na sajtu; već prihvaćenu ponudu dogovarate posebno.</p>
-          <div class="field"><label for="s_swissPackageFee">Cena paketa u Švajcarskoj, CHF</label><input id="s_swissPackageFee" type="number" min="0" max="100000" step="1" value="900"></div>
+          <div class="grid setgrid"><div class="field"><label for="s_swissPackageFee">Cena paketa u Švajcarskoj, CHF</label><input id="s_swissPackageFee" type="number" min="0" max="100000" step="1" value="900"></div></div>
           <div class="btns"><button id="saveSwissPackage" class="b primary small" type="button">Sačuvaj cenu paketa</button><a class="b small" href="/proba-uvoza/" target="_blank" rel="noopener">Probni kalkulator uvoza</a></div>
           <p id="swissPackageStatus" class="note" role="status" aria-live="polite"></p>
         </fieldset>
@@ -603,7 +603,6 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
           <p class="note">Polazak: St. Gallen, centar. Računamo odlazak i povratak. Cena se zaokružuje na najbližih 10 CHF. Ove vrednosti koriste novi zahtevi za pregled i novi predlozi vozila.</p>
           <div class="grid setgrid">
             <div class="field"><label for="s_inspKmRate">Cena po pređenom kilometru, CHF</label><input id="s_inspKmRate" type="number" min="0" max="100" step="0.05" value="1.5"></div>
-            <div class="field"><label for="s_inspBaseFee">Pregled i pisani izveštaj, CHF</label><input id="s_inspBaseFee" type="number" min="0" max="10000" step="1" value="100"></div>
           </div>
           <div class="btns"><button id="saveInspectionPrice" class="b primary small" type="button">Sačuvaj cenu pregleda</button><a class="b small" href="/proba-pregleda/" target="_blank" rel="noopener">Proveri obračun</a></div>
           <p id="inspectionPriceStatus" class="note" role="status" aria-live="polite"></p>
@@ -1672,7 +1671,6 @@ function fillSettings(){
   $("swissPackageSettings").querySelectorAll("input,button").forEach(el=>el.disabled=savingSwissPackage||!canWrite||me?.role!=="admin");
   if(!$("inspectionPriceSettings").contains(document.activeElement)){
     $("s_inspKmRate").value=SET.inspKmRate??1.5;
-    $("s_inspBaseFee").value=SET.inspBaseFee??100;
   }
   $("inspectionPriceSettings").querySelectorAll("input,button").forEach(el=>el.disabled=savingInspectionPrice||!canWrite||me?.role!=="admin");
   if(!$("setForm").contains(document.activeElement)){
@@ -1708,15 +1706,16 @@ $("saveSwissPackage").addEventListener("click",async()=>{
 });
 $("saveInspectionPrice").addEventListener("click",async()=>{
   if(savingInspectionPrice||!db||!canWrite||me?.role!=="admin")return;
-  const rateInput=$("s_inspKmRate"),baseInput=$("s_inspBaseFee"),status=$("inspectionPriceStatus"),button=$("saveInspectionPrice");
-  if(!rateInput.value.trim()||!baseInput.value.trim()||!rateInput.reportValidity()||!baseInput.reportValidity())return;
-  const kmRate=Number(rateInput.value),baseFee=Number(baseInput.value);
-  if(!Number.isFinite(kmRate)||kmRate<0||kmRate>100||!Number.isFinite(baseFee)||baseFee<0||baseFee>10000)return;
+  const rateInput=$("s_inspKmRate"),status=$("inspectionPriceStatus"),button=$("saveInspectionPrice");
+  if(!rateInput.value.trim()||!rateInput.reportValidity())return;
+  const kmRate=Number(rateInput.value);
+  if(!Number.isFinite(kmRate)||kmRate<0||kmRate>100)return;
   savingInspectionPrice=true;button.disabled=true;status.textContent="Čuvamo cenu pregleda…";
-  try{await db.doc("settings/main").update({inspKmRate:kmRate,inspBaseFee:baseFee});status.textContent="Cena pregleda je sačuvana. Novi zahtevi koriste ove vrednosti.";toast("Cena pregleda sačuvana");}
+  try{await db.doc("settings/main").update({inspKmRate:kmRate,inspBaseFee:0});status.textContent="Cena pregleda po kilometru je sačuvana. Novi zahtevi nemaju dodatnu osnovnu naknadu.";toast("Cena pregleda sačuvana");}
   catch(err){status.textContent="Čuvanje nije uspelo. Pokušaj ponovo.";fail(err);}
   finally{savingInspectionPrice=false;fillSettings();}
 });
+$("s_inspKmRate").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("saveInspectionPrice").click();}});
 $("rsConfirm").oninput=()=>{$("rsBtn").disabled=$("rsConfirm").value.trim()!=="RESET";};
 $("rsBtn").addEventListener("click",async()=>{const b=$("rsBtn");if($("rsConfirm").value.trim()!=="RESET")return;b.disabled=true;
   const sets=[["cars",CARS],["costs",COSTS],["leads",LEADS],["events",EVENTS],["finds",FINDS],["prices",PRICES],["runs",RUNS],["settlements",SETTLES],["inspections",INSPS]];
