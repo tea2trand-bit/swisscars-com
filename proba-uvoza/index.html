@@ -25,7 +25,11 @@
       </div>
       <p id="price-help" class="import-help">Unesite dogovorenu cenu za izvoz. Povrat švajcarskog PDV-a se ne odbija automatski.</p>
       <div class="import-field"><label for="import-origin">Dokaz o poreklu vozila</label><select id="import-origin"><option value="unknown">Još ne znam — uporedi obe mogućnosti</option><option value="preferential">Prihvaćen dokaz za povlašćenu carinu (0%)</option><option value="standard">Bez prihvaćenog dokaza (12,5%)</option></select></div>
-      <p class="import-help">Kupovina u Švajcarskoj sama po sebi ne znači da je carina 0%.</p>
+      <details class="import-origin-info"><summary><span aria-hidden="true">ⓘ</span> Kada je carina 0%?</summary>
+        <p>Vozilo mora imati poreklo koje daje pravo na povlašćeni uvoz, uz dokaz koji prihvata carina Srbije. To može biti EUR.1 ili odgovarajuća izjava izvoznika na fakturi. Izjava bez ovlašćenja izvoznika važi za vrednost do 6.000 €; za veće iznose potreban je EUR.1 ili izjava ovlašćenog izvoznika.</p>
+        <p>Kupovina ili registracija auta u Švajcarskoj nije dovoljan dokaz. Čak i kada je carina 0%, <strong>PDV pri uvozu je 20%</strong>. Ako još nemate potvrdu špeditera o dokumentaciji, ostavite „Još ne znam“ i uporedite obe mogućnosti.</p>
+        <a href="https://www.carina.rs/putnici/pitanja-i-odgovori/uvoz-polovnih-vozila.html" target="_blank" rel="noopener">Detaljnije: Uprava carina ↗</a>
+      </details>
       <details class="import-costs" id="import-assumptions">
         <summary>Prilagodite kurs i troškove <span aria-hidden="true">+</span></summary>
         <p class="import-help" id="defaults-status">Učitavamo početne procene…</p>
