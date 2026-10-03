@@ -591,6 +591,13 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
       <div class="sheet ppanel" data-pp="nums" hidden>
         <div class="top"><h2>Podešavanja</h2><button class="b primary small" type="submit">Sačuvaj</button></div>
         <div class="grid setgrid" id="setGrid"></div>
+        <fieldset id="swissPackageSettings" style="margin:24px 0 0;padding:18px;border:1px solid var(--line);border-radius:12px">
+          <legend>Paket za auto koji je klijent izabrao</legend>
+          <p class="note">Rad našeg tima u Švajcarskoj: pregled, preuzimanje vozila, predaja transportu i priprema dokumentacije. Prethodno plaćeni pregled uračunava se u cenu paketa. Cena se prikazuje na sajtu; već prihvaćenu ponudu dogovarate posebno.</p>
+          <div class="field"><label for="s_swissPackageFee">Cena paketa u Švajcarskoj, CHF</label><input id="s_swissPackageFee" type="number" min="0" max="100000" step="1" value="900"></div>
+          <div class="btns"><button id="saveSwissPackage" class="b primary small" type="button">Sačuvaj cenu paketa</button><a class="b small" href="/proba-uvoza/" target="_blank" rel="noopener">Probni kalkulator uvoza</a></div>
+          <p id="swissPackageStatus" class="note" role="status" aria-live="polite"></p>
+        </fieldset>
         <fieldset id="inspectionPriceSettings" style="margin:24px 0 0;padding:18px;border:1px solid var(--line);border-radius:12px">
           <legend>Obračun pregleda po kilometru</legend>
           <p class="note">Polazak: St. Gallen, centar. Računamo odlazak i povratak. Cena se zaokružuje na najbližih 10 CHF. Ove vrednosti koriste novi zahtevi za pregled i novi predlozi vozila.</p>
@@ -1659,8 +1666,10 @@ $("pwForm").addEventListener("submit",async e=>{e.preventDefault();const m=$("pw
 $("logout").onclick=()=>SC.signOut();
 
 /* ---------- settings ---------- */
-let savingInspectionPrice=false;
+let savingInspectionPrice=false,savingSwissPackage=false;
 function fillSettings(){
+  if(!$("swissPackageSettings").contains(document.activeElement))$("s_swissPackageFee").value=SET.swissPackageFee??900;
+  $("swissPackageSettings").querySelectorAll("input,button").forEach(el=>el.disabled=savingSwissPackage||!canWrite||me?.role!=="admin");
   if(!$("inspectionPriceSettings").contains(document.activeElement)){
     $("s_inspKmRate").value=SET.inspKmRate??1.5;
     $("s_inspBaseFee").value=SET.inspBaseFee??100;
@@ -1686,6 +1695,17 @@ $("iam").onchange=()=>{IAM=$("iam").value;try{localStorage.setItem("sc_iam",IAM)
 $("setForm").addEventListener("submit",async e=>{e.preventDefault();const body={};SETF.forEach(([k])=>{const v=parseFloat($("s_"+k).value);body[k]=isNaN(v)?DEF[k]:v;});
   body.payInfo=$("s_pay").value.trim();
   try{await db.doc("settings/main").update(body);toast("Sačuvano");}catch(err){fail(err);}});
+$("s_swissPackageFee").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("saveSwissPackage").click();}});
+$("saveSwissPackage").addEventListener("click",async()=>{
+  if(savingSwissPackage||!db||!canWrite||me?.role!=="admin")return;
+  const input=$("s_swissPackageFee"),status=$("swissPackageStatus");
+  if(!input.value.trim()||!input.reportValidity())return;
+  const fee=Number(input.value);if(!Number.isFinite(fee)||fee<0||fee>100000)return;
+  savingSwissPackage=true;$("saveSwissPackage").disabled=true;status.textContent="Čuvamo cenu paketa…";
+  try{await db.doc("settings/main").update({swissPackageFee:fee});status.textContent="Cena paketa je sačuvana i prikazuje se na sajtu.";toast("Cena paketa sačuvana");}
+  catch(err){status.textContent="Čuvanje nije uspelo. Pokušaj ponovo.";fail(err);}
+  finally{savingSwissPackage=false;fillSettings();}
+});
 $("saveInspectionPrice").addEventListener("click",async()=>{
   if(savingInspectionPrice||!db||!canWrite||me?.role!=="admin")return;
   const rateInput=$("s_inspKmRate"),baseInput=$("s_inspBaseFee"),status=$("inspectionPriceStatus"),button=$("saveInspectionPrice");

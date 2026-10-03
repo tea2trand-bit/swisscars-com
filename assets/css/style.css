@@ -339,6 +339,8 @@ a { text-decoration: none; color: inherit }
   z-index: 2;
 }
 
+.hero-calculator-btn { display: flex; width: 100%; margin-top: 18px; min-height: 52px; text-align: center }
+
 .hero-frame {
   position: relative;
   border-radius: var(--r-lg);
@@ -767,6 +769,20 @@ a { text-decoration: none; color: inherit }
 .service-note { font-size: 14px; color: var(--muted) }
 .service-tracking { margin-top: 24px }
 .service-tracking h3 { margin-top: 0 }
+.service-tracking .section-kicker { margin-bottom: 8px }
+.platform-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; padding: 0; margin: 26px 0 22px; list-style: none }
+.platform-flow li { position: relative; min-width: 0; padding: 20px 16px 16px; border: 1px solid var(--line); border-radius: 14px; background: #faf9f6 }
+.platform-flow li:not(:last-child)::after { content: '→'; position: absolute; right: -19px; top: 34px; z-index: 1; color: var(--gold); font-size: 20px; font-weight: 700 }
+.platform-number { display: inline-grid; place-items: center; width: 40px; height: 40px; margin-bottom: 16px; background: #f0e5d1; color: #795727; border-radius: 50%; font-size: 14px; font-weight: 700 }
+.platform-flow h4 { margin: 0 0 10px; color: #354e65; font-size: 17px; line-height: 1.35 }
+.platform-flow p { margin: 0 0 16px; color: var(--muted); font-size: 14px }
+.platform-label { display: block; padding-top: 12px; border-top: 1px solid var(--line); color: #795727; font-size: 12px; font-weight: 600; line-height: 1.5 }
+.platform-status { display: flex; gap: 12px; align-items: baseline; padding: 14px 16px; background: #edf4f1; border-radius: 10px; color: #325749 }
+.platform-status p { margin: 0; font-size: 14px }
+.platform-status-dot { flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%; background: #487c67 }
+.service-tracking .platform-privacy { margin: 16px 0 0; font-size: 12px; color: var(--muted) }
+@media (max-width: 1000px) { .platform-flow { grid-template-columns: repeat(2, minmax(0, 1fr)) } .platform-flow li:nth-child(2)::after { display: none } }
+@media (max-width: 500px) { .platform-flow { grid-template-columns: 1fr; gap: 18px; margin-top: 22px } .platform-flow li { padding: 16px 16px 16px 72px } .platform-number { position: absolute; left: 16px; top: 16px; width: 36px; height: 36px; margin: 0 } .platform-flow li:not(:last-child)::after { display: block; content: '↓'; right: auto; left: 27px; top: auto; bottom: -22px; background: var(--paper); line-height: 22px } .platform-flow h4 { font-size: 16px } .platform-flow p { margin-bottom: 12px } .hero-calculator-btn { font-size: 12px; padding: 14px 12px } }
 .process-subtitle { margin: 32px 0 18px }
 @media (max-width: 700px) { .service-options { grid-template-columns: 1fr } .service-options article, .service-tracking { padding: 20px } }
 
@@ -1155,12 +1171,11 @@ footer small { color: #b9b7ba; display: block; margin-top: 4px }
 .nav-requests-list a { overflow-wrap: anywhere; }
 .nav-requests-list a[aria-current='page'] { color: var(--gold); }
 .nav .nav-team-portal { border-left: 1px solid var(--line); padding-left: 18px; }
-@media (min-width: 901px) and (max-width: 1280px) {
+@media (min-width: 901px) and (max-width: 1440px) {
   .site-header { flex-wrap: wrap; gap: 10px; }
   .site-header .brand { margin-right: auto; }
-  .nav { order: 4; width: 100%; margin-left: 0; justify-content: center; align-items: center; gap: 18px; }
+  .nav { order: 4; width: 100%; margin-left: 0; justify-content: center; align-items: center; gap: 12px 18px; flex-wrap: wrap; }
   .nav > a, .nav-requests summary { white-space: nowrap; }
-  .header-cta { display: none; }
 }
 @media (max-width: 900px) { .nav .nav-team-portal { border-left: 0; border-top: 1px solid var(--line); padding: 10px 2px; margin-top: 8px; } }
 .nav-toggle { position: relative; }

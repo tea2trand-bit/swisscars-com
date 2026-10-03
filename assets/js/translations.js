@@ -27,3 +27,84 @@ Object.assign(translations.en, {"serviceInspectionText":"Send the listing link a
 Object.assign(translations.sr,{serviceInspectionCalc:"Izračunajte cenu pregleda →"});
 Object.assign(translations.de,{serviceInspectionCalc:"Prüfpreis berechnen →"});
 Object.assign(translations.en,{serviceInspectionCalc:"Calculate the inspection price →"});
+
+// Public package price comes from the dedicated service-price setting.
+Object.assign(translations.sr, {serviceSwissText:"Naš tim obavlja pregled, povratak po vozilo, preuzimanje i predaju na mesto polaska transporta, uz pripremu dokumentacije. Cena paketa: {swissPackage}. Prethodno plaćeni pregled uračunava se u cenu paketa."});
+Object.assign(translations.de, {serviceSwissText:"Unser Team prüft das Fahrzeug, fährt erneut zur Abholung, übernimmt es und übergibt es am Transport-Abfahrtsort samt Vorbereitung der Unterlagen. Paketpreis: {swissPackage}. Eine bereits bezahlte Prüfung wird auf den Paketpreis angerechnet."});
+Object.assign(translations.en, {serviceSwissText:"Our team inspects the vehicle, returns to collect it, takes it over and hands it over at the transport departure point, with document preparation. Package price: {swissPackage}. Any inspection already paid is credited towards the package."});
+
+// Customer view of the platform, with a link to the trial import calculator.
+Object.assign(translations.sr, {
+  importCalculatorCta: 'Izračunajte troškove uvoza',
+  platformKicker: 'Vaš lični pregled',
+  platformIntro: 'Posle slanja upita dobijate lični link mejlom. Otvorite ga na telefonu ili računaru i pratite svoj upit, bez traženja poruka po različitim aplikacijama.',
+  platformRequestTitle: 'Vaš upit',
+  platformRequestText: 'Budžet i uslovi koje ste uneli ostaju pregledno sačuvani.',
+  platformRequestLabel: 'Vi navodite šta tražite',
+  platformProposalsTitle: 'Predlozi vozila',
+  platformProposalsText: 'Kada pronađemo odgovarajuća vozila, vidite oglase, cenu i naredni korak.',
+  platformProposalsLabel: 'Vi birate šta vas zanima',
+  platformReportTitle: 'Pregled i fotografije',
+  platformReportText: 'Posle pregleda čitate nalaz našeg tima i otvarate fotografije sa lica mesta.',
+  platformReportLabel: 'Odluka uz uvid u stanje',
+  platformChatTitle: 'Razgovor sa timom',
+  platformChatText: 'Poruke i odgovori su uz isti upit, sa imenom pošiljaoca i vremenom.',
+  platformChatLabel: 'Razgovor tokom celog postupka',
+  platformStatus: 'Kako postupak napreduje, tim ažurira status vašeg upita. Preko istog linka vidite nove informacije.',
+  platformPrivacy: 'Link sačuvajte i delite samo sa osobama kojima želite da omogućite uvid. Na istom uređaju sačuvane upite otvarate kroz „Moji upiti“.'
+});
+Object.assign(translations.de, {
+  importCalculatorCta: 'Importkosten berechnen',
+  platformKicker: 'Ihr persönlicher Überblick',
+  platformIntro: 'Nach Ihrer Anfrage erhalten Sie einen persönlichen Link per E-Mail. Öffnen Sie ihn auf dem Handy oder Computer und verfolgen Sie Ihre Anfrage, ohne Nachrichten in verschiedenen Apps suchen zu müssen.',
+  platformRequestTitle: 'Ihre Anfrage',
+  platformRequestText: 'Ihr Budget und Ihre Anforderungen bleiben übersichtlich gespeichert.',
+  platformRequestLabel: 'Sie sagen uns, was Sie suchen',
+  platformProposalsTitle: 'Fahrzeugvorschläge',
+  platformProposalsText: 'Sobald wir passende Fahrzeuge finden, sehen Sie Inserate, Preis und nächsten Schritt.',
+  platformProposalsLabel: 'Sie wählen, was Sie interessiert',
+  platformReportTitle: 'Prüfung und Fotos',
+  platformReportText: 'Nach der Prüfung lesen Sie unseren Bericht und öffnen die Fotos vom Fahrzeug vor Ort.',
+  platformReportLabel: 'Entscheidung mit Einblick in den Zustand',
+  platformChatTitle: 'Gespräch mit dem Team',
+  platformChatText: 'Nachrichten und Antworten gehören zur selben Anfrage, mit Absender und Uhrzeit.',
+  platformChatLabel: 'Austausch während des ganzen Ablaufs',
+  platformStatus: 'Unser Team aktualisiert den Status, wenn der Vorgang vorankommt. Über denselben Link sehen Sie neue Informationen.',
+  platformPrivacy: 'Bewahren Sie den Link auf und teilen Sie ihn nur mit Personen, denen Sie Einblick geben möchten. Im selben Browser öffnen Sie gespeicherte Anfragen unter „Meine Anfragen“.'
+});
+Object.assign(translations.en, {
+  importCalculatorCta: 'Calculate import costs',
+  platformKicker: 'Your personal overview',
+  platformIntro: 'After submitting a request, you receive a personal link by email. Open it on your phone or computer and follow your request, without searching for messages across different apps.',
+  platformRequestTitle: 'Your request',
+  platformRequestText: 'Your budget and requirements remain clearly saved.',
+  platformRequestLabel: 'Tell us what you are looking for',
+  platformProposalsTitle: 'Vehicle suggestions',
+  platformProposalsText: 'When we find suitable vehicles, you see listings, the price and the next step.',
+  platformProposalsLabel: 'Choose what interests you',
+  platformReportTitle: 'Inspection and photos',
+  platformReportText: 'After the inspection, read our team’s report and open photos taken on site.',
+  platformReportLabel: 'Decide with a view of the condition',
+  platformChatTitle: 'Conversation with the team',
+  platformChatText: 'Messages and replies belong to the same request, with the sender and time.',
+  platformChatLabel: 'Talk throughout the process',
+  platformStatus: 'As the process moves forward, our team updates your request status. See new information through the same link.',
+  platformPrivacy: 'Keep the link and share it only with people you want to give access. In the same browser, open saved requests under “My requests”.'
+});
+
+Object.assign(translations.sr, {
+  serviceBudgetTitle: 'Pronalazimo auto za vas',
+  serviceBudgetText: 'Recite nam budžet i šta vam je važno. Biramo između više vozila i, kada je moguće, spajamo preglede, preuzimanje i transport da smanjimo troškove. Dobijate ponudu sa ukupnom cenom u Srbiji. Nakon dogovora i kapare organizujemo kupovinu, dokumentaciju, transport, carinjenje i završnu proveru pre predaje. Registraciju na vaše ime možete posebno dogovoriti.'
+});
+Object.assign(translations.de, {
+  serviceBudgetTitle: 'Wir finden Ihr Auto',
+  serviceBudgetText: 'Nennen Sie uns Ihr Budget und Ihre Wünsche. Wir wählen aus mehreren Fahrzeugen und verbinden nach Möglichkeit Prüfungen, Abholung und Transport, um Kosten zu senken. Sie erhalten ein Angebot mit dem Gesamtpreis in Serbien. Nach Absprache und Anzahlung organisieren wir Kauf, Unterlagen, Transport, Verzollung und Abschlussprüfung vor der Übergabe. Die Zulassung auf Ihren Namen kann separat vereinbart werden.'
+});
+Object.assign(translations.en, {
+  serviceBudgetTitle: 'We find your car',
+  serviceBudgetText: 'Tell us your budget and what matters to you. We choose from several vehicles and, where possible, combine inspections, collection and transport to reduce costs. You receive a quote with the total price in Serbia. After agreement and a deposit, we arrange purchase, documents, transport, customs clearance and a final check before handover. Registration in your name can be arranged separately.'
+});
+
+Object.assign(translations.sr, {navImportCalculator:'Kalkulator uvoza'});
+Object.assign(translations.de, {navImportCalculator:'Importrechner'});
+Object.assign(translations.en, {navImportCalculator:'Import calculator'});
