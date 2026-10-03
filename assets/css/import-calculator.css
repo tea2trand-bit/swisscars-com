@@ -3,3 +3,5 @@
 .import-heading h1,.import-card h2{color:#344e63}.import-field label,.import-costs>summary{color:#425a6c;font-weight:600}.import-total{color:#344e63}
 
 .import-origin-info{font-size:13px;line-height:1.65;margin:2px 0 20px;color:#536273}.import-origin-info summary{display:flex;align-items:center;gap:8px;cursor:pointer;color:#657c8d;list-style:none;padding:7px 0}.import-origin-info summary::-webkit-details-marker{display:none}.import-origin-info summary span{font-size:20px;color:#a57a3c}.import-origin-info[open]{padding:12px 15px;background:#f4f6f7;border-radius:10px}.import-origin-info p{margin:12px 0}.import-origin-info a{text-decoration:underline}
+
+.import-vat-label{display:inline-block;margin:4px 0 8px;padding:7px 11px;background:#edf2f4;border-radius:8px;color:#4b6578;font-size:12px}
