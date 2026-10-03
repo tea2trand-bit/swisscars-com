@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   const $ = id => document.getElementById('import-' + id);
-  const money = n => n.toLocaleString('sr-RS', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  const money = n => n.toLocaleString('sr-RS', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00a0€';
   const names = { price: 'cenu vozila', rate: 'kurs', transport: 'prevoz', export: 'izvoznu dokumentaciju', eco: 'ekološku naknadu', broker: 'špeditera', testing: 'ispitivanje i dokumenta', other: 'ostale troškove', domestic: 'deo prevoza nakon granice', customs: 'carinsku vrednost' };
   const labels = { broker: 'špediter i carinski postupak', testing: 'ispitivanje i dokumenta u Srbiji', other: 'ostali troškovi' };
   const fields = ['price', 'currency', 'origin', 'rate', 'transport', 'export', 'eco', 'broker', 'testing', 'other', 'domestic', 'customs'];
