@@ -79,9 +79,9 @@
 .up-card h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; margin: 0; font-size: 24px }
 .up-card p { margin: 0 }
 .up-track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px }
-.up-track li { font-size: 12px; line-height: 1.3; color: #9a948a; padding-top: 9px; border-top: 4px solid var(--line) }
-.up-track li.done { color: var(--muted); border-top-color: var(--gold2) }
-.up-track li.now { color: var(--text); font-weight: 700; border-top-color: var(--gold) }
+.up-track li { font-size: 12px; line-height: 1.4; color: #7c8389; padding: 9px 7px 8px; border-top: 4px solid var(--line); border-radius: 0 0 7px 7px; overflow-wrap: anywhere }
+.up-track li.done { color: #527564; background: #f1f7f3; border-top-color: #a2c9b1 }
+.up-track li.now { color: #245b40; background: #e1f2e7; font-weight: 600; border-top-color: #65a580; box-shadow: inset 0 0 0 1px #c6e2d0 }
 .up-now { font-size: 17px }
 .up-ai { background: var(--bg); border-left: 3px solid var(--gold2); padding: 10px 14px; border-radius: 6px; font-size: 15px }
 .up-prop { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 0; padding: 0; overflow: hidden }

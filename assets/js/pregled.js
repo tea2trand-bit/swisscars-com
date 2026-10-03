@@ -172,7 +172,7 @@
   function renderView() {
     const t = T(), d = view; if (!d) return;
     const step = d.status === "gotovo" || d.reportAt ? 3 : d.plannedAt ? 2 : d.paidAt ? 1 : 0;
-    $("v_track").innerHTML = t.track.map((x, k) => `<li class="${k < step ? "done" : k === step ? "now" : ""}">${esc(x)}</li>`).join("");
+    $("v_track").innerHTML = t.track.map((x, k) => `<li class="${k < step ? "done" : k === step ? "now" : ""}"${k === step ? ' aria-current="step"' : ''}>${esc(x)}</li>`).join("");
     $("v_now").textContent = d.status === "otkazano" ? t.cancelled : step === 0 && d.fee == null ? t.nowAgree : t.now[step].replace("{p}", d.plannedAt || "");
     const rows = [[t.rCar, d.car], [t.rPlace, d.ort || d.place], [t.rFee, d.fee != null ? num(d.fee) + " CHF" : t.agree]];
     $("v_req").innerHTML = rows.filter(r => r[1]).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")
