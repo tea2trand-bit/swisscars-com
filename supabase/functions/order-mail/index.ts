@@ -6,6 +6,7 @@
 // Secrets (Supabase → Edge Functions → Secrets): SMTP_USER (info@swiscars.com), SMTP_PASS.
 // Optional: SMTP_HOST (default asmtp.mail.hostpoint.ch), SMTP_PORT (default 465).
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { mailParts } from "./mime.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
@@ -20,16 +21,16 @@ const num = (n: unknown) => Number(n).toLocaleString("de-CH").replace(/[’']/g,
 
 type Lang = "sr" | "de" | "en";
 const COMMON = {
-  sr: { hello: "Poštovani/a {name},", btn: "Pogledaj moj upit", sign: "Srdačan pozdrav,\nTim SWISCARS", foot: "Ovu poruku ste dobili jer ste poslali upit na swiscars.com. Na poruku možete direktno odgovoriti." },
+  sr: { hello: "Poštovani/a {name},", btn: "Pogledaj moj upit", sign: "Srdačan pozdrav,\nTim SWISCARS", foot: "Ovu poruku ste dobili jer ste poslali upit na swiscars.com. Dopune i pitanja pošaljite kroz razgovor u svom upitu." },
   de: { hello: "Guten Tag {name}", btn: "Meine Anfrage ansehen", sign: "Freundliche Grüsse\nIhr SWISCARS-Team", foot: "Sie erhalten diese Nachricht, weil Sie auf swiscars.com eine Anfrage gesendet haben. Sie können direkt auf diese E-Mail antworten." },
   en: { hello: "Dear {name},", btn: "View my request", sign: "Kind regards,\nThe SWISCARS team", foot: "You are receiving this message because you sent a request on swiscars.com. You can reply directly to this email." },
 };
 // subject + body per kind; {n} {title} {price} {model} are filled in
 const MSG: Record<string, Record<Lang, [string, string]>> = {
   welcome: {
-    sr: ["SWISCARS | Potvrda upita za {model}", "Hvala na upitu za {model}. Primili smo vaše uslove i javićemo vam se u roku od 24 sata sa do 3 predloga vozila i procenom ukupne cene u Srbiji.\n\nStatus, svoje uslove i predloge pratite preko linka ispod. Ako želite nešto da dopunite, odgovorite na ovaj mejl."],
-    de: ["SWISCARS | Bestätigung Ihrer Anfrage für {model}", "Vielen Dank für Ihre Anfrage zu {model}. Wir haben Ihre Wünsche erhalten und melden uns innerhalb von 24 Stunden mit bis zu 3 Fahrzeugvorschlägen und einer Schätzung des Gesamtpreises in Serbien.\n\nÜber den Link unten sehen Sie den Status, Ihre Wünsche und die Vorschläge. Für Ergänzungen antworten Sie auf diese E-Mail."],
-    en: ["SWISCARS | Confirmation of your request for {model}", "Thank you for your request for {model}. We have received your requirements and will contact you within 24 hours with up to 3 vehicle proposals and an estimated total price in Serbia.\n\nUse the link below to view your status, requirements and proposals. Reply to this email if you would like to add anything."],
+    sr: ["SWISCARS | Potvrda upita za {model}", "Hvala na upitu za {model}. Primili smo vaše uslove i javićemo vam se u roku od 24 sata sa do 3 predloga vozila i procenom ukupne cene u Srbiji.\n\nStatus, svoje uslove i predloge pratite preko linka ispod. Za dopune i pitanja koristite razgovor u svom upitu."],
+    de: ["SWISCARS | Bestätigung Ihrer Anfrage für {model}", "Vielen Dank für Ihre Anfrage zu {model}. Wir haben Ihre Wünsche erhalten und melden uns innerhalb von 24 Stunden mit bis zu 3 Fahrzeugvorschlägen und einer Schätzung des Gesamtpreises in Serbien.\n\nÜber den Link unten sehen Sie den Status, Ihre Wünsche und die Vorschläge. Für Ergänzungen und Fragen nutzen Sie den Chat in Ihrer Anfrage."],
+    en: ["SWISCARS | Confirmation of your request for {model}", "Thank you for your request for {model}. We have received your requirements and will contact you within 24 hours with up to 3 vehicle proposals and an estimated total price in Serbia.\n\nUse the link below to view your status, requirements and proposals. Use the conversation in your request for questions or additional details."],
   },
   check_yes: {
     sr: ["Prva provera tržišta je gotova – SWISCARS", "naš asistent je završio prvu proveru tržišta za {model}: u Švajcarskoj smo pronašli {n} vozila koja bi mogla da odgovaraju vašem budžetu. Naš tim ih sada proverava i javlja vam se sa konkretnim predlogom."],
@@ -208,14 +209,14 @@ Deno.serve(async (req) => {
         if (!x) err = "no_inspection";
         else if (r.kind === "pg_team") {
           const t = `Nova narudžbina pregleda\n\nAuto: ${x.car || "—"}\nOglas: ${x.url || "—"}\nMesto: ${x.ort || x.place || "—"}${x.dist != null ? ` (~${x.dist} km od St. Gallena)` : ""}\nCena: ${x.fee != null ? x.fee + " CHF" : "po dogovoru — upišite cenu u aplikaciji"}\nKupac: ${x.name || "—"} · ${x.phone || "—"} · ${x.email || "—"}\nNapomena: ${x.note || "—"}\n\nU aplikaciji: https://swiscars.com/intern/ (kartica Upiti → Pregled po narudžbini)`;
-          await client.send({ from: `SWISCARS sajt <${user}>`, to: user, replyTo: x.email || user, subject: `Pregled: ${x.car || x.ort || ""} (${x.name || ""})`, content: t });
+          await client.send({ from: `SWISCARS sajt <${user}>`, to: user, replyTo: x.email || user, subject: `Pregled: ${x.car || x.ort || ""} (${x.name || ""})`, ...mailParts(t) });
           sent++;
         } else if (!x.email) err = "no_email";
         else {
           const { data: sr } = await sb.from("sc_docs").select("data").eq("collection", "settings").eq("id", "main").maybeSingle();
           const msg = composePg(r.kind, x, String((sr?.data as any)?.payInfo || ""));
           if (!msg) err = "unknown_kind";
-          else { await client.send({ from: `SWISCARS <${user}>`, to: x.email, replyTo: user, subject: msg.subject, content: msg.text, html: msg.html }); sent++; }
+          else { await client.send({ from: `SWISCARS <${user}>`, to: x.email, replyTo: user, subject: msg.subject, ...mailParts(msg.text, msg.html) }); sent++; }
         }
         await sb.from("sc_mail_queue").update({ error: err }).eq("id", r.id);
         continue;
@@ -224,7 +225,7 @@ Deno.serve(async (req) => {
       const l = lr?.data as Record<string, any> | undefined;
       if (l && r.kind === "team") {
         const t = `${r.payload?.text || ""}\n\nPotražilac: ${l.name || "—"} · ${l.phone || "—"} · ${l.email || "—"}\nU aplikaciji: https://swiscars.com/intern/`;
-        await client.send({ from: `SWISCARS asistent <${user}>`, to: user, replyTo: l.email || user, subject: `Upit ${l.name || ""}: ${String(r.payload?.text || "").slice(0, 70)}`, content: t });
+        await client.send({ from: `SWISCARS asistent <${user}>`, to: user, replyTo: l.email || user, subject: `Upit ${l.name || ""}: ${String(r.payload?.text || "").slice(0, 70)}`, ...mailParts(t) });
         sent++; await sb.from("sc_mail_queue").update({ error: null }).eq("id", r.id); continue;
       }
       if (!l) err = "no_lead";
@@ -237,10 +238,10 @@ Deno.serve(async (req) => {
         const msg = compose(r.kind, l, r.payload, car, String((sr?.data as any)?.payInfo || ""), Number((sr?.data as any)?.rate) || 1.057);
         if (!msg) err = "unknown_kind";
         else {
-          await client.send({ from: `SWISCARS - Upiti za vozila <${user}>`, to: l.email, replyTo: user, subject: msg.subject, content: msg.text, html: msg.html });
+          await client.send({ from: `SWISCARS - Upiti za vozila <${user}>`, to: l.email, replyTo: user, subject: msg.subject, ...mailParts(msg.text, msg.html) });
           if (r.kind === "welcome") {
             const team = `Novi upit sa sajta\n\nIme: ${l.name}\nTelefon: ${l.phone || "—"}\nEmail: ${l.email || "—"}\nModel: ${l.model}\nBudžet: ${l.budget || "—"} €\nKilometraža: ${l.mileage || "—"}\nMenjač: ${l.gearbox || "—"}\nNapomena: ${l.note || "—"}\n\nU evidenciji: https://swiscars.com/intern/ (kartica Upiti)\nLink potražioca: https://swiscars.com/upit/#${l.token}`;
-            await client.send({ from: `SWISCARS sajt <${user}>`, to: user, replyTo: l.email, subject: `Novi upit: ${l.model} (${l.name})`, content: team });
+            await client.send({ from: `SWISCARS sajt <${user}>`, to: user, replyTo: l.email, subject: `Novi upit: ${l.model} (${l.name})`, ...mailParts(team) });
           }
           sent++;
         }
