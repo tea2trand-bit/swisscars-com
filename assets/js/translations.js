@@ -104,3 +104,7 @@ Object.assign(translations.en, {
   serviceBudgetTitle: 'We find your car',
   serviceBudgetText: 'Tell us your budget and what matters to you. We choose from several vehicles and, where possible, combine inspections, collection and transport to reduce costs. You receive a quote with the total price in Serbia. After agreement and a deposit, we arrange purchase, documents, transport, customs clearance and a final check before handover. Registration in your name can be arranged separately.'
 });
+
+Object.assign(translations.sr, {navImportCalculator:'Kalkulator uvoza'});
+Object.assign(translations.de, {navImportCalculator:'Importrechner'});
+Object.assign(translations.en, {navImportCalculator:'Import calculator'});

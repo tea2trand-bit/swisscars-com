@@ -1171,12 +1171,11 @@ footer small { color: #b9b7ba; display: block; margin-top: 4px }
 .nav-requests-list a { overflow-wrap: anywhere; }
 .nav-requests-list a[aria-current='page'] { color: var(--gold); }
 .nav .nav-team-portal { border-left: 1px solid var(--line); padding-left: 18px; }
-@media (min-width: 901px) and (max-width: 1280px) {
+@media (min-width: 901px) and (max-width: 1440px) {
   .site-header { flex-wrap: wrap; gap: 10px; }
   .site-header .brand { margin-right: auto; }
-  .nav { order: 4; width: 100%; margin-left: 0; justify-content: center; align-items: center; gap: 18px; }
+  .nav { order: 4; width: 100%; margin-left: 0; justify-content: center; align-items: center; gap: 12px 18px; flex-wrap: wrap; }
   .nav > a, .nav-requests summary { white-space: nowrap; }
-  .header-cta { display: none; }
 }
 @media (max-width: 900px) { .nav .nav-team-portal { border-left: 0; border-top: 1px solid var(--line); padding: 10px 2px; margin-top: 8px; } }
 .nav-toggle { position: relative; }
