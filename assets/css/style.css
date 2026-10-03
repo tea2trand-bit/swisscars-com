@@ -805,6 +805,12 @@ input, select, textarea {
   transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
 }
 
+.contact-form input::placeholder, .contact-form textarea::placeholder {
+  color: #9a9fa4;
+  opacity: 1;
+  font-weight: 400;
+}
+
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--gold);
