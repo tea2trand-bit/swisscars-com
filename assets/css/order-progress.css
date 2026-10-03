@@ -1,0 +1,10 @@
+.sc-order-progress{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px}
+.sc-order-progress li{display:flex;align-items:center;gap:4px;flex:1 0 auto;align-self:start;white-space:nowrap;font-size:12px;line-height:1.4;font-weight:400;color:#7c8389;background:transparent;padding:4px;border:0;border-top:3px solid #e3e0da;border-radius:0 0 5px 5px;box-shadow:none}
+.sc-order-progress .step-number{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#f1f0ed;color:inherit;font-size:10px;flex:none}
+.sc-order-progress .step-state{font-size:10px;margin-left:2px;white-space:nowrap}
+.sc-order-progress li.done{color:#527564;background:#f1f7f3;border-top-color:#a2c9b1}
+.sc-order-progress li.done .step-number{background:#e3efe7}
+.sc-order-progress li.now{color:#245b40;background:#e1f2e7;border-top-color:#65a580;font-weight:600;box-shadow:inset 0 0 0 1px #c6e2d0}
+.sc-order-progress li.now .step-number{background:#c7e7d4}
+.sc-order-progress li.next{color:#64717b;border-top-color:#cdd4d9}
+@media(max-width:760px){.sc-order-progress li{flex-grow:0}}
