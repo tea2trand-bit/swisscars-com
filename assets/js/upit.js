@@ -111,7 +111,7 @@
     if (window.scSaveUpit) window.scSaveUpit(token, { model: d.model, created: d.created });
     $("u_lead").textContent = t.lead;
     const st = stage(d);
-    $("u_track").innerHTML = t.track.map((x, i) => `<li class="${st < 0 ? "" : i < st ? "done" : i === st ? "now" : ""}">${esc(x)}</li>`).join("");
+    $("u_track").innerHTML = t.track.map((x, i) => `<li class="${st < 0 ? "" : i < st ? "done" : i === st ? "now" : ""}"${i === st ? ' aria-current="step"' : ''}>${esc(x)}</li>`).join("");
     const PS = d.proposals || [];
     const act = !d.car && st >= 0 ? (PS.find(p => p.choice === "buy") ? t.nowBuy : PS.find(p => p.inspAt && !p.choice && p.insp !== "ne") ? t.nowRep : PS.find(p => p.insp === "ne" && !p.choice) ? t.nowFail : PS.find(p => p.depositPaidAt && !p.insp && !p.inspAt) ? t.nowInsp : PS.find(p => p.answer === "zelim" && !p.availAt && p.avail !== "ne") ? t.nowCheck : PS.find(p => p.answer === "zelim" && !p.depositPaidAt && p.avail !== "ne") ? t.nowDep : PS.find(p => p.answer === "zanima" && p.photosAt) ? t.nowPhotos : PS.find(p => p.answer === "zanima") ? t.nowZanima : "") : "";
     $("u_now").textContent = st < 0 ? t.closed : act || (d.car && d.car.status === "prodaja" && st === 6 ? t.ready : t.now[st]);
