@@ -594,7 +594,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
         <fieldset id="swissPackageSettings" style="margin:24px 0 0;padding:18px;border:1px solid var(--line);border-radius:12px">
           <legend>Paket za auto koji je klijent izabrao</legend>
           <p class="note">Rad našeg tima u Švajcarskoj: pregled, preuzimanje vozila, predaja transportu i priprema dokumentacije. Prethodno plaćeni pregled uračunava se u cenu paketa. Cena se prikazuje na sajtu; već prihvaćenu ponudu dogovarate posebno.</p>
-          <div class="field"><label for="s_swissPackageFee">Cena paketa u Švajcarskoj, CHF</label><input id="s_swissPackageFee" type="number" min="0" max="100000" step="1" value="900"></div>
+          <div class="grid setgrid"><div class="field"><label for="s_swissPackageFee">Cena paketa u Švajcarskoj, CHF</label><input id="s_swissPackageFee" type="number" min="0" max="100000" step="1" value="900"></div></div>
           <div class="btns"><button id="saveSwissPackage" class="b primary small" type="button">Sačuvaj cenu paketa</button><a class="b small" href="/proba-uvoza/" target="_blank" rel="noopener">Probni kalkulator uvoza</a></div>
           <p id="swissPackageStatus" class="note" role="status" aria-live="polite"></p>
         </fieldset>
