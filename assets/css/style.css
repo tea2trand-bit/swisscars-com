@@ -109,6 +109,8 @@ a { text-decoration: none; color: inherit }
 }
 
 .nav a:hover { color: var(--gold) }
+.nav a[aria-current], .header-cta[aria-current] { color: #906322; }
+.nav a[aria-current] { box-shadow: inset 0 -2px #b7863d; }
 
 .nav-toggle {
   display: none;

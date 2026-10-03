@@ -128,4 +128,6 @@
 @media (max-width: 640px) { #pgForm { grid-template-columns: 1fr } }
 #u_req .up-req-wide { grid-column: 1 / -1; }
 #u_req dd { overflow-wrap: anywhere; white-space: pre-line; }
+#u_req dd { color: #415466; font-weight: 500; line-height: 1.6; }
+.up-now { color: #415466; }
 .up-box p { white-space: pre-line; overflow-wrap: anywhere; }
