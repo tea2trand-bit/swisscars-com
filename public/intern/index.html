@@ -1061,6 +1061,13 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 .history-period{min-height:36px;align-items:center}
 @media(max-width:760px){.history-selects{flex-basis:100%;gap:7px}.history-selects select{font-size:12px;padding-left:8px}.history-period{min-height:28px}}
 </style>
+<style id="inquiry-action-order">
+#t-narudzbine>.top #leadNewBtn{order:0;margin:0}
+#t-narudzbine>.top #leadQuery{order:1;margin:0;flex:1;min-width:120px}
+#t-narudzbine>.top #teamInquiryCount{order:2}
+#t-narudzbine>.top #leadFilter{order:3;margin-left:auto}
+@media(max-width:640px){#t-narudzbine>.top #leadQuery{order:4;flex-basis:100%}#t-narudzbine>.top #teamInquiryCount{order:5}}
+</style>
 </head>
 <body>
 <div id="login" class="login" hidden>
@@ -1245,7 +1252,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
   <!-- UPITI -->
   <section id="t-narudzbine" class="wrap" style="gap:16px" hidden>
     <div class="top">
-      <input id="leadQuery" type="search" placeholder="Ime, prezime ili broj upita" aria-label="Pretraga upita" style="max-width:340px;margin-bottom:10px"><span class="note" id="teamInquiryCount" role="status"></span><div class="chips" id="leadFilter"><button type="button" data-lf="done" aria-pressed="false" title="Prikaži arhivirane upite">Archiv</button></div><button class="b primary" type="button" id="leadNewBtn" aria-haspopup="dialog" aria-controls="teamPhonePane">Upit preko telefona</button>
+      <button class="b primary" type="button" id="leadNewBtn" aria-haspopup="dialog" aria-controls="teamPhonePane">+ Upit klijenta</button><input id="leadQuery" type="search" placeholder="Ime, prezime ili broj upita" aria-label="Pretraga upita" style="max-width:340px;margin-bottom:10px"><span class="note" id="teamInquiryCount" role="status"></span><div class="chips" id="leadFilter"><button type="button" data-lf="done" aria-pressed="false" title="Prikaži arhivirane upite">Arhiv</button></div>
       
     </div>
     <div class="sheet" id="pgSheet" hidden><div class="top"><h2>Pregled po narudžbini</h2><span class="note">sa stranice swiscars.com/pregled</span></div><div id="pgList" style="display:grid;gap:12px;margin-top:10px"></div></div>
@@ -1384,8 +1391,8 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 </div>
 
 <dialog class="team-planning-pane" id="teamPhonePane" aria-labelledby="teamPhoneTitle">    <div class="sheet" id="leadNewBox" hidden>
-      <h2 id="teamPhoneTitle">Upit preko telefona</h2>
-      <p class="note">Upiti sa sajta stižu sami. Ovde upiši samo kad te neko pozove ili dođe lično.</p>
+      <h2 id="teamPhoneTitle">Novi upit klijenta</h2>
+      <p class="note">Upiti sa sajta stižu sami. Ovde unesi zahtev klijenta koji ste dobili telefonom, porukom ili uživo.</p>
       <form id="leadForm" autocomplete="off">
         <div class="grid">
           <div class="field"><label for="l_name">Ime i prezime</label><input id="l_name" required></div>
