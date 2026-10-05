@@ -1086,7 +1086,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
   
   <div class="team-mobile-toolbar">
     <select id="mobileSection" aria-label="Sekcija evidencije">
-      <option value="auta">Naša auta</option><option value="narudzbine">Upiti</option><option value="ai">KI pretraga</option><option value="novac">Novac i obračun</option><option value="prodata">Prodata auta</option><option value="izvestaji">Izveštaji</option><option value="istorija">Istorija</option><option value="pod">Administracija</option>
+      <option value="auta">Naša auta</option><option value="narudzbine">Upiti</option><option value="ai">KI pretraga</option><option value="novac">Novac i obračun</option><option value="prodata">Prodata auta</option><option value="izvestaji">Pregledi</option><option value="istorija">Istorija</option><option value="pod">Administracija</option>
     </select>
     
   </div>
@@ -1097,7 +1097,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
     <button role="tab" data-t="ai" aria-selected="false">KI pretraga</button>
     <button role="tab" data-t="novac" aria-selected="false">Novac i obračun</button>
     <button role="tab" data-t="prodata" aria-selected="false">Prodata auta</button>
-    <button role="tab" data-t="izvestaji" aria-selected="false">Izveštaji<span class="tbadge" id="tabReportCnt" hidden></span></button>
+    <button role="tab" data-t="izvestaji" aria-selected="false">Pregledi<span class="tbadge" id="tabReportCnt" hidden></span></button>
     <button role="tab" data-t="istorija" aria-selected="false">Istorija</button>
     <span class="sp"></span>
     <button role="tab" data-t="pod" aria-selected="false" class="set">⚙ Administracija</button>
@@ -1284,7 +1284,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
   <!-- IZVEŠTAJI -->
   <section id="t-izvestaji" class="wrap" style="gap:16px" hidden>
     <div class="sheet">
-      <div class="top"><h2 style="margin:0">Izveštaji sa pregleda</h2><button class="b primary" type="button" id="teamPlannerOpen">Asistent za planiranje</button></div>
+      <div class="top"><h2 style="margin:0">Pregledi</h2><button class="b primary" type="button" id="teamPlannerOpen">Asistent za preglede</button></div>
       <div class="team-report-filters">
         <div class="field"><label for="teamReportDay">Dan pregleda</label><input id="teamReportDay" type="date"></div>
         <div class="field"><label for="teamReportCity">Grad</label><select id="teamReportCity"><option value="">Svi gradovi</option></select></div>
@@ -1410,7 +1410,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 <section id="teamMoneyDetail" hidden><h3 id="teamMoneyVehicle"></h3><p class="note" id="teamMoneyClient"></p><p id="teamMoneyPackage"></p><div class="team-money-totals" id="teamMoneyTotals"></div><p id="teamMoneyRemaining"></p><details class="more"><summary>Dogovoreni kurs za konačni obračun</summary><label>Koliko EUR vredi 1 CHF<input id="teamMoneyRate" type="number" min="0.01" max="10" step="0.0001"></label><button class="b" type="button" id="teamMoneyRateSave">Sačuvaj kurs</button></details><div id="teamMoneyRows"></div>
 <form id="teamMoneyForm" class="team-planning-job-body"><h3>Nova stavka za ovo vozilo</h3><div class="team-planning-fields"><label>Vrsta stavke<select id="teamMoneyKind"><option value="expense">Trošak firme</option><option value="income">Uplata kupca</option><option value="refund">Povrat kupcu</option></select></label><label>Status<select id="teamMoneyStatus"><option value="paid">Plaćeno / primljeno</option><option value="planned">Planirano / očekuje se</option></select></label><label>Faza posla<select id="teamMoneyPhase"></select></label><label>Kategorija troška<select id="teamMoneyCategory"></select></label><label>Iznos<input id="teamMoneyAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></label><label>Valuta<select id="teamMoneyCurrency"><option>EUR</option><option>CHF</option><option>RSD</option></select></label><label>Datum<input id="teamMoneyDate" type="date" required></label></div><div id="companyExpenseFields"><p class="note">Plaća firma · unos: <span id="companyExpenseRecorder"></span></p><div class="team-planning-fields"><label>Način plaćanja<select id="companyExpenseMethod"><option value="cash">Kasa firme</option><option value="bank">Račun firme</option><option value="card">Kartica firme</option></select></label><label>Dobavljač / primalac<input id="companyExpenseSupplier" maxlength="160" placeholder="Garaža, servis, pumpa…"></label><label>Mesto troška<input id="companyExpenseLocation" maxlength="160" placeholder="Grad / gde je plaćeno"></label><label>Broj računa / dokumenta<input id="companyExpenseRef" maxlength="160" placeholder="Ako postoji"></label></div></div><label>Za šta tačno<input id="teamMoneyWhat" required maxlength="240" placeholder="Npr. transport, kapara ili priprema"></label><label>Račun / potvrda (nije obavezno)<input id="teamMoneyPhoto" type="file" accept="image/*" capture="environment"></label><button class="b primary" id="teamMoneySave" type="submit">Sačuvaj stavku</button></form><p class="note" id="teamMoneyResult" role="status" aria-live="polite"></p></section></div></dialog>
 <dialog class="team-planning-pane" id="teamPlanningPane" aria-labelledby="teamPlanningTitle">
-  <header class="team-planning-pane-head"><button class="b" type="button" id="teamPlanningBack">← Nazad</button><h2 id="teamPlanningTitle">Asistent za planiranje</h2></header>
+  <header class="team-planning-pane-head"><button class="b" type="button" id="teamPlanningBack">← Nazad</button><h2 id="teamPlanningTitle">Asistent za preglede</h2></header>
   <div class="team-planning-body">
     <div class="team-report-modes"><button class="b" type="button" data-planning-mode="schedule" aria-pressed="true">Pregledi za zakazivanje</button><button class="b" type="button" data-planning-mode="trip" aria-pressed="false">Plan polaska</button></div>
     <div class="team-planning-settings"><label>Dan polaska<input id="teamPlanningDay" type="date"></label><label>Polazak iz<input id="teamPlanningOrigin" type="text" maxlength="200" placeholder="Grad ili adresa polaska"></label></div>
@@ -2369,7 +2369,7 @@ function renderTeamWorkReports(){
   const queue=$("teamReportQueue");if(!queue)return;
   const all=buildTeamWorkTasks(LEADS,INSPS,FINDS),day=$("teamReportDay").value||teamWorkDay();
   $("tabReportCnt").textContent=all.length;$("tabReportCnt").hidden=!all.length;
-  const reportOption=$("mobileSection").querySelector('option[value="izvestaji"]');reportOption.textContent=all.length?"Izveštaji ("+all.length+")":"Izveštaji";
+  const reportOption=$("mobileSection").querySelector('option[value="izvestaji"]');reportOption.textContent=all.length?"Pregledi ("+all.length+")":"Pregledi";
   if(document.activeElement?.closest?.("#teamReportQueue [data-work-city-form]"))return;
   const scoped=groupTeamWorkTasks(all,teamReportMode,day);
   if(teamReportCity&&!scoped.cities.some(g=>g.key===teamReportCity))teamReportCity="";
