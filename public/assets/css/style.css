@@ -341,7 +341,7 @@ a { text-decoration: none; color: inherit }
   z-index: 2;
 }
 
-.hero-calculator-btn { display: flex; width: 100%; margin-top: 18px; min-height: 52px; text-align: center }
+.hero-calculator-btn { display: flex; width: fit-content; max-width: 100%; margin: 18px auto 0; min-height: 52px; text-align: center }
 
 .hero-frame {
   position: relative;
