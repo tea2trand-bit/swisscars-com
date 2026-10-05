@@ -1038,7 +1038,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 @media(max-width:760px){.finance-tabs{gap:14px}.finance-tabs button{font-size:13px}.finance-toolbar-actions{width:100%;justify-content:flex-end}#bonusAdd.b.primary{height:36px;min-height:36px;font-size:12px;padding:0 10px}#financeMonthControl{flex:1}}
 </style>
 <style id="history-compact-filters">
-.history-toolbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.history-toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .history-chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .history-chips button{border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:999px;min-height:28px;padding:3px 10px;font:400 12px var(--f-body);cursor:pointer}
 .history-chips button b{font-variant-numeric:tabular-nums;color:var(--ink);margin-left:4px}
@@ -1053,6 +1053,13 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 #kpis>.kpi:nth-child(4)>.v,#kpis>.kpi:nth-child(4)>.v>span{color:#278351}
 #kpis>.kpi:nth-child(5)>.v,#kpis>.kpi:nth-child(5)>.v>span{color:#b96b15}
 #kpis>.kpi:nth-child(6)>.v,#kpis>.kpi:nth-child(6)>.v>span{color:var(--ink)}
+</style>
+<style id="history-unified-selects">
+.history-selects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;flex:1;min-width:0;max-width:760px}
+.history-selects label{display:grid;gap:5px;min-width:0;font-size:12px;color:var(--muted)}
+.history-selects select{width:100%;min-width:0;height:36px;padding:0 30px 0 11px;border:1px solid var(--line);border-radius:9px;background-color:var(--paper);color:var(--ink);font:400 13px var(--f-body)}
+.history-period{min-height:36px;align-items:center}
+@media(max-width:760px){.history-selects{flex-basis:100%;gap:7px}.history-selects select{font-size:12px;padding-left:8px}.history-period{min-height:28px}}
 </style>
 </head>
 <body>
@@ -1305,9 +1312,11 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
   <!-- ISTORIJA -->
   <section id="t-istorija" class="wrap" style="gap:16px" hidden>
     <div class="sheet">
-      <div class="history-toolbar"><div class="history-chips" id="historyTypes" aria-label="Vrsta događaja"></div><div class="history-chips history-period" id="historyPeriods" aria-label="Period istorije"></div></div>
-      <div class="history-filter-row"><span>Ko</span><div class="history-chips" id="historyPeople" aria-label="Članovi tima"></div></div>
-      <div class="history-filter-row"><span>Klijenti</span><div class="history-chips" id="historyClients" aria-label="Klijenti po imenu"></div></div>
+      <div class="history-toolbar"><div class="history-selects">
+        <label>Vrsta događaja<select id="historyTypes" aria-label="Vrsta događaja"></select></label>
+        <label>Ko<select id="historyPeople" aria-label="Ko je uradio"></select></label>
+        <label>Klijent<select id="historyClients" aria-label="Klijent"></select></label>
+      </div><div class="history-chips history-period" id="historyPeriods" aria-label="Period istorije"></div></div>
       <div class="hsum" id="hSum"></div>
       <ul class="timeline" id="timeline"></ul>
       <p class="note" id="histEmpty" hidden>Nema događaja za ovaj izbor.</p>
@@ -1754,6 +1763,12 @@ function historyForClientRecord(e,key){
  return !!name&&text.includes(name);
 }
 function historyChips(id,items,selected,key){
+ if($(id).tagName==='SELECT'){
+  const allLabels={historyTypes:'Sve vrste',historyPeople:'Svi',historyClients:'Svi klijenti'};
+  $(id).innerHTML=items.map(([value,label,count])=>'<option value="'+esc(value)+'">'+esc(value?label:allLabels[id])+(count==null?'':' ('+count+')')+'</option>').join('');
+  $(id).value=selected;$(id).onchange=()=>{historyFilter[key]=$(id).value;renderHistory();};return;
+ }
+
  $(id).innerHTML=items.map(([value,label,count])=>'<button type="button" data-value="'+esc(value)+'" aria-pressed="'+(value===selected)+'">'+esc(label)+(count==null?'':' <b>'+count+'</b>')+'</button>').join('');
  $(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{historyFilter[key]=b.dataset.value;renderHistory();});
 }
