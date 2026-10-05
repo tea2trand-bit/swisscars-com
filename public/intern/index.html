@@ -1306,7 +1306,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
   <section id="t-istorija" class="wrap" style="gap:16px" hidden>
     <div class="sheet">
       <div class="history-toolbar"><div class="history-chips" id="historyTypes" aria-label="Vrsta događaja"></div><div class="history-chips history-period" id="historyPeriods" aria-label="Period istorije"></div></div>
-      <div class="history-filter-row"><span>Tim</span><div class="history-chips" id="historyPeople" aria-label="Članovi tima"></div></div>
+      <div class="history-filter-row"><span>Ko</span><div class="history-chips" id="historyPeople" aria-label="Članovi tima"></div></div>
       <div class="history-filter-row"><span>Klijenti</span><div class="history-chips" id="historyClients" aria-label="Klijenti po imenu"></div></div>
       <div class="hsum" id="hSum"></div>
       <ul class="timeline" id="timeline"></ul>
@@ -1740,10 +1740,12 @@ function periodStart(v){const d=new Date();
   if(v==="30")return [Date.now()-30*864e5,Infinity];
   return [0,Infinity];}
 const historyFilter={period:'30',type:'',person:'',client:''};
-function historyClientRows(){return [...LEADS.map(x=>({...x,key:'lead:'+x._id})),...INSPS.filter(x=>!teamCompanyInspection(x)).map(x=>({...x,key:'inspection:'+x._id}))].filter(x=>!x.demo&&x.name);}
-function historyForClient(e,key){
+function historyClientRecords(){return [...LEADS.map(x=>({...x,key:'lead:'+x._id})),...INSPS.filter(x=>!teamCompanyInspection(x)).map(x=>({...x,key:'inspection:'+x._id}))].filter(x=>!x.demo&&x.name);}
+function historyClientRows(){const groups=new Map();for(const c of historyClientRecords()){const key=c.name.trim().toLocaleLowerCase('sr-Latn');if(!groups.has(key))groups.set(key,{key,name:c.name});}return [...groups.values()];}
+function historyForClient(e,key){if(!key)return true;return historyClientRecords().filter(c=>c.name.trim().toLocaleLowerCase('sr-Latn')===key).some(c=>historyForClientRecord(e,c.key));}
+function historyForClientRecord(e,key){
  if(!key)return true;
- const client=historyClientRows().find(x=>x.key===key);if(!client)return false;
+ const client=historyClientRecords().find(x=>x.key===key);if(!client)return false;
  const car=CARS.find(c=>c._id===e.carId);
  if(key.startsWith('lead:')&&(e.leadId===client._id||e.orderId===client._id||car?.orderId===client._id||client.carId&&client.carId===e.carId))return true;
  if(key.startsWith('inspection:')&&e.inspectionId===client._id)return true;
