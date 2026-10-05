@@ -241,6 +241,16 @@ details.intro p{margin:0 0 4px}
 .lsteps li.cur{background:var(--btn);color:#fff;border-color:var(--btn);font-weight:700}
 .lnext{font-size:15px;padding:8px 12px;border-radius:8px;background:var(--next-bg);border:1px dashed var(--next-line)}
 .lnext.mine{background:var(--neg-soft);border:1px solid var(--neg)}
+.lead.workcard{border-left:1px solid var(--line);padding:16px 20px;gap:12px}
+.workcard .lhd{align-items:flex-start}.workcard .lhd h3{font-family:inherit;font-size:16px;font-weight:600;color:var(--muted)}
+.workcard .work-vehicle{font-size:21px;font-weight:600;color:var(--ink);line-height:1.35;margin-top:5px}
+.workcard .work-budget{font-size:14px;font-weight:400;color:var(--muted);margin-left:10px;white-space:nowrap}
+.workcard .work-criteria{display:flex;gap:6px;flex-wrap:wrap}.workcard .work-criteria span{font-size:13px;color:var(--muted);background:var(--soft);padding:3px 8px;border-radius:5px}
+.workcard .lnext{background:#f6f8f6;border:0;border-left:3px solid #a8c6b1;padding:8px 12px;line-height:1.45}
+.workcard .lnext.mine{background:#fbf6ea;border-left-color:#bd9558}.workcard .work-owner{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
+.workcard .more{background:transparent}.workcard .more summary{font-weight:500;font-size:14px}
+.workcard .work-detail-body{display:grid;gap:10px;padding-top:12px}
+.workcard .work-details .lactions{margin-top:2px}@media(max-width:700px){.lead.workcard{padding:14px}.workcard .work-vehicle{font-size:19px}.workcard .work-budget{display:block;margin:2px 0 0}.workcard .lhd{gap:8px}}
 .who{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--soft);white-space:nowrap}
 .who.w-vi{background:var(--neg);color:#fff}
 @media (max-width:700px){.lsteps{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -292,6 +302,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 .toolrow .b[aria-pressed=true],#mTools .b[aria-pressed=true]{background:var(--soft);color:var(--ink);border-color:var(--btn);box-shadow:inset 0 -3px 0 var(--btn)}
 .match{display:inline-block;font-size:12px;background:var(--info-soft);color:var(--info);border-radius:999px;padding:1px 8px}
 </style>
+<link rel="stylesheet" href="/assets/css/order-progress.css">
 </head>
 <body>
 <div id="login" class="login" hidden>
@@ -650,6 +661,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/intern/sc-db.js"></script>
 <script src="/assets/js/conversation.js"></script>
+<script src="/assets/js/order-progress.js"></script>
 <script src="/assets/js/inspection-report.js"></script>
 <script>
 const FLOW=[["kupljen","Kupljen"],["transport","U transportu"],["carinjen","Ocarinjen"],["garaza","U garaži"],["prodaja","Spreman za prodaju"],["prodat","Prodat"]];
@@ -1334,7 +1346,7 @@ function leadFlow(l,n){const props=l.proposals||[],car=l.carId?CARS.find(c=>c._i
   else if(pf(p=>A(p)==="zanima"&&p.photosAt)){next="Slike su poslate. Čekamo da kaže da li želi auto.";who="Potražilac";}
   else if(pf(p=>!A(p))){next="Predlozi su poslati (link oglasa i procena cene). Čekamo da izabere auto za pregled.";who="Potražilac";}
   else if(l.demo){next="Demo upit: asistent ne obrađuje izmišljene upite.";who="";}
-  else if(!l.aiCheckedAt){next="KI proverava tržište i šalje 3 predloga (provera oko 9 i 21 h; obećano u roku od 24 h).";who="Asistent";}
+  else if(!l.aiCheckedAt){next="Čekamo predloge vozila. KI pretraga se proverava oko 9 i 21 h.";who="Asistent";}
   else if(n){next="KI šalje nove predloge (pri sledećoj proveri, oko 9 ili 21 h).";who="Asistent";}
   else {next="Asistent traži dalje i javlja čim nađe dobar oglas.";who="Asistent";}
   return {d,i:i<0?LSTEPS.length:i,next,who};}
@@ -1426,6 +1438,7 @@ function renderInsp(){const L=$("pgList");if(!L)return;
 function renderLeads(){renderInsp();
   {const n=LEADS.filter(l=>!l.carId&&(l.proposals||[]).some(p=>propState(p).act)).length;$("tabLeadCnt").textContent=n;$("tabLeadCnt").hidden=!n;}
   if(leadBusy&&document.querySelector("#leadList .pphoto:not([hidden])"))return;
+  const keptDetails=new Set([...document.querySelectorAll("[data-lead-details][open]")].map(e=>e.dataset.leadDetails));
   const keptChats=new Map([...document.querySelectorAll("[data-lead-chat]")].map(e=>[e.dataset.leadChat,e]));
   const rows=shopRows();
   const list=[...LEADS].map(l=>{const fs=leadFindsOf(l,rows);return {l,fs,st:leadStage(l,fs.length)};}).filter(x=>leadFilter==="open"?!x.st.done:x.st.done).sort((a,b)=>(b.l.created||0)-(a.l.created||0));
@@ -1436,12 +1449,17 @@ function renderLeads(){renderInsp();
     const sv=x=>x&&x!=="Svejedno"?x:"";
     const want=[l.budget?`do ${fmt(l.budget)} €`:"",l.yearFrom?`od ${l.yearFrom}.`:"",sv(l.fuel),sv(l.body),l.drive==="4x4"?"4x4":"",sv(l.gearbox),l.mileage&&l.mileage!=="Nije presudno"?l.mileage.toLowerCase():"",(l.equip||[]).length?"oprema: "+l.equip.join(", "):"",l.when].filter(Boolean).map(esc).join(" · ");
     const fl=leadFlow(l,fs.length);
-    const head=`<div class="lhd"><div><h3>${esc(l.name||l.contact||"Bez imena")}${l.demo?' <span class="pill">demo</span>':""}</h3><span class="sub">${[l.city||(l.where&&l.where!=="Sajt"?l.where:""),l.source==="web"?"sa sajta":"telefonom / uživo",l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):"",l.source!=="web"&&l.payer?"uneo "+l.payer:""].filter(Boolean).map(esc).join(" · ")}</span></div>${fl.who?`<span class="who w-${fl.who==="Vi"?"vi":"x"}">Na potezu: <b>${esc(fl.who)}</b></span>`:`<span class="stage ${st.c}">${esc(st.t)}</span>`}</div>
-      <ol class="lsteps">${LSTEPS.map((x,j)=>`<li class="${fl.d[j]?"done":j===fl.i&&l.status!=="odustao"?"cur":""}">${fl.d[j]?"✓ ":""}${x}</li>`).join("")}</ol>
-      <div class="lnext ${fl.who==="Vi"?"mine":""}"><b>Sledeće:</b> ${esc(fl.next)}</div>`;
+    const workStep=SCOrderProgress.stage(l,car);
+    const essentials=[l.yearFrom?"Od "+l.yearFrom+".":"",sv(l.fuel),sv(l.gearbox),l.mileage&&l.mileage!=="Nije presudno"?l.mileage:""].filter(Boolean);
+    const head=`<div class="lhd"><div><h3>${esc(l.name||l.contact||"Bez imena")}${l.demo?' <span class="pill">demo</span>':""}</h3><div class="work-vehicle">${esc(car?.model||l.model||"Vozilo nije navedeno")}${l.budget?`<span class="work-budget">Budžet klijenta: ${fmt(l.budget)} €</span>`:""}</div></div></div><ol class="sc-order-progress" aria-label="Status upita">${SCOrderProgress.markup(workStep)}</ol>
+      ${essentials.length?`<div class="work-criteria">${essentials.map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""}
+      <div class="lnext ${fl.who==="Vi"?"mine":""}"><span class="work-owner">${fl.who?"Na potezu: "+esc(fl.who):"Status upita"}</span>${esc(fl.next)}</div>`;
     const contact=`<div class="lcontact">${l.phone?`<a href="tel:${esc(wa)}">📞 ${esc(l.phone)}</a>${wa.length>6?`<a href="https://wa.me/${esc(wa.replace("+",""))}" target="_blank" rel="noopener">WhatsApp</a>`:""}`:""}${l.email?`<a href="mailto:${esc(l.email)}">✉ ${esc(l.email)}</a>`:""}${!l.phone&&!l.email&&l.contact?esc(l.contact):""}</div>`;
     const pli=p=>{let ps=propState(p);if(car&&["zanima","zelim"].includes(pAns(p)))ps={t:"✓ Kupljeno",c:"ans-da"};const f=p.findId?FINDS.find(x=>x._id===p.findId):null;const url=p.url||(f&&f.url);
-      return `<li><span>${url?`<a href="${esc(url)}" target="_blank" rel="noopener" title="Otvori švajcarski oglas">${esc(p.title)}</a>`:esc(p.title)}${p.year?" · "+p.year:""}${p.km?" · "+fmt(p.km)+" km":""} · <b>${p.price?fmt(p.price)+" €":"cena po dogovoru"}</b> <span class="note">${p.at?new Date(p.at).toLocaleDateString("sr-Latn-RS"):""}${p.by?", "+esc(who(p.by)):""}</span>${p.dist!=null||p.inspFee!=null?`<span class="sub">${p.place?esc(p.place)+" · ":""}${p.dist!=null?"~"+p.dist+" km od St. Gallena · ":""}pregled ${p.inspFee!=null?fmt(p.inspFee)+" CHF":"po dogovoru"}${p.adChf?" · oglas "+fmt(p.adChf)+" CHF":""}${+p.depositPct>=50?" · <b>avans 50%</b>":""}</span>`:""}${p.inspAt&&p.inspNote?`<span class="sub">👀 ${esc(p.inspNote)}</span>`:""}${p.answerNote?`<span class="sub">„${esc(p.answerNote)}“</span>`:""}${(p.photos||[]).length&&p.photosAt?`<span class="sub">${p.photos.length} ${p.photos.length===1?"slika poslata":"slika poslato"}${p.adNote?" · "+esc(p.adNote.slice(0,80)):""}</span>`:""}</span>
+      const workPrice=p.adChf||f?.priceChf,workPlace=p.place||f?.place;
+      return `<li><span>${url?`<a href="${esc(url)}" target="_blank" rel="noopener" title="Otvori švajcarski oglas">${esc(p.title)}</a>`:esc(p.title)}${workPrice?` · cena oglasa <b>${fmt(workPrice)} CHF</b>`:""}
+        <span class="sub">${[workPlace,p.year,p.km?fmt(p.km)+" km":""].filter(Boolean).map(esc).join(" · ")}</span>
+        <details class="more"><summary>Ponuda za klijenta i beleške</summary><div class="note">Cena za klijenta: ${p.price?fmt(p.price)+" €":"po dogovoru"}${p.deposit?" · kapara "+fmt(p.deposit)+" €":""}${p.inspFee!=null?" · pregled "+fmt(p.inspFee)+" CHF":""}</div>${p.answerNote?`<p class="note">Odgovor klijenta: ${esc(p.answerNote)}</p>`:""}${p.inspNote?`<p class="note">Izveštaj: ${esc(p.inspNote)}</p>`:""}${p.adNote?`<p class="note">Opis oglasa: ${esc(p.adNote)}</p>`:""}</details></span>
         <span class="pst"><span class="${ps.c}">${esc(ps.t)}</span>${url&&!car&&ps.act==="photos"?`<a class="b small" href="${esc(url)}" target="_blank" rel="noopener">Oglas ↗</a>`:""}${canWrite&&!car?(ps.act==="photos"?`<button class="b small primary" type="button" data-pph="${esc(l._id)}|${esc(p.id)}" data-mode="photos">Dodaj slike i opis</button>`:ps.act==="report"?`<button class="b small primary" type="button" data-pph="${esc(l._id)}|${esc(p.id)}" data-mode="report">Pošalji izveštaj sa pregleda</button>`:ps.act==="avail"?`${url?`<a class="b small" href="${esc(url)}" target="_blank" rel="noopener">Oglas ↗</a>`:""}<button class="b small" type="button" data-pavno="${esc(l._id)}|${esc(p.id)}">Nije dostupno</button><button class="b small primary" type="button" data-pavok="${esc(l._id)}|${esc(p.id)}">Dostupno – traži kaparu</button>`:ps.act==="paid"?`<button class="b small primary" type="button" data-ppaid="${esc(l._id)}|${esc(p.id)}">Kapara primljena</button>`:ps.act==="refund"?`<button class="b small" type="button" data-prefund="${esc(l._id)}|${esc(p.id)}">Kapara vraćena</button>`:""):""}</span>
         <div class="pphoto" data-pphbox="${esc(l._id)}|${esc(p.id)}" hidden><p class="note">${url?`<a href="${esc(url)}" target="_blank" rel="noopener">Otvori oglas ↗</a> · `:""}<span data-phelp>Sačuvaj slike iz oglasa i dodaj ih ovde (možeš više puta), ili kopiraj sliku i nalepi je sa Ctrl+V.</span></p>
           <div class="pthumbs" data-pthumbs></div>
@@ -1451,7 +1469,7 @@ function renderLeads(){renderInsp();
           <div class="btns"><button class="b primary small" type="button" data-psend>Pošalji mu slike i opis</button><button class="b small" type="button" data-pcancel>Odustani</button></div></div></li>`;};
     const hot=props.filter(p=>["zanima","zelim"].includes(pAns(p))||p.depositPaidAt||p.insp||p.choice), cold=props.filter(p=>!hot.includes(p));
     const coldSum=(()=>{const w=cold.filter(p=>!pAns(p)).length,n=cold.filter(p=>pAns(p)==="ne").length;return [w?`${w} čeka odgovor`:"",n?`${n} ne zanima`:""].filter(Boolean).join(", ");})();
-    const propHTML=props.length?`<div class="blk"><h4>${hot.length?"Zanima ga":"Predlozi"}</h4>${hot.length?`<ul class="plist">${hot.map(pli).join("")}</ul>${cold.length?`<details class="more pcold"><summary>Ostali predlozi (${cold.length}): ${coldSum}</summary><ul class="plist">${cold.map(pli).join("")}</ul></details>`:""}`:`<ul class="plist">${props.map(pli).join("")}</ul>`}</div>`:"";
+    const propHTML=props.length?`<div class="blk"><h4>${hot.length?"Vozilo za obradu":"Predlozi vozila"}</h4>${hot.length?`<ul class="plist">${hot.map(pli).join("")}</ul>${cold.length?`<details class="more pcold"><summary>Ostali predlozi (${cold.length}): ${coldSum}</summary><ul class="plist">${cold.map(pli).join("")}</ul></details>`:""}`:`<ul class="plist">${props.map(pli).join("")}</ul>`}</div>`:"";
     const findHTML=!st.done&&!car&&!fs.length&&!l.aiCheckedAt?"":!st.done&&!car?`<details class="lfinds"><summary>${fs.length?`Asistent našao ${fs.length} ${fs.length===1?"oglas":"oglasa"} u Švajcarskoj · šalje ih sam, po 3`:(l.aiCheckedAt?"Asistent trenutno nema odgovarajući oglas":"Asistent još proverava")}${l.aiNote?` <span class="note">· ${esc(l.aiNote)}</span>`:""}</summary>${fs.length?`<ul>${fs.slice(0,6).map(f=>{const p=findProfit(f);const sent=props.some(x=>x.findId===f._id);return `<li><span>${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.title||f.model)}</a>`:esc(f.title||f.model)} · ${f.year||""} · ${f.km?fmt(f.km)+" km · ":""}${fmt(f.priceChf)} CHF${p?` · naša zarada <span class="${p.post>=0?"pos":"neg"}">${sgn(p.post)} €</span>`:""}</span>${(sent?'<span class="note">poslato njemu</span>':'<span class="note">na čekanju</span>')}</li>`;}).join("")}</ul>`:""}</details>`:"";
     const first=(l.name||"").split(" ")[0];
     const waMsg=l.token?encodeURIComponent(`Zdravo ${first}, ovde možete pratiti vaš upit kod SWISCARS: ${trackUrl(l.token)}`):"";
@@ -1459,7 +1477,8 @@ function renderLeads(){renderInsp();
       ${car?`<span class="note">Auto: <b>${esc(car.model)}</b> · ${esc(SL[car.status]||"")}</span>`:""}
       ${st.done?`<button class="b small" type="button" data-reopen="${esc(l._id)}">Ponovo otvori</button>`:`<button class="b small danger" type="button" data-close="${esc(l._id)}" style="margin-left:auto" title="Kad potražilac više ne traži auto (kupio drugde, ne javlja se). Upit prelazi u „Završeni“.">Potražilac odustao</button>`}</div>`:"";
     const chat=`<details class="more" data-lead-chat="${esc(l._id)}"><summary>Razgovor sa klijentom<span data-chat-summary="${esc(l._id)}"></span></summary><div data-chat-root></div></details>`;
-    return `<article class="lead ${st.c}">${head}<div class="lwant"><b>Traži:</b> ${esc(l.model)}${want?" · "+want:""}</div>${contact}${l.note?`<div class="note">„${esc(l.note)}“</div>`:""}${chat}${propHTML}${findHTML}<div class="propform" data-pform="${esc(l._id)}" hidden></div>${actions}</article>`;}).join("");
+    const detail=`<details class="more work-details" data-lead-details="${esc(l._id)}"${keptDetails.has(l._id)?" open":""}><summary>Detalji upita</summary><div class="work-detail-body"><div class="sub">${[l.city||(l.where&&l.where!=="Sajt"?l.where:""),l.source==="web"?"sa sajta":"telefonom / uživo",l.created?new Date(l.created).toLocaleDateString("sr-Latn-RS"):"",l.source!=="web"&&l.payer?"uneo "+l.payer:""].filter(Boolean).map(esc).join(" · ")}</div><div class="lwant"><b>Svi uslovi:</b> ${esc(l.model)}${want?" · "+want:""}</div>${contact}${l.note?`<div class="note">„${esc(l.note)}“</div>`:""}${actions}</div></details>`;
+    return `<article class="lead workcard ${st.c}">${head}${propHTML}${chat}${findHTML}<div class="propform" data-pform="${esc(l._id)}" hidden></div>${detail}</article>`;}).join("");
   $("leadEmpty").hidden=list.length>0;
   const L=$("leadList");
   L.querySelectorAll("[data-lead-chat]").forEach(placeholder=>{
