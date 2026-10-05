@@ -1329,7 +1329,6 @@ input[type="search"]::placeholder{color:var(--muted);opacity:1}
         <label>Ko<select id="historyPeople" aria-label="Ko je uradio"></select></label>
         <label>Klijent<select id="historyClients" aria-label="Klijent"></select></label>
       </div><div class="history-chips history-period" id="historyPeriods" aria-label="Period istorije"></div></div>
-      <div class="hsum" id="hSum"></div>
       <ul class="timeline" id="timeline"></ul>
       <p class="note" id="histEmpty" hidden>Nema događaja za ovaj izbor.</p>
     </div>
@@ -1800,9 +1799,6 @@ function renderHistory(){
  historyChips('historyPeople',[['','Svi',base.filter(e=>clientMatch(e)&&typeMatch(e)).length],...people.map(p=>[p,p,base.filter(e=>e.actor===p&&clientMatch(e)&&typeMatch(e)).length])],f.person,'person');
  const clients=historyClientRows();
  historyChips('historyClients',[['','Svi',base.filter(e=>personMatch(e)&&typeMatch(e)).length],...clients.map(c=>[c.key,c.name,base.filter(e=>historyForClient(e,c.key)&&personMatch(e)&&typeMatch(e)).length])],f.client,'client');
- const cs=COSTS.filter(k=>(!f.person||CF.recorder(k)===f.person)&&historyForClient(k,f.client)&&costAt(k)>=from&&(!f.type||f.type==='cost'));
- const tot=cs.reduce((sum,k)=>sum+toEUR(k.amount||0,k.currency),0);
- $('hSum').innerHTML='<span>'+evs.length+' '+(evs.length===1?'događaj':'događaja')+'</span><span>Troškovi: <b>'+fmt(tot)+' €</b> ('+cs.length+' stavki)</span>';
  $('timeline').innerHTML=timelineHTML(evs,true);$('histEmpty').hidden=evs.length>0;
 }
 
