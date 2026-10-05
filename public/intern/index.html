@@ -1037,6 +1037,17 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 #financeMonthControl{min-width:0}
 @media(max-width:760px){.finance-tabs{gap:14px}.finance-tabs button{font-size:13px}.finance-toolbar-actions{width:100%;justify-content:flex-end}#bonusAdd.b.primary{height:36px;min-height:36px;font-size:12px;padding:0 10px}#financeMonthControl{flex:1}}
 </style>
+<style id="history-compact-filters">
+.history-toolbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.history-chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.history-chips button{border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:999px;min-height:28px;padding:3px 10px;font:400 12px var(--f-body);cursor:pointer}
+.history-chips button b{font-variant-numeric:tabular-nums;color:var(--ink);margin-left:4px}
+.history-chips button[aria-pressed="true"]{background:var(--bg);border-color:var(--btn);color:var(--ink)}
+.history-chips button:focus-visible{outline:2px solid var(--btn);outline-offset:2px}
+.history-period{margin-left:auto;flex-wrap:nowrap}
+.history-filter-row{display:flex;gap:10px;align-items:baseline;margin-bottom:8px}.history-filter-row>span{min-width:48px;font-size:12px;color:var(--muted)}
+@media(max-width:760px){.history-toolbar{gap:8px}.history-filter-row{align-items:flex-start}.history-filter-row>span{padding-top:5px}}
+</style>
 </head>
 <body>
 <div id="login" class="login" hidden>
@@ -1288,12 +1299,9 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
   <!-- ISTORIJA -->
   <section id="t-istorija" class="wrap" style="gap:16px" hidden>
     <div class="sheet">
-      <div class="filters">
-        <select id="hWho" aria-label="Osoba"></select>
-        <select id="hPeriod" aria-label="Period"></select>
-        <select id="hType" aria-label="Vrsta"><option value="">Sve vrste</option><option value="cost">Samo troškovi</option><option value="status">Samo koraci (kupljen, transport…)</option><option value="edit">Samo ispravke</option></select>
-        <select id="hCar" aria-label="Auto"></select>
-      </div>
+      <div class="history-toolbar"><div class="history-chips" id="historyTypes" aria-label="Vrsta događaja"></div><div class="history-chips history-period" id="historyPeriods" aria-label="Period istorije"></div></div>
+      <div class="history-filter-row"><span>Tim</span><div class="history-chips" id="historyPeople" aria-label="Članovi tima"></div></div>
+      <div class="history-filter-row"><span>Klijenti</span><div class="history-chips" id="historyClients" aria-label="Klijenti po imenu"></div></div>
       <div class="hsum" id="hSum"></div>
       <ul class="timeline" id="timeline"></ul>
       <p class="note" id="histEmpty" hidden>Nema događaja za ovaj izbor.</p>
@@ -1725,24 +1733,43 @@ function periodStart(v){const d=new Date();
   if(v==="prev")return [new Date(d.getFullYear(),d.getMonth()-1,1).getTime(),new Date(d.getFullYear(),d.getMonth(),1).getTime()];
   if(v==="30")return [Date.now()-30*864e5,Infinity];
   return [0,Infinity];}
-function renderHistory(){
-  const hc=$("hCar").value, hw=$("hWho").value;
-  const carOpts=`<option value="">Sva auta</option>`+CARS.map(c=>`<option value="${esc(c._id)}">${esc(c.model)}${c.year?" "+c.year:""}</option>`).join("");
-  if($("hCar").dataset.sig!==carOpts){$("hCar").innerHTML=carOpts;$("hCar").dataset.sig=carOpts;$("hCar").value=hc;}
-  const people=[...new Set([...team().map(p=>p.name),...EVENTS.map(e=>e.actor),...COSTS.map(k=>CF.recorder(k))].filter(Boolean))];
-  const whoOpts=`<option value="">Svi ljudi</option>`+people.map(p=>`<option>${esc(p)}</option>`).join("");
-  if($("hWho").dataset.sig!==whoOpts){$("hWho").innerHTML=whoOpts;$("hWho").dataset.sig=whoOpts;$("hWho").value=hw;}
-  fillMonths($("hPeriod"),[["30","Poslednjih 30 dana"],["all","Sve"]]);
-  const per=$("hPeriod").value, typ=$("hType").value, [from,to]=periodStart(per);
-  const evs=EVENTS.filter(e=>(!hc||e.carId===hc)&&(!hw||e.actor===hw)&&(e.at||0)>=from&&(e.at||0)<to&&(!typ||e.type===typ));
-  const cs=COSTS.filter(k=>(!hc||k.carId===hc)&&(!hw||CF.recorder(k)===hw)&&costAt(k)>=from&&costAt(k)<to);
-  const by={};cs.forEach(k=>{by[CF.recorder(k)]=(by[CF.recorder(k)]||0)+toEUR(k.amount||0,k.currency);});
-  const tot=Object.values(by).reduce((a,b)=>a+b,0);
-  $("hSum").innerHTML=`<span>${evs.length} ${evs.length===1?"događaj":"događaja"}</span><span>Troškovi: <b>${fmt(tot)} €</b> (${cs.length} ${cs.length===1?"stavka":"stavki"})</span>${hw?"":Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`<span>${esc(p)}: <b>${fmt(v)} €</b></span>`).join("")}`;
-  $("timeline").innerHTML=timelineHTML(evs,true); $("histEmpty").hidden=evs.length>0;
+const historyFilter={period:'30',type:'',person:'',client:''};
+function historyClientRows(){return [...LEADS.map(x=>({...x,key:'lead:'+x._id})),...INSPS.filter(x=>!teamCompanyInspection(x)).map(x=>({...x,key:'inspection:'+x._id}))].filter(x=>!x.demo&&x.name);}
+function historyForClient(e,key){
+ if(!key)return true;
+ const client=historyClientRows().find(x=>x.key===key);if(!client)return false;
+ const car=CARS.find(c=>c._id===e.carId);
+ if(key.startsWith('lead:')&&(e.leadId===client._id||e.orderId===client._id||car?.orderId===client._id||client.carId&&client.carId===e.carId))return true;
+ if(key.startsWith('inspection:')&&e.inspectionId===client._id)return true;
+ if(e.leadId||e.orderId||e.inspectionId||car?.orderId)return false;
+ const text=String(e.text||e.what||'').toLocaleLowerCase('sr-Latn'),name=client.name.trim().toLocaleLowerCase('sr-Latn');
+ return !!name&&text.includes(name);
 }
-["hPeriod","hType"].forEach(id=>$(id).onchange=renderHistory);
-$("hCar").onchange=renderHistory; $("hWho").onchange=renderHistory;
+function historyChips(id,items,selected,key){
+ $(id).innerHTML=items.map(([value,label,count])=>'<button type="button" data-value="'+esc(value)+'" aria-pressed="'+(value===selected)+'">'+esc(label)+(count==null?'':' <b>'+count+'</b>')+'</button>').join('');
+ $(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{historyFilter[key]=b.dataset.value;renderHistory();});
+}
+function renderHistory(){
+ const f=historyFilter,from=f.period==='all'?0:Date.now()-Number(f.period)*864e5;
+ const base=EVENTS.filter(e=>(e.at||0)>=from);
+ const personMatch=e=>!f.person||e.actor===f.person;
+ const clientMatch=e=>historyForClient(e,f.client);
+ const typeMatch=e=>!f.type||e.type===f.type;
+ const evs=base.filter(e=>personMatch(e)&&clientMatch(e)&&typeMatch(e));
+ const types=[['','Sve'],['cost','Troškovi'],['status','Koraci'],['edit','Ispravke']];
+ const known=new Set(types.map(x=>x[0]));const names={money:'Uplate',bonus:'Provizije',contact:'Kontakti',order:'Upiti i dogovori',lead:'Upiti',inspection:'Pregledi',find:'Pretraga',delete:'Brisanja',create:'Dodavanja'};
+ [...new Set(EVENTS.map(e=>e.type).filter(Boolean))].filter(t=>!known.has(t)).sort().forEach(t=>types.push([t,names[t]||'Ostalo']));
+ historyChips('historyTypes',types.map(([v,l])=>[v,l,base.filter(e=>personMatch(e)&&clientMatch(e)&&(!v||e.type===v)).length]),f.type,'type');
+ historyChips('historyPeriods',[['7','7 dana'],['30','30 dana'],['all','Sve']],f.period,'period');
+ const people=[...new Set([...MEMBERS.map(p=>p.name),...EVENTS.map(e=>e.actor)].filter(Boolean))];
+ historyChips('historyPeople',[['','Svi',base.filter(e=>clientMatch(e)&&typeMatch(e)).length],...people.map(p=>[p,p,base.filter(e=>e.actor===p&&clientMatch(e)&&typeMatch(e)).length])],f.person,'person');
+ const clients=historyClientRows();
+ historyChips('historyClients',[['','Svi',base.filter(e=>personMatch(e)&&typeMatch(e)).length],...clients.map(c=>[c.key,c.name,base.filter(e=>historyForClient(e,c.key)&&personMatch(e)&&typeMatch(e)).length])],f.client,'client');
+ const cs=COSTS.filter(k=>(!f.person||CF.recorder(k)===f.person)&&historyForClient(k,f.client)&&costAt(k)>=from&&(!f.type||f.type==='cost'));
+ const tot=cs.reduce((sum,k)=>sum+toEUR(k.amount||0,k.currency),0);
+ $('hSum').innerHTML='<span>'+evs.length+' '+(evs.length===1?'događaj':'događaja')+'</span><span>Troškovi: <b>'+fmt(tot)+' €</b> ('+cs.length+' stavki)</span>';
+ $('timeline').innerHTML=timelineHTML(evs,true);$('histEmpty').hidden=evs.length>0;
+}
 
 const soldByOf=c=>c.soldBy||EVENTS.filter(e=>e.carId===c._id&&/^Prodat/.test(e.text||"")).sort((a,b)=>(b.at||0)-(a.at||0))[0]?.actor||"—";
 const costAt=k=>k.date?Date.parse(k.date+"T12:00:00"):(k.paidAt||k.created||0);
