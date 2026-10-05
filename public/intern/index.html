@@ -1015,13 +1015,13 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 </style>
 <style id="aligned-finance-kpis">
 .team-finance-toolbar{justify-content:flex-start}
-#kpis{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+#kpis{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
 #kpis>.kpi{min-width:0;align-content:start;grid-template-rows:16px 34px 18px;gap:5px;padding:12px}
 #kpis>.kpi>.l{white-space:nowrap;line-height:16px;font-size:11px;letter-spacing:.05em}
 #kpis>.kpi>.v{line-height:34px;font-size:26px;white-space:nowrap}
 #kpis>.kpi>.s{white-space:nowrap;line-height:18px;font-size:12px}
 #kpis>.kpi:has(input){grid-template-rows:none}
-@media(max-width:900px){#kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1050px){#kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){#kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#kpis>.kpi{padding:10px}#kpis>.kpi>.v{font-size:23px}#kpis>.kpi>.s{font-size:11px}}
 </style>
 <style id="finance-subnavigation">
@@ -2409,13 +2409,16 @@ function leadCashMax(){const fm=freeMoney();if(!fm)return null;
     .filter(p=>(p.answer==="zelim"||p.depositPaidAt)&&p.choice!=="refund"&&!p.depositRefundAt&&p.insp!=="ne").reduce((x,p)=>x+(+p.price||0)-(+p.commission||0)*SET.rate-(+p.deposit||0),0);
   // with a 50% advance from the requester our cash need is car cost − half of his price
   const av=fm.free-committed;return Math.floor((2*av+SET.provizija*SET.rate-SET.prevoz*(1+SET.pdv/100)-SET.izvoz-SET.eko)/(SET.rate*(1+SET.pdv/100)));}
+function vehicleExtraCosts(rows=COSTS){
+ return rows.filter(k=>!k.demo&&(k.carId||k.orderId||k.inspectionId)&&CF.paid(k)).reduce((sum,k)=>sum+toEUR(Number(k.amount)||0,k.currency),0);
+}
 function renderKpis(){
   const act=CARS.filter(c=>!["prodat","odustao","pregledan"].includes(c.status)), sold=CARS.filter(c=>c.status==="prodat");
   const tied=act.reduce((s,c)=>s+carCalc(c).tied,0), prof=sold.reduce((s,c)=>s+(carCalc(c).post||0),0);
   const dd=sold.map(c=>carCalc(c).days).filter(x=>x!=null), avgD=dd.length?dd.reduce((a,b)=>a+b,0)/dd.length:null;
   const exp=act.filter(c=>c.askEur).reduce((s,c)=>s+(carCalc(c).post||0),0);
   const adm=me?.role==="admin";
-  $("kpis").innerHTML=`<div class="kpi${adm?" click":""}" id="kapTile"${adm?' title="Klikni da upišeš ili promeniš"':""}><span class="l">Kapital</span><span class="v">${SET.kapital>0?fmt(SET.kapital)+" €":"—"}</span><span class="s">${SET.rezervaKap>0?"Rezerva: "+fmt(SET.rezervaKap)+" €":"Bez rezerve"}</span></div>`+[["U vozilima",fmt(tied)+" €",`${act.length} neprodatih auta`],["Zarađeno",`<span class="${prof>=0?"pos":"neg"}">${sgn(prof)} €</span>`,`Neto · ${sold.length} prodaja`],["Očekivano",`<span class="${exp>=0?"pos":"neg"}">${sgn(exp)} €</span>`,"Procena neto zarade"]]
+  $("kpis").innerHTML=`<div class="kpi${adm?" click":""}" id="kapTile"${adm?' title="Klikni da upišeš ili promeniš"':""}><span class="l">Kapital</span><span class="v">${SET.kapital>0?fmt(SET.kapital)+" €":"—"}</span><span class="s">${SET.rezervaKap>0?"Rezerva: "+fmt(SET.rezervaKap)+" €":"Bez rezerve"}</span></div>`+[["U vozilima",fmt(tied)+" €",`${act.length} neprodatih auta`],["Troškovi",fmt(vehicleExtraCosts())+" €","Plaćeno uz vozila","Evidentirani plaćeni troškovi vozila, upita i pregleda, za sve vreme. Kupovna cena vozila nije deo ovog zbira. Troškovi su već uključeni u postojeći obračun; ne oduzimaju se ponovo."],["Zarađeno",`<span class="${prof>=0?"pos":"neg"}">${sgn(prof)} €</span>`,`Neto · ${sold.length} prodaja`],["Očekivano",`<span class="${exp>=0?"pos":"neg"}">${sgn(exp)} €</span>`,"Procena neto zarade"]]
     .concat((()=>{const fm=freeMoney();return [fm?["Za kupovinu",`<span class="${fm.free>=0?"pos":"neg"}">${fmt(fm.free)} €</span>`,"Trenutno dostupno",`početni kapital + zarađeno − u autima${fm.pend?" − troškovi do prodaje (~"+fmt(fm.pend)+" €)":""}${fm.other?" − ostali troškovi":""}${fm.res?" − rezerva":""}; ovo vidi i KI`]:["Za kupovinu","—","Upiši kapital"]];})())
     .map(([l,v,s,detail])=>`<div class="kpi"${detail?` title="${esc(detail)}"`:""}><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`).join("");
   if(adm)$("kapTile").onclick=()=>{const t=$("kapTile");if(t.querySelector("input"))return;
