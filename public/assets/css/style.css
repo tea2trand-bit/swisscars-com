@@ -1215,3 +1215,8 @@ footer .footer-legal { margin-bottom: 8px }
 .cf-equip-panel > summary { padding: 14px 12px; font-size: 14px; color: var(--muted); cursor: pointer; }
 .cf-equip-panel > summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: var(--r-sm); }
 .cf-equip-panel > .cf-equip { border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 12px; }
+
+/* Keep the two introductory actions together at every viewport width. */
+.hero-actions{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);flex-wrap:nowrap;max-width:510px;align-items:stretch}
+.hero-actions .btn{width:100%;min-width:0;white-space:normal;text-align:center;justify-content:center;padding-left:12px;padding-right:12px}
+@media(max-width:600px){.hero-actions{gap:8px}.hero-actions .btn{padding-left:8px;padding-right:8px;line-height:1.4}}
