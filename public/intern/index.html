@@ -1016,24 +1016,24 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 <style id="aligned-finance-kpis">
 .team-finance-toolbar{justify-content:flex-start}
 #kpis{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-#kpis>.kpi{min-width:0;align-content:start;grid-template-rows:16px 34px 18px;gap:5px;padding:12px}
-#kpis>.kpi>.l{white-space:nowrap;line-height:16px;font-size:11px;letter-spacing:.05em}
-#kpis>.kpi>.v{line-height:34px;font-size:26px;white-space:nowrap}
-#kpis>.kpi>.s{white-space:nowrap;line-height:18px;font-size:12px}
+#kpis>.kpi{min-width:0;align-content:start;grid-template-rows:14px 30px 16px;gap:3px;padding:8px 10px}
+#kpis>.kpi>.l{white-space:nowrap;line-height:14px;font-size:11px;letter-spacing:.05em}
+#kpis>.kpi>.v{line-height:30px;font-size:26px;white-space:nowrap}
+#kpis>.kpi>.s{white-space:nowrap;line-height:16px;font-size:12px}
 #kpis>.kpi:has(input){grid-template-rows:none}
 @media(max-width:1050px){#kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:600px){#kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#kpis>.kpi{padding:10px}#kpis>.kpi>.v{font-size:23px}#kpis>.kpi>.s{font-size:11px}}
+@media(max-width:600px){#kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#kpis>.kpi{padding:8px}#kpis>.kpi>.v{font-size:23px}#kpis>.kpi>.s{font-size:11px}}
 </style>
 <style id="finance-subnavigation">
 /* Finance subnavigation and shared entry actions. */
 .team-finance-toolbar{justify-content:space-between;flex-wrap:wrap;gap:10px 16px}
-.finance-tabs{display:flex;gap:16px;align-items:center}
+.finance-tabs{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .finance-tabs button{background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;padding:8px 0;color:var(--muted);font:400 14px var(--f-body);cursor:pointer;white-space:nowrap}
 .finance-tabs button[aria-pressed="true"]{border-bottom-color:var(--btn);color:var(--ink);font-weight:600}
 .finance-tabs button:focus-visible{outline:2px solid var(--muted);outline-offset:3px}
 .finance-toolbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
 #bonusAdd.b.primary{background:var(--btn);border-color:var(--btn);color:#fff;min-height:34px;height:34px;padding:0 12px;border-radius:8px;font-size:13px;font-weight:500;white-space:nowrap}
-#bonusAdd[hidden],.finance-tabs button[hidden],#companyExpenseSection[hidden],#companyBonusSection[hidden]{display:none!important}
+#bonusAdd[hidden],.finance-tabs button[hidden],#companyReceiptsSection[hidden],#companyExpenseSection[hidden],#companyBonusSection[hidden]{display:none!important}
 #financeMonthControl{min-width:0}
 @media(max-width:760px){.finance-tabs{gap:14px}.finance-tabs button{font-size:13px}.finance-toolbar-actions{width:100%;justify-content:flex-end}#bonusAdd.b.primary{height:36px;min-height:36px;font-size:12px;padding:0 10px}#financeMonthControl{flex:1}}
 </style>
@@ -1078,6 +1078,8 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
     <span class="sp"></span>
     <button role="tab" data-t="pod" aria-selected="false" class="set">⚙ Administracija</button>
   </nav>
+
+  <div class="kpis" id="kpis" aria-label="Poslovni pregled"></div>
 
   <!-- AUTA -->
   <section id="t-auta" class="wrap" style="gap:16px">
@@ -1229,7 +1231,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 
   <!-- NOVAC -->
   <section id="t-novac" class="wrap" style="gap:16px" hidden>
-    <div class="team-finance-toolbar"><nav class="finance-tabs" aria-label="Pregled novca"><button type="button" data-finance-view="expenses" aria-pressed="true" aria-controls="companyExpenseSection">Troškovi firme</button><button type="button" data-finance-view="bonuses" aria-pressed="false" aria-controls="companyBonusSection" hidden>Provizije i bonusi</button></nav><div class="finance-toolbar-actions"><button class="b primary" type="button" id="bonusAdd">+ Provizija / bonus</button><button class="b primary" type="button" id="qcOpen" hidden>Unesi trošak</button></div></div><div class="kpis" id="kpis" aria-label="Poslovni pregled"></div>
+    <div class="team-finance-toolbar"><nav class="finance-tabs" aria-label="Pregled novca"><button type="button" data-finance-view="expenses" aria-pressed="true" aria-controls="companyExpenseSection">Troškovi firme</button><button type="button" data-finance-view="bonuses" aria-pressed="false" aria-controls="companyBonusSection" hidden>Provizije i bonusi</button><button type="button" data-finance-view="receipts" aria-pressed="false" aria-controls="companyReceiptsSection">Sve stavke i računi</button></nav><div class="finance-toolbar-actions"><button class="b primary" type="button" id="bonusAdd">+ Provizija / bonus</button><button class="b primary" type="button" id="qcOpen" hidden>Unesi trošak</button></div></div>
     <div class="sheet" id="companyExpenseSection">
       <div class="top"><h2 id="owTitle">Troškovi firme</h2><div class="btns" id="expenseHeaderActions"><div id="financeMonthControl"><select id="ocMonth" aria-label="Mesec" style="width:auto"></select></div><button class="b" type="button" id="csvBtn">Fajl za knjigovođu</button></div></div>
       <p class="note" id="owNote"></p><div class="company-source-totals" id="companySourceTotals"></div><p class="note">Troškovi se plaćaju iz firme. Ovo je evidencija potrošnje, uz račun ili potvrdu kada je dostupna.</p>
@@ -1237,9 +1239,10 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
         <div class="scroll"><table id="whoTbl"><thead><tr><th>Ko je uneo</th><th class="n">Stavki</th><th>Iznosi po valuti</th></tr></thead><tbody></tbody></table></div>
         <div class="scroll"><table id="catTbl"><thead><tr><th>Za šta</th><th>Iznosi po valuti</th></tr></thead><tbody></tbody></table></div>
       </div>
-      <details class="more" id="companyExpenseDetails"><summary>Sve stavke i računi</summary><div id="companyExpenseRows"></div></details>
+
       <details class="more" id="settleHist"><summary>Raniji mesečni pregledi</summary><div class="scroll" style="margin-top:8px"><table id="setTbl"><thead><tr><th>Mesec</th><th>Zaključio</th><th>Sačuvani pregled</th></tr></thead><tbody></tbody></table></div></details>
     </div>
+<div class="sheet" id="companyReceiptsSection" hidden><div class="top"><h2>Sve stavke i računi</h2><div class="btns" id="receiptsHeaderActions"></div></div><div id="companyExpenseRows"></div></div>
 <div class="sheet" id="companyBonusSection" hidden><div class="top"><h2>Provizije i bonusi</h2><div class="btns" id="bonusHeaderActions"><button class="b" type="button" id="bonusCsv">Mesečni obračun za knjigovođu</button></div></div><p class="note" id="companyBonusTotals"></p><p class="note">Unesi dogovoreni iznos po osobi i poslu. Knjigovođa potvrđuje poreski obračun i dokument za isplatu. Isplatu evidentiraš kada je izvršena.</p><div id="companyBonusRows"></div></div>
   </section>
 
@@ -4033,10 +4036,10 @@ function companyBonusTargets(){const list=teamMoneyTargets();for(const car of CA
 function companyDownload(text,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
 let financeSection='expenses';
 function renderFinanceSection(){
- const admin=me?.role==='admin';if(!admin)financeSection='expenses';
- $('companyExpenseSection').hidden=financeSection!=='expenses';$('companyBonusSection').hidden=!admin||financeSection!=='bonuses';
+ const admin=me?.role==='admin';if(!admin&&financeSection==='bonuses')financeSection='expenses';
+ $('companyReceiptsSection').hidden=financeSection!=='receipts';$('companyExpenseSection').hidden=financeSection!=='expenses';$('companyBonusSection').hidden=!admin||financeSection!=='bonuses';
  document.querySelectorAll('[data-finance-view]').forEach(b=>{b.hidden=b.dataset.financeView==='bonuses'&&!admin;b.setAttribute('aria-pressed',String(b.dataset.financeView===financeSection));});
- const target=$(financeSection==='bonuses'?'bonusHeaderActions':'expenseHeaderActions'),month=$('financeMonthControl');if(month.parentElement!==target)target.prepend(month);
+ const target=$(financeSection==='bonuses'?'bonusHeaderActions':financeSection==='receipts'?'receiptsHeaderActions':'expenseHeaderActions'),month=$('financeMonthControl');if(month.parentElement!==target)target.prepend(month);
 }
 document.querySelectorAll('[data-finance-view]').forEach(b=>b.onclick=()=>{financeSection=b.dataset.financeView;renderFinanceSection();});
 function renderCompanyMonth(){
