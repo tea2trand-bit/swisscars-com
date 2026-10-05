@@ -858,15 +858,16 @@ button.b.team-appointment-save{background:#b7863d;color:#fff;border-color:#b7863
 .company-search-criteria{padding:14px;border:1px solid var(--line);border-radius:8px;background:var(--soft)}.company-search-criteria [type="submit"]{justify-self:start}.company-search-profit-help>summary{width:max-content;max-width:100%;cursor:pointer}.company-search-profit-help>div{display:grid;gap:10px;margin-top:12px}.company-search-profit-values{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;margin:0}.company-search-profit-values dd{margin:0;text-align:right}.company-search-waiting{opacity:.68}.company-find-criteria{font-size:12px}
 
 #runProg[hidden],#companyAutomaticStatus[hidden],#pCompanyManual[hidden],#companySearchCriteriaPanel[hidden],#companySearchCriteriaToggle[hidden],#companyAutomaticControls[hidden],#companyAutomaticLaunch[hidden],#companyAutomaticLaunchNotice[hidden]{display:none!important}
-#aiTools [data-company-search-view][aria-pressed="true"]{box-shadow:inset 0 -3px rgba(255,255,255,.55)}
 .company-automatic-controls{display:grid;gap:8px;margin:0 0 10px}.company-automatic-heading{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}.company-automatic-heading h3{margin:0}.company-automatic-heading .b{margin-left:auto}.company-automatic-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.company-automatic-controls .note{margin:0;flex-basis:100%}
 
 /* Neutral color for the three main work actions. */
 .team-work-actions > #qcOpen.b.primary,.team-work-actions > #newCar.b.primary,.team-work-actions > #leadNewBtn.b.primary{background:#6b6b6b;border-color:#6b6b6b;color:#fff}
 #aiTools [data-company-search-view]::before{content:"";display:inline-block;width:1em;margin-right:.35em}
-#aiTools [data-company-search-view][aria-pressed="true"]{background:#173d58;border-color:#173d58;color:#fff;font-weight:700;outline:2px solid #173d58;outline-offset:2px;box-shadow:inset 0 -3px rgba(255,255,255,.8)}
+#aiTools [data-company-search-view]{background:var(--paper);border-color:var(--line);color:var(--ink);font-weight:400;box-shadow:none}
+#aiTools [data-company-search-view][aria-pressed="true"]{background:var(--soft);border-color:var(--muted);color:var(--ink);font-weight:500;outline:none;box-shadow:none}
+#aiTools [data-company-search-view]:hover{filter:none;border-color:var(--muted)}
 #aiTools [data-company-search-view][aria-pressed="true"]::before{content:"✓"}
-#aiTools [data-company-search-view]:focus-visible{outline:3px solid #987729;outline-offset:3px}
+#aiTools [data-company-search-view]:focus-visible{outline:2px solid var(--muted);outline-offset:2px}
 #companyAutomaticLaunch.b.primary,#companyManualSearch button[type="submit"].b.primary{background:#28734e;border-color:#28734e;color:#fff}
 </style>
 <link rel="stylesheet" href="/assets/css/order-progress.css">
@@ -1471,8 +1472,12 @@ async function doStep(c,st){
 }
 
 /* ---------- render ---------- */
+function eventDisplayText(e){
+  const text=String(e.text||"");
+  return e.actor==="Potražilac"?text.replace(/^(Potražilac .+ želi pregled) \(čeka kaparu\)(: )/,"$1$2"):text;
+}
 function bellItems(){const out=[];
-  EVENTS.forEach(e=>{if(!e.at)return;if(e.actor==="Potražilac")out.push({at:e.at,t:e.text,tab:"narudzbine",k:"Potražilac"});
+  EVENTS.forEach(e=>{if(!e.at)return;if(e.actor==="Potražilac")out.push({at:e.at,t:eventDisplayText(e),tab:"narudzbine",k:"Potražilac"});
     else if((e.actor==="Asistent"||e.actor==="Claude")&&e.type==="order")out.push({at:e.at,t:e.text,tab:"narudzbine",k:"Asistent"});});
   LEADS.forEach(l=>{if(l.source==="web"&&l.created)out.push({at:l.created,t:`Novi upit sa sajta: ${l.name||""} traži ${l.model||"auto"}`,tab:"narudzbine",k:"Sajt"});});
   RUNS.forEach(r=>{if(r.at&&r.newFinds>0&&r._id!=="lock")out.push({at:r.at,t:`Asistent je našao ${r.newFinds} ${r.newFinds===1?"nov oglas":"novih oglasa"} u Švajcarskoj`,tab:r.mode==="brzi"?"narudzbine":"ai",k:"Asistent"});});
@@ -1583,7 +1588,7 @@ function fillCarForm(){const c=CARS.find(x=>x._id===curId);if(!c)return;
   const set=(id,v)=>$(id).value=v??"";set("c_ask",c.askEur);$("c_hide").value=c.hidePublic?"1":"";set("c_sale",c.salePrice);set("c_sdate",c.soldDate);$("c_status").value=c.status;}
 function timelineHTML(evs,showCar){
   return [...evs].sort((a,b)=>(b.at||0)-(a.at||0)).map(e=>{const d=new Date(e.at||0);const car=e.carId?CARS.find(c=>c._id===e.carId):null;
-    return `<li><time datetime="${d.toISOString()}">${d.toLocaleDateString("sr-Latn-RS",{day:"numeric",month:"numeric",year:"2-digit"})} ${d.toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}</time><div><span class="who">${esc(who(e.actor||"—"))}</span> · <span class="ev-${esc(e.type)}">${esc(e.text)}</span>${showCar&&car?` <span class="car">· ${esc(car.model)}${car.year?" "+car.year:""}</span>`:""}</div></li>`;}).join("");
+    return `<li><time datetime="${d.toISOString()}">${d.toLocaleDateString("sr-Latn-RS",{day:"numeric",month:"numeric",year:"2-digit"})} ${d.toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}</time><div><span class="who">${esc(who(e.actor||"—"))}</span> · <span class="ev-${esc(e.type)}">${esc(eventDisplayText(e))}</span>${showCar&&car?` <span class="car">· ${esc(car.model)}${car.year?" "+car.year:""}</span>`:""}</div></li>`;}).join("");
 }
 const MN=["januar","februar","mart","april","maj","jun","jul","avgust","septembar","oktobar","novembar","decembar"];
 const mKey=t=>{const d=new Date(t);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");};
@@ -3145,7 +3150,7 @@ function leadStage(l,n){
   if(props.some(p=>p.inspAt&&!p.choice&&p.insp!=="ne")) return {t:"Izveštaj poslat – čeka odluku",c:"s-wait"};
   if(props.some(p=>p.depositPaidAt&&!p.insp&&!p.inspAt)) return {t:"Kapara primljena – Stefan pregleda auto",c:"s-yes"};
   if(props.some(p=>pAns(p)==="zelim"&&!p.availAt&&p.avail!=="ne")) return {t:"Zainteresovan – proveri dostupnost",c:"s-new"};
-  if(props.some(p=>pAns(p)==="zelim"&&!p.depositPaidAt&&p.avail!=="ne")) return {t:"Dostupno – čeka kaparu",c:"s-wait"};
+  if(props.some(p=>pAns(p)==="zelim"&&!p.depositPaidAt&&p.avail!=="ne")) return {t:"Dostupno – čeka se uplata kapare",c:"s-wait"};
   if(props.some(p=>pAns(p)==="zanima"&&!p.photosAt)) return {t:"Zanima ga – dodajte slike",c:"s-new"};
   if(props.some(p=>pAns(p)==="zanima"&&p.photosAt)) return {t:"Slike poslate – čeka odluku",c:"s-wait"};
   if(props.some(p=>!pAns(p))) return {t:"Čeka odgovor na predloge",c:"s-wait"};
@@ -3500,7 +3505,7 @@ function renderLeads(){if(teamOrderCalculatorState)return;renderInsp();if(teamCo
     const essentials=[l.yearFrom?"Od "+l.yearFrom+".":"",sv(l.fuel),sv(l.gearbox),l.mileage&&l.mileage!=="Nije presudno"?l.mileage:""].filter(Boolean);
     const selected=props.filter(p=>pAns(p)==="zelim");
     const strip=leadStripVehicle(l,car,props,FINDS);
-    const task=l.status==="odustao"?"Potražilac odustao":car?(SL[car.status]||"Kupljeno"):selected.some(p=>!p.inspAt&&p.inspectionDraft?.savedAt)?"Izveštaj sačuvan — čeka slanje":!props.length?"Tražimo auto":!selected.length?"Čeka izbor klijenta":selected.some(p=>p.avail!=="da")?"Proveriti dostupnost":selected.some(p=>p.chVatRefundVerified==null||p.originProofVerified==null)?"Proveriti poreklo i CH PDV":selected.some(p=>p.inspectionPaid!==true)?"Čeka uplatu pregleda":selected.some(p=>teamOrderDepositPaid(p)&&p.choice==="buy"&&teamOrderInspectionCompleted(p))?"Kapara primljena — završiti kupovinu":selected.some(p=>!teamAutoReviewed(p)&&p.inspectionScheduled!==true)?"Zakazati pregled":selected.some(p=>!teamAutoReviewed(p)&&!p.plannedAt)?"Uneti termin pregleda":selected.some(p=>p.inspAt&&(p.insp==="ne"||p.inspChecklist?.overall==="ne"))?"Vozilo nije prošlo pregled — čeka odluku klijenta":selected.some(p=>!teamOrderInspectionCompleted(p))?"Pregled — čeka se završen izveštaj":selected.some(p=>p.choice!=="buy")?"Izveštaj poslat — čeka odluku klijenta":selected.some(p=>!teamOrderDepositPaid(p))?"Čeka kaparu":"Završiti kupovinu";
+    const task=l.status==="odustao"?"Potražilac odustao":car?(SL[car.status]||"Kupljeno"):selected.some(p=>!p.inspAt&&p.inspectionDraft?.savedAt)?"Izveštaj sačuvan — čeka slanje":!props.length?"Tražimo auto":!selected.length?"Čeka izbor klijenta":selected.some(p=>p.avail!=="da")?"Proveriti dostupnost":selected.some(p=>p.chVatRefundVerified==null||p.originProofVerified==null)?"Proveriti poreklo i CH PDV":selected.some(p=>p.inspectionPaid!==true)?"Čeka uplatu pregleda":selected.some(p=>teamOrderDepositPaid(p)&&p.choice==="buy"&&teamOrderInspectionCompleted(p))?"Kapara primljena — završiti kupovinu":selected.some(p=>!teamAutoReviewed(p)&&p.inspectionScheduled!==true)?"Zakazati pregled":selected.some(p=>!teamAutoReviewed(p)&&!p.plannedAt)?"Uneti termin pregleda":selected.some(p=>p.inspAt&&(p.insp==="ne"||p.inspChecklist?.overall==="ne"))?"Vozilo nije prošlo pregled — čeka odluku klijenta":selected.some(p=>!teamOrderInspectionCompleted(p))?"Pregled — čeka se završen izveštaj":selected.some(p=>p.choice!=="buy")?"Izveštaj poslat — čeka odluku klijenta":selected.some(p=>!teamOrderDepositPaid(p))?"Čeka se uplata kapare":"Završiti kupovinu";
     const shortTask=task==="Izveštaj sačuvan — čeka slanje"?"Čeka slanje":task.startsWith("Proveriti")?"Proveri":task==="Pregled zakazan — čeka se izveštaj"?"Čeka se izveštaj":task==="Kupljeno"?"Kupljen":task==="Čeka uplatu pregleda"?"Čeka uplatu":task==="Zakazati pregled"||task==="Uneti termin pregleda"?"Zakaži termin":task;
     const taskHtml=shortTask==="Proveri"?`<button class="b small team-lead-next" type="button" data-team-checks="${esc(l._id)}">Proveri</button>`:`<span class="team-lead-next">${esc(shortTask)}</span>`;
     const head=`<ol class="sc-order-progress" aria-label="Status upita">${teamDetailedProgress(l,car,workStep)}</ol>
