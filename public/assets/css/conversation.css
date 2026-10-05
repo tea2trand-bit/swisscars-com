@@ -1,0 +1,18 @@
+.sc-conversation { display:grid; gap:12px; min-width:0; margin-top:12px }
+.sc-conversation h2,.sc-conversation h4 { margin:0; font-size:20px }
+.sc-conversation .sc-chat-hint,.sc-conversation .sc-chat-status { margin:0; font-size:14px; color:var(--muted,#5d666e) }
+.sc-chat-list { display:flex; flex-direction:column; gap:10px; max-height:480px; overflow-y:auto; overscroll-behavior:contain; padding:14px; margin:0; list-style:none; background:#f0eee8; border-radius:12px; box-sizing:border-box }
+.sc-chat-message { align-self:flex-start; flex:0 0 auto; width:fit-content; max-width:85%; box-sizing:border-box; border:1px solid #deddd6; background:#fff; color:#172a3a; border-radius:2px 12px 12px; padding:10px 13px; min-width:0; box-shadow:0 1px 2px #172a3a08 }
+.sc-chat-message.sc-chat-team { align-self:flex-end; background:#e0f1dc; border-color:#c4dbbf; border-radius:12px 2px 12px 12px }
+.sc-chat-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; font-size:12px; color:#50616a; margin-bottom:6px }
+.sc-chat-body { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.5 }
+.sc-chat-form { display:grid; gap:8px; margin:0 }
+.sc-chat-form label { font-size:14px; font-weight:600 }
+.sc-chat-form textarea { box-sizing:border-box; width:100%; min-height:100px; resize:vertical; padding:10px 12px; font:inherit; color:var(--ink,var(--text,#16191d)); background:var(--paper,#fff); border:1px solid var(--line,#e6e2da); border-radius:8px }
+.sc-chat-actions { display:flex; flex-wrap:wrap; align-items:center; gap:10px }
+.sc-chat-button { font:600 14px/1.4 Inter,"Segoe UI",Arial,sans-serif; padding:10px 16px; background:#2f6690; color:white; border:0; border-radius:8px; cursor:pointer }
+.sc-chat-button:disabled { opacity:.55; cursor:default }
+.sc-chat-older { justify-self:start; background:none; color:var(--ink,var(--text,#16191d)); border:1px solid var(--line,#e6e2da) }
+.sc-chat-status[data-error=true] { color:#a3362b }
+.sc-chat-notice { color:#a3362b; font-weight:700 }
+@media(max-width:640px) { .sc-chat-list{max-height:380px;padding:10px} .sc-chat-message{max-width:92%} .sc-chat-actions .sc-chat-button{width:100%} }

@@ -1,0 +1,39 @@
+[build]
+publish = "public"
+
+[build.environment]
+NODE_VERSION = "24"
+
+[functions]
+directory = "netlify/functions"
+
+  [functions.emails]
+  included_files = [
+    "./emails/**"
+  ]
+
+[[redirects]]
+from = "/supabase/*"
+to = "/404.html"
+status = 404
+force = true
+
+[context]
+
+  [context.production]
+
+    [context.production.functions]
+
+      [context.production.functions.emails]
+      included_files = [
+        "./emails/**"
+      ]
+
+  [context.main]
+
+    [context.main.functions]
+
+      [context.main.functions.emails]
+      included_files = [
+        "./emails/**"
+      ]

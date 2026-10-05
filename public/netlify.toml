@@ -1,0 +1,31 @@
+[functions]
+
+  [functions.emails]
+  included_files = [
+    "./emails/**"
+  ]
+
+[[redirects]]
+from = "/supabase/*"
+to = "/404.html"
+status = 404
+
+[context]
+
+  [context.production]
+
+    [context.production.functions]
+
+      [context.production.functions.emails]
+      included_files = [
+        "./emails/**"
+      ]
+
+  [context.main]
+
+    [context.main.functions]
+
+      [context.main.functions.emails]
+      included_files = [
+        "./emails/**"
+      ]
