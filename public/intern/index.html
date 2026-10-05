@@ -945,6 +945,27 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
  #runProg .company-progress-counts>span{font-size:12px;padding:3px 8px}
 }
 </style>
+<style id="section-specific-actions">
+/* One compact action in its own section, aligned with existing controls. */
+.team-car-toolbar,.team-finance-toolbar{display:flex;align-items:center;gap:12px;min-width:0}
+.team-car-toolbar>.pipe{flex:1;min-width:0}
+.team-finance-toolbar>details{flex:1;min-width:0;margin:0}
+#newCar.b.primary,#leadNewBtn.b.primary,#qcOpen.b.primary{background:var(--btn);border-color:var(--btn);color:#fff;min-height:34px;height:34px;padding:0 12px;border-radius:8px;font-size:13px;font-weight:500;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+#newCar{margin-left:auto}
+#t-narudzbine>.top{gap:8px 12px}
+#t-narudzbine #leadFilter{margin-left:auto}
+#t-narudzbine #leadNewBtn{margin-left:0}
+@media(max-width:760px){
+ .team-car-toolbar{gap:8px}
+ .team-car-toolbar>.team-choice-trigger{flex:1;min-width:0;width:auto;min-height:36px;height:36px;padding:6px 10px}
+ #workBar{display:none}
+ #newCar.b.primary,#leadNewBtn.b.primary,#qcOpen.b.primary{min-height:36px;height:36px;padding:0 10px;font-size:12px}
+ #t-narudzbine #leadQuery{flex-basis:100%;max-width:100%!important}
+ #t-narudzbine #teamInquiryCount{margin-right:0;font-size:12px}
+ #t-narudzbine #leadFilter{margin-left:auto}
+ .team-finance-toolbar{align-items:flex-start;gap:8px}
+}
+</style>
 </head>
 <body>
 <div id="login" class="login" hidden>
@@ -986,12 +1007,11 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
     <span class="sp"></span>
     <button role="tab" data-t="pod" aria-selected="false" class="set">⚙ Administracija</button>
   </nav>
-  <div class="team-work-actions"><button class="b primary" type="button" id="qcOpen" hidden>Unesi trošak</button><button class="b primary" id="newCar" type="button" aria-expanded="false" aria-controls="newBox">+ Novi auto</button><button class="b primary" type="button" id="leadNewBtn" aria-haspopup="dialog" aria-controls="teamPhonePane">Upit preko telefona</button></div>
 
   <!-- AUTA -->
   <section id="t-auta" class="wrap" style="gap:16px">
-    <div class="pipe" id="pipe"></div>
-    <div class="top" id="workBar"><select id="mobileCarFilter" aria-label="Faza auta"><option value="">Sva auta</option></select>
+    <div class="team-car-toolbar"><div class="pipe" id="pipe"></div><select id="mobileCarFilter" aria-label="Faza auta"><option value="">Sva auta</option></select><button class="b primary" id="newCar" type="button" aria-expanded="false" aria-controls="newBox">+ Novi auto</button></div>
+    <div class="top" id="workBar">
       <p class="note" style="margin:0"><b id="cntAkt">0</b> auta u radu</p>
     </div>
 
@@ -1128,7 +1148,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
   <!-- UPITI -->
   <section id="t-narudzbine" class="wrap" style="gap:16px" hidden>
     <div class="top">
-      <input id="leadQuery" type="search" placeholder="Ime, prezime ili broj upita" aria-label="Pretraga upita" style="max-width:340px;margin-bottom:10px"><span class="note" id="teamInquiryCount" role="status"></span><div class="chips" id="leadFilter"><button type="button" data-lf="done" aria-pressed="false" title="Prikaži arhivirane upite">Archiv</button></div>
+      <input id="leadQuery" type="search" placeholder="Ime, prezime ili broj upita" aria-label="Pretraga upita" style="max-width:340px;margin-bottom:10px"><span class="note" id="teamInquiryCount" role="status"></span><div class="chips" id="leadFilter"><button type="button" data-lf="done" aria-pressed="false" title="Prikaži arhivirane upite">Archiv</button></div><button class="b primary" type="button" id="leadNewBtn" aria-haspopup="dialog" aria-controls="teamPhonePane">Upit preko telefona</button>
       
     </div>
     <div class="sheet" id="pgSheet" hidden><div class="top"><h2>Pregled po narudžbini</h2><span class="note">sa stranice swiscars.com/pregled</span></div><div id="pgList" style="display:grid;gap:12px;margin-top:10px"></div></div>
@@ -1138,7 +1158,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
 
   <!-- NOVAC -->
   <section id="t-novac" class="wrap" style="gap:16px" hidden>
-    <details class="more"><summary>Okvirni poslovni pregled</summary><div class="kpis" id="kpis"></div></details>
+    <div class="team-finance-toolbar"><details class="more"><summary>Okvirni poslovni pregled</summary><div class="kpis" id="kpis"></div></details><button class="b primary" type="button" id="qcOpen" hidden>Unesi trošak</button></div>
     <div class="sheet">
       <div class="top"><h2 id="owTitle">Troškovi firme</h2><div class="btns"><select id="ocMonth" aria-label="Mesec" style="width:auto"></select><button class="b" type="button" id="csvBtn">Fajl za knjigovođu</button></div></div>
       <p class="note" id="owNote"></p><div class="company-source-totals" id="companySourceTotals"></div><p class="note">Troškovi se plaćaju iz firme. Ovo je evidencija potrošnje, uz račun ili potvrdu kada je dostupna.</p>
