@@ -3167,7 +3167,7 @@ function updateConversationBadges(){
   document.querySelectorAll("[data-lead-message]").forEach(e=>{const s=conversationSummary.get(e.dataset.leadMessage);e.hidden=!s?.waiting;e.textContent=s?.waiting?"Nova poruka · čeka odgovor":"";});
   document.querySelectorAll("[data-chat-summary]").forEach(e=>{const s=conversationSummary.get(e.dataset.chatSummary);e.textContent=s?.count?` (${s.count})${s.waiting?" · Čeka odgovor tima":""}`:"";e.classList.toggle("sc-chat-notice",!!s?.waiting);});
   const n=LEADS.filter(l=>conversationSummary.get(l._id)?.waiting||(!l.carId&&(l.proposals||[]).some(p=>propState(p).act))).length;
-  $("tabLeadCnt").textContent=teamInquiryTotal();$("tabLeadCnt").hidden=false;$("tabLeadCnt").title="Ukupan broj upita";
+  updateActiveInquiryBadge();
 }
 async function refreshConversationSummary(){
   if(!db||!me?.active||conversationSummaryBusy)return;
@@ -3249,12 +3249,15 @@ function teamInquiryReference(record,kind){
   const inspection=kind==='inspection'||String(record._id||'').startsWith('pg-')||!!record.car;
   return (inspection?'PR-':'UP-')+String(record._id||'').replace(/^(web|pg)-/,'').slice(-12).toUpperCase();
 }
+function activeInspectionInquiry(x,now=Date.now()){return !teamCompanyInspection(x)&&!x.demo&&x.status!=="otkazano"&&(x.status!=="gotovo"||now-(x.reportAt||x.created||0)<14*864e5);}
+function activeInquiryCount(){return LEADS.filter(l=>!l.demo&&!leadStage(l,0).done).length+INSPS.filter(x=>activeInspectionInquiry(x)).length;}
+function updateActiveInquiryBadge(){const n=activeInquiryCount();$("tabLeadCnt").textContent=n;$("tabLeadCnt").hidden=n===0;$("tabLeadCnt").title="Aktivni upiti";syncMobileNavigation();}
 function teamInquiryTotal(){return LEADS.filter(l=>!l.demo).length+INSPS.filter(x=>!x.demo&&!teamCompanyInspection(x)).length;}
 function matchesLeadQuery(x){const norm=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("sr-Latn-RS");const hay=norm([x.name,x.contact,teamInquiryReference(x),x._id,...(x.proposals||[]).map(p=>p.inquiryReference)].filter(Boolean).join(" "));return norm(leadQuery).trim().split(/\s+/).every(q=>hay.includes(q));}
 function renderInsp(){const L=$("pgList");if(!L)return;
   if(teamReportPaneState?.kind==="inspection"||pgOpen&&L.querySelector(".pgform"))return; // don't wipe a report being written
   const keptInspections=new Set([...L.querySelectorAll("[data-inspection-card][open]")].map(e=>e.dataset.inspectionCard));
-  const now=Date.now(),list=INSPS.filter(x=>!teamCompanyInspection(x)&&matchesLeadQuery(x)&&leadFilter!=="done"&&!x.demo&&x.status!=="otkazano"&&(x.status!=="gotovo"||now-(x.reportAt||x.created||0)<14*864e5)).sort((a,b)=>(b.created||0)-(a.created||0));
+  const now=Date.now(),list=INSPS.filter(x=>activeInspectionInquiry(x,now)&&matchesLeadQuery(x)&&leadFilter!=="done").sort((a,b)=>(b.created||0)-(a.created||0));
   $("pgSheet").hidden=!list.length;
   L.innerHTML=list.map(x=>{const id=esc(x._id),st=pgStep(x),done=x.status==="gotovo",canc=x.status==="otkazano";
     const steps=`<ol class="lsteps">${PG_STEPS.map((t,i)=>`<li class="${i<st||done?"done":i===st&&!canc?"now":""}">${i<st||done?"✓ ":""}${t}</li>`).join("")}</ol>`;
@@ -3486,7 +3489,7 @@ function leadStripReport(l,car,info){
  return '<h3>Izveštaj sa pregleda · '+esc(info.title)+'</h3><p class="note">Poslat: '+esc(new Date(p.inspAt).toLocaleDateString('sr-Latn-RS'))+'</p>'+(p.inspNote?'<p>'+esc(p.inspNote)+'</p>':'')+SCInspectionReport.render(p.inspChecklist)+'<div class="lead-report-photos">'+SCInspectionReport.unassignedPhotos(p.inspChecklist,p.inspPhotos).map(id=>'<a href="'+esc(SC.photoUrl(id))+'" target="_blank" rel="noopener"><img src="'+esc(SC.photoUrl(id))+'" alt="Fotografija sa pregleda vozila" loading="lazy"></a>').join('')+'</div>';
 }
 function renderLeads(){if(teamOrderCalculatorState)return;renderInsp();if(teamContactState&&$("teamContactPane").open){renderTeamContactHistory();return;}
-  {const n=LEADS.filter(l=>!l.carId&&(l.proposals||[]).some(p=>propState(p).act)).length;$("tabLeadCnt").textContent=teamInquiryTotal();$("tabLeadCnt").hidden=false;$("tabLeadCnt").title="Ukupan broj upita";}
+  {const n=LEADS.filter(l=>!l.carId&&(l.proposals||[]).some(p=>propState(p).act)).length;updateActiveInquiryBadge();}
   if(leadBusy&&(teamReportPaneState?.kind==="lead"||document.querySelector("#leadList .pphoto:not([hidden])")))return;
   const keptReports=new Set([...document.querySelectorAll("[data-lead-report-panel]:not([hidden])")].map(e=>e.dataset.leadReportPanel));
   const keptCards=new Set([...document.querySelectorAll("[data-lead-card][open]")].map(e=>e.dataset.leadCard));
