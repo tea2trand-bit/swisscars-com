@@ -424,6 +424,7 @@ dialog.qc form{padding:18px;display:grid;gap:12px}
 .team-account-actions .b,.team-account-actions .nm{width:100%;min-height:44px;padding:10px 12px;text-align:left;justify-content:flex-start}
 .team-account-actions>.team-mobile-account-link{display:none}
 .team-work-actions{display:flex;gap:8px;align-items:center}
+#qcOpen[hidden]{display:none!important}
 .team-work-actions .b{min-height:44px;font-size:15px}
 .team-report-filters{display:grid;grid-template-columns:minmax(160px,220px) minmax(180px,320px);gap:10px}
 .team-report-filters select,.team-report-filters input{min-height:44px}
@@ -958,7 +959,7 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
     <span class="sp"></span>
     <button role="tab" data-t="pod" aria-selected="false" class="set">⚙ Administracija</button>
   </nav>
-  <div class="team-work-actions"><button class="b primary" type="button" id="qcOpen">Unesi trošak</button><button class="b primary" id="newCar" type="button" aria-expanded="false" aria-controls="newBox">+ Novi auto</button><button class="b primary" type="button" id="leadNewBtn" aria-haspopup="dialog" aria-controls="teamPhonePane">Upit preko telefona</button></div>
+  <div class="team-work-actions"><button class="b primary" type="button" id="qcOpen" hidden>Unesi trošak</button><button class="b primary" id="newCar" type="button" aria-expanded="false" aria-controls="newBox">+ Novi auto</button><button class="b primary" type="button" id="leadNewBtn" aria-haspopup="dialog" aria-controls="teamPhonePane">Upit preko telefona</button></div>
 
   <!-- AUTA -->
   <section id="t-auta" class="wrap" style="gap:16px">
@@ -3934,7 +3935,7 @@ function setupCompanyFinance(){
 }
 
 /* ---------- tabs ---------- */
-function switchTab(t){$("aiTools").hidden=t!=="ai";document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));if(!["auta","ai","narudzbine","novac","istorija","prodata","izvestaji","pod"].includes(t))t="auta";document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));["auta","ai","narudzbine","novac","istorija","prodata","izvestaji","pod"].forEach(x=>$("t-"+x).hidden=x!==t);try{localStorage.setItem("sc_tab",t);}catch(e){}syncMobileNavigation();closeTeamAccount();}
+function switchTab(t){$("qcOpen").hidden=t!=="novac";$("aiTools").hidden=t!=="ai";document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));if(!["auta","ai","narudzbine","novac","istorija","prodata","izvestaji","pod"].includes(t))t="auta";document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));["auta","ai","narudzbine","novac","istorija","prodata","izvestaji","pod"].forEach(x=>$("t-"+x).hidden=x!==t);try{localStorage.setItem("sc_tab",t);}catch(e){}syncMobileNavigation();closeTeamAccount();}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
 setupTeamMobileUi();
 setupTeamWorkReports();setupCompanyManualSearch();setupCompanySearchModes();setupCompanySearchCriteria();setupCompanySearchView();
