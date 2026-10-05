@@ -990,6 +990,19 @@ button.b.primary:hover,a.b.primary:hover{filter:brightness(1.1)}
  #companySearchCriteriaPanel .company-search-grid input,#companySearchCriteriaPanel .company-search-grid select,#pCompanyManual .company-search-grid input,#pCompanyManual .company-search-grid select{font-size:16px;min-height:36px;height:36px}
 }
 </style>
+<style id="search-info-disclosure">
+/* Counters stay visible; search explanation is opened on demand. */
+#runProg .company-search-info{display:block;background:transparent;border:0;border-radius:0;padding:0;margin:0 0 12px}
+.company-search-info>summary{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;list-style:none;cursor:pointer}
+.company-search-info>summary::-webkit-details-marker{display:none}
+.company-search-info>summary:focus-visible{outline:2px solid var(--muted);outline-offset:4px;border-radius:6px}
+.company-search-info-label{margin-left:auto;font-size:13px;color:var(--muted);white-space:nowrap}
+.company-search-info-label::after{content:" ▾"}
+.company-search-info[open] .company-search-info-label::after{content:" ▴"}
+.company-search-info-body{display:grid;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:10px}
+.company-search-info-body>p{font-size:14px;color:var(--muted);line-height:1.5;margin:0}
+@media(max-width:760px){.company-search-info>summary{flex-wrap:wrap;gap:8px}.company-search-info-label{font-size:12px}.company-search-info-body{padding:12px}}
+</style>
 </head>
 <body>
 <div id="login" class="login" hidden>
@@ -3084,12 +3097,12 @@ function companySearchProgressHtml(state){
  const counts=state.counters.length?'<div class="company-progress-counts">'+state.counters.map(c=>'<span>'+esc(c.label)+': <b>'+esc(String(c.value))+'</b></span>').join('')+'</div>':'';
  if(state.kind==='failed'||state.kind==='unknown'){
   const reason=state.goalIssue|| (typeof state.done?.note==='string'&&state.done.note.trim()?state.done.note.trim():state.kind==='unknown'?'Završni zapis nema potvrđen ishod.':'Završni zapis nije naveo razlog prekida.');
-  return '<div class="ki-search-outcome company-search-progress" role="status"><b>'+esc(regime)+' · Pretraga nije završena.</b><p>'+esc(reason)+'</p>'+counts+stamp+'</div>';
+  return '<details class="company-search-progress company-search-info"><summary>'+counts+'<span class="company-search-info-label">ⓘ Pretraga nije završena</span></summary><div class="company-search-info-body"><p>'+esc(reason)+'</p>'+stamp+'</div></details>';
  }
  const steps=[];for(const p of state.progress.slice().reverse()){if(!steps.some(x=>x.t===p.t))steps.push(p);if(steps.length===3)break;}steps.reverse();
  const status=state.stale?'Zahtev je i dalje aktivan; nema novog ažuriranja više od 30 minuta.':steps.length?'Pretraga je u toku.':state.working?'KI je preuzeo zahtev; prvi korak još nije upisan.':'Zahtev je sačuvan; čekamo da KI upiše prvi korak.';
  const logs=steps.length?'<ul class="company-progress-steps">'+steps.map(p=>'<li>'+esc(p.t)+'</li>').join('')+'</ul>':'';
- return '<div class="ki-search-outcome company-search-progress" role="status"><b>'+esc(regime)+'</b><p>'+esc(status)+'</p>'+logs+counts+stamp+'</div>';
+ return '<details class="company-search-progress company-search-info"><summary>'+counts+'<span class="company-search-info-label">ⓘ Pretraga je u toku</span></summary><div class="company-search-info-body"><p>'+esc(status)+'</p>'+logs+stamp+'</div></details>';
 }
 function renderCompanySearchProgress(){
  const state=companySearchProgressState();
@@ -3124,7 +3137,9 @@ function renderRun(){
   let s=last?`Datum pretrage: ${dt(last.at)}`:`Još nije bilo pretrage · pokrenite automatsku pretragu ili pretragu po modelu`;
   if(pending) s=`Provera zatražena (${lock?.by||actor()}, ${new Date(reqAt).toLocaleTimeString("sr-Latn-RS",{hour:"2-digit",minute:"2-digit"})}) · tok rada je ispod`;
   $("runInfo").textContent=s;
+  const searchInfoOpen=$("runProg").querySelector(".company-search-info")?.open;
   $("runProg").innerHTML=renderCompanySearchViewProgress();
+  if(searchInfoOpen){const info=$("runProg").querySelector(".company-search-info");if(info)info.open=true;}
   $("runInfo").title="";
   const b=$("runBtn");
   b.disabled=!!(pending||recent);
