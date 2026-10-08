@@ -69,7 +69,12 @@
 #app #kpis>.kpi>.s { font:400 12px/18px var(--f-body); text-align:center; }
 #app #kpis>.kpi:nth-child(6)>.v,
 #app #kpis>.kpi:nth-child(6)>.v>span { color:#1b2d3b; }
-@media(max-width:760px) { #app #kpis>.kpi>.v { font-size:22px; } }
+@media(max-width:760px) {
+  #app #kpis>.kpi:not(:has(input)) {grid-template-rows:16px 24px 16px;gap:2px;padding:5px 8px}
+  #app #kpis>.kpi>.l {line-height:16px}
+  #app #kpis>.kpi>.v {font-size:18px;line-height:24px}
+  #app #kpis>.kpi>.s {font-size:11px;line-height:16px}
+}
 
 /* A model is already chosen here: use a clear profit target, no demand priority. */
 #app #t-ai :is(#companyManualSearch,#companySearchCriteriaForm) .company-layout-profit>select {display:none}
