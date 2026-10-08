@@ -126,14 +126,14 @@ Object.assign(translations.en, {
   serviceBudgetCosts: 'Our service price per car: {swissPackage}, the same as for a car you find yourself, including inspection. An inspection already paid is credited against the fee. The vehicle price and other costs are listed separately; we confirm the total before scheduling the inspection.'
 });
 
-Object.assign(translations.sr, {navImportCalculator:'Kalkulator uvoza'});
-Object.assign(translations.de, {navImportCalculator:'Importrechner'});
-Object.assign(translations.en, {navImportCalculator:'Import calculator'});
+Object.assign(translations.sr, {navImportCalculator:'Uvoz auta'});
+Object.assign(translations.de, {navImportCalculator:'Import'});
+Object.assign(translations.en, {navImportCalculator:'Import'});
 
 // Clear public navigation for company vehicles and inspection orders.
-Object.assign(translations.sr, {navCars:'Auta u ponudi',navInsp:'Kalkulator pregleda'});
-Object.assign(translations.de, {navCars:'Fahrzeugangebot',navInsp:'Prüfkostenrechner'});
-Object.assign(translations.en, {navCars:'Cars for sale',navInsp:'Inspection cost calculator'});
+Object.assign(translations.sr, {navCars:'Vozila',navInsp:'Pregled auta'});
+Object.assign(translations.de, {navCars:'Fahrzeuge',navInsp:'Prüfung'});
+Object.assign(translations.en, {navCars:'Vehicles',navInsp:'Inspection'});
 
 Object.assign(translations.sr,{cfHow:"Na email dobijate link za praćenje upita i predloga vozila. Usluga sa pregledom košta {swissPackage}; ukupnu cenu potvrđujemo unapred, a o kupovini odlučujete posle izveštaja."});
 
@@ -224,6 +224,11 @@ Object.assign(translations.sr,{dealerAccountLogin:"Prijava dilera",dealerPublicS
 Object.assign(translations.de,{dealerAccountLogin:"Händler-Anmeldung",dealerPublicStatus:"Sie haben ein Partnerkonto? Melden Sie sich an. Für eine neue Zusammenarbeit senden Sie uns eine Nachricht."});
 Object.assign(translations.en,{dealerAccountLogin:"Dealer sign-in",dealerPublicStatus:"Already have a partner account? Sign in. For a new partnership, send us a message."});
 
+
+// Vehicles are offered from purchase, independently of their transport phase.
+Object.assign(translations.sr,{carsLead:'Naša vozila možete kupiti već u Švajcarskoj, tokom transporta ili na carini. Uz svako vozilo vidite dostupnost i trenutnu lokaciju.'});
+Object.assign(translations.de,{carsLead:'Sie können unsere Fahrzeuge bereits in der Schweiz, während des Transports oder beim Zoll kaufen. Bei jedem Fahrzeug sehen Sie Verfügbarkeit und aktuellen Standort.'});
+Object.assign(translations.en,{carsLead:'You can buy our vehicles while they are still in Switzerland, in transport or at customs. Each vehicle shows its availability and current location.'});
 
 // Inspection network copy reviewed on 2026-10-08
 Object.assign(translations.sr, {"serviceInspectionText":"Pošaljite link oglasa i unesite grad ili poštanski broj gde se vozilo nalazi. Odmah dobijate okvirnu cenu pregleda. Na licu mesta proveravamo vozilo i dostupnu dokumentaciju kod prodavca, fotografišemo auto i sastavljamo pisani izveštaj. Preglede trenutno obavlja naš tim iz St. Gallena. Razvijamo mrežu eksperata širom Švajcarske kako bismo smanjili troškove dolaska. Cenu i termin potvrđujemo pre uplate; o kupovini i daljem transportu odlučujete sami.","standaloneText":"Već ste našli auto? Možete naručiti samo pregled. Na licu mesta proveravamo vozilo i dostupnu dokumentaciju kod prodavca, fotografišemo auto i sastavljamo pisani izveštaj o stanju i uočenim nedostacima. Preglede trenutno obavlja naš tim iz St. Gallena. Razvijamo mrežu eksperata širom Švajcarske kako bismo smanjili troškove dolaska.","standalonePrices":"Unesite grad ili poštanski broj vozila u obrazac za pregled i videćete okvirnu cenu. Trenutno polazimo iz St. Gallena. Cenu potvrđujemo pre uplate, a termin sa prodavcem dogovaramo nakon uplate.","serviceBudgetText":"Recite nam model, uslove i najveći ukupni budžet. Tražimo odgovarajući auto kroz našu mrežu i B2B platforme. Uz svaki predlog prikazujemo link oglasa, cenu auta, našu uslugu i sve potvrđene troškove do predaje. Budžet je granica ukupnog troška. Vi birate auto i odlučujete o kupovini nakon našeg izveštaja. Registraciju na vaše ime možete posebno dogovoriti."});

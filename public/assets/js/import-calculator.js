@@ -12,7 +12,7 @@
   }
   const cents = n => Math.round((n + Number.EPSILON) * 100) / 100;
   function calculate(input) {
-    const price = numeric(input.price, 'price', { min: 1, max: 1000000 });
+    const price = numeric(input.price, 'price', { min: 1, max: Infinity });
     if (!['CHF', 'EUR'].includes(input.currency)) throw new Error('currency');
     if (!['unknown', 'preferential', 'standard'].includes(input.origin)) throw new Error('origin');
     const rate = numeric(input.rate, 'rate', { min: .01, max: 10 });

@@ -3,11 +3,12 @@
 .cars-head { padding: 64px 0 18px; background: linear-gradient(180deg, #fff, var(--bg)); border-bottom: 1px solid var(--line) }
 .cars-head h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; margin: 10px 0 12px; letter-spacing: -.01em }
 .cars-lead { max-width: 62ch; color: var(--muted); font-size: 17px; margin: 0 0 26px }
-.cars-filter { display: flex; flex-wrap: wrap; gap: 8px }
-.cars-filter button { font: 600 14px Inter, 'Segoe UI', sans-serif; border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 999px; padding: 9px 16px; cursor: pointer }
-.cars-filter button b { font-weight: 600; color: var(--muted); margin-left: 4px }
-.cars-filter button[aria-pressed="true"] { background: var(--charcoal); border-color: var(--charcoal); color: #fff }
+.cars-filter { display: flex; flex-wrap: wrap; gap: 20px }
+.cars-filter button { font: 400 14px Inter, 'Segoe UI', sans-serif; border: 0; background: transparent; color: var(--muted); border-radius: 0; padding: 10px 0; min-height: 40px; cursor: pointer }
+.cars-filter button b { font-weight: 400; color: var(--muted); margin-left: 6px }
+.cars-filter button[aria-pressed="true"] { box-shadow: inset 0 -2px var(--gold); color: var(--text) }
 .cars-filter button[aria-pressed="true"] b { color: var(--gold2) }
+.cars-filter button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px }
 
 .cars-list { padding: 34px 0 80px }
 .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px }
@@ -30,10 +31,11 @@
 .car-price.ask { font-family: Inter, 'Segoe UI', sans-serif; font-size: 15px; font-weight: 600; color: var(--muted) }
 .car-more { font-size: 13px; font-weight: 600; color: var(--gold) }
 
-.car-track { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px }
-.car-track li { font-size: 11px; line-height: 1.3; color: #9a948a; padding-top: 7px; border-top: 3px solid var(--line) }
-.car-track li.done { color: var(--muted); border-top-color: var(--gold2) }
-.car-track li.now { color: var(--text); font-weight: 700; border-top-color: var(--gold) }
+.car-track { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px }
+.car-track:empty { display: none }
+.car-track li { font-size: 11px; line-height: 1.3; color: #74808b; padding-top: 7px; border-top: 3px solid #e0e5e9 }
+.car-track li.done { color: #756342; border-top-color: #bfa26c }
+.car-track li.now { color: #195b87; font-weight: 600; border-top-color: #246a95 }
 
 .cars-empty { text-align: center; padding: 50px 20px; background: #fff; border: 1px dashed var(--line); border-radius: var(--r-md); display: grid; gap: 12px; justify-items: center }
 .cars-empty h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; margin: 0 }
@@ -50,14 +52,15 @@
 .dlg-gallery .ph svg { width: 40% }
 .dlg-body { padding: 28px 26px; overflow-y: auto; max-height: 92vh; display: grid; gap: 12px; align-content: start }
 .dlg-body h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 28px; line-height: 1.15; margin: 0; padding-right: 36px }
-.dlg-body h3 { margin: 8px 0 0; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted) }
-.car-stage { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gold) }
+.dlg-body h3 { margin: 8px 0 0; font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--muted) }
+.car-stage { margin: 0; font-size: 13px; font-weight: 400; letter-spacing: 0; color: var(--gold) }
 .car-specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin: 6px 0 0 }
 .car-specs div { display: grid }
 .car-specs dt { font-size: 12px; color: var(--muted) }
 .car-specs dd { margin: 0; font-weight: 600 }
-.car-equip { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px }
-.car-equip li { font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 11px; background: var(--bg) }
+.car-equip { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 18px }
+.car-equip li { position: relative; min-width: 0; font-size: 14px; line-height: 1.45; padding-left: 16px; overflow-wrap: anywhere }
+.car-equip li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-size: 12px }
 .dlg-body .btn { margin-top: 8px; justify-self: start }
 
 @media (max-width: 760px) {
@@ -243,6 +246,13 @@
 .up-current-quote .btn{color:#546b7c;font-weight:500;font-size:12px;padding:8px 12px;min-height:40px}
 
 /* Reviewed compact offering preview. */
+.car-photo .car-image-note,.dlg-gallery .car-image-note{position:absolute;left:12px;bottom:12px;padding:4px 8px;border-radius:4px;background:#ffffffeb;color:#536273;font-size:11px;font-weight:400;line-height:1.4}
+.dlg-gallery{position:relative}
+.cars-photo-credits{margin-top:14px;color:#687784;font-size:12px;line-height:1.6}
+.cars-photo-credits>summary{cursor:pointer;width:fit-content;padding:6px 0}
+.cars-photo-credits>summary:focus-visible{outline:2px solid #246a95;outline-offset:3px}
+.cars-photo-credits p{margin:8px 0}
+.cars-photo-credits a{text-decoration:underline}
 .cars-page .cars-head{padding:28px 0 16px}
 .cars-page .cars-head h1{font-size:clamp(30px,3.4vw,42px);margin:6px 0 10px}
 .cars-page .cars-lead{margin-bottom:18px}

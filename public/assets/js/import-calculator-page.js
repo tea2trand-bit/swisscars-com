@@ -8,7 +8,7 @@
   const fallback = { transport: 500, export: 0, eco: 155, testing: 200 };
   let fx = null; let fxReady=false; let pendingResultReveal=false;
   const touched = new Set();
-  const priceStep = 500, priceMin = 1, priceMax = 30000;
+  const priceStep = 500, priceMin = 1;
   let activated = false; let packageMode=false;
   for (const [key, value] of Object.entries(fallback)) $(key).value = value;
   $('rate').value = ''; $('rate').readOnly = true;
@@ -33,20 +33,22 @@
   function priceParts(raw) {
     const text = String(raw).trim().replace(/\s/g, '');
     if (!text) return null;
-    const match = text.match(/^(\d+|\d{1,3}(?:\.\d{3})+)(?:,(\d{0,2}))?$/)
+    const match = text.match(/^(\d+|\d{1,3}(?:\.\d{3})+\d*)(?:,(\d{0,2}))?$/)
       || text.match(/^(\d+)\.(\d{1,2})$/);
     if (!match) return null;
     const whole = match[1].replace(/\./g, ''), fraction = match[2];
     const value = Number(whole + (fraction ? '.' + fraction : ''));
     return Number.isFinite(value) ? { value, fraction } : null;
   }
-  function formatPriceEntry() {
+  function formatPriceEntry(finalize = false) {
     const field = $('price'), raw = field.value, parts = priceParts(raw);
     if (!parts) return;
     const start = field.selectionStart, atEnd = start === raw.length;
     const digitsBefore = raw.slice(0, start ?? raw.length).replace(/\D/g, '').length;
     const commaBefore = raw.slice(0, start ?? raw.length).includes(',');
-    const next = Math.trunc(parts.value).toLocaleString('sr-RS') + (parts.fraction !== undefined ? ',' + parts.fraction : '');
+    const next = finalize
+      ? parts.value.toLocaleString('sr-RS', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      : Math.trunc(parts.value).toLocaleString('sr-RS') + (parts.fraction !== undefined ? ',' + parts.fraction : '');
     if (next === raw) return;
     field.value = next;
     if (document.activeElement === field) {
@@ -62,17 +64,17 @@
     $('price-minus').setAttribute('aria-label', `Smanjite cenu za ${priceStep} ${currency}`);
     $('price-plus').setAttribute('aria-label', `Povećajte cenu za ${priceStep} ${currency}`);
     const raw = $('price').value.trim(), value = priceParts(raw)?.value ?? null;
-    const invalid = raw !== '' && (value === null || value < priceMin || value > priceMax);
+    const invalid = raw !== '' && (value === null || value < priceMin);
     $('price-minus').disabled = invalid || value === null || value - priceStep < priceMin;
-    $('price-plus').disabled = invalid || value !== null && value + priceStep > priceMax;
+    $('price-plus').disabled = invalid;
   }
   function adjustPrice(direction) {
     updatePriceControls();
     if ($(direction < 0 ? 'price-minus' : 'price-plus').disabled) return;
     const current = priceParts($('price').value)?.value ?? 0;
     const next = Math.round((current + direction * priceStep + Number.EPSILON) * 100) / 100;
-    if (next < priceMin || next > priceMax) return;
-    $('price').value = next.toLocaleString('sr-RS', { maximumFractionDigits: 2 });
+    if (!Number.isFinite(next) || next < priceMin) return;
+    $('price').value = next.toLocaleString('sr-RS', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     $('price').dispatchEvent(new Event('input', { bubbles: true }));
   }
   function renderScenarios(container, scenarios) {
@@ -94,7 +96,7 @@
     try {
       for (const key of fields) if ($(key).validity.badInput) throw new Error(key);
       const price = priceParts($('price').value)?.value;
-      if (!Number.isFinite(price) || price < priceMin || price > priceMax) throw new Error('price');
+      if (!Number.isFinite(price) || price < priceMin) throw new Error('price');
       const input = Object.fromEntries(fields.map(key => [key, $(key).value]));
       input.price = price;
       if (input.currency === 'CHF' && !fx) throw new Error('rate');
@@ -122,6 +124,7 @@
     }
   }
   for (const key of ['price','currency','origin']) $(key).addEventListener('input', () => { if(key==='price')formatPriceEntry();touched.add(key); activated = true; render(); });
+  $('price').addEventListener('blur', () => formatPriceEntry(true));
   $('price-minus').addEventListener('click', () => adjustPrice(-1));
   $('price-plus').addEventListener('click', () => adjustPrice(1));
 
@@ -129,7 +132,7 @@
   $('package-check').addEventListener('change',()=>{packageMode=$('package-check').checked;activated=true;render();});
   updatePriceControls();
   $('form').addEventListener('submit', e => { e.preventDefault(); requestResultReveal(); activated=true; render(); if($('result').hidden&&!(pendingResultReveal&&!fxReady))$('price').focus(); });
-  $('example').addEventListener('click', () => { requestResultReveal(); $('price').value = '10.000'; $('currency').value = 'CHF'; touched.add('price'); touched.add('currency'); activated = true; render(); });
+  $('example').addEventListener('click', () => { requestResultReveal(); $('price').value = '10.000,00'; $('currency').value = 'CHF'; touched.add('price'); touched.add('currency'); activated = true; render(); });
   SCServicePrices.ready.then(data => {
     const defaults = data?.importDefaults;
     if (defaults) {

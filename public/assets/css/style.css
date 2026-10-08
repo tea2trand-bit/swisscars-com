@@ -101,10 +101,10 @@ a { text-decoration: none; color: inherit }
 }
 
 .nav a {
-  font-size: 12px;
-  text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: .8px;
+  font-size: 14px;
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0;
   color: #273039;
 }
 
@@ -1179,7 +1179,7 @@ footer p { color: #d0ced0 }
 footer small { color: #b9b7ba; display: block; margin-top: 4px }
 /* Saved requests: the count and links are local to this browser. */
 .nav-requests { position: relative; }
-.nav-requests summary { cursor: pointer; list-style: none; font-size: 12px; font-weight: 700; letter-spacing: .8px; color: #273039; text-transform: uppercase; }
+.nav-requests summary { cursor: pointer; list-style: none; font-size: 14px; font-weight: 400; letter-spacing: 0; color: #273039; text-transform: none; }
 .nav-requests summary::-webkit-details-marker { display: none; }
 .nav-requests summary::after { content: ' ▾'; }
 .nav-requests-list { position: absolute; right: 0; top: calc(100% + 12px); width: 300px; max-width: calc(100vw - 48px); max-height: 380px; overflow: auto; padding: 14px; background: #fff; border: 1px solid #e6e2da; border-radius: 10px; box-shadow: 0 12px 30px #0002; z-index: 30; display: grid; gap: 12px; }
@@ -1232,7 +1232,7 @@ footer .footer-legal { margin-bottom: 8px }
 /* One partner entry, with separately accessible registration links. */
 .nav-partners{position:relative;flex:none}
 .nav-login-mobile{display:none}
-.nav-partners summary{cursor:pointer;list-style:none;white-space:nowrap;font-size:12px;font-weight:700;letter-spacing:.8px;color:#273039;text-transform:uppercase}
+.nav-partners summary{cursor:pointer;list-style:none;white-space:nowrap;font-size:14px;font-weight:400;letter-spacing:0;color:#273039;text-transform:none}
 .nav-partners summary::-webkit-details-marker{display:none}
 .nav-partners summary::after{content:' ▾'}
 .nav-partners-list{position:absolute;right:0;top:calc(100% + 12px);width:220px;max-width:calc(100vw - 48px);display:grid;gap:14px;background:#fff;padding:18px;border:1px solid #e6e2da;border-radius:10px;box-shadow:0 12px 30px #0002;z-index:40}
@@ -1300,7 +1300,7 @@ footer .footer-legal { margin-bottom: 8px }
  .site-header .nav.open{max-height:calc(100dvh - 48px);overflow-y:auto}
 }
 /* Distinct desktop navigation items without adding another header row. */
-@media(min-width:901px){.site-header .nav{gap:18px;align-items:center}.site-header .nav>a,.site-header .nav>details{position:relative}.site-header .nav>a+ a:before,.site-header .nav>a+details:before,.site-header .nav>details+details:before{content:'';position:absolute;left:-10px;top:50%;height:12px;border-left:1px solid #d5d9de;transform:translateY(-50%)}}@media(min-width:1251px) and (max-width:1399px){.site-header{padding-left:8px;padding-right:8px;gap:10px}}
+@media(min-width:901px){.site-header .nav{gap:18px;align-items:center}}@media(min-width:1251px) and (max-width:1399px){.site-header{padding-left:8px;padding-right:8px;gap:10px}}
 /* ── /pregled/: kartica cene, predlozi mesta, kontakt red, poziv ekspertima (dopuna; važi samo za stranicu pregleda) ── */
 .cars-page .pg-price-card{gap:14px}
 .cars-page .pg-price-controls{display:grid;gap:14px;align-items:end;min-width:0}

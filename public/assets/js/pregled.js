@@ -163,8 +163,10 @@
     if (q.fee == null) { meta.textContent = fill(t.qAgree, { ort: q.ort, plz: q.plz || "" }); box("", "—"); el.setAttribute("aria-label", meta.textContent); return; }
     const p = q.pricing || {}, o = q.origin || {};
     meta.textContent = `${q.ort}${q.plz ? " (" + q.plz + ")" : ""} · ${originText(q)}`;
-    box("", money(q.fee));
-    el.setAttribute("aria-label", fill(t.qFee, { ort: q.ort, plz: q.plz || "", f: money(q.fee), o: o.ort || "St. Gallen" }));
+    const estimate = Math.round(Number(q.fee));
+    const estimateText = estimate.toLocaleString(LOCALE[lang()], { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    box("", estimateText);
+    el.setAttribute("aria-label", fill(t.qFee, { ort: q.ort, plz: q.plz || "", f: estimateText, o: o.ort || "St. Gallen" }));
     const note = o.kind === "expert" || p.version === "team-local-v1"
       ? (Number(p.extraKm) > 0 ? fill(t.extraNote, { km: num(p.extraKm), rate: num(p.kmRate), travel: money(p.travel) }) : t.localNote)
       : fill(t.teamNote, { d: num(q.dist) });

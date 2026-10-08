@@ -10,6 +10,12 @@ test('CHF conversion and separate duty scenarios; VAT includes duty and import l
 test('EUR price is not converted; accepted proof selects only zero duty',()=>{
   const r=calculate({...base,currency:'EUR',origin:'preferential'});assert.equal(r.car,10000);assert.equal(r.scenarios.length,1);assert.equal(r.scenarios[0].duty,0);assert.equal(r.scenarios[0].total,12906);
 });
+test('vehicle prices have no fixed upper ceiling and retain the same cost calculation',()=>{
+  for(const [price,total] of [[50000,60906],[1500000,1800906]]) {
+    const r=calculate({...base,price,currency:'EUR',origin:'preferential'});
+    assert.equal(r.car,price);assert.equal(r.scenarios[0].total,total);
+  }
+});
 test('known gross services added once; explicit zero is different from unknown',()=>{
   const r=calculate({...base,broker:150,testing:100,other:0});assert.equal(r.scenarios[0].total,13840);assert.deepEqual(r.missing,[]);
 });

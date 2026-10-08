@@ -12,7 +12,7 @@
 .import-price-row{align-items:end}.import-price-step{display:inline-block;margin-left:5px;font-size:11px;font-weight:400;color:#607080;white-space:nowrap}.import-price-control{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;height:48px;padding:1px;border:1px solid #d8d6d0;border-radius:9px;background:#fff}.import-price-control:focus-within{outline:2px solid #b98942;outline-offset:2px}.import-price-control:has(input[aria-invalid=true]){border-color:#a8392b}.import-price-control input{height:44px;border:0;border-radius:0;padding:10px 6px}.import-price-control input:focus{outline:none}.import-price-control button{width:44px;height:44px;border:0;border-radius:7px;background:#f6f5f2;color:#344e63;font-family:inherit;font-size:20px;font-weight:600;line-height:1;cursor:pointer}.import-price-control button:disabled{opacity:.4;cursor:default}.import-price-control button:focus-visible{outline:2px solid #b98942;outline-offset:-2px}@media(max-width:340px){.import-price-row{grid-template-columns:1fr}}
 .import-swiss-vat{margin:16px 0 10px}.import-swiss-vat select{height:auto;min-height:48px}.import-comparison-title{font-size:14px;color:#425a6c;margin:22px 0 0}.import-comparison-title+.import-scenarios{margin-top:10px}
 .import-layout{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}.import-result{position:static}.import-total{font-size:clamp(17px,2vw,22px);white-space:nowrap;letter-spacing:-.3px}@media(max-width:760px){.import-layout{grid-template-columns:1fr;align-items:start}.import-total{font-size:20px}}@media(max-width:400px){.import-total{font-size:18px}}@media(max-width:340px){.import-total{font-size:16px}}
-.import-price-row{max-width:352px}.import-price-control input{text-align:center}
+.import-price-row{max-width:none}.import-price-control input{text-align:center}
 @media(min-width:341px) and (max-width:480px){.import-price-row{grid-template-columns:minmax(0,1fr) 76px;gap:8px}.import-price-control{grid-template-columns:36px minmax(0,1fr) 36px}.import-price-control button{width:36px}}
 @media(min-width:341px) and (max-width:380px){.import-price-row{grid-template-columns:minmax(0,1fr) 60px;gap:6px}.import-price-control{grid-template-columns:32px minmax(0,1fr) 32px}.import-price-control button{width:32px}.import-price-control input::placeholder{font-size:13px}#import-currency{padding-left:6px;padding-right:2px;font-size:14px}}
 
@@ -109,3 +109,20 @@
 .import-price-entry>span{line-height:1.5}
 @media(max-width:760px){.import-price-entry input,.import-price-entry>span,#import-currency{font-size:18px}}
 @media(min-width:341px) and (max-width:380px){.import-price-entry{gap:8px;padding:0 4px}.import-price-entry input,.import-price-entry>span,#import-currency{font-size:16px}}
+
+/* Give the amount the full phone width while keeping currency beside its label. */
+@media(max-width:480px){
+ .import-price-row{grid-template-columns:minmax(0,1fr) 76px;gap:8px;align-items:center;margin-bottom:16px}
+ .import-price-row>.import-field:first-child{display:contents}
+ .import-price-row>.import-field:first-child>label{grid-column:1;grid-row:1;margin:0}
+ .import-price-row .import-price-control{grid-column:1/-1;grid-row:2;grid-template-columns:36px minmax(0,1fr) 36px}
+ .import-price-row .import-price-control button{width:36px}
+ .import-price-row>.import-field:last-child{grid-column:2;grid-row:1;margin:0}
+ .import-price-row>.import-field:last-child>label{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}
+@media(max-width:380px){
+ .import-price-row .import-price-control{grid-template-columns:32px minmax(0,1fr) 32px}
+ .import-price-row .import-price-control button{width:32px}
+ .import-price-entry{gap:8px;padding:0 4px}
+ .import-price-entry input,.import-price-entry>span,#import-currency{font-size:16px}
+}
