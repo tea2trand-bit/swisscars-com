@@ -1366,6 +1366,6 @@ footer .footer-legal { margin-bottom: 8px }
 
 /* Reviewed homepage adjustments, 7 October 2026. */
 @media(max-width:600px){.hero-copy .hero-actions{grid-template-columns:minmax(0,1fr);width:100%;max-width:none;gap:10px}.hero-copy .hero-actions .btn{white-space:nowrap;min-height:48px;}}
-@media(min-width:601px){.hero-copy .hero-actions{display:flex;gap:14px;max-width:none;flex-wrap:wrap}.hero-copy .hero-actions .btn{width:auto;padding-left:22px;padding-right:22px;white-space:nowrap;}}
+@media(min-width:601px){.hero-copy .hero-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:510px}.hero-copy .hero-actions .btn{width:100%;padding-left:12px;padding-right:12px;white-space:normal;}}
 .hero-photo{filter:brightness(1.925) saturate(1.12) contrast(1.06);}
 @media(max-width:760px){.contact-form-panel>summary{position:relative;box-sizing:border-box;min-height:44px;padding:12px 36px;justify-content:center;text-align:center;font-size:13px;line-height:18px;text-transform:uppercase;letter-spacing:.5px}.contact-form-panel>summary::after{position:absolute;right:16px;font-size:20px;}}

@@ -1,3 +1,6 @@
+.contact h2[data-i18n=formTitle]{font-size:clamp(20px,2.5vw,34px);line-height:1.2}
+.general-contact-form>button[type=submit],.contact-form>button[type=submit]{box-sizing:border-box;min-height:50px;height:50px;line-height:1.25;padding:12px 16px;display:flex;align-items:center;justify-content:center}
+@media(min-width:901px){.contact-grid>div:first-child{display:flex;flex-direction:column}.contact-grid>div:first-child>.contact-links{margin-bottom:22px}.contact-grid>div:first-child>.general-contact-form{margin-top:auto;padding-bottom:24px}.contact-grid>.contact-form-panel[open]{align-self:stretch;display:flex;flex-direction:column;justify-content:flex-end}}
 .general-contact-form .contact-topic-native{position:absolute;width:1px;height:1px;padding:0;border:0;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
 .general-contact-form .contact-topic-trigger{display:block;width:100%;min-height:46px;padding:12px 14px;text-align:left;background:var(--paper,#fff);color:var(--ink,#173448);border:1px solid var(--line,#e4dfd5);border-radius:12px;font:inherit;font-size:16px;cursor:pointer}
 .contact-topic-trigger:focus-visible{outline:2px solid var(--gold,#b88a3f);outline-offset:3px}
