@@ -713,6 +713,8 @@ a { text-decoration: none; color: inherit }
   border-radius: var(--r-md);
   display: grid;
   gap: 4px;
+  text-align: center;
+  justify-items: center;
 }
 
 .company strong {
@@ -1269,7 +1271,7 @@ footer .footer-legal { margin-bottom: 8px }
 @media(max-width:700px){.partner-network-grid{grid-template-columns:minmax(0,1fr);gap:12px}.partner-network-grid article{padding:18px}.partner-quality summary small{display:block;margin:4px 0 0}}
 
 /* Compact company identity and a separate general contact form. */
-.company-heading{display:flex;align-items:center;gap:9px;min-width:0;margin-bottom:4px}
+.company-heading{display:flex;align-items:center;justify-content:center;gap:9px;min-width:0;margin-bottom:4px}
 .company-heading .brand-mark{display:flex;flex:0 0 30px;width:30px;height:30px;color:var(--gold)}
 .company-heading strong{font-size:22px;line-height:1.25}
 .general-contact-form{margin-top:22px;padding:20px;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}

@@ -57,8 +57,26 @@
 
 /* Four direct contact choices: one desktop row, two equal mobile columns. */
 .pg-price-controls #pg_place{text-align:center}
-.up-contact .hero-actions{display:grid;grid-template-columns:1fr 1fr 1.35fr 1.6fr;gap:8px;max-width:none;width:100%}
-.up-contact .hero-actions .btn{min-width:0;min-height:46px;padding:10px 8px;font-size:13px;letter-spacing:0;white-space:nowrap;text-transform:none;line-height:1.3}
+.up-contact .hero-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:none;width:100%}
+.up-contact .hero-actions .btn{min-width:0;width:100%;min-height:46px;padding:10px 8px;font-family:inherit;font-size:16px;font-weight:500;letter-spacing:0;white-space:nowrap;text-transform:none;line-height:1.3}
 .up-contact .pg-contact-viber{background:#7360a8;border-color:#7360a8;color:#fff}
 .up-contact .pg-contact-viber:hover{background:#60508d;border-color:#60508d}
-@media(max-width:900px){.up-contact .hero-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.up-contact .pg-contact-email{grid-column:1;grid-row:2}.up-contact .pg-contact-phone{grid-column:2;grid-row:2}.up-contact .hero-actions .btn{padding:10px 4px;font-size:clamp(11px,3.1vw,13px)}}
+@media(max-width:900px){.up-contact .hero-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.up-contact .pg-contact-email{grid-column:1;grid-row:2}.up-contact .pg-contact-phone{grid-column:2;grid-row:2}.up-contact .hero-actions .btn{padding:10px 4px;font-size:clamp(11.5px,3.5vw,14px)}}
+
+/* Compact place, quote and scheduling controls with details directly below the quote. */
+#kalkulator-pregleda{gap:12px;padding:20px}
+#kalkulator-pregleda #p_priceT{margin:0;font-size:22px;line-height:1.3}
+#kalkulator-pregleda .pg-price-controls{grid-template-columns:minmax(0,1fr) 180px 120px;gap:10px 12px;align-items:end;max-width:640px}
+#kalkulator-pregleda .pg-place-field,#kalkulator-pregleda .pg-price-box{gap:6px}
+#kalkulator-pregleda #pg_placeLabel,#kalkulator-pregleda .pg-price-label{font-family:inherit;font-size:13px;font-weight:500;line-height:1.5;color:var(--text)}
+#kalkulator-pregleda #pg_place,#kalkulator-pregleda #pg_book{height:44px;min-height:44px;padding:8px 12px;font-size:16px;line-height:1.4}
+#kalkulator-pregleda #pg_place{padding-right:38px;background:#fff;border:1px solid var(--line);text-align:center;box-shadow:none}
+#kalkulator-pregleda .pg-clear{width:34px;height:34px;font-size:22px}
+#kalkulator-pregleda #pg_quote{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:10px;height:44px;min-height:44px;padding:8px 12px}
+#kalkulator-pregleda #pg_quote .pg-q-num,#kalkulator-pregleda #pg_quote .pg-q-cur{font-family:inherit;font-size:18px;font-weight:400;line-height:1.4;letter-spacing:0;color:var(--text)}
+#kalkulator-pregleda #pg_quote.is-placeholder .pg-q-num,#kalkulator-pregleda #pg_quote.is-placeholder .pg-q-cur{color:var(--muted)}
+#kalkulator-pregleda .pg-price-info{grid-column:2/-1;display:grid;gap:6px;align-self:start;font-size:13px;line-height:1.5}
+#kalkulator-pregleda .pg-price-info p{margin:0;font-size:13px;line-height:1.5}
+#kalkulator-pregleda .pg-price-info .pg-info{margin:0}
+#kalkulator-pregleda:has(#pg_quote.is-placeholder) #pg_quoteMeta{display:none}
+@media(max-width:760px){#kalkulator-pregleda .pg-price-controls{grid-template-columns:repeat(2,minmax(0,1fr))}#kalkulator-pregleda .pg-place-field{grid-column:1/-1}#kalkulator-pregleda .pg-price-info{grid-column:1/-1}#kalkulator-pregleda #pg_quoteLabel{font-size:12px}}

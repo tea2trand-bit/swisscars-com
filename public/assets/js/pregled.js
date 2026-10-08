@@ -49,6 +49,7 @@
     let last = null; try { last = JSON.parse(localStorage.getItem(KEYLS) || "null"); } catch (e) {}
     $("p_priceNote").innerHTML = esc(t.priceNote) + (last && last.t ? ` <a href="/pregled/#${esc(last.t)}">${esc(t.last)}</a>` : "");
     $("pg_placeLabel").textContent = t.place;
+    $("pg_quoteLabel").textContent = t.qEstimate;
     $("pg_place").placeholder = t.placePh; $("pg_place").setAttribute("aria-label", t.place);
     $("pg_clear").setAttribute("aria-label", t.clear); $("pg_clear").title = t.clear;
     $("pg_sugg").setAttribute("aria-label", t.sugLabel);
@@ -138,8 +139,7 @@
     const t = T(), o = q.origin || {};
     return fill(o.kind === "expert" ? t.originExpert : t.originTeam, { ort: o.ort || "St. Gallen" });
   }
-  // Kutija cene sadrži SAMO iznos: mali „od/okvirno“, veliki broj, manji CHF. Sav ostali tekst ide iznad (meta) ili van (extra).
-  let START_FEE = null; // Loaded from the available public price lists.
+  // The initial zero is a visual placeholder; a server quote is required for scheduling.
   function box(prefix, amount) {
     $("pg_quote").innerHTML = `<span class="pg-q-from">${esc(prefix)}</span><strong class="pg-q-num">${esc(amount)}</strong><span class="pg-q-cur">CHF</span>`;
   }
@@ -147,7 +147,8 @@
     const t = T(), q = quote, el = $("pg_quote"), meta = $("pg_quoteMeta"), extra = $("pg_quoteExtra"), br = $("pg_break");
     $("pg_book").disabled = !currentQuoteValid();
     el.removeAttribute("aria-busy"); br.hidden = true; extra.hidden = true; extra.innerHTML = ""; meta.classList.remove("pg-warn");
-    if (!q) { meta.textContent = t.qStartNote; box(START_FEE == null ? "" : t.qFrom, START_FEE == null ? "—" : money(START_FEE)); el.setAttribute("aria-label", START_FEE == null ? t.qStartNote : t.qFrom + " " + money(START_FEE) + " CHF · " + t.qStartNote); return; }
+    el.classList.toggle("is-placeholder", !q);
+    if (!q) { meta.textContent = t.qStartNote; box("", Number(0).toLocaleString(LOCALE[lang()], { minimumFractionDigits: 2, maximumFractionDigits: 2 })); el.setAttribute("aria-label", t.qStartNote); return; }
     if (q.loading) { el.setAttribute("aria-busy", "true"); meta.textContent = t.qLoading; box("", "…"); el.setAttribute("aria-label", t.qLoading); return; }
     if (q.error) { meta.textContent = t.qError; meta.classList.add("pg-warn"); box("", "—"); el.setAttribute("aria-label", t.qError); extra.hidden = false; extra.innerHTML = `<button type="button" class="pg-retry" id="pg_retry">${esc(t.retry)}</button>`; $("pg_retry").onclick = () => calculateQuote(); return; }
     if (q.ambiguous) {
@@ -162,7 +163,7 @@
     if (q.fee == null) { meta.textContent = fill(t.qAgree, { ort: q.ort, plz: q.plz || "" }); box("", "—"); el.setAttribute("aria-label", meta.textContent); return; }
     const p = q.pricing || {}, o = q.origin || {};
     meta.textContent = `${q.ort}${q.plz ? " (" + q.plz + ")" : ""} · ${originText(q)}`;
-    box(t.qApprox, money(q.fee));
+    box("", money(q.fee));
     el.setAttribute("aria-label", fill(t.qFee, { ort: q.ort, plz: q.plz || "", f: money(q.fee), o: o.ort || "St. Gallen" }));
     const note = o.kind === "expert" || p.version === "team-local-v1"
       ? (Number(p.extraKm) > 0 ? fill(t.extraNote, { km: num(p.extraKm), rate: num(p.kmRate), travel: money(p.travel) }) : t.localNote)
@@ -311,5 +312,4 @@
   window.addEventListener("hashchange", boot);
   updateClear();
   boot();
-  rpc("sc_insp_start_price", {}).then(r => { const fee = Number(r?.fee); if (r?.fee != null && Number.isFinite(fee) && fee > 0) { START_FEE = fee; if (!quote && !tokenOf()) showQuote(); } }).catch(() => {});
 })();

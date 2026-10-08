@@ -68,15 +68,18 @@
             <p class="pg-suggest-status" id="pg_suggStatus" role="status" hidden></p>
           </div>
           <div class="pg-price-box">
-            <p class="pg-quote-meta" id="pg_quoteMeta" aria-live="polite">Unesite mesto vozila za ponudu prema dostupnom ekspertu i njegovom cenovniku.</p>
-            <p class="pg-price-quote" id="pg_quote" aria-live="polite" aria-atomic="true" aria-label="Cena prema mestu vozila"><span class="pg-q-from"></span><strong class="pg-q-num">—</strong><span class="pg-q-cur">CHF</span></p>
+            <span class="pg-price-label" id="pg_quoteLabel">Okvirna cena pregleda</span>
+            <p class="pg-price-quote is-placeholder" id="pg_quote" aria-live="polite" aria-atomic="true" aria-label="Unesite mesto vozila za cenu pregleda"><span class="pg-q-from"></span><strong class="pg-q-num">0,00</strong><span class="pg-q-cur">CHF</span></p>
           </div>
           <button class="btn btn-gold" type="button" id="pg_book" aria-controls="pgForm" aria-expanded="false" disabled>Zakaži</button>
+          <div class="pg-price-info">
+            <p class="pg-quote-meta" id="pg_quoteMeta" aria-live="polite"></p>
+            <p class="car-meta" id="p_priceNote"></p>
+            <details class="pg-info"><summary id="pg_infoT"></summary><p id="pg_infoP"></p></details>
+          </div>
         </div>
         <div class="pg-quote-extra" id="pg_quoteExtra" hidden></div>
         <details class="pg-breakdown" id="pg_break" hidden></details>
-        <p class="car-meta" id="p_priceNote"></p>
-        <details class="pg-info"><summary id="pg_infoT"></summary><p id="pg_infoP"></p></details>
       </div>
       <form class="contact-form up-card" id="pgForm" novalidate hidden>
         <h2 id="p_formT" style="grid-column:1/-1"></h2>
