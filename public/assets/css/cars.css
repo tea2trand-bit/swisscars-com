@@ -241,3 +241,11 @@
 .up-quote-lines dd{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .up-quote-lines .up-quote-total{border-top:1px solid #d2dce3;padding-top:8px;font-weight:500}
 .up-current-quote .btn{color:#546b7c;font-weight:500;font-size:12px;padding:8px 12px;min-height:40px}
+
+/* Reviewed compact offering preview. */
+.cars-page .cars-head{padding:28px 0 16px}
+.cars-page .cars-head h1{font-size:clamp(30px,3.4vw,42px);margin:6px 0 10px}
+.cars-page .cars-lead{margin-bottom:18px}
+.cars-page .cars-list{padding-top:22px}
+.car-photo{aspect-ratio:16/9}
+@media(max-width:760px){.cars-page .cars-head{padding:20px 0 14px}.cars-page .cars-head h1{font-size:30px}.cars-page .cars-list{padding-top:16px}.dlg-gallery img,.dlg-gallery .ph{aspect-ratio:16/9}}

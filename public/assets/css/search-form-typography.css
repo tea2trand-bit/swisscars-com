@@ -1,0 +1,174 @@
+/* One form language for automatic and model search, in every theme. */
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) label,
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-search-number-field>label,
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) #companySearchBudgetManual>label {
+  font:500 13px/1.4 var(--f-body)!important; color:var(--ink);
+}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(input,select),
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-search-number-control>input {
+  height:44px; min-height:44px; font:500 16px/1.4 var(--f-body)!important;
+  color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:5px; box-shadow:none;
+}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) input::placeholder,
+#app #companySearchCriteriaForm :is(input[name="yearFrom"],input[name="yearTo"])::placeholder,
+#app #companyManualSearch :is(input[name="yearFrom"],input[name="yearTo"])::placeholder {
+  color:var(--muted); opacity:1; font:400 16px/1.4 var(--f-body)!important;
+}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) input:focus {
+  outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); box-shadow:none;
+}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .team-choice-trigger,
+#app #companyAutomaticPriority + .team-choice-trigger,
+#app #companyManualPriority + .team-choice-trigger {
+  font:500 16px/1.4 var(--f-body)!important; background:var(--paper)!important; color:var(--ink)!important; border-color:var(--line)!important;
+  text-align:left; padding:6px 10px;
+}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .team-choice-trigger>span { font:inherit; color:inherit; }
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-search-number-control>.b {
+  font:500 22px/1 var(--f-body); background:var(--soft); color:var(--ink); border-color:var(--line); box-shadow:none;
+}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-search-number-control>.b:disabled {
+  opacity:1; color:var(--muted); background:var(--soft); border-color:var(--line); cursor:default;
+}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(.note,.company-layout-explanation) {
+  font:400 13px/1.5 var(--f-body); color:var(--muted);
+}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) button[type="submit"] { font:600 14px/1.4 var(--f-body); }
+#app #t-ai :is(h2,h3) { color:var(--ink); }
+#app #t-ai .company-search-portals a { color:var(--accent); }
+#app #t-ai .company-search-portals {justify-content:center;text-align:center;gap:4px 16px}
+#app #t-ai .company-search-portals>span {flex-basis:100%;text-align:center}
+#app #t-ai .company-search-portals>a {text-align:center;white-space:nowrap}
+#app #companyManualSearch [hidden] { display:none!important; }
+#app #companyManualSearch .search-area {
+  grid-column:span 2; min-width:0; margin:0; padding:0; border:0;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; gap:10px;
+}
+#app #companyManualSearch .search-area>label { display:grid; grid-template-rows:36px 44px; gap:4px; align-items:end; }
+#app #companyManualSearch .search-area .company-search-number-field { width:100%; }
+#app #companyManualSearch .search-area select { width:100%; min-width:0; }
+#app #companyManualSearch .search-area>.search-area-choice { grid-column:1/-1; }
+#app #companyManualSearch .search-area-hint {grid-column:1/-1;font:400 12px/1.4 var(--f-body);color:var(--muted);margin-top:-4px;}
+@media(max-width:760px) {
+  #app #companyManualSearch .search-area { grid-column:1/-1; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  #app #companyManualSearch .search-area>.search-area-choice { grid-column:1/-1; }
+}
+@media(max-width:359px) { #app #companyManualSearch .search-area { grid-template-columns:1fr; } }
+
+/* Quieter, centred financial counters: readable captions, lighter amounts. */
+#app #kpis>.kpi { grid-template-rows:18px 30px 18px; text-align:center; justify-items:center; }
+#app #kpis>.kpi>.l {
+  font:500 12px/18px var(--f-body); text-transform:none; letter-spacing:normal;
+  width:100%; text-align:center;
+}
+#app #kpis>.kpi>.v {
+  font:400 24px/30px var(--f-body); letter-spacing:normal;
+  font-variant-numeric:tabular-nums; width:100%; text-align:center;
+}
+#app #kpis>.kpi>.v>span { font:inherit; letter-spacing:inherit; }
+#app #kpis>.kpi>.s { font:400 12px/18px var(--f-body); text-align:center; }
+#app #kpis>.kpi:nth-child(6)>.v,
+#app #kpis>.kpi:nth-child(6)>.v>span { color:#1b2d3b; }
+@media(max-width:760px) { #app #kpis>.kpi>.v { font-size:22px; } }
+
+/* A model is already chosen here: use a clear profit target, no demand priority. */
+#app #t-ai :is(#companyManualSearch,#companySearchCriteriaForm) .company-layout-profit>select {display:none}
+#app #t-ai :is(#companyManualSearch,#companySearchCriteriaForm) .company-layout-profit {display:grid;grid-template-rows:36px 44px;gap:4px;align-items:end;min-width:0}
+#app #t-ai :is(#companyManualSearch,#companySearchCriteriaForm) .company-layout-profit>.team-choice-trigger {
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  width:100%;min-width:0;height:44px;min-height:44px;padding:6px 10px;
+}
+#app .company-layout-profit>.team-choice-trigger>svg {width:16px;height:16px;flex-shrink:0}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-profit>.team-choice-trigger {position:relative;padding-right:30px;justify-content:center}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-profit>.team-choice-trigger>svg {display:none}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-profit>.team-choice-trigger>span {width:100%;text-align:center}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-profit>.team-choice-trigger.is-placeholder>span {font-weight:400;color:var(--muted)}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-profit>.team-choice-trigger::after {content:'€';position:absolute;right:12px;top:50%;transform:translateY(-50%);font:400 16px/1 var(--f-body);color:var(--muted);pointer-events:none}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(.company-layout-year,.company-layout-mileage) {
+  display:grid;grid-template-rows:36px 44px;gap:4px;align-items:end;min-width:0;
+}
+#app #t-ai :is(.company-layout-year,.company-layout-mileage)>select {display:none}
+#app #t-ai :is(.company-layout-year,.company-layout-mileage)>.team-choice-trigger {
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  width:100%;min-width:0;height:44px;min-height:44px;
+}
+#app #t-ai :is(.company-layout-year,.company-layout-mileage)>.team-choice-trigger>svg {width:16px;height:16px;flex-shrink:0}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-year>.team-choice-trigger {justify-content:center}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-year>.team-choice-trigger>svg {display:none}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-year>.team-choice-trigger>span {width:100%;text-align:center}
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-year>.team-choice-trigger.is-placeholder>span {font-weight:400;color:var(--muted)}
+
+#app #t-ai #companyManualSearch .company-layout-body {display:grid;grid-template-rows:36px 44px;gap:4px;align-items:end;min-width:0}
+#app #t-ai #companyManualSearch .company-layout-body>select {display:none!important}
+#app #t-ai #companyManualSearch .company-layout-body>.team-choice-trigger {display:flex!important;align-items:center;justify-content:center;width:100%;min-width:0;height:44px;min-height:44px}
+#app #t-ai #companyManualSearch .company-layout-body>.team-choice-trigger>span {width:100%;text-align:center}
+#app #t-ai #companyManualSearch .company-layout-body>.team-choice-trigger>svg {display:none}
+dialog.team-choice-pane[data-choice=companyManualBody] {inset:0;margin:auto;width:min(320px,calc(100vw - 24px));height:fit-content;max-height:calc(100dvh - 40px)}
+dialog.team-choice-pane[data-choice=companyManualBody] .team-choice-option {font-size:16px}
+
+#app #t-ai #companyManualSearch #companyManualRadius {display:none!important}
+#app #t-ai #companyManualSearch #companyManualRadius + .team-choice-trigger {display:flex!important;align-items:center;justify-content:center;width:100%;min-width:0;height:44px;min-height:44px}
+#app #t-ai #companyManualSearch #companyManualRadius + .team-choice-trigger>span {width:100%;text-align:center}
+#app #t-ai #companyManualSearch #companyManualRadius + .team-choice-trigger>svg {display:none}
+#app #t-ai #companyManualSearch #companyManualRadius + .team-choice-trigger.is-placeholder>span {font-weight:400;color:var(--muted)}
+dialog.team-choice-pane[data-choice=companyManualRadius] {inset:0;margin:auto;width:min(320px,calc(100vw - 24px));height:fit-content;max-height:calc(100dvh - 40px)}
+dialog.team-choice-pane[data-choice=companyManualRadius] .team-choice-option {font-size:16px}
+dialog.team-choice-pane:is([data-year-picker=true],[data-mileage-picker=true]) {inset:0;margin:auto;width:min(320px,calc(100vw - 24px));height:fit-content;max-height:min(580px,calc(100dvh - 40px))}
+.team-choice-pane:is([data-year-picker=true],[data-mileage-picker=true]) .team-choice-option {font-size:16px}
+dialog.team-choice-pane[data-choice$=Profit] {inset:0;margin:auto;width:min(360px,calc(100vw - 24px));height:fit-content;max-height:calc(100dvh - 24px)}
+.team-choice-pane[data-choice$=Profit] .team-choice-options {display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.team-choice-pane[data-choice$=Profit] .team-choice-option {font-size:16px;text-align:center;justify-content:center}
+#app #t-ai :is(#companyManualSearch,#companySearchCriteriaForm) .company-search-number-control.budget-manual-entry {grid-template-columns:minmax(0,1fr);position:relative}
+#app #t-ai .budget-manual-entry>[data-number-step] {display:none!important}
+#app #t-ai .budget-manual-entry>input {padding-right:30px}
+#app #t-ai .budget-entry-currency {position:absolute;right:12px;top:50%;transform:translateY(-50%);font:400 16px/1 var(--f-body);color:var(--muted);pointer-events:none}
+@media(min-width:1200px) {
+  #app #t-ai #companyManualSearch {grid-template-columns:repeat(8,minmax(0,1fr));row-gap:8px;margin-top:0}
+  #app #t-ai #companyManualSearch :is(.company-layout-budget,.company-layout-profit,.company-layout-year,.company-layout-mileage,.company-layout-body) {grid-column:span 1}
+  #app #t-ai #companyManualSearch .search-area {grid-column:span 2}
+  #app #t-ai #companyManualSearch .search-area>.company-layout-text {grid-column:auto}
+  #app #t-ai #companyManualSearch :is(.vehicle-picker-field,.company-search-number-field,.company-layout-profit,.company-layout-year,.company-layout-mileage,.company-layout-body),
+  #app #t-ai #companyManualSearch .search-area>label {grid-template-rows:20px 44px;gap:4px}
+  #app #t-ai #companyManualSearch :is(.company-search-number-field>label,#companySearchBudgetManual>label) {min-height:20px}
+  #app #t-ai #companyManualSearch>.btns {grid-column:8;grid-row:3/span 2;align-self:start;order:1;margin:0}
+  #app #t-ai #companyManualSearch>.note {order:2;margin:0}
+  #app #t-ai #companyManualSearch>.note:not([data-company-search-result]):not([data-company-search-pending]) {grid-column:1/8;grid-row:3;order:1}
+  #app #t-ai #companyManualSearch>.company-layout-explanation {grid-column:1/8;grid-row:4;order:1}
+}
+#app #t-ai #companyManualSearch .vehicle-picker-field {grid-column:1/-1}
+
+/* Centre the chosen search mode and mileage; clicking the whole field opens choices. */
+#app #t-ai #companySearchCriteriaForm #companyAutomaticPriority + .team-choice-trigger,
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-mileage>.team-choice-trigger {
+  justify-content:center!important; text-align:center!important;
+}
+#app #t-ai #companySearchCriteriaForm #companyAutomaticPriority + .team-choice-trigger>span,
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-mileage>.team-choice-trigger>span {
+  width:100%; text-align:center;
+}
+#app #t-ai #companySearchCriteriaForm #companyAutomaticPriority + .team-choice-trigger>svg,
+#app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-mileage>.team-choice-trigger>svg {
+  display:none!important;
+}
+
+/* Phone reading order: investment/profit, both years, priority/mileage. */
+@media(max-width:760px) {
+  #app #t-ai #companySearchCriteriaForm {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+  #app #t-ai #companySearchCriteriaForm :is(.company-layout-main,.company-search-core,.company-layout-extra,.company-layout-extra>.company-search-grid) {display:contents}
+  #app #t-ai #companySearchCriteriaForm .company-layout-budget {grid-column:1;grid-row:1;width:100%;min-width:0;max-width:none}
+  #app #t-ai #companySearchCriteriaForm .company-layout-profit {grid-column:2;grid-row:1}
+  #app #t-ai #companySearchCriteriaForm .company-layout-year:has([name=yearFrom]) {grid-column:1;grid-row:2}
+  #app #t-ai #companySearchCriteriaForm .company-layout-year:has([name=yearTo]) {grid-column:2;grid-row:2}
+  #app #t-ai #companySearchCriteriaForm .company-layout-priority {grid-column:1;grid-row:3}
+  #app #t-ai #companySearchCriteriaForm .company-layout-mileage {grid-column:2;grid-row:3}
+  #app #t-ai #companySearchCriteriaForm .company-search-criteria-actions {grid-column:1/-1;grid-row:4;padding:0;margin:0}
+  #app #t-ai #companySearchCriteriaForm>.company-layout-explanation {grid-column:1/-1;grid-row:5;margin:0}
+  #app #t-ai #companySearchCriteriaForm>.note {grid-column:1/-1;margin:0}
+  #app #t-ai #companyManualSearch .vehicle-picker-field {grid-column:1/-1;grid-row:1}
+  #app #t-ai #companyManualSearch .company-layout-budget {grid-column:1;grid-row:2}
+  #app #t-ai #companyManualSearch .company-layout-profit {grid-column:2;grid-row:2}
+  #app #t-ai #companyManualSearch .company-layout-year:has([name=yearFrom]) {grid-column:1;grid-row:3}
+  #app #t-ai #companyManualSearch .company-layout-year:has([name=yearTo]) {grid-column:2;grid-row:3}
+  #app #t-ai #companyManualSearch .company-layout-mileage {grid-column:1;grid-row:4}
+  #app #t-ai #companyManualSearch .company-layout-body {grid-column:2;grid-row:4}
+}

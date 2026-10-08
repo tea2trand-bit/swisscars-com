@@ -1,0 +1,57 @@
+/* SWISCARS · dodatak katalogu partnerskog jezika za panel cenovnika eksperta (/eksperti/).
+   Ne prepisuje postojeći katalog (partner-language.js): dodaje nove ključeve u isti rečnik. Srpski izvor → [nemački (CH, ss), engleski]. */
+(function () {
+  'use strict';
+  const I = window.SCPartnerLanguage; if (!I || !I.catalog) return;
+  Object.assign(I.catalog, {
+    "Vaš cenovnik pregleda": ["Ihre Preisliste für Prüfungen", "Your inspection price list"],
+    "Cenovnik pregleda": ["Preisliste für Prüfungen", "Inspection price list"],
+    "Vi određujete cenu. Kupci vide samo polazište (mesto) i obračun, ne vaše ime ni kontakt. Dok je prijava na proveri, cenovnik se čuva, ali se ne nudi kupcima.": ["Sie legen den Preis fest. Kunden sehen nur den Ausgangsort und die Berechnung, nicht Ihren Namen oder Kontakt. Solange die Anmeldung geprüft wird, bleibt die Preisliste gespeichert, wird Kunden aber noch nicht angeboten.", "You set the price. Customers see only the departure town and the calculation, never your name or contact details. While your application is under review, the price list is stored but not yet offered to customers."],
+    "Cenovnik još nije podešen. Bez cenovnika i polazišta ne ulazite u automatske predloge pregleda.": ["Die Preisliste ist noch nicht eingerichtet. Ohne Preisliste und Ausgangsort werden Sie nicht automatisch für Prüfungen vorgeschlagen.", "The price list is not set up yet. Without a price list and departure town you are not included in automatic inspection proposals."],
+    "Podesi cenovnik": ["Preisliste einrichten", "Set up price list"],
+    "Izmeni cenovnik": ["Preisliste ändern", "Edit price list"],
+    "Sačuvaj cenovnik": ["Preisliste speichern", "Save price list"],
+    "Polja označena * su obavezna. Kilometri se računaju u oba smera.": ["Felder mit * sind Pflichtfelder. Kilometer werden hin und zurück gerechnet.", "Fields marked * are required. Kilometres are counted both ways."],
+    "Polazište *": ["Ausgangsort *", "Departure town *"],
+    "Poštanski broj ili mesto *": ["Postleitzahl oder Ort *", "Postal code or town *"],
+    "npr. 8001 Zürich": ["z. B. 8001 Zürich", "e.g. 8001 Zürich"],
+    "Odakle krećete na preglede. Izaberite mesto sa liste.": ["Von wo Sie zu Prüfungen aufbrechen. Wählen Sie den Ort aus der Liste.", "Where you start from for inspections. Choose the town from the list."],
+    "Tražim mesta…": ["Orte werden gesucht…", "Searching places…"],
+    "Nema mesta za ovaj unos.": ["Kein Ort für diese Eingabe.", "No place matches this input."],
+    "Predlozi trenutno nisu dostupni.": ["Vorschläge sind momentan nicht verfügbar.", "Suggestions are currently unavailable."],
+    "Predlozi mesta": ["Ortsvorschläge", "Place suggestions"],
+    "Cena": ["Preis", "Price"],
+    "Osnovna cena pregleda (CHF) *": ["Grundpreis der Prüfung (CHF) *", "Base inspection price (CHF) *"],
+    "u vašem lokalnom području": ["in Ihrem lokalen Gebiet", "within your local area"],
+    "Lokalno područje (km) *": ["Lokales Gebiet (km) *", "Local area (km) *"],
+    "do ove udaljenosti važi samo osnovna cena": ["bis zu dieser Entfernung gilt nur der Grundpreis", "up to this distance only the base price applies"],
+    "Cena po km (CHF) *": ["Preis pro km (CHF) *", "Price per km (CHF) *"],
+    "van lokalnog područja, u oba smera": ["ausserhalb des lokalen Gebiets, hin und zurück", "outside the local area, both ways"],
+    "Primam automatske predloge pregleda": ["Ich erhalte automatische Prüfungsvorschläge", "I receive automatic inspection proposals"],
+    "Primer: vozilo {d} km od polazišta → {base} + 2 × {extra} km × {rate} CHF = {total} CHF": ["Beispiel: Fahrzeug {d} km vom Ausgangsort → {base} + 2 × {extra} km × {rate} CHF = {total} CHF", "Example: vehicle {d} km from your departure town → {base} + 2 × {extra} km × {rate} CHF = {total} CHF"],
+    "Primer: vozilo {d} km od polazišta → osnovna cena {total} CHF (u lokalnom području)": ["Beispiel: Fahrzeug {d} km vom Ausgangsort → Grundpreis {total} CHF (im lokalen Gebiet)", "Example: vehicle {d} km from your departure town → base price {total} CHF (within the local area)"],
+    "Polazište": ["Ausgangsort", "Departure town"],
+    "Osnovna cena": ["Grundpreis", "Base price"],
+    "Lokalno područje": ["Lokales Gebiet", "Local area"],
+    "Cena po km": ["Preis pro km", "Price per km"],
+    "u oba smera": ["hin und zurück", "both ways"],
+    "Automatski predlozi": ["Automatische Vorschläge", "Automatic proposals"],
+    "uključeni": ["aktiv", "on"],
+    "pauzirani": ["pausiert", "paused"],
+    "Poslednja izmena": ["Letzte Änderung", "Last change"],
+    "Cenovnik je sačuvan.": ["Die Preisliste wurde gespeichert.", "The price list has been saved."],
+    "Cenovnik je u međuvremenu promenjen. Osvežite stranicu i proverite podatke pre ponovnog čuvanja.": ["Die Preisliste wurde inzwischen geändert. Laden Sie die Seite neu und prüfen Sie die Angaben, bevor Sie erneut speichern.", "The price list has changed in the meantime. Reload the page and check the details before saving again."],
+    "Polazište nije prepoznato. Izaberite mesto sa liste predloga.": ["Der Ausgangsort wurde nicht erkannt. Wählen Sie den Ort aus der Vorschlagsliste.", "The departure town was not recognised. Choose it from the suggestion list."],
+    "Cenovnik mogu da podese samo eksperti.": ["Die Preisliste können nur Experten einrichten.", "Only experts can set up a price list."],
+    "Profil nije dostupan: još nije napravljen ili je isključen.": ["Das Profil ist nicht verfügbar: noch nicht erstellt oder deaktiviert.", "The profile is unavailable: not created yet or deactivated."],
+    "Server nije prihvatio polje cenovnika: {f}": ["Der Server hat das Feld der Preisliste nicht akzeptiert: {f}", "The server did not accept the price list field: {f}"],
+    "Cenovnik trenutno nije moguće učitati.": ["Die Preisliste kann momentan nicht geladen werden.", "The price list cannot be loaded right now."],
+    "Izaberite polazište sa liste predloga.": ["Wählen Sie den Ausgangsort aus der Vorschlagsliste.", "Choose the departure town from the suggestion list."],
+    "Unesite osnovnu cenu pregleda od 1 do 5000 CHF.": ["Geben Sie einen Grundpreis zwischen 1 und 5000 CHF ein.", "Enter a base inspection price between 1 and 5000 CHF."],
+    "Unesite cenu po kilometru od 0 do 20 CHF.": ["Geben Sie einen Kilometerpreis zwischen 0 und 20 CHF ein.", "Enter a price per kilometre between 0 and 20 CHF."],
+    "Lokalno područje je ceo broj od 0 do 50 km.": ["Das lokale Gebiet ist eine ganze Zahl von 0 bis 50 km.", "The local area is a whole number from 0 to 50 km."],
+    "Nalog je privremeno isključen; cenovnik se ne može menjati.": ["Das Konto ist vorübergehend deaktiviert; die Preisliste kann nicht geändert werden.", "The account is temporarily deactivated; the price list cannot be changed."],
+    "Cenovnik važi za automatske predloge tek kad SWISCARS aktivira nalog.": ["Die Preisliste gilt für automatische Vorschläge erst, wenn SWISCARS das Konto aktiviert.", "The price list applies to automatic proposals only once SWISCARS activates the account."]
+  });
+  if (typeof I.apply === 'function') I.apply();
+})();

@@ -7,7 +7,8 @@
  const source=k=>k.fundingSource==='company'?(methods[k.paymentMethod]||'Firma — način nije upisan'):'Raniji unos — izvor nije potvrđen';
  const currency=k=>k.currency||'EUR';
  const totals=rows=>rows.reduce((s,k)=>{if(Number.isFinite(Number(k.amount)))s[currency(k)]=Math.round(((s[currency(k)]||0)+Number(k.amount))*100)/100;return s;},{});
- const money=s=>Object.entries(s).map(([c,n])=>n.toLocaleString('sr-Latn-RS',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+c).join(' · ')||'0';
+ const locale=()=>(typeof window!=='undefined'&&window.EV&&typeof window.EV.locale==='function')?window.EV.locale():'sr-Latn-RS'; // jezik evidencije; podrazumevano srpski
+ const money=s=>Object.entries(s).map(([c,n])=>n.toLocaleString(locale(),{minimumFractionDigits:2,maximumFractionDigits:2})+' '+c).join(' · ')||'0';
  function month(rows,m){return rows.filter(k=>paid(k)&&day(k).slice(0,7)===m);}
  function groups(rows,key){const g=new Map();for(const k of rows){const name=key(k);if(!g.has(name))g.set(name,[]);g.get(name).push(k);}return [...g].map(([name,items])=>({name,n:items.length,totals:totals(items)}));}
  function csv(rows){const quote=v=>'"'+String(typeof v==='string'&&/^[\s]*[=+@-]/.test(v)?"'"+v:v??'').replace(/"/g,'""')+'"';return '\ufeff'+rows.map(row=>row.map(quote).join(';')).join('\r\n');}

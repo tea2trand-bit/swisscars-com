@@ -4,15 +4,35 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>Kalkulator uvoza — probna verzija | SWISCARS</title>
+  <title>Kalkulator uvoza | SWISCARS</title>
   <link rel="stylesheet" href="/assets/css/style.css">
   <link rel="stylesheet" href="/assets/css/import-calculator.css">
 </head>
-<body>
+<body><header class="site-header">
+  <a class="brand" href="/">
+    <span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="38" height="38" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/></path><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></path><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/></path><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></path></svg></span>
+    <span><strong>SWISCARS</strong><small>Premium Selection</small></span>
+  </a>
+  <button class="nav-toggle" aria-label="Menu" aria-expanded="false" data-partner-aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/></line><line x1="4" y1="12" x2="20" y2="12"/></line><line x1="4" y1="17" x2="20" y2="17"/></line></svg></button>
+  <nav class="nav">
+    <a href="/#top" data-i18n="navHome">Početna</a>
+    <a href="/auta/" data-i18n="navCars">Auta u ponudi</a>
+    <a href="/pregled/#kalkulator-pregleda" data-i18n="navInsp">Kalkulator pregleda</a>
+    <a href="/proba-uvoza/" data-i18n="navImportCalculator">Kalkulator uvoza</a>
+    <a href="/#proces" data-i18n="navProcess">Proces</a>
+    <a href="/#about" data-i18n="navAbout">O nama</a>
+    <a href="/#blog" data-i18n="navBlog">Saveti</a>
+    <a class="nav-contact-mobile" href="/#contact" data-i18n="navContact">Kontakt</a>
+    <details class="nav-partners"><summary><span class="nav-login-desktop" data-i18n="navLogin">Login</span><span class="nav-login-mobile" data-i18n="navAccountAccess">Prijava / Registracija</span></summary><div class="nav-partners-list"><a href="/intern/" data-i18n="navLoginTeam" rel="nofollow">Tim</a><span class="nav-partners-caption" data-i18n="navPartnersLabel">Saradnici</span><a href="/dileri/" data-i18n="navDealers">Autodileri</a><a href="/eksperti/" data-i18n="navExperts">Eksperti</a><a href="/prevoznici/" data-i18n="navCarriers">Prevoznici</a></div></details></nav>
+  <div class="language-switch">
+    <button data-lang="sr" class="active">SR</button><button data-lang="de">DE</button><button data-lang="en">EN</button>
+  </div>
+  <a class="btn btn-outline header-cta" href="/#contact" data-i18n="navContact">Kontakt</a>
+</header>
 <main class="import-wrap">
-  <div class="import-top"><a href="/" class="import-brand">SWISCARS</a><a href="/pregled/">Pregled vozila ↗</a></div>
+
   <header class="import-heading">
-    <span class="import-tag">PROBNI KALKULATOR</span>
+    <span class="import-tag">KALKULATOR UVOZA</span>
     <h1>Koliko košta uvoz?</h1>
 
   </header>
@@ -24,8 +44,13 @@
         <div class="import-field"><label for="import-currency">Valuta</label><select id="import-currency"><option value="CHF">CHF</option><option value="EUR">EUR</option></select></div>
       </div>
       <p id="price-help" class="import-help">Cena iz oglasa ili dogovorena cena, najviše 30.000 u izabranoj valuti. Ako je cena već bez PDV-a, unesite taj iznos.</p>
+      <aside class="import-fx" aria-label="Kurs za obračun">
+        <p id="import-rate-status" role="status" aria-live="polite">Učitavamo referentni kurs CHF/EUR…</p>
+        <p class="import-fx-source">Izvor: <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener noreferrer">Evropska centralna banka (ECB)</a>. Kurs se preuzima automatski iz poslednje objave.</p>
+        <p class="import-fx-note">Referentni kurs za procenu. Kurs banke i naknade pri plaćanju mogu se razlikovati.</p>
+      </aside>
       <div hidden aria-hidden="true">
-        <input id="import-rate" type="hidden"><span id="import-rate-status"></span><span id="defaults-status"></span>
+        <input id="import-rate" type="hidden"><span id="defaults-status"></span>
         <input id="import-transport" type="hidden"><input id="import-export" type="hidden"><input id="import-eco" type="hidden">
         <input id="import-broker" type="hidden"><input id="import-testing" type="hidden"><input id="import-other" type="hidden">
         <input id="import-domestic" type="hidden" value="0"><input id="import-customs" type="hidden">
@@ -38,6 +63,16 @@
     <li><strong>Pregled:</strong> cena zavisi od udaljenosti. Više pregleda na istoj ruti može smanjiti putne troškove.</li></ul>
     <p>SWISCARS proverava ove stavke i mogućnosti uštede pre konačnog dogovora.</p>
   </section>
+  <details class="import-sources">
+    <summary>Propisi i korisni izvori</summary>
+    <ul>
+      <li><a href="https://www.carina.rs/putnici/pitanja-i-odgovori/uvoz-polovnih-vozila.html" target="_blank" rel="noopener noreferrer">Uprava carina Srbije — uvoz polovnih vozila</a><span>Carina, PDV i dokazi o poreklu.</span></li>
+      <li><a href="https://www.amss.org.rs/usluge/sve-za-vozila/atesti-i-uvoz" target="_blank" rel="noopener noreferrer">AMSS — atesti i uvoz</a><span>Ispitivanje vozila i dokumentacija.</span></li>
+      <li><a href="https://www.bazg.admin.ch/en/refunds-of-swiss-vat-private" target="_blank" rel="noopener noreferrer" hreflang="en">Švajcarska carina — povrat PDV-a (EN)</a><span>Uslovi i postupak povrata.</span></li>
+      <li><a href="https://www.tcs.ch/de/testberichte-ratgeber/ratgeber/fahrzeug-kaufen-verkaufen/" target="_blank" rel="noopener noreferrer" hreflang="de">TCS — Auto kaufen und verkaufen (DE)</a><span>Saveti Touring Club Schweiz za kupovinu i prodaju vozila.</span></li>
+    </ul>
+    <p>Linkovi vode na nezavisne izvore informacija i ne označavaju partnerstvo sa SWISCARS-om. Za konkretno vozilo proveravaju se važeći uslovi i dokumentacija.</p>
+  </details>
   <div class="import-final-action"><button type="submit" form="import-form" class="btn btn-gold import-submit">Izračunaj troškove uvoza</button><p id="import-status" class="import-status" role="status" aria-live="polite" hidden></p></div>
     </form>
     <section class="import-card import-result" id="import-result-card" tabindex="-1" aria-labelledby="result-title">
@@ -50,7 +85,7 @@
         <p id="import-missing" hidden></p>
         
       </div>
-  <section class="import-next"><div class="import-package-total-row"><label class="import-package-checkbox" for="import-package-check"><input type="checkbox" id="import-package-check" aria-controls="import-package-fee-eur import-package-deductions import-package-info"><span>SWISCARS paket</span></label><strong id="import-package-fee-eur" aria-live="polite" hidden></strong></div><dl id="import-package-deductions" class="import-breakdown" hidden></dl><div id="import-package-info" hidden><details class="import-experience"><summary class="import-experience-toggle">Koliku razliku pravi iskustvo?</summary><div class="import-experience-copy"><strong>Iskustvo koje može da se isplati.</strong><p>Iskustvo u Švajcarskoj pomaže da izaberete dobar auto, izbegnete skupe greške i prepoznate mogućnosti uštede pri kupovini i uvozu. I kupcima i dilerima prava provera može doneti korist veću od cene paketa.</p><strong id="import-package-difference" hidden aria-hidden="true"></strong><p id="import-package-note" class="import-help"></p></div></details></div><h2>Kako želite da nastavimo?</h2><a class="btn btn-outline" href="/pregled/">Imam auto — pošalji link za pregled</a><a class="btn btn-gold" href="/#contact">Pronađite auto za mene</a></section>
+  <section class="import-next"><div class="import-package-total-row"><label class="import-package-checkbox" for="import-package-check"><input type="checkbox" id="import-package-check" aria-controls="import-package-fee-eur import-package-deductions import-package-info"><span>SWISCARS paket</span></label><strong id="import-package-fee-eur" aria-live="polite" hidden></strong></div><dl id="import-package-deductions" class="import-breakdown" hidden></dl><div id="import-package-info" hidden><section class="import-savings" aria-labelledby="import-saving-label" aria-describedby="import-package-note import-saving-basis" aria-live="polite" aria-atomic="true"><p id="import-saving-label" class="import-saving-label">Moguća neto ušteda</p><strong id="import-package-difference"></strong><p id="import-package-note" class="import-help"></p><p id="import-saving-basis" class="import-saving-basis">Poredimo uvoz istog vozila sa i bez ovih pogodnosti, uz cenu paketa. Ne upoređujemo cene kod prodavaca u Srbiji.</p></section><details class="import-seller-check"><summary>Šta da pitam prodavca pre pregleda?</summary><div><ul><li>Koja je pisana cena za izvoz?</li><li>Da li je PDV obračunat i da li je moguć njegov povrat?</li><li>Koji dokaz porekla može da obezbedi, npr. EUR.1?</li></ul><p>Pošaljite link oglasa i odgovor prodavca uz zahtev za pregled. Dokumentaciju proveravamo pre konačnog obračuna.</p><p>Ako PDV pri prodaji nije obračunat, nema tog povrata. PDV pri uvozu ostaje uključen. Osnovni obračun ne uključuje zaseban pregled.</p></div></details><details class="import-experience"><summary class="import-experience-toggle">Koliku razliku pravi iskustvo?</summary><div class="import-experience-copy"><strong>Iskustvo koje može da se isplati.</strong><p>Iskustvo u Švajcarskoj pomaže da izaberete dobar auto, izbegnete skupe greške i prepoznate mogućnosti uštede pri kupovini i uvozu. I kupcima i dilerima prava provera može doneti korist veću od cene paketa.</p></div></details></div><h2>Kako želite da nastavimo?</h2><a class="btn btn-outline" href="/pregled/">Imam auto — pošalji link za pregled</a><a class="btn btn-gold" href="/#contact">Pronađite auto za mene</a></section>
     </section>
   </div>
 
@@ -61,5 +96,5 @@
 <script src="/assets/js/fx-reference.js"></script>
 <script src="/assets/js/fx-reference-client.js"></script>
 <script src="/assets/js/import-calculator-page.js"></script>
-</body>
+<script src="/assets/js/translations.js"></script><script src="/assets/js/main.js"></script></body>
 </html>

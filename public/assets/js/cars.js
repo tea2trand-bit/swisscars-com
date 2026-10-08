@@ -8,16 +8,16 @@
   const photoUrl = p => /^https?:/.test(p) ? p : `${SB_URL}/storage/v1/object/public/sc-photos/${p.split("/").map(encodeURIComponent).join("/")}`;
 
   const L = {
-    sr: { reserved: "Rezervisano", stage: { kupljen: "Kupljen u Švajcarskoj", transport: "Na putu ka Srbiji", carinjen: "Na carini", garaza: "Priprema u Srbiji", prodaja: "Spremno za prodaju" },
-      track: ["Kupljen", "Transport", "Carina", "Priprema", "Spremno"], ask: "Cena na upit", soon: "Cena uskoro", photos: "fotografija", details: "Detalji →",
+    sr: { reserved: "Rezervisano", stage: { kupljen: "Kupljen u Švajcarskoj", transport: "Na putu ka Srbiji", carinjen: "Na carini", garaza: "U prodaji", prodaja: "Spremno za prodaju" },
+      track: ["Kupljen", "Transport", "Carina", "U prodaji", "Spremno"], ask: "Cena na upit", soon: "Cena uskoro", photos: "fotografija", details: "Detalji →",
       spec: { year: "Godište", firstReg: "Prva registracija", km: "Kilometraža", engine: "Motor", power: "Snaga", fuel: "Gorivo", gear: "Menjač", body: "Karoserija", drive: "Pogon", doors: "Vrata", euro: "Emisiona klasa", color: "Boja", keys: "Ključeva", serviceBook: "Servisna knjiga" },
       close: "Zatvori", noEquip: "Oprema po dogovoru — pitajte nas." , locale: "sr-Latn-RS" },
-    de: { reserved: "Reserviert", stage: { kupljen: "In der Schweiz gekauft", transport: "Unterwegs nach Serbien", carinjen: "Beim Zoll", garaza: "Aufbereitung in Serbien", prodaja: "Verkaufsbereit" },
-      track: ["Gekauft", "Transport", "Zoll", "Aufbereitung", "Bereit"], ask: "Preis auf Anfrage", soon: "Preis folgt", photos: "Fotos", details: "Details →",
+    de: { reserved: "Reserviert", stage: { kupljen: "In der Schweiz gekauft", transport: "Unterwegs nach Serbien", carinjen: "Beim Zoll", garaza: "Im Verkauf", prodaja: "Verkaufsbereit" },
+      track: ["Gekauft", "Transport", "Zoll", "Im Verkauf", "Bereit"], ask: "Preis auf Anfrage", soon: "Preis folgt", photos: "Fotos", details: "Details →",
       spec: { year: "Baujahr", firstReg: "Erstzulassung", km: "Kilometer", engine: "Motor", power: "Leistung", fuel: "Treibstoff", gear: "Getriebe", body: "Karosserie", drive: "Antrieb", doors: "Türen", euro: "Abgasnorm", color: "Farbe", keys: "Schlüssel", serviceBook: "Serviceheft" },
       close: "Schliessen", noEquip: "Ausstattung auf Anfrage.", locale: "de-CH" },
-    en: { reserved: "Reserved", stage: { kupljen: "Bought in Switzerland", transport: "On the way to Serbia", carinjen: "At customs", garaza: "Being prepared in Serbia", prodaja: "Ready for sale" },
-      track: ["Bought", "Transport", "Customs", "Preparation", "Ready"], ask: "Price on request", soon: "Price coming soon", photos: "photos", details: "Details →",
+    en: { reserved: "Reserved", stage: { kupljen: "Bought in Switzerland", transport: "On the way to Serbia", carinjen: "At customs", garaza: "For sale", prodaja: "Ready for sale" },
+      track: ["Bought", "Transport", "Customs", "For sale", "Ready"], ask: "Price on request", soon: "Price coming soon", photos: "photos", details: "Details →",
       spec: { year: "Year", firstReg: "First registration", km: "Mileage", engine: "Engine", power: "Power", fuel: "Fuel", gear: "Gearbox", body: "Body", drive: "Drive", doors: "Doors", euro: "Emission class", color: "Colour", keys: "Keys", serviceBook: "Service book" },
       close: "Close", noEquip: "Equipment on request.", locale: "en-GB" },
   };
@@ -67,6 +67,7 @@
     $("dlgGallery").innerHTML = ph.length ? ph.map((p, i) => `<img src="${esc(photoUrl(p))}" alt="${esc(c.model)} ${i + 1}" loading="${i < 2 ? "eager" : "lazy"}">`).join("") : `<div class="ph">${PH}</div>`;
     $("dlgStage").textContent = (t.stage[c.status] || "") + (c.reserved ? " · " + t.reserved : "");
     $("dlgTitle").textContent = c.model;
+    $("exampleInspection").hidden = c.id !== 'preview-skoda-octavia-combi-2018';
     $("dlgPrice").textContent = price(c); $("dlgPrice").className = "car-price" + (c.price ? "" : " ask");
     $("dlgTrack").innerHTML = track(c);
     const rows = [["year", c.year], ["firstReg", c.firstReg ? String(c.firstReg).split("-").reverse().join("/") : ""], ["km", c.km != null && c.km !== "" ? num(c.km) + " km" : ""], ["engine", c.engine], ["power", c.kw ? `${c.kw} kW / ${Math.round(c.kw * 1.36)} ${hp()}` : ""],
@@ -90,6 +91,20 @@
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(data => {
       CARS = Array.isArray(data) ? data : [];
+      // Local illustrative preview only; never writes vehicle records.
+      const illustrations = {
+        'preview-skoda-octavia-combi-2018': ['https://upload.wikimedia.org/wikipedia/commons/1/1c/2018_Skoda_Octavia_%285E_MY18.5%29_110TSI_station_wagon_%282018-11-02%29.jpg', 'EurovisionNim', '2018_Skoda_Octavia_(5E_MY18.5)_110TSI_station_wagon_(2018-11-02).jpg'],
+        'preview-vw-golf-variant-2017': ['https://upload.wikimedia.org/wikipedia/commons/3/36/Volkswagen_Golf_Variant_%282017%29.jpg', 'Charles01', 'Volkswagen_Golf_Variant_(2017).jpg'],
+        'preview-toyota-c-hr-2019': ['https://upload.wikimedia.org/wikipedia/commons/4/41/Toyota_C-HR_01_China_2019-04-04.jpg', 'Navigator84', 'Toyota_C-HR_01_China_2019-04-04.jpg']
+      };
+      CARS.forEach(c => {
+        const image = illustrations[c.id] || (c.model.startsWith('VW Golf') ? illustrations['preview-vw-golf-variant-2017'] : c.model.startsWith('Toyota C-HR') ? illustrations['preview-toyota-c-hr-2019'] : null);
+        if (image && !(c.photos || []).length) c.photos = [image[0]];
+      });
+      const credits = document.createElement('p');
+      credits.className = 'cars-note';
+      credits.innerHTML = 'Ilustracije modela — primer prikaza — nisu fotografije ponuđenih vozila. Fotografije: ' + Object.values(illustrations).map(p => `<a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(p[2])}" target="_blank" rel="noopener">${p[1]}</a>`).join(', ') + ' · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> · prikaz skraćen na 16:9.';
+      $('cars').before(credits);
       CARS.sort((a, b) => (a.stage === b.stage ? 0 : a.stage === "ready" ? -1 : 1));
       render();
       if (location.hash.startsWith("#auto-")) open(decodeURIComponent(location.hash.slice(6)));

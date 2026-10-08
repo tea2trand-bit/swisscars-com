@@ -721,20 +721,26 @@ a { text-decoration: none; color: inherit }
 }
 
 .contact-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  display: grid;
+  grid-template-columns:1.3fr 1fr 1fr;
+  gap: 6px;
+  max-width:460px;
 }
 
 .contact-links a {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
+  justify-content:center;
+  min-width:0;
+  min-height:44px;
+  white-space:nowrap;
   background: white;
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
-  padding: 13px 16px;
-  font-weight: 900;
+  padding: 9px 6px;
+  font-size:13px;
+  font-weight: 600;
   color: #242b31;
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
@@ -745,7 +751,7 @@ a { text-decoration: none; color: inherit }
   box-shadow: var(--shadow-sm);
 }
 
-.contact-links svg { width: 24px; height: 24px; fill: currentColor }
+.contact-links svg { width: 17px; height: 17px; flex:none; fill: currentColor }
 .wa { color: #187b4d !important }
 .vb { color: #665cac !important }
 .mail { color: var(--gold) !important }
@@ -1220,3 +1226,146 @@ footer .footer-legal { margin-bottom: 8px }
 .hero-actions{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);flex-wrap:nowrap;max-width:510px;align-items:stretch}
 .hero-actions .btn{width:100%;min-width:0;white-space:normal;text-align:center;justify-content:center;padding-left:12px;padding-right:12px}
 @media(max-width:600px){.hero-actions{gap:8px}.hero-actions .btn{padding-left:8px;padding-right:8px;line-height:1.4}}
+
+/* One partner entry, with separately accessible registration links. */
+.nav-partners{position:relative;flex:none}
+.nav-login-mobile{display:none}
+.nav-partners summary{cursor:pointer;list-style:none;white-space:nowrap;font-size:12px;font-weight:700;letter-spacing:.8px;color:#273039;text-transform:uppercase}
+.nav-partners summary::-webkit-details-marker{display:none}
+.nav-partners summary::after{content:' ▾'}
+.nav-partners-list{position:absolute;right:0;top:calc(100% + 12px);width:220px;max-width:calc(100vw - 48px);display:grid;gap:14px;background:#fff;padding:18px;border:1px solid #e6e2da;border-radius:10px;box-shadow:0 12px 30px #0002;z-index:40}
+.nav-partners-list a{white-space:normal}
+.nav-partners summary:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+@media(min-width:1251px){.site-header{flex-wrap:nowrap;gap:12px}.site-header .brand{margin-right:0}.site-header .nav{order:0;width:auto;flex-basis:auto;flex-wrap:nowrap;gap:12px;margin-left:auto}.site-header .language-switch{margin-left:0}.site-header .header-cta{flex:none;padding-left:14px;padding-right:14px}}
+@media(min-width:901px){.nav>a{white-space:nowrap}.site-header{gap:16px}.nav{gap:18px}}
+@media(min-width:901px) and (max-width:1250px){.site-header{flex-wrap:wrap}.site-header .nav{order:3;flex-basis:100%;justify-content:center}.site-header .language-switch{margin-left:auto}}
+@media(max-width:900px){.nav-partners summary{padding:7px 2px;font-size:16px}.nav-partners-list{position:static;margin-top:8px;box-shadow:none}}
+@media(max-width:900px){.nav-login-desktop{display:none}.nav-login-mobile{display:inline}.site-header .nav.open{max-height:calc(100dvh - 110px);overflow-y:auto}.nav-partners summary{white-space:normal;letter-spacing:.3px}}
+
+.site-header .brand strong{line-height:1.12}.site-header .brand small{line-height:1.2;margin-top:2px}.site-header{min-height:48px}.nav-partners-caption{padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.4px}
+.site-header .brand{gap:7px}
+
+/* Partner opportunities and planned reviews, kept separate from live account features. */
+.partner-network{background:var(--paper)}
+.partner-network-intro{max-width:950px;color:var(--muted);margin:0 0 14px}
+.partner-network-how,.partner-network-choice{max-width:950px;margin:0 0 14px;color:var(--muted);font-size:14px}
+.partner-network-choice{margin-bottom:22px}
+.partner-network-referral{font-size:14px;margin:20px 0 8px;color:var(--ink)}
+.partner-network-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.partner-network-grid article{display:flex;flex-direction:column;min-width:0;padding:22px;background:#fff;border:1px solid var(--line);border-radius:var(--r-md)}
+.partner-network-grid h3{font-size:20px;margin:0 0 8px}
+.partner-network-grid p{margin:0 0 16px;color:var(--muted);font-size:14px}
+.partner-network-grid a{margin-top:auto;font-size:14px;font-weight:600;color:var(--gold);overflow-wrap:anywhere}
+.partner-network-note{font-size:13px;color:var(--muted);margin:14px 0}
+.partner-roadmap{border-top:1px solid var(--line);padding:14px 0;color:var(--ink)}
+.partner-roadmap summary{cursor:pointer;font-weight:600}
+.partner-roadmap p{max-width:950px;font-size:14px;color:var(--muted);margin:12px 0 0}
+.partner-roadmap summary:focus-visible{outline:2px solid var(--gold);outline-offset:5px}
+.partner-quality{border-top:1px solid var(--line);padding-top:14px}
+.partner-quality summary{cursor:pointer;font-weight:600}
+.partner-quality summary small{display:inline-block;margin-left:12px;font-weight:400;color:var(--muted)}
+.partner-quality p{max-width:950px;font-size:14px;color:var(--muted);margin:12px 0 0}
+.partner-quality summary:focus-visible{outline:2px solid var(--gold);outline-offset:5px}
+@media(max-width:700px){.partner-network-grid{grid-template-columns:minmax(0,1fr);gap:12px}.partner-network-grid article{padding:18px}.partner-quality summary small{display:block;margin:4px 0 0}}
+
+/* Compact company identity and a separate general contact form. */
+.company-heading{display:flex;align-items:center;gap:9px;min-width:0;margin-bottom:4px}
+.company-heading .brand-mark{display:flex;flex:0 0 30px;width:30px;height:30px;color:var(--gold)}
+.company-heading strong{font-size:22px;line-height:1.25}
+.general-contact-form{margin-top:22px;padding:20px;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.general-contact-form h3,.general-contact-intro,.general-contact-wide,.general-contact-form>button{grid-column:1/-1}
+.general-contact-form h3{margin:0;font-size:20px}
+.general-contact-intro{margin:-4px 0 2px;font-size:14px;color:var(--muted)}
+.general-contact-form label{display:grid;gap:5px;min-width:0;font-size:13px;color:var(--muted)}
+.general-contact-form input,.general-contact-form select,.general-contact-form textarea{min-width:0;padding:10px 12px;background:#fff;font-size:16px}
+.general-contact-form textarea{resize:vertical;min-height:100px}
+.general-contact-form .form-status{margin:0;font-size:14px}
+.general-contact-form button{min-height:44px}
+@media(max-width:380px){.general-contact-form{padding:16px;grid-template-columns:minmax(0,1fr)}.company-heading strong{font-size:20px}}
+
+/* Keep the logo, language choice and menu on the same mobile row. */
+@media(max-width:900px){
+ .site-header{flex-wrap:nowrap;gap:6px;padding:2px 8px;min-height:48px}
+ .site-header .brand{gap:4px;min-width:0;flex-shrink:0}
+ .site-header .brand-mark{width:24px;height:24px}
+ .site-header .brand-mark svg{width:24px!important;height:24px!important}
+ .site-header .brand strong{font-size:18px;letter-spacing:1.3px}
+ .site-header .brand small{font-size:8px;letter-spacing:1px;margin-top:1px}
+ .site-header .language-switch{flex-shrink:0;gap:3px;margin-left:auto}
+ .site-header .language-switch button{padding:5px 4px;font-size:9px;min-height:30px;letter-spacing:0}
+ .site-header .nav-toggle{flex-shrink:0;width:34px;min-height:38px;padding:4px}
+ .site-header .nav{position:absolute;top:100%;left:0;width:100%;padding:8px 14px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 10px 18px #0001}
+ .site-header .nav.open{max-height:calc(100dvh - 48px);overflow-y:auto}
+}
+/* Distinct desktop navigation items without adding another header row. */
+@media(min-width:901px){.site-header .nav{gap:18px;align-items:center}.site-header .nav>a,.site-header .nav>details{position:relative}.site-header .nav>a+ a:before,.site-header .nav>a+details:before,.site-header .nav>details+details:before{content:'';position:absolute;left:-10px;top:50%;height:12px;border-left:1px solid #d5d9de;transform:translateY(-50%)}}@media(min-width:1251px) and (max-width:1399px){.site-header{padding-left:8px;padding-right:8px;gap:10px}}
+/* ── /pregled/: kartica cene, predlozi mesta, kontakt red, poziv ekspertima (dopuna; važi samo za stranicu pregleda) ── */
+.cars-page .pg-price-card{gap:14px}
+.cars-page .pg-price-controls{display:grid;gap:14px;align-items:end;min-width:0}
+@media(min-width:761px){.cars-page .pg-price-controls{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) auto}}
+.cars-page .pg-place-field{display:grid;gap:6px;min-width:0}
+.cars-page .pg-place-field label{font-size:14px;font-weight:600;color:var(--text)}
+.cars-page .pg-combobox{position:relative;min-width:0}
+.cars-page .pg-combobox input{width:100%;min-height:60px;margin:0;padding:12px 48px;text-align:center;font-size:16px;background:#eef6fc;border:1.5px solid #9ebed8;border-radius:var(--r-sm);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.cars-page .pg-combobox input::placeholder{color:#61778c;opacity:1}
+.cars-page .pg-combobox input:focus{background:#eef6fc;border-color:#689bc3;box-shadow:0 0 0 3px rgba(104,155,195,.35);outline:none}
+.cars-page .pg-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:44px;height:44px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:26px;line-height:1;cursor:pointer}
+.cars-page .pg-clear:hover,.cars-page .pg-clear:focus-visible{background:rgba(104,155,195,.18);color:var(--text)}
+.cars-page .pg-suggest{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;margin:0;padding:6px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-md);max-height:280px;overflow:auto}
+.cars-page .pg-suggest li{display:flex;gap:10px;align-items:center;min-height:44px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:15px;line-height:1.3}
+.cars-page .pg-suggest li b{font-variant-numeric:tabular-nums;min-width:44px;color:var(--gold)}
+.cars-page .pg-suggest li span{min-width:0;overflow-wrap:anywhere}
+.cars-page .pg-suggest li small{margin-left:auto;color:var(--muted);font-size:12px;flex:none}
+.cars-page .pg-suggest li[aria-selected="true"],.cars-page .pg-suggest li:hover{background:var(--bg)}
+.cars-page .pg-suggest-status{margin:0;font-size:13px;color:var(--muted)}
+.cars-page .pg-suggest-status.pg-warn,.cars-page .pg-quote-meta.pg-warn{color:#9c2a2a}
+/* Kutija cene: samo iznos. Sav drugi tekst je iznad (meta) ili ispod kartice (extra, razloženo, napomena). */
+.cars-page .pg-price-box{display:grid;gap:6px;min-width:0;align-content:end}
+.cars-page .pg-quote-meta{margin:0;font-size:13px;line-height:1.45;color:var(--muted)}
+.cars-page .pg-price-quote{margin:0;display:flex;flex-direction:row;justify-content:flex-start;align-items:baseline;gap:8px;flex-wrap:wrap;min-height:60px;padding:6px 14px;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-sm)} /* flex-direction:row namerno: inspection-report.css ima .pg-price-quote{flex-direction:column} za stari prikaz */
+.cars-page .pg-price-quote span,.cars-page .pg-price-quote strong{line-height:1.1}
+.cars-page .pg-q-from{font-size:14px;font-weight:500;color:var(--muted);text-transform:lowercase}
+.cars-page .pg-q-from:empty{display:none}
+.cars-page .pg-q-num{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(32px,6vw,42px);line-height:1;color:var(--text);font-variant-numeric:tabular-nums}
+.cars-page .pg-q-cur{font-size:16px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+@media(max-width:760px){
+ .cars-page .pg-price-quote{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);justify-content:normal;align-content:center;text-align:center}
+ .cars-page .pg-q-from{grid-column:1;justify-self:end}
+ .cars-page .pg-q-num{grid-column:2;justify-self:center}
+ .cars-page .pg-q-cur{grid-column:3;justify-self:start}
+}
+.cars-page .pg-quote-extra{display:grid;gap:8px}
+.cars-page .pg-q-sub2{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+.cars-page .pg-choices{display:flex;flex-wrap:wrap;gap:8px}
+.cars-page .pg-choices button,.cars-page .pg-retry{font:600 14px Inter,'Segoe UI',sans-serif;min-height:44px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--text);cursor:pointer}
+.cars-page .pg-choices button b{color:var(--gold);margin-right:2px}
+.cars-page .pg-choices button small{color:var(--muted)}
+.cars-page .pg-choices button:hover,.cars-page .pg-retry:hover,.cars-page .pg-choices button:focus-visible,.cars-page .pg-retry:focus-visible{border-color:var(--gold);background:rgba(183,134,61,.08)}
+.cars-page .pg-price-controls #pg_book{min-height:60px;white-space:nowrap}
+@media(max-width:760px){.cars-page #pg_book{width:100%}}
+.cars-page .pg-breakdown,.cars-page .pg-info{margin:0;font-size:14px}
+.cars-page .pg-breakdown>summary,.cars-page .pg-info>summary{cursor:pointer;font-weight:600;color:var(--muted);padding:4px 0;width:fit-content}
+.cars-page .pg-breakdown>summary:focus-visible,.cars-page .pg-info>summary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.cars-page .pg-breakdown dl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;margin:8px 0 0;padding:10px 12px;background:var(--bg);border-radius:10px}
+.cars-page .pg-breakdown dt,.cars-page .pg-breakdown dd{margin:0}
+.cars-page .pg-breakdown dd{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600}
+.cars-page .pg-breakdown .pg-total{border-top:1px solid var(--line);padding-top:6px;font-weight:700}
+.cars-page .pg-breakdown>p{margin:8px 0 0}
+.cars-page .pg-info p{margin:8px 0 0;color:var(--muted);line-height:1.55}
+.cars-page .form-status.pg-confirm{display:grid;gap:10px;padding:14px 16px;border-radius:10px;background:#fff4d9;color:#5c4511;border:1px solid #e6d4a9;grid-column:1 / -1}
+.cars-page .form-status.pg-confirm strong{font-size:16px}
+.cars-page .form-status.pg-confirm .btn{justify-self:start;min-height:46px}
+/* Poziv mehaničarima i autolimarima (link na /eksperti/). */
+.cars-page .pg-cta{background:linear-gradient(135deg,#fff8e9,#fff);border-color:#e6d4a9}
+.cars-page .pg-cta .section-kicker{margin:0}
+.cars-page .pg-cta h2{font-size:22px}
+.cars-page .pg-cta p{color:var(--text);line-height:1.6}
+.cars-page .pg-cta .pg-cta-dealer{color:var(--muted);font-size:14px}
+.cars-page .pg-cta .btn{justify-self:start;min-height:48px}
+@media(max-width:760px){.cars-page .pg-cta .btn{width:100%}}
+
+/* Reviewed homepage adjustments, 7 October 2026. */
+@media(max-width:600px){.hero-copy .hero-actions{grid-template-columns:minmax(0,1fr);width:100%;max-width:none;gap:10px}.hero-copy .hero-actions .btn{white-space:nowrap;min-height:48px;}}
+@media(min-width:601px){.hero-copy .hero-actions{display:flex;gap:14px;max-width:none;flex-wrap:wrap}.hero-copy .hero-actions .btn{width:auto;padding-left:22px;padding-right:22px;white-space:nowrap;}}
+.hero-photo{filter:brightness(1.925) saturate(1.12) contrast(1.06);}
+@media(max-width:760px){.contact-form-panel>summary{position:relative;box-sizing:border-box;min-height:44px;padding:12px 36px;justify-content:center;text-align:center;font-size:13px;line-height:18px;text-transform:uppercase;letter-spacing:.5px}.contact-form-panel>summary::after{position:absolute;right:16px;font-size:20px;}}

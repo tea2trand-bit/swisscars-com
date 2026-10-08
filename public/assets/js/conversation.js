@@ -1,9 +1,9 @@
 /* One conversation, two views. Text is rendered with textContent, never HTML. */
 (function () {
   const words = {
-    sr: {title:'Razgovor o vašem upitu',hint:'Pišite ovde kako bi pitanja, dogovori i odgovori ostali uz vaš upit. Odgovor tima pojaviće se na ovoj stranici. Članovi tima vide vaše poruke u svojoj aplikaciji.',empty:'Još nema poruka. Napišite pitanje ili dopunu upita.',label:'Vaša poruka',send:'Pošaljite poruku',sending:'Šaljemo…',sent:'Poruka je sačuvana. Tim je vidi uz vaš upit.',error:'Poruka nije poslata. Tekst je sačuvan u polju; pokušajte ponovo.',loadError:'Razgovor trenutno nije dostupan. Pokušajte ponovo.',rate:'Poslali ste više poruka u kratkom roku. Sačekajte malo i pokušajte ponovo.',older:'Prikažite starije poruke',refresh:'Osvežite razgovor',client:'Klijent',you:'Vi',team:'SWISCARS tim',limit:'Do 3.000 znakova',locale:'sr-Latn-RS'},
-    de: {title:'Gespräch zu Ihrer Anfrage',hint:'Schreiben Sie hier, damit Fragen, Absprachen und Antworten bei Ihrer Anfrage bleiben. Die Antwort unseres Teams erscheint hier. Unser Team sieht Ihre Nachrichten in seiner Anwendung.',empty:'Noch keine Nachrichten. Stellen Sie eine Frage oder ergänzen Sie Ihre Anfrage.',label:'Ihre Nachricht',send:'Nachricht senden',sending:'Wird gesendet…',sent:'Nachricht gespeichert. Unser Team sieht sie bei Ihrer Anfrage.',error:'Nachricht nicht gesendet. Ihr Text bleibt im Feld; versuchen Sie es erneut.',loadError:'Das Gespräch ist momentan nicht verfügbar. Bitte erneut versuchen.',rate:'Zu viele Nachrichten in kurzer Zeit. Bitte kurz warten und erneut versuchen.',older:'Ältere Nachrichten anzeigen',refresh:'Gespräch aktualisieren',client:'Kunde',you:'Sie',team:'SWISCARS Team',limit:'Bis 3.000 Zeichen',locale:'de-CH'},
-    en: {title:'Conversation about your request',hint:'Write here to keep questions, agreements and replies with your request. The team’s reply will appear on this page. Our team sees your messages in its application.',empty:'No messages yet. Ask a question or add details to your request.',label:'Your message',send:'Send message',sending:'Sending…',sent:'Message saved. The team sees it with your request.',error:'Message not sent. Your text remains in the field; please try again.',loadError:'The conversation is temporarily unavailable. Please try again.',rate:'Too many messages in a short time. Wait a little and try again.',older:'Show older messages',refresh:'Refresh conversation',client:'Customer',you:'You',team:'SWISCARS team',limit:'Up to 3,000 characters',locale:'en-GB'}
+    sr: {title:'Razgovor o vašem upitu',hint:'Pišite ovde kako bi pitanja, dogovori i odgovori ostali uz vaš upit. Odgovor tima pojaviće se na ovoj stranici. Članovi tima vide vaše poruke u svojoj aplikaciji.',empty:'Još nema poruka. Napišite pitanje ili dopunu upita.',label:'Vaša poruka',send:'Pošaljite poruku',sending:'Šaljemo…',sent:'Poruka je sačuvana. Tim je vidi uz vaš upit.',error:'Poruka nije poslata. Tekst je sačuvan u polju; pokušajte ponovo.',loadError:'Razgovor trenutno nije dostupan. Pokušajte ponovo.',rate:'Poslali ste više poruka u kratkom roku. Sačekajte malo i pokušajte ponovo.',older:'Prikažite starije poruke',refresh:'Osvežite razgovor',client:'Klijent',you:'Vi',team:'SWISCARS tim',limit:'Do 3.000 znakova',locale:'sr-Latn-RS',teamTitle:'Razgovor sa klijentom',teamHint:'Klijent vidi ove poruke na svom ličnom linku. Odgovor se čuva sa imenom člana tima i vremenom slanja.',teamLabel:'Odgovor klijentu',teamSent:'Odgovor je sačuvan. Klijent ga vidi na svom upitu.'},
+    de: {title:'Gespräch zu Ihrer Anfrage',hint:'Schreiben Sie hier, damit Fragen, Absprachen und Antworten bei Ihrer Anfrage bleiben. Die Antwort unseres Teams erscheint hier. Unser Team sieht Ihre Nachrichten in seiner Anwendung.',empty:'Noch keine Nachrichten. Stellen Sie eine Frage oder ergänzen Sie Ihre Anfrage.',label:'Ihre Nachricht',send:'Nachricht senden',sending:'Wird gesendet…',sent:'Nachricht gespeichert. Unser Team sieht sie bei Ihrer Anfrage.',error:'Nachricht nicht gesendet. Ihr Text bleibt im Feld; versuchen Sie es erneut.',loadError:'Das Gespräch ist momentan nicht verfügbar. Bitte erneut versuchen.',rate:'Zu viele Nachrichten in kurzer Zeit. Bitte kurz warten und erneut versuchen.',older:'Ältere Nachrichten anzeigen',refresh:'Gespräch aktualisieren',client:'Kunde',you:'Sie',team:'SWISCARS Team',limit:'Bis 3.000 Zeichen',locale:'de-CH',teamTitle:'Gespräch mit dem Kunden',teamHint:'Der Kunde sieht diese Nachrichten auf seinem persönlichen Link. Die Antwort wird mit Name des Teammitglieds und Sendezeit gespeichert.',teamLabel:'Antwort an den Kunden',teamSent:'Die Antwort wurde gespeichert. Der Kunde sieht sie bei seiner Anfrage.'},
+    en: {title:'Conversation about your request',hint:'Write here to keep questions, agreements and replies with your request. The team’s reply will appear on this page. Our team sees your messages in its application.',empty:'No messages yet. Ask a question or add details to your request.',label:'Your message',send:'Send message',sending:'Sending…',sent:'Message saved. The team sees it with your request.',error:'Message not sent. Your text remains in the field; please try again.',loadError:'The conversation is temporarily unavailable. Please try again.',rate:'Too many messages in a short time. Wait a little and try again.',older:'Show older messages',refresh:'Refresh conversation',client:'Customer',you:'You',team:'SWISCARS team',limit:'Up to 3,000 characters',locale:'en-GB',teamTitle:'Conversation with the customer',teamHint:'The customer sees these messages on their personal link. The reply is stored with the team member’s name and the time it was sent.',teamLabel:'Reply to the customer',teamSent:'The reply has been saved. The customer sees it with their request.'}
   };
   const widgets = new Set();
   let nextId = 0;
@@ -31,9 +31,9 @@
       list.scrollTop=atBottom?list.scrollHeight:scroll;older.hidden=!hasMore;
     }
     function language(value) {
-      lang=words[value]?value:'sr';title.textContent=options.team?'Razgovor sa klijentom':t().title;
-      hint.textContent=options.team?'Klijent vidi ove poruke na svom ličnom linku. Odgovor se čuva sa imenom člana tima i vremenom slanja.':t().hint;
-      label.textContent=options.team?'Odgovor klijentu':t().label;send.textContent=busy?t().sending:t().send;
+      lang=words[value]?value:'sr';title.textContent=options.team?t().teamTitle:t().title;
+      hint.textContent=options.team?t().teamHint:t().hint;
+      label.textContent=options.team?t().teamLabel:t().label;send.textContent=busy?t().sending:t().send;
       older.textContent=t().older;refresh.textContent=t().refresh;limit.textContent=t().limit;paint();
     }
     async function load(before=null) {
@@ -54,7 +54,7 @@
       try {
         const result=await options.call(options.team?'sc_team_send_message':'sc_order_send_message',{...options.key,p_text:pendingText,p_request_id:requestId});
         if(!result?.ok)throw Error('not_saved');
-        input.value='';requestId=null;say(options.team?'Odgovor je sačuvan. Klijent ga vidi na svom upitu.':t().sent);await load();options.onSent?.();
+        input.value='';requestId=null;say(options.team?t().teamSent:t().sent);await load();options.onSent?.();
       } catch(e) {say(String(e.message).includes('rate_limited')?t().rate:t().error,true);}
       finally {busy=false;input.disabled=false;send.disabled=false;send.textContent=t().send;}
     });
@@ -63,5 +63,7 @@
   }
   setInterval(()=>{if(document.visibilityState==='visible')for(const widget of widgets){if(widget.root.isConnected&&widget.root.getClientRects().length)widget.refresh();else if(!widget.root.isConnected)widgets.delete(widget);}},15000);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')for(const widget of widgets)if(widget.root.isConnected&&widget.root.getClientRects().length)widget.refresh();});
+  // Evidencija (/intern/) menja jezik bez ponovnog učitavanja: svi otvoreni razgovori prate izbor.
+  document.addEventListener('evidencija-language-changed',e=>{const l=e&&e.detail&&e.detail.language;if(words[l])for(const widget of widgets)widget.setLanguage(l);});
   window.SCConversation={mount};
 })();

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pregled auta u Švajcarskoj | SWISCARS GmbH</title>
-<meta name="description" content="Našli ste auto u Švajcarskoj? Pregledamo ga za vas: udes, papiri, tehnika, slike i pisani izveštaj. Pregled u St. Gallenu od 90 CHF. Cena prema mestu vozila.">
+<meta name="description" content="Našli ste auto u Švajcarskoj? Pregledamo ga za vas: udes, papiri, tehnika, slike i pisani izveštaj. Cena prema mestu vozila: lokalni partner ekspert ili SWISCARS tim iz St. Gallena.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
@@ -30,9 +30,9 @@
     <a href="/#about" data-i18n="navAbout">O nama</a>
     <a href="/#blog" data-i18n="navBlog">Saveti</a>
     <a class="nav-contact-mobile" href="/#contact" data-i18n="navContact">Kontakt</a>
-  <a class="nav-team-portal" href="/intern/" data-i18n="navTeamPortal" rel="nofollow">Tim</a></nav>
+  <details class="nav-partners"><summary><span class="nav-login-desktop" data-i18n="navLogin">Login</span><span class="nav-login-mobile" data-i18n="navAccountAccess">Prijava / Registracija</span></summary><div class="nav-partners-list"><a href="/intern/" data-i18n="navLoginTeam" rel="nofollow">Tim</a><span class="nav-partners-caption" data-i18n="navPartnersLabel">Saradnici</span><a href="/dileri/" data-i18n="navDealers">Autodileri</a><a href="/eksperti/" data-i18n="navExperts">Eksperti</a><a href="/prevoznici/" data-i18n="navCarriers">Prevoznici</a></div></details></nav>
   <div class="language-switch">
-    <button data-lang="sr" class="active">SR</button><button data-lang="de">DE</button>
+    <button data-lang="sr" class="active">SR</button><button data-lang="de">DE</button><button data-lang="en">EN</button>
   </div>
   <a class="btn btn-outline header-cta" href="/#contact" data-i18n="navContact">Kontakt</a>
 </header>
@@ -54,18 +54,29 @@
         <h2 id="p_whatT"></h2>
         <ul class="pg-checks" id="p_what"></ul>
       </div>
-      <div class="up-card" id="kalkulator-pregleda" style="scroll-margin-top:80px">
+      <div class="up-card pg-price-card" id="kalkulator-pregleda" style="scroll-margin-top:80px">
         <h2 id="p_priceT"></h2>
-        <dl class="car-specs" id="p_prices"></dl>
+        <dl class="car-specs" id="p_prices" hidden></dl>
         <div class="pg-price-controls">
           <div class="pg-place-field">
-            <label for="pg_place" id="pg_placeLabel">Poštanski broj ili grad gde se vozilo nalazi</label>
-            <input id="pg_place" name="place" form="pgForm" aria-describedby="pg_quote p_priceNote" required>
+            <label for="pg_place" id="pg_placeLabel">Poštanski broj ili mesto vozila</label>
+            <div class="pg-combobox">
+              <input id="pg_place" name="place" form="pgForm" placeholder="npr. 8001 Zürich" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="search" maxlength="80" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="pg_sugg" aria-describedby="pg_quoteMeta pg_quote" required>
+              <button type="button" class="pg-clear" id="pg_clear" aria-label="Obriši unos" hidden>&times;</button>
+              <ul class="pg-suggest" id="pg_sugg" role="listbox" aria-label="Predlozi mesta" hidden></ul>
+            </div>
+            <p class="pg-suggest-status" id="pg_suggStatus" role="status" hidden></p>
           </div>
-          <p class="pg-price-quote" id="pg_quote" aria-live="polite" aria-atomic="true" aria-label="Od 90 CHF · Početna cena za St. Gallen"><strong>Od 90 CHF</strong><span>Početna cena za St. Gallen</span></p>
+          <div class="pg-price-box">
+            <p class="pg-quote-meta" id="pg_quoteMeta" aria-live="polite">Unesite mesto vozila za ponudu prema dostupnom ekspertu i njegovom cenovniku.</p>
+            <p class="pg-price-quote" id="pg_quote" aria-live="polite" aria-atomic="true" aria-label="Cena prema mestu vozila"><span class="pg-q-from"></span><strong class="pg-q-num">—</strong><span class="pg-q-cur">CHF</span></p>
+          </div>
           <button class="btn btn-gold" type="button" id="pg_book" aria-controls="pgForm" aria-expanded="false" disabled>Zakaži</button>
         </div>
+        <div class="pg-quote-extra" id="pg_quoteExtra" hidden></div>
+        <details class="pg-breakdown" id="pg_break" hidden></details>
         <p class="car-meta" id="p_priceNote"></p>
+        <details class="pg-info"><summary id="pg_infoT"></summary><p id="pg_infoP"></p></details>
       </div>
       <form class="contact-form up-card" id="pgForm" novalidate hidden>
         <h2 id="p_formT" style="grid-column:1/-1"></h2>
@@ -92,12 +103,19 @@
     <div class="up-card up-contact">
       <h2 id="p_qT"></h2>
       <p id="p_qP"></p>
-      <div class="hero-actions" style="margin:0"><a class="btn btn-gold" href="https://wa.me/41799056164" target="_blank" rel="noopener">WhatsApp</a><a class="btn btn-outline up-out" href="mailto:info@swiscars.com">info@swiscars.com</a><a class="btn btn-outline up-out" href="tel:+41799056164">+41 79 905 61 64</a></div>
+      <div class="hero-actions" style="margin:0"><a class="btn btn-gold pg-contact-whatsapp" href="https://wa.me/41799056164" target="_blank" rel="noopener">WhatsApp</a><a class="btn btn-outline pg-contact-viber" href="viber://chat?number=%2B41799056164">Viber</a><a class="btn btn-outline up-out pg-contact-phone" href="tel:+41799056164">+41 79 905 61 64</a><a class="btn btn-outline up-out pg-contact-email" href="mailto:info@swiscars.com">info@swiscars.com</a></div>
+    </div>
+    <div class="up-card pg-cta">
+      <p class="section-kicker" id="pg_ctaK">Za mehaničare i autolimare</p>
+      <h2 id="pg_ctaT">Iskoristite svoje znanje za dodatnu zaradu</h2>
+      <p id="pg_ctaP">Obavljajte stručne preglede vozila u svom mestu ili kantonu preko SWISCARS-a. Sami određujete cenu pregleda i puta. Prijavu proverava SWISCARS pre aktivacije; svaki pregled dogovara se pojedinačno.</p>
+      <p class="pg-cta-dealer" id="pg_ctaDealer">Autodileri: preporučite SWISCARS svom mehaničaru ili autolimaru.</p>
+      <a class="btn btn-outline" id="pg_ctaBtn" href="/eksperti/">Prijava za eksperte</a>
     </div>
   </div>
 </section>
 </main>
 
 <footer><div class="brand footer-brand"><span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span><span><strong>SWISCARS</strong><small>Premium Selection</small></span></div><div class="footer-company"><strong>SWISCARS GmbH</strong><span data-i18n="footerText">Vaš tehnički ekspert za proverena vozila iz Švajcarske.</span><span data-i18n="footerCountry">Švajcarska</span></div><div class="footer-social"><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none"/></svg></a><a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M14 9V7.2c0-.8.5-1.2 1.3-1.2H17V3h-2.4C12 3 11 4.7 11 6.8V9H9v3h2v9h3v-9h2.2l.5-3H14z" fill="currentColor" stroke="none"/></svg></a><a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="2" y="5.5" width="20" height="13" rx="3.5"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor" stroke="none"/></svg></a></div><div class="footer-legal"><a href="/impressum" data-i18n="navImpressum">Impresum</a><a href="/agb" data-i18n="navAgb">Uslovi</a><a href="/intern/" data-i18n="navTeam" rel="nofollow">Za tim</a></div><small>&copy; 2026 SWISCARS GmbH. <span data-i18n="footerRights">Sva prava zadržana.</span></small></footer>
-<script src="/assets/js/translations.js"></script><script src="/assets/js/main.js"></script><script src="/assets/js/inspection-report.js"></script><script src="/assets/js/pregled.js"></script>
+<script src="/assets/js/translations.js"></script><script src="/assets/js/main.js"></script><script src="/assets/js/inspection-report.js"></script><script src="/assets/js/pregled-texts.js"></script><script src="/assets/js/pregled.js"></script>
 </body></html>

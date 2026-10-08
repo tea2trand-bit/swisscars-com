@@ -1,118 +1,42 @@
 /* SWISCARS – car inspection on order (/pregled/).
-   Without a token in the link: what we check, prices from St. Gallen, order form with a live price.
-   With /pregled/#<token>: status of the order, payment details and the report with photos. */
+   Without a token in the link: what we check, dynamic price by vehicle place (partner expert or SWISCARS team), order form.
+   With /pregled/#<token>: status of the order, payment details and the report with photos.
+   Texts live in pregled-texts.js (window.SCPregledTexts). The server (sc_insp_quote_place / sc_submit_inspection) is the
+   only authority for price, origin and the proposed expert; this page only displays what it returns. */
 (function () {
   const URL_ = typeof SC_URL !== "undefined" ? SC_URL : "https://qghrrnqsvsrcwdhgufkv.supabase.co";
   const KEY = typeof SC_KEY !== "undefined" ? SC_KEY : "";
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const num = n => Number(n).toLocaleString(lang()==="sr"?"sr-Latn-RS":lang()==="de"?"de-CH":"en-GB",{maximumFractionDigits:2});
+  const LOCALE = { sr: "sr-Latn-RS", de: "de-CH", en: "en-GB" };
+  const num = n => Number(n).toLocaleString(LOCALE[lang()], { maximumFractionDigits: 2 });
+  const money = n => { const v = Number(n); return v.toLocaleString(LOCALE[lang()], { minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 }); };
+  const fill = (s, m) => String(s).replace(/\{(\w+)\}/g, (_, k) => (k in m ? m[k] : "{" + k + "}"));
   const rpc = (fn, body) => fetch(`${URL_}/rest/v1/rpc/${fn}`, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
     .then(async r => { const j = await r.json().catch(() => null); if (!r.ok) throw new Error((j && j.message) || r.status); return j; });
   const photo = p => /^https?:/.test(p) ? p : `${URL_}/storage/v1/object/public/sc-photos/${String(p).split("/").map(encodeURIComponent).join("/")}`;
-  const lang = () => { const l = localStorage.getItem("swiscars-lang"); return ["sr", "de", "en"].includes(l) ? l : "sr"; };
-
-  const L = {
-    sr: {
-      kicker: "Pregled auta", title: "Pregled auta u Švajcarskoj",
-      lead: "Našli ste auto u Švajcarskoj? Pre nego što platite, naš tim ga pregleda na licu mesta i pošalje vam slike i pisani izveštaj.",
-      whatT: "Šta proveravamo",
-      what: [["Da li je auto lupan", "Karoserija, debljina laka, zazori, tragovi popravke"], ["Papirologija", "Saobraćajna, servisna knjiga, MFK, broj vlasnika, poreklo"], ["Tehničko stanje", "Motor, menjač, kočnice, gume, test vožnja"], ["Slike i izveštaj", "Detaljne slike i pisano mišljenje: preporučujemo ili ne"]],
-      priceT: "Cena pregleda", prices: [["Do 100 km od St. Gallena", "200 CHF"], ["Do 200 km od St. Gallena", "300 CHF"], ["Dalje od 200 km", "po dogovoru"]],
-      priceNote: "Polazimo iz St. Gallena. Pregled se plaća unapred; kad uplata legne, dogovaramo termin sa prodavcem.",
-      formT: "Naručite pregled", url: "Link oglasa (comparis, autoscout24, …)", car: "Auto (npr. VW Golf 7 2.0 TDI, 2017)", place: "Grad ili poštanski broj gde je auto",
-      name: "Ime i prezime", phone: "Telefon / WhatsApp", email: "E-mail (za link i izveštaj)", notes: "Napomena (npr. kada je prodavac dostupan, šta vas posebno zanima)",
-      send: "Naruči pregled", sending: "Šaljem…",
-      qFee: "{ort} ({k}) · ~{d} km od St. Gallena · pregled {f} CHF", qAgree: "{ort} ({k}) · ~{d} km od St. Gallena · cena po dogovoru, javićemo vam se", qNo: "Mesto nije pronađeno. Upišite poštanski broj (npr. 8000).",
-      need: "Upišite link oglasa, mesto, ime i email.",
-      ok: "Hvala! Narudžbina je primljena. Javićemo vam se u roku od 24 sata. Link za praćenje šaljemo i na vaš mejl. Status i izveštaj možete otvoriti i odmah:", okLink: "Moj pregled →",
-      saveHint: "Sačuvajte link i za drugi uređaj:", wa: "Pošalji sebi na WhatsApp", copy: "Kopiraj link", copied: "Kopirano ✓", waText: "Moj SWISCARS pregled:",
-      err: "Slanje nije uspelo. Pokušajte ponovo ili nam pišite na WhatsApp.",
-      last: "Vaša poslednja narudžbina pregleda →",
-      errT: "Narudžbina nije pronađena", errP: "Proverite link iz emaila ili nam se javite.", errB: "Naruči pregled",
-      track: ["Primljeno", "Uplata", "Pregled", "Izveštaj"],
-      now: ["Narudžbina je primljena. Uplatite cenu pregleda; kad uplata legne, dogovaramo termin.", "Uplata je primljena. Dogovaramo termin sa prodavcem.", "Pregled je zakazan: {p}.", "Pregled je gotov. Izveštaj je ispod."],
-      nowAgree: "Narudžbina je primljena. Mesto je dalje od 200 km, javićemo vam se sa cenom.",
-      cancelled: "Ova narudžbina je otkazana. Ako i dalje želite pregled, javite nam se.",
-      rCar: "Auto", rAd: "Oglas", rPlace: "Mesto", rFee: "Cena pregleda", agree: "po dogovoru", open: "Otvori oglas ↗",
-      payT: "Uplata", payP: "Molimo uplatite {f} CHF. Napomena uz uplatu: „Pregled {n}“.", payNone: "Podatke za uplatu šaljemo vam lično (WhatsApp ili email).",
-      repT: "Izveštaj sa pregleda", rep: { udes: "Da li je auto lupan", papiri: "Papirologija", tehnika: "Tehničko stanje", zakljucak: "Zaključak" },
-      verdict: { da: "✓ Preporučujemo kupovinu", oprez: "⚠ Kupovina uz oprez (vidi zaključak)", ne: "✗ Ne preporučujemo kupovinu" },
-      qT: "Pitanja?", qP: "Pišite nam ili nas pozovite, odgovaramo brzo."
-    },
-    de: {
-      kicker: "Fahrzeugprüfung", title: "Fahrzeugprüfung in der Schweiz",
-      lead: "Sie haben ein Auto in der Schweiz gefunden? Bevor Sie zahlen, prüft unser Team es vor Ort und sendet Ihnen Fotos und einen schriftlichen Bericht.",
-      whatT: "Was wir prüfen",
-      what: [["Unfallschäden", "Karosserie, Lackschichtdicke, Spaltmasse, Reparaturspuren"], ["Papiere", "Fahrzeugausweis, Serviceheft, MFK, Anzahl Halter, Herkunft"], ["Technischer Zustand", "Motor, Getriebe, Bremsen, Reifen, Probefahrt"], ["Fotos und Bericht", "Detailfotos und schriftliche Einschätzung: empfehlenswert oder nicht"]],
-      priceT: "Preis der Prüfung", prices: [["Bis 100 km ab St. Gallen", "200 CHF"], ["Bis 200 km ab St. Gallen", "300 CHF"], ["Weiter als 200 km", "nach Absprache"]],
-      priceNote: "Abfahrt ab St. Gallen. Die Prüfung wird im Voraus bezahlt; nach Zahlungseingang vereinbaren wir einen Termin mit dem Verkäufer.",
-      formT: "Prüfung bestellen", url: "Link zum Inserat (comparis, autoscout24, …)", car: "Auto (z. B. VW Golf 7 2.0 TDI, 2017)", place: "Ort oder Postleitzahl des Autos",
-      name: "Vor- und Nachname", phone: "Telefon / WhatsApp", email: "E-Mail (für Link und Bericht)", notes: "Bemerkung (z. B. wann der Verkäufer erreichbar ist, was Sie besonders interessiert)",
-      send: "Prüfung bestellen", sending: "Wird gesendet…",
-      qFee: "{ort} ({k}) · ~{d} km ab St. Gallen · Prüfung {f} CHF", qAgree: "{ort} ({k}) · ~{d} km ab St. Gallen · Preis nach Absprache, wir melden uns", qNo: "Ort nicht gefunden. Bitte Postleitzahl eingeben (z. B. 8000).",
-      need: "Bitte Inserat-Link, Ort, Name und E-Mail angeben.",
-      ok: "Danke! Die Bestellung ist eingegangen. Wir melden uns innerhalb von 24 Stunden. Den Link zum Status senden wir Ihnen auch per E-Mail. Status und Bericht sehen Sie auch gleich hier:", okLink: "Meine Prüfung →",
-      saveHint: "Speichern Sie den Link auch für ein anderes Gerät:", wa: "Per WhatsApp an mich senden", copy: "Link kopieren", copied: "Kopiert ✓", waText: "Meine SWISCARS-Prüfung:",
-      err: "Senden fehlgeschlagen. Bitte erneut versuchen oder per WhatsApp schreiben.",
-      last: "Ihre letzte Prüfungsbestellung →",
-      errT: "Bestellung nicht gefunden", errP: "Bitte prüfen Sie den Link aus der E-Mail oder melden Sie sich.", errB: "Prüfung bestellen",
-      track: ["Eingegangen", "Zahlung", "Prüfung", "Bericht"],
-      now: ["Die Bestellung ist eingegangen. Bitte zahlen Sie den Prüfpreis; nach Zahlungseingang vereinbaren wir einen Termin.", "Zahlung erhalten. Wir vereinbaren einen Termin mit dem Verkäufer.", "Prüfung geplant: {p}.", "Die Prüfung ist abgeschlossen. Der Bericht steht unten."],
-      nowAgree: "Die Bestellung ist eingegangen. Der Ort ist weiter als 200 km, wir melden uns mit dem Preis.",
-      cancelled: "Diese Bestellung wurde storniert. Wenn Sie weiterhin eine Prüfung wünschen, melden Sie sich.",
-      rCar: "Auto", rAd: "Inserat", rPlace: "Ort", rFee: "Preis der Prüfung", agree: "nach Absprache", open: "Inserat öffnen ↗",
-      payT: "Zahlung", payP: "Bitte überweisen Sie {f} CHF. Vermerk: „Prüfung {n}“.", payNone: "Die Zahlungsangaben senden wir Ihnen persönlich (WhatsApp oder E-Mail).",
-      repT: "Prüfbericht", rep: { udes: "Unfallschäden", papiri: "Papiere", tehnika: "Technischer Zustand", zakljucak: "Fazit" },
-      verdict: { da: "✓ Kauf empfohlen", oprez: "⚠ Kauf mit Vorsicht (siehe Fazit)", ne: "✗ Kauf nicht empfohlen" },
-      qT: "Fragen?", qP: "Schreiben Sie uns oder rufen Sie an, wir antworten schnell."
-    },
-    en: {
-      kicker: "Car inspection", title: "Car inspection in Switzerland",
-      lead: "Found a car in Switzerland? Before you pay, our team inspects it on site and sends you photos and a written report.",
-      whatT: "What we check",
-      what: [["Accident damage", "Body, paint thickness, panel gaps, signs of repair"], ["Paperwork", "Registration, service book, MFK, number of owners, origin"], ["Technical condition", "Engine, gearbox, brakes, tyres, test drive"], ["Photos and report", "Detailed photos and a written opinion: recommended or not"]],
-      priceT: "Inspection price", prices: [["Up to 100 km from St. Gallen", "200 CHF"], ["Up to 200 km from St. Gallen", "300 CHF"], ["Further than 200 km", "on request"]],
-      priceNote: "We start from St. Gallen. The inspection is paid in advance; once the payment arrives we arrange a time with the seller.",
-      formT: "Order an inspection", url: "Link to the listing (comparis, autoscout24, …)", car: "Car (e.g. VW Golf 7 2.0 TDI, 2017)", place: "Town or postal code where the car is",
-      name: "Full name", phone: "Phone / WhatsApp", email: "E-mail (for the link and report)", notes: "Note (e.g. when the seller is available, what you care about most)",
-      send: "Order inspection", sending: "Sending…",
-      qFee: "{ort} ({k}) · ~{d} km from St. Gallen · inspection {f} CHF", qAgree: "{ort} ({k}) · ~{d} km from St. Gallen · price on request, we will contact you", qNo: "Place not found. Please enter the postal code (e.g. 8000).",
-      need: "Please enter the listing link, place, name and e-mail.",
-      ok: "Thank you! Your order has been received. We will get back to you within 24 hours. We also email you the tracking link. You can open the status and report right away:", okLink: "My inspection →",
-      saveHint: "Save the link for another device too:", wa: "Send to myself on WhatsApp", copy: "Copy link", copied: "Copied ✓", waText: "My SWISCARS inspection:",
-      err: "Sending failed. Please try again or write to us on WhatsApp.",
-      last: "Your last inspection order →",
-      errT: "Order not found", errP: "Please check the link from the e-mail or contact us.", errB: "Order an inspection",
-      track: ["Received", "Payment", "Inspection", "Report"],
-      now: ["Your order has been received. Please pay the inspection price; once it arrives we arrange a time.", "Payment received. We are arranging a time with the seller.", "Inspection scheduled: {p}.", "The inspection is done. The report is below."],
-      nowAgree: "Your order has been received. The place is further than 200 km, we will contact you with the price.",
-      cancelled: "This order was cancelled. If you still want an inspection, please contact us.",
-      rCar: "Car", rAd: "Listing", rPlace: "Place", rFee: "Inspection price", agree: "on request", open: "Open listing ↗",
-      payT: "Payment", payP: "Please pay {f} CHF. Reference: “Inspection {n}”.", payNone: "We will send you the payment details personally (WhatsApp or e-mail).",
-      repT: "Inspection report", rep: { udes: "Accident damage", papiri: "Paperwork", tehnika: "Technical condition", zakljucak: "Conclusion" },
-      verdict: { da: "✓ We recommend buying", oprez: "⚠ Buy with caution (see conclusion)", ne: "✗ We do not recommend buying" },
-      qT: "Questions?", qP: "Write or call us, we answer quickly."
-    }
-  };
-  Object.assign(L.sr, {"prices":[],"priceNote":"Pregled u St. Gallenu od 90 CHF. Unesite grad ili poštanski broj vozila za okvirnu ukupnu cenu. Za udaljenija mesta cena zavisi od puta. Cenu potvrđujemo pre uplate; nakon uplate dogovaramo termin sa prodavcem.","place":"Poštanski broj ili grad (dalje od St. Gallena je skuplje)","qFee":"{ort} ({plz}) · Okvirna cena pregleda: {f} CHF","qAgree":"{ort} ({plz}) · Cena se potvrđuje po dogovoru","qNo":"Mesto nije pronađeno. Proverite naziv grada ili unesite poštanski broj (npr. 8000).","qLoading":"Računamo okvirnu cenu pregleda…","qError":"Cena trenutno nije dostupna. Pokušajte ponovo.","priceChanged":"Cena pregleda je promenjena. Proverite novu cenu iznad, pa ponovo pošaljite zahtev.","nowAgree":"Narudžbina je primljena. Javićemo vam se da potvrdimo cenu pregleda."});
-  Object.assign(L.de, {"prices":[],"priceNote":"Fahrzeugprüfung in St. Gallen ab 90 CHF. Geben Sie Ort oder Postleitzahl des Fahrzeugs für den geschätzten Gesamtpreis ein. Bei weiter entfernten Orten richtet sich der Preis nach der Anfahrt. Wir bestätigen den Preis vor Zahlung; danach vereinbaren wir einen Termin.","place":"Postleitzahl oder Ort (weiter von St. Gallen = teurer)","qFee":"{ort} ({plz}) · Geschätzter Prüfpreis: {f} CHF","qAgree":"{ort} ({plz}) · Preis nach Absprache","qNo":"Ort nicht gefunden. Prüfen Sie den Ortsnamen oder geben Sie die Postleitzahl ein (z. B. 8000).","qLoading":"Prüfpreis wird berechnet…","qError":"Preis momentan nicht verfügbar. Bitte erneut versuchen.","priceChanged":"Der Prüfpreis hat sich geändert. Bitte prüfen Sie den neuen Preis oben und senden Sie die Anfrage erneut.","nowAgree":"Bestellung erhalten. Wir melden uns zur Preisbestätigung."});
-  Object.assign(L.en, {"prices":[],"priceNote":"Vehicle inspections in St. Gallen from CHF 90. Enter the vehicle’s town or postal code for the estimated total price. Prices for locations farther away depend on travel distance. We confirm the price before payment, then arrange a time with the seller.","place":"Postal code or town (farther from St. Gallen costs more)","qFee":"{ort} ({plz}) · Estimated inspection price: {f} CHF","qAgree":"{ort} ({plz}) · Price to be confirmed","qNo":"Place not found. Check the town name or enter the postal code (e.g. 8000).","qLoading":"Calculating the estimated inspection price…","qError":"Price temporarily unavailable. Please try again.","priceChanged":"The inspection price has changed. Check the new price above and submit your request again.","nowAgree":"Order received. We will contact you to confirm the inspection price."});
-  Object.assign(L.sr, {need:"Upišite oglas ili auto, mesto, ime i prezime, telefon i email.",fullNameNeeded:"Unesite ime i prezime.",phoneNeeded:"Unesite ispravan broj telefona, npr. +381 64 123 4567."});
-  Object.assign(L.de, {need:"Bitte Inserat oder Auto, Ort, Vor- und Nachname, Telefon und E-Mail angeben.",fullNameNeeded:"Bitte Vor- und Nachname angeben.",phoneNeeded:"Bitte eine gültige Telefonnummer angeben, z. B. +41 79 123 45 67."});
-  Object.assign(L.en, {need:"Enter the listing or car, location, full name, phone and email.",fullNameNeeded:"Enter your first and last name.",phoneNeeded:"Enter a valid phone number, e.g. +41 79 123 45 67."});
-  Object.assign(L.sr, {book:"Zakaži",qPrompt:"Početna cena za St. Gallen",startingPrice:"Od 90 CHF"});
-  Object.assign(L.de, {book:"Prüfung buchen",qPrompt:"Startpreis für St. Gallen",startingPrice:"Ab 90 CHF"});
-  Object.assign(L.en, {book:"Book inspection",qPrompt:"Starting price for St. Gallen",startingPrice:"From CHF 90"});
-  const T = () => L[lang()];
+  // Shared SR/DE/EN selector is provided by the published main.js.
+  let chosenLang = null;
+  const lang = () => { let l = null; try { l = chosenLang || localStorage.getItem("swiscars-lang"); } catch (e) {} return ["sr", "de", "en"].includes(l) ? l : "sr"; };
+  try { if (chosenLang && localStorage.getItem("swiscars-lang") !== chosenLang) localStorage.setItem("swiscars-lang", chosenLang); } catch (e) {}
+  const L = window.SCPregledTexts || { sr: {}, de: {}, en: {} };
+  const T = () => L[lang()] || L.sr;
   const tokenOf = () => { const h = location.hash.slice(1); return /^[a-f0-9]{24}$/.test(h) ? h : null; };
   const KEYLS = "sc_my_pregled";
-  let view = null, quote = null, qTimer = null, quotePlace = "", quoteSeq = 0;
+  let view = null;
+  // Cena: quote = poslednji odgovor servera; quotePlace = unos za koji važi; selected = izabrani predlog (plz+ort).
+  let quote = null, quotePlace = "", quoteSeq = 0, selected = null, pendingConfirm = null;
+  // Predlozi mesta.
+  let sugItems = [], sugActive = -1, sugSeq = 0, sugTimer = null, blurTimer = null;
 
   function common() {
     const t = T();
     $("p_kicker").textContent = t.kicker; $("p_title").textContent = t.title; $("p_lead").textContent = t.lead;
     $("p_qT").textContent = t.qT; $("p_qP").textContent = t.qP;
+    [["pg_cWa", "cWa", "cWaLabel"], ["pg_cViber", "cViber", "cViberLabel"], ["pg_cMail", "cMail", "cMailLabel"], ["pg_cCall", "cCall", "cCallLabel"]].forEach(([id, k, lab]) => {
+      const a = $(id); if (!a) return; a.setAttribute("aria-label", t[lab]); a.querySelector(".pg-c-short").textContent = t[k];
+    });
+    if ($("pg_ctaK")) { $("pg_ctaK").textContent = t.ctaK; $("pg_ctaT").textContent = t.ctaT; $("pg_ctaP").textContent = t.ctaP; $("pg_ctaDealer").textContent = t.ctaDealer; $("pg_ctaBtn").textContent = t.ctaBtn; }
   }
 
   function renderOrder() {
@@ -125,103 +49,231 @@
     let last = null; try { last = JSON.parse(localStorage.getItem(KEYLS) || "null"); } catch (e) {}
     $("p_priceNote").innerHTML = esc(t.priceNote) + (last && last.t ? ` <a href="/pregled/#${esc(last.t)}">${esc(t.last)}</a>` : "");
     $("pg_placeLabel").textContent = t.place;
+    $("pg_place").placeholder = t.placePh; $("pg_place").setAttribute("aria-label", t.place);
+    $("pg_clear").setAttribute("aria-label", t.clear); $("pg_clear").title = t.clear;
+    $("pg_sugg").setAttribute("aria-label", t.sugLabel);
+    $("pg_infoT").textContent = t.infoT; $("pg_infoP").textContent = t.infoP;
     $("p_formT").textContent = t.formT;
-    [["pg_url", "url"], ["pg_car", "car"], ["pg_place", "place"], ["pg_name", "name"], ["pg_phone", "phone"], ["pg_email", "email"], ["pg_notes", "notes"]]
+    [["pg_url", "url"], ["pg_car", "car"], ["pg_name", "name"], ["pg_phone", "phone"], ["pg_email", "email"], ["pg_notes", "notes"]]
       .forEach(([id, k]) => { $(id).placeholder = t[k]; $(id).setAttribute("aria-label", t[k]); });
     $("pg_send").textContent = t.send;
     $("pg_book").textContent = t.book;
+    renderSuggest();
     showQuote();
   }
 
+  /* ---------- predlozi mesta (combobox) ---------- */
+  const updateClear = () => { $("pg_clear").hidden = !$("pg_place").value; };
+  function sugStatus(text, warn) { const s = $("pg_suggStatus"); s.hidden = !text; s.textContent = text || ""; s.classList.toggle("pg-warn", !!warn); }
+  function closeSuggest() { sugItems = []; sugActive = -1; renderSuggest(); sugStatus(""); }
+  function renderSuggest() {
+    const ul = $("pg_sugg"), inp = $("pg_place");
+    ul.hidden = !sugItems.length;
+    inp.setAttribute("aria-expanded", String(!!sugItems.length));
+    ul.innerHTML = sugItems.map((s, i) => `<li role="option" id="pg_opt_${i}" aria-selected="${i === sugActive}" data-i="${i}"><b>${esc(s.plz)}</b><span>${esc(s.ort)}</span><small>${esc(s.kanton || "")}</small></li>`).join("");
+    if (sugActive >= 0) { inp.setAttribute("aria-activedescendant", "pg_opt_" + sugActive); const li = ul.children[sugActive]; if (li && li.scrollIntoView) li.scrollIntoView({ block: "nearest" }); }
+    else inp.removeAttribute("aria-activedescendant");
+  }
+  async function loadSuggest(v) {
+    const seq = ++sugSeq;
+    if (!sugItems.length) sugStatus(T().sugLoading);
+    try {
+      const rows = await rpc("sc_place_suggest", { p_prefix: v, p_limit: 8 });
+      if (seq !== sugSeq || v !== $("pg_place").value.trim()) return; // zastareo odgovor
+      sugItems = Array.isArray(rows) ? rows.filter(r => r && r.plz && r.ort) : []; sugActive = -1; renderSuggest();
+      sugStatus(sugItems.length ? "" : fill(T().sugEmpty, { q: v }), false);
+    } catch (e) { if (seq === sugSeq) { sugItems = []; renderSuggest(); sugStatus(T().sugError, true); } }
+  }
+  function choose(item) {
+    selected = { plz: String(item.plz), ort: String(item.ort), kanton: item.kanton ? String(item.kanton) : "" };
+    $("pg_place").value = selected.plz + " " + selected.ort; updateClear();
+    closeSuggest(); ++sugSeq; clearTimeout(sugTimer);
+    calculateQuote();
+  }
+  $("pg_place").addEventListener("input", () => {
+    const v = $("pg_place").value.trim();
+    selected = null; invalidateQuote(); updateClear();
+    clearTimeout(sugTimer); ++sugSeq;
+    if (v.length < 2) { closeSuggest(); return; }
+    sugTimer = setTimeout(() => loadSuggest(v), 250);
+    // Čist poštanski broj: cena se računa i bez izbora iz liste (više mesta → izbor dolazi sa servera).
+    if (/^\d{4}$/.test(v)) { clearTimeout(qTimer); qTimer = setTimeout(calculateQuote, 450); }
+  });
+  $("pg_place").addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (!sugItems.length) { const v = $("pg_place").value.trim(); if (v.length >= 2) loadSuggest(v); return; }
+      e.preventDefault();
+      sugActive = e.key === "ArrowDown" ? Math.min(sugItems.length - 1, sugActive + 1) : Math.max(0, sugActive - 1);
+      renderSuggest();
+    } else if (e.key === "Enter") {
+      e.preventDefault(); // Enter u polju mesta nikad ne šalje formu
+      if (sugItems.length && sugActive >= 0) return choose(sugItems[sugActive]);
+      if (sugItems.length === 1) return choose(sugItems[0]);
+      closeSuggest(); ++sugSeq; clearTimeout(sugTimer); calculateQuote();
+    } else if (e.key === "Escape") {
+      if (sugItems.length) { e.preventDefault(); closeSuggest(); }
+    } else if (e.key === "Tab") closeSuggest();
+  });
+  $("pg_place").addEventListener("blur", () => {
+    // Stanje se čita u trenutku napuštanja polja; ako se polje u međuvremenu ponovo koristi, ništa se ne dira.
+    const v = $("pg_place").value.trim(), need = v.length >= 3 && !selected && !quote;
+    clearTimeout(blurTimer);
+    blurTimer = setTimeout(() => { if (document.activeElement === $("pg_place")) return; closeSuggest(); if (need && !quote && v === $("pg_place").value.trim()) calculateQuote(); }, 150);
+  });
+  $("pg_place").addEventListener("focus", () => { const v = $("pg_place").value.trim(); if (v.length >= 2 && !selected && !sugItems.length) loadSuggest(v); });
+  $("pg_sugg").addEventListener("mousedown", e => e.preventDefault()); // fokus ostaje u polju; klik bira
+  $("pg_sugg").addEventListener("click", e => { const li = e.target.closest("li[data-i]"); if (li) choose(sugItems[Number(li.dataset.i)]); });
+  $("pg_clear").addEventListener("click", () => {
+    $("pg_place").value = ""; selected = null; updateClear(); closeSuggest(); ++sugSeq; clearTimeout(sugTimer);
+    invalidateQuote(); $("pg_place").focus();
+  });
+
+  /* ---------- cena ---------- */
+  let qTimer = null;
   const currentQuoteValid = () => !!(quote && quote.found && quote.fee != null && quotePlace === $("pg_place").value.trim());
-  function closeOrder() {
-    $("pgForm").hidden = true;
-    $("pg_book").setAttribute("aria-expanded", "false");
+  function closeOrder() { $("pgForm").hidden = true; $("pg_book").setAttribute("aria-expanded", "false"); }
+  function openOrder() { $("pgForm").hidden = false; $("pg_book").setAttribute("aria-expanded", "true"); }
+  function invalidateQuote() { ++quoteSeq; clearTimeout(qTimer); quote = null; quotePlace = ""; pendingConfirm = null; closeOrder(); showQuote(); }
+  function originText(q) {
+    const t = T(), o = q.origin || {};
+    return fill(o.kind === "expert" ? t.originExpert : t.originTeam, { ort: o.ort || "St. Gallen" });
+  }
+  // Kutija cene sadrži SAMO iznos: mali „od/okvirno“, veliki broj, manji CHF. Sav ostali tekst ide iznad (meta) ili van (extra).
+  let START_FEE = null; // Loaded from the available public price lists.
+  function box(prefix, amount) {
+    $("pg_quote").innerHTML = `<span class="pg-q-from">${esc(prefix)}</span><strong class="pg-q-num">${esc(amount)}</strong><span class="pg-q-cur">CHF</span>`;
   }
   function showQuote() {
-    const t = T(), q = quote, el = $("pg_quote");
+    const t = T(), q = quote, el = $("pg_quote"), meta = $("pg_quoteMeta"), extra = $("pg_quoteExtra"), br = $("pg_break");
     $("pg_book").disabled = !currentQuoteValid();
-    el.removeAttribute("aria-label");
-    if (!q) { el.innerHTML = "<strong>" + esc(t.startingPrice) + "</strong><span>" + esc(t.qPrompt) + "</span>"; el.setAttribute("aria-label", t.startingPrice + " · " + t.qPrompt); return; }
-    if (!q.found) { el.textContent = t.qNo; return; }
-    if (q.fee == null) { el.textContent = t.qAgree.replace("{ort}", q.ort).replace("{plz}", q.plz || ""); return; }
-    el.innerHTML = '<strong>' + esc(num(q.fee)) + ' CHF</strong><span>' + esc(q.ort) + (q.plz ? ' (' + esc(q.plz) + ')' : '') + '</span>';
-    el.setAttribute("aria-label", t.qFee.replace("{ort}", q.ort).replace("{plz}", q.plz || "").replace("{f}", num(q.fee)));
+    el.removeAttribute("aria-busy"); br.hidden = true; extra.hidden = true; extra.innerHTML = ""; meta.classList.remove("pg-warn");
+    if (!q) { meta.textContent = t.qStartNote; box(START_FEE == null ? "" : t.qFrom, START_FEE == null ? "—" : money(START_FEE)); el.setAttribute("aria-label", START_FEE == null ? t.qStartNote : t.qFrom + " " + money(START_FEE) + " CHF · " + t.qStartNote); return; }
+    if (q.loading) { el.setAttribute("aria-busy", "true"); meta.textContent = t.qLoading; box("", "…"); el.setAttribute("aria-label", t.qLoading); return; }
+    if (q.error) { meta.textContent = t.qError; meta.classList.add("pg-warn"); box("", "—"); el.setAttribute("aria-label", t.qError); extra.hidden = false; extra.innerHTML = `<button type="button" class="pg-retry" id="pg_retry">${esc(t.retry)}</button>`; $("pg_retry").onclick = () => calculateQuote(); return; }
+    if (q.ambiguous) {
+      meta.textContent = t.qAmbiguous; box("", "—"); el.setAttribute("aria-label", t.qAmbiguous);
+      extra.hidden = false;
+      extra.innerHTML = `<div class="pg-choices" role="group" aria-label="${esc(t.qAmbiguous)}">` +
+        (q.choices || []).map((c, i) => `<button type="button" data-c="${i}"><b>${esc(c.plz)}</b> ${esc(c.ort)}${c.kanton ? ` <small>${esc(c.kanton)}</small>` : ""}</button>`).join("") + `</div>`;
+      extra.querySelectorAll("button[data-c]").forEach(b => b.addEventListener("click", () => choose(q.choices[Number(b.dataset.c)])));
+      return;
+    }
+    if (!q.found) { meta.textContent = t.qNo; meta.classList.add("pg-warn"); box("", "—"); el.setAttribute("aria-label", t.qNo); return; }
+    if (q.fee == null) { meta.textContent = fill(t.qAgree, { ort: q.ort, plz: q.plz || "" }); box("", "—"); el.setAttribute("aria-label", meta.textContent); return; }
+    const p = q.pricing || {}, o = q.origin || {};
+    meta.textContent = `${q.ort}${q.plz ? " (" + q.plz + ")" : ""} · ${originText(q)}`;
+    box(t.qApprox, money(q.fee));
+    el.setAttribute("aria-label", fill(t.qFee, { ort: q.ort, plz: q.plz || "", f: money(q.fee), o: o.ort || "St. Gallen" }));
+    const note = o.kind === "expert" || p.version === "team-local-v1"
+      ? (Number(p.extraKm) > 0 ? fill(t.extraNote, { km: num(p.extraKm), rate: num(p.kmRate), travel: money(p.travel) }) : t.localNote)
+      : fill(t.teamNote, { d: num(q.dist) });
+    extra.hidden = false; extra.innerHTML = `<p class="pg-q-sub2">${esc(note)}</p>`;
+    // Razloženo (van kutije): osnovna cena, put, (zaokruživanje), ukupno.
+    const rows = [[t.bBase, money(p.base) + " CHF"]];
+    if (Number(p.travelKm) > 0 || o.kind !== "expert") rows.push([fill(t.bTravel, { km: num(p.travelKm || 0), rate: num(p.kmRate) }), money(p.travel || 0) + " CHF"]);
+    if (p.roundTo) rows.push([fill(t.bRound, { min: num(p.minimum) }), ""]);
+    br.hidden = false;
+    br.innerHTML = `<summary>${esc(t.breakT)}</summary><dl>` + rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("") +
+      `<dt class="pg-total">${esc(t.bTotal)}</dt><dd class="pg-total">${esc(money(q.fee))} CHF</dd></dl><p class="pg-q-sub2">${esc(fill(t.bDist, { d: num(q.dist) }))}</p>`;
   }
   $("pg_book").addEventListener("click", () => {
     if (!currentQuoteValid() || tokenOf()) return;
-    $("pgForm").hidden = false;
-    $("pg_book").setAttribute("aria-expanded", "true");
-    $("pgForm").scrollIntoView({behavior: "smooth", block: "start"});
-    $("pg_url").focus({preventScroll: true});
+    openOrder();
+    $("pgForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("pg_url").focus({ preventScroll: true });
   });
-
   async function calculateQuote() {
-    clearTimeout(qTimer);const value=$("pg_place").value.trim(),sequence=++quoteSeq;
-    quote=null;quotePlace="";closeOrder();showQuote();
-    if(value.length<3)return null;
-    $("pg_quote").textContent=T().qLoading;
-    try { const q=await rpc("sc_insp_quote",{p_place:value});
-      if(sequence!==quoteSeq||value!==$("pg_place").value.trim())return null;
-      quote=q;quotePlace=value;showQuote();return q;
-    } catch {if(sequence===quoteSeq)$("pg_quote").textContent=T().qError;return null;}
+    clearTimeout(qTimer);
+    const value = $("pg_place").value.trim(), sequence = ++quoteSeq, sel = selected;
+    quote = null; quotePlace = ""; pendingConfirm = null; closeOrder();
+    if (value.length < 3 && !(sel && sel.plz)) { showQuote(); return null; }
+    quote = { loading: true }; showQuote();
+    try {
+      const q = await rpc("sc_insp_quote_place", sel ? { p_place: value, p_plz: sel.plz, p_ort: sel.ort } : { p_place: value });
+      if (sequence !== quoteSeq || value !== $("pg_place").value.trim()) return null; // zastareo odgovor
+      quote = q && typeof q === "object" ? q : { found: false }; quotePlace = value;
+      closeSuggest(); ++sugSeq; clearTimeout(sugTimer); // obračun je stigao: lista predloga više nije potrebna (izbor više mesta dolazi iz obračuna)
+      showQuote(); return quote;
+    } catch (e) { if (sequence === quoteSeq) { quote = { error: true }; quotePlace = value; showQuote(); } return null; }
   }
-  $("pg_place").addEventListener("input",()=>{
-    ++quoteSeq;clearTimeout(qTimer);quote=null;quotePlace="";closeOrder();showQuote();
-    if($("pg_place").value.trim().length>=3)qTimer=setTimeout(calculateQuote,350);
-  });
 
+  /* ---------- slanje ---------- */
   ["pg_name", "pg_phone", "pg_email"].forEach(id => $(id).addEventListener("input", () => $(id).setCustomValidity("")));
+  function status(cls, html) { const st = $("pg_status"); st.hidden = false; st.className = "form-status " + cls; st.innerHTML = html; }
+  function showConfirm() {
+    // Server je odbio zastarelu ponudu; nova je već izračunata (quote). Ništa nije poslato dok korisnik ne potvrdi.
+    const t = T(), q = quote;
+    pendingConfirm = q.offer || null;
+    status("pg-confirm", `<strong>${esc(t.confirmT)}</strong><span>${esc(fill(t.confirmP, { f: money(q.fee), ort: (q.origin && q.origin.ort) || "St. Gallen" }))}</span><button type="button" class="btn btn-gold" id="pg_confirm">${esc(t.confirmBtn)}</button>`);
+    $("pg_send").disabled = true;
+    $("pg_confirm").onclick = () => { $("pg_send").disabled = false; $("pgForm").requestSubmit ? $("pgForm").requestSubmit() : $("pg_send").click(); };
+  }
   $("pgForm").addEventListener("submit", async e => {
     e.preventDefault();
     if ($("pgForm").hidden) return;
-    const t = T(), st = $("pg_status"), btn = $("pg_send");
+    const t = T(), btn = $("pg_send");
     const v = id => $(id).value.trim();
     const contact = window.SCContactValidation;
-    const reject = (id, message) => { st.hidden = false; st.className = "form-status err"; st.textContent = message; $(id).setCustomValidity(message); $(id).focus(); $(id).reportValidity(); };
+    const reject = (id, message) => { status("err", esc(message)); $(id).setCustomValidity(message); $(id).focus(); $(id).reportValidity(); };
     ["pg_name", "pg_phone", "pg_email"].forEach(id => $(id).setCustomValidity(""));
-    if (!contact) { st.hidden = false; st.className = "form-status err"; st.textContent = t.err; return; }
+    if (!contact) { status("err", esc(t.err)); return; }
     if (!contact.validFullName(v("pg_name"))) { reject("pg_name", t.fullNameNeeded); return; }
     if (!contact.validPhone(v("pg_phone"))) { reject("pg_phone", t.phoneNeeded); return; }
     if (!$("pg_email").checkValidity()) { $("pg_email").focus(); $("pg_email").reportValidity(); return; }
-    if (!(v("pg_url") || v("pg_car")) || !v("pg_place") || !v("pg_email")) { st.hidden = false; st.className = "form-status err"; st.textContent = t.need; return; }
-    if(btn.disabled)return;
-    if(!quote||quotePlace!==v("pg_place")){await calculateQuote();return;}
-    if(!quote.found||quote.fee==null){st.hidden=false;st.className="form-status err";st.textContent=quote.found?t.qError:t.qNo;return;}
+    if (!(v("pg_url") || v("pg_car")) || !v("pg_place") || !v("pg_email")) { status("err", esc(t.need)); return; }
+    if (btn.disabled) return;
+    if (!currentQuoteValid()) { await calculateQuote(); if (!currentQuoteValid()) { status("err", esc(quote && quote.ambiguous ? t.ambiguousSubmit : quote && quote.found === false ? t.qNo : t.qError)); } return; }
+    if (pendingConfirm && pendingConfirm !== quote.offer) { showConfirm(); return; }
+    const q = quote;
     btn.disabled = true; btn.textContent = t.sending;
     try {
-      const r = await rpc("sc_submit_inspection", { p: { url: v("pg_url"), car: v("pg_car"), place: v("pg_place"), name: v("pg_name"), phone: v("pg_phone"), email: v("pg_email"), notes: v("pg_notes"), website: $("pgForm").website.value, expectedFee: quote.fee, lang: lang() } });
+      const r = await rpc("sc_submit_inspection", { p: { url: v("pg_url"), car: v("pg_car"), place: v("pg_place"), plz: q.plz, ort: q.ort, name: v("pg_name"), phone: v("pg_phone"), email: v("pg_email"), notes: v("pg_notes"), website: $("pgForm").website.value, expectedFee: q.fee, expectedOffer: q.offer, lang: lang() } });
       if (!r || !r.token) throw new Error("no token");
       const link = `https://swiscars.com/pregled/#${r.token}`;
       try { localStorage.setItem(KEYLS, JSON.stringify({ t: r.token, at: Date.now() })); } catch (e2) {}
       fetch(`${URL_}/functions/v1/order-mail`, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: "{}" }).catch(() => {});
-      st.hidden = false; st.className = "form-status ok";
-      st.innerHTML = `${esc(t.ok)} <a href="/pregled/#${esc(r.token)}" style="text-decoration:underline">${esc(t.okLink)}</a>
+      status("ok", `${esc(t.ok)} <a href="/pregled/#${esc(r.token)}" style="text-decoration:underline">${esc(t.okLink)}</a>
         <span style="display:block;margin-top:10px">${esc(t.saveHint)}</span>
-        <span style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"><a class="btn btn-outline" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(t.waText + " " + link)}">${esc(t.wa)}</a><button type="button" class="btn btn-outline" id="pg_copy">${esc(t.copy)}</button></span>`;
+        <span style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"><a class="btn btn-outline" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(t.waText + " " + link)}">${esc(t.wa)}</a><button type="button" class="btn btn-outline" id="pg_copy">${esc(t.copy)}</button></span>`);
       $("pg_copy").onclick = () => (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => { $("pg_copy").textContent = t.copied; }).catch(() => window.prompt("", link));
-      $("pgForm").reset(); quote = null; quotePlace = ""; ++quoteSeq; clearTimeout(qTimer); showQuote();
-    } catch (err) { console.warn(err); st.hidden = false; st.className = "form-status err"; st.textContent = err.message==="price_changed"?t.priceChanged:err.message==="full_name"?t.fullNameNeeded:err.message==="phone"?t.phoneNeeded:t.err; if(err.message==="price_changed")await calculateQuote(); }
-    btn.disabled = false; btn.textContent = t.send;
+      $("pgForm").reset(); $("pg_place").value = ""; selected = null; updateClear(); quote = null; quotePlace = ""; pendingConfirm = null; ++quoteSeq; clearTimeout(qTimer); showQuote();
+      btn.disabled = false; btn.textContent = t.send;
+      return;
+    } catch (err) {
+      console.warn(err);
+      btn.disabled = false; btn.textContent = t.send;
+      const m = err.message;
+      if (m === "price_changed") {
+        // Ponuda je zastarela: nova cena se računa i korisnik je potvrđuje; nema tihog ponovnog slanja.
+        const nq = await calculateQuote(); // zatvara formu dok računa; unos korisnika ostaje u poljima
+        if (nq && currentQuoteValid()) { openOrder(); pendingConfirm = "stale"; showConfirm(); $("pg_status").scrollIntoView({ behavior: "smooth", block: "center" }); }
+        else { openOrder(); status("err", esc(t.priceChanged)); }
+        return;
+      }
+      if (m === "place_ambiguous") { status("err", esc(t.ambiguousSubmit)); selected = null; await calculateQuote(); return; }
+      if (m === "place_not_found") { status("err", esc(t.qNo)); return; }
+      status("err", esc(m === "full_name" ? t.fullNameNeeded : m === "phone" ? t.phoneNeeded : t.err));
+    }
   });
 
+  /* ---------- pregled narudžbine (token) ---------- */
   function renderView() {
     const t = T(), d = view; if (!d) return;
     const step = d.status === "gotovo" || d.reportAt ? 3 : d.plannedAt ? 2 : d.paidAt ? 1 : 0;
     $("v_track").innerHTML = t.track.map((x, k) => `<li class="${k < step ? "done" : k === step ? "now" : ""}"${k === step ? ' aria-current="step"' : ''}>${esc(x)}</li>`).join("");
     $("v_now").textContent = d.status === "otkazano" ? t.cancelled : step === 0 && d.fee == null ? t.nowAgree : t.now[step].replace("{p}", d.plannedAt || "");
-    const rows = [[t.rCar, d.car], [t.rPlace, d.ort || d.place], [t.rFee, d.fee != null ? num(d.fee) + " CHF" : t.agree]];
+    const rows = [[t.rCar, d.car], [t.rPlace, d.ort || d.place], [t.rOrigin, d.origin && d.origin.ort ? d.origin.ort : null], [t.rFee, d.fee != null ? money(d.fee) + " CHF" : t.agree]];
     $("v_req").innerHTML = rows.filter(r => r[1]).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")
       + (d.url ? `<div><dt>${esc(t.rAd)}</dt><dd><a href="${esc(d.url)}" target="_blank" rel="noopener nofollow">${esc(t.open)}</a></dd></div>` : "");
     const pay = $("v_pay");
     pay.hidden = !!(d.paidAt || d.status === "otkazano" || d.fee == null);
-    if (!pay.hidden) pay.innerHTML = `<h2>${esc(t.payT)}</h2><p>${esc(t.payP.replace("{f}", num(d.fee)).replace("{n}", d.name || ""))}</p><p class="up-pay" style="white-space:pre-line">${esc(d.pay || t.payNone)}</p>`;
+    if (!pay.hidden) pay.innerHTML = `<h2>${esc(t.payT)}</h2><p>${esc(t.payP.replace("{f}", money(d.fee)).replace("{n}", d.name || ""))}</p><p class="up-pay" style="white-space:pre-line">${esc(d.pay || t.payNone)}</p>`;
     const rep = $("v_report"), r = d.report || {};
     rep.hidden = !d.reportAt;
     if (!rep.hidden) rep.innerHTML = `<h2>${esc(t.repT)}</h2>${r.ocena && t.verdict[r.ocena] ? `<p class="pg-verdict">${esc(t.verdict[r.ocena])}</p>` : ""}
       <div class="pg-rep">${["udes", "papiri", "tehnika", "zakljucak"].filter(k => r[k]).map(k => `<div><h3>${esc(t.rep[k])}</h3><p>${esc(r[k])}</p></div>`).join("")}</div>
       ${window.SCInspectionReport?.render(r.checklist, d.lang || lang(), {photoUrl:photo}) || ""}
-      ${SCInspectionReport.unassignedPhotos(r.checklist,d.photos).length ? `<div class="pg-photos">${SCInspectionReport.unassignedPhotos(r.checklist,d.photos).map(p => `<a href="${esc(photo(p))}" target="_blank" rel="noopener"><img src="${esc(photo(p))}" alt="" loading="lazy"></a>`).join("")}</div>` : ""}`;
+      ${window.SCInspectionReport && SCInspectionReport.unassignedPhotos(r.checklist,d.photos).length ? `<div class="pg-photos">${SCInspectionReport.unassignedPhotos(r.checklist,d.photos).map(p => `<a href="${esc(photo(p))}" target="_blank" rel="noopener"><img src="${esc(photo(p))}" alt="" loading="lazy"></a>`).join("")}</div>` : ""}`;
   }
 
   function showErr() {
@@ -229,7 +281,11 @@
     $("p_errT").textContent = t.errT; $("p_errP").textContent = t.errP; $("p_errB").textContent = t.errB;
   }
 
-  function render() { common(); if (tokenOf()) renderView(); else renderOrder(); }
+  function render() {
+    document.querySelectorAll("[data-lang]").forEach(x => x.classList.toggle("active", x.dataset.lang === lang()));
+    if (lang() === "en") document.documentElement.lang = "en";
+    common(); if (tokenOf()) renderView(); else renderOrder();
+  }
 
   async function boot() {
     const tok = tokenOf();
@@ -244,7 +300,16 @@
     } catch (e) { console.warn(e); common(); showErr(); }
   }
 
-  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setTimeout(render, 0)));
+  // Jezik: dugmad u zaglavlju (main.js čuva izbor pod 'swiscars-lang'); ova stranica poštuje i EN i prikazuje svoj sadržaj
+  // u izabranom jeziku čak i ako zajednički main.js poznaje samo SR/DE. Promena jezika ne briše unos ni obračun.
+  document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => setTimeout(() => {
+    chosenLang = ["sr", "de", "en"].includes(b.dataset.lang) ? b.dataset.lang : null;
+    try { if (chosenLang) localStorage.setItem("swiscars-lang", chosenLang); } catch (e) {}
+    document.querySelectorAll("[data-lang]").forEach(x => x.classList.toggle("active", x.dataset.lang === lang()));
+    render();
+  }, 0)));
   window.addEventListener("hashchange", boot);
+  updateClear();
   boot();
+  rpc("sc_insp_start_price", {}).then(r => { const fee = Number(r?.fee); if (r?.fee != null && Number.isFinite(fee) && fee > 0) { START_FEE = fee; if (!quote && !tokenOf()) showQuote(); } }).catch(() => {});
 })();

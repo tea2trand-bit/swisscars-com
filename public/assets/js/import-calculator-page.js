@@ -15,8 +15,19 @@
   function applyRate(data) {
     fx = data; fxReady=true;
     $('rate').value = fx ? String(fx.eurPerCHF) : '';
-    $('rate-status').textContent = fx ? `ECB · ${new Date(fx.asOf+'T12:00:00Z').toLocaleDateString('sr-RS')}${fx.status==='last-known'?' · poslednji poznati kurs':''}. Referentni kurs za procenu; bankarski kurs može se razlikovati.` : 'Dnevni kurs trenutno nije dostupan. Obračun u CHF čeka kurs; cenu u evrima možete obračunati.';
     render();
+  }
+  function updateRateNote() {
+    const inEUR = $('currency').value === 'EUR';
+    const conversion = inEUR ? 'Cena vozila je već u evrima, pa je ne preračunavamo.' : 'Cena u CHF × kurs = cena u EUR.';
+    if (fx) {
+      const rate = fx.eurPerCHF.toLocaleString('sr-RS', { minimumFractionDigits: 5, maximumFractionDigits: 5 });
+      const date = new Date(fx.asOf + 'T12:00:00Z').toLocaleDateString('sr-RS').replace(/\.$/, '');
+      $('rate-status').textContent = `Primenjeni kurs: 1 CHF ≈ ${rate} EUR · ${date}${fx.status === 'last-known' ? ' · poslednji poznati kurs' : ''}. ${conversion}${inEUR && packageMode ? ' Kurs primenjujemo na cenu SWISCARS paketa u CHF.' : ''}`;
+    } else {
+      const state = fxReady ? 'Kurs trenutno nije dostupan.' : 'Učitavamo referentni kurs CHF/EUR…';
+      $('rate-status').textContent = `${state} ${inEUR ? conversion + (packageMode ? ' Za SWISCARS paket potreban je kurs.' : '') : 'Obračun u CHF čeka kurs; možete uneti cenu u evrima.'}`;
+    }
   }
   function requestResultReveal(){pendingResultReveal=true;$('example-status').hidden=false;$('example-status').textContent='Pripremamo obračun…';}
   function finishResultReveal(){if(!pendingResultReveal)return;pendingResultReveal=false;$('example-status').hidden=false;$('example-status').textContent='Obračun je spreman.';if(matchMedia('(max-width:760px)').matches)requestAnimationFrame(()=>{$('result-card').scrollIntoView({behavior:'smooth',block:'start'});$('result-card').focus({preventScroll:true});});}
@@ -50,6 +61,7 @@
   }
   function render() {
     updatePriceControls();
+    updateRateNote();
     for (const key of fields) $(key).removeAttribute('aria-invalid');
     $('status').className = 'import-status'; $('status').hidden=true;
     if (!activated && !$('price').value) return;
@@ -60,7 +72,7 @@
       if (input.currency === 'CHF' && !fx) throw new Error('rate');
       // An EUR-only input needs no CHF conversion, even if the source is offline.
       input.rate = fx ? fx.eurPerCHF : 1;
-      const originUnconfirmed=input.origin==='unknown'; if(originUnconfirmed)input.origin='standard'; $('origin-note').textContent=originUnconfirmed?'Dok poreklo nije potvrđeno, računamo carinu 12,5%.':input.origin==='preferential'?'Carina 0% uz prihvaćen dokaz porekla.':'Carina 12,5% bez prihvaćenog dokaza porekla.'; const original=SCImportCalculator.calculate(input); if(packageMode){if(!fx)throw new Error('rate');input.price=Number(input.price)/1.081;input.origin='preferential';} const possible = SCImportCalculator.calculate(input), possibleA=possible.scenarios[0]; const result=original,a=result.scenarios[0],b=result.scenarios.at(-1); const packageFee=packageMode?700*fx.eurPerCHF:0; $('package-fee-eur').hidden=!packageMode; $('package-fee-eur').textContent=packageMode?'700 CHF':''; if(packageMode){possibleA.total=Math.round((possibleA.total+packageFee)*100)/100;} const deductions=$('package-deductions'); deductions.replaceChildren(); deductions.hidden=!packageMode; const dutySaving=packageMode?original.scenarios[0].duty-possibleA.duty:0, chVatSaving=packageMode?original.car-possible.car:0, srVatSaving=packageMode?original.scenarios[0].vat-possibleA.vat:0; for(const [label,value] of [['Carina u Srbiji', '- '+money(dutySaving)],['Švajcarski PDV (8,1%)','- '+money(chVatSaving)],['Razlika PDV-a pri uvozu','- '+money(srVatSaving)],['Ukupno uz SWISCARS',money(packageMode?possibleA.total:original.scenarios[0].total)],['Moguća neto ušteda',money(packageMode?original.scenarios[0].total-possibleA.total:0)]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;if(label==='Moguća neto ušteda'){dd.className='import-net-saving';}if(label==='Ukupno uz SWISCARS'){dt.className='import-sum';dd.className='import-sum';}deductions.append(dt,dd);} $('package-info').hidden=!packageMode; const saving=original.scenarios[0].total-possibleA.total; $('package-difference').textContent=packageMode?(saving>=0?'Moguća neto ušteda: ':'Dodatni trošak paketa: ')+money(Math.abs(saving)):''; $('package-note').textContent=packageMode?'Uslovna procena: cena uključuje CH PDV 8,1%, povrat i dokaz porekla se potvrđuju. SR PDV ostaje uključen. Osnovni uvoz ne uključuje zaseban pregled.':'';
+      const originUnconfirmed=input.origin==='unknown'; if(originUnconfirmed)input.origin='standard'; $('origin-note').textContent=originUnconfirmed?'Dok poreklo nije potvrđeno, računamo carinu 12,5%.':input.origin==='preferential'?'Carina 0% uz prihvaćen dokaz porekla.':'Carina 12,5% bez prihvaćenog dokaza porekla.'; const original=SCImportCalculator.calculate(input); if(packageMode){if(!fx)throw new Error('rate');input.price=Number(input.price)/1.081;input.origin='preferential';} const possible = SCImportCalculator.calculate(input), possibleA=possible.scenarios[0]; const result=original,a=result.scenarios[0],b=result.scenarios.at(-1); const packageFee=packageMode?700*fx.eurPerCHF:0; $('package-fee-eur').hidden=!packageMode; $('package-fee-eur').textContent=packageMode?'700 CHF':''; if(packageMode){possibleA.total=Math.round((possibleA.total+packageFee)*100)/100;} const deductions=$('package-deductions'); deductions.replaceChildren(); deductions.hidden=!packageMode; const dutySaving=packageMode?original.scenarios[0].duty-possibleA.duty:0, chVatSaving=packageMode?original.car-possible.car:0, srVatSaving=packageMode?original.scenarios[0].vat-possibleA.vat:0; for(const [label,value] of [['Carina u Srbiji', '- '+money(dutySaving)],['Švajcarski PDV (8,1%)','- '+money(chVatSaving)],['Razlika PDV-a pri uvozu','- '+money(srVatSaving)],['Ukupno uz SWISCARS',money(packageMode?possibleA.total:original.scenarios[0].total)]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;if(label==='Moguća neto ušteda'){dd.className='import-net-saving';}if(label==='Ukupno uz SWISCARS'){dt.className='import-sum';dd.className='import-sum';}deductions.append(dt,dd);} $('package-info').hidden=!packageMode; const saving=original.scenarios[0].total-possibleA.total; $('saving-label').textContent=saving>0?'Moguća neto ušteda':saving<0?'Dodatni trošak paketa':'Bez neto uštede'; $('package-info').dataset.outcome=saving>0?'saving':saving<0?'cost':'neutral'; $('package-difference').textContent=packageMode?money(Math.abs(saving)):''; $('package-note').textContent=packageMode?'Uslovna procena: važi uz potvrđen povrat švajcarskog PDV-a i prihvaćen dokaz porekla. Najpre proveravamo oba uslova za izabrano vozilo.':'';
       $('empty').hidden = true; $('result').hidden = false;
       const rows = [['Vozilo ('+Number($('price').value).toLocaleString('sr-RS')+' '+input.currency+')', money(result.car)], ['Prevoz', money(result.costs.transport)], ['Ekološka naknada — procena', money(result.costs.eco)]];
       for (const key of ['broker', 'testing', 'other']) if (result.costs[key] !== null) rows.push([labels[key][0].toUpperCase() + labels[key].slice(1), money(result.costs[key])]);
@@ -73,7 +85,7 @@
       $('missing').textContent = '';
       $('status').textContent = ''; finishResultReveal();
     } catch (error) {
-      $('empty').hidden = false; $('result').hidden = true;
+      $('empty').hidden = false; $('result').hidden = true; $('package-info').hidden = true; $('package-deductions').hidden = true; $('package-fee-eur').hidden = true;
       const key = error.message;
       $(key)?.setAttribute('aria-invalid', 'true');
       $('status').className = 'import-status error'; $('status').hidden=false;

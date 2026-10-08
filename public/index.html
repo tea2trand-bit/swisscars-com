@@ -11,6 +11,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link rel="apple-touch-icon" href="assets/img/favicon.svg">
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/contact-topic-picker.css">
 </head>
 <body>
 <header class="site-header">
@@ -28,9 +29,9 @@
     <a href="#about" data-i18n="navAbout">O nama</a>
     <a href="#blog" data-i18n="navBlog">Saveti</a>
     <a class="nav-contact-mobile" href="#contact" data-i18n="navContact">Kontakt</a>
-  <a class="nav-team-portal" href="/intern/" data-i18n="navTeamPortal" rel="nofollow">Tim</a></nav>
+    <details class="nav-partners"><summary><span class="nav-login-desktop" data-i18n="navLogin">Login</span><span class="nav-login-mobile" data-i18n="navAccountAccess">Prijava / Registracija</span></summary><div class="nav-partners-list"><a href="/intern/" data-i18n="navLoginTeam" rel="nofollow">Tim</a><span class="nav-partners-caption" data-i18n="navPartnersLabel">Saradnici</span><a href="/dileri/" data-i18n="navDealers">Autodileri</a><a href="/eksperti/" data-i18n="navExperts">Eksperti</a><a href="/prevoznici/" data-i18n="navCarriers">Prevoznici</a></div></details></nav>
   <div class="language-switch">
-    <button data-lang="sr" class="active">SR</button><button data-lang="de">DE</button>
+    <button data-lang="sr" class="active">SR</button><button data-lang="de">DE</button><button data-lang="en">EN</button>
   </div>
   <a class="btn btn-outline header-cta" href="#contact" data-i18n="navContact">Kontakt</a>
 </header>
@@ -79,9 +80,9 @@
     <p class="services-intro" data-i18n="servicesIntro">Izaberite uslugu koja vam odgovara. Naša digitalna platforma povezuje izbor vozila, rad našeg tima i praćenje svakog koraka, bez vašeg putovanja u Švajcarsku.</p>
     <div class="service-options">
       <article><span class="step-num">01</span><h3 data-i18n="serviceStockTitle">Vozila iz naše ponude</h3><p data-i18n="serviceStockText">Birajte vozila koja smo kupili za svoju ponudu. Uz svako vozilo pratite da li je kupljeno u Švajcarskoj, na transportu, na carini, u pripremi u Srbiji ili spremno za prodaju.</p><a href="/auta/" data-i18n="serviceStockCta">Pogledajte ponudu vozila →</a></article>
-      <article><span class="step-num">02</span><h3 data-i18n="serviceInspectionTitle">Pregled auta koji ste pronašli</h3><p data-i18n="serviceInspectionText">Pošaljite link oglasa i unesite grad ili poštanski broj gde se vozilo nalazi. Odmah dobijate okvirnu cenu pregleda. Naš tim polazi iz St. Gallena, proverava vozilo i dokumentaciju dostupnu kod prodavca, pa vam šalje fotografije i pisani izveštaj. Cenu i termin potvrđujemo pre uplate; o kupovini i daljem transportu odlučujete sami.</p><a href="/pregled/" data-i18n="standaloneCta">Zatražite pregled auta</a></article>
+      <article><span class="step-num">02</span><h3 data-i18n="serviceInspectionTitle">Pregled auta koji ste pronašli</h3><p data-i18n="serviceInspectionText">Pošaljite link oglasa i unesite grad ili poštanski broj gde se vozilo nalazi. Odmah dobijate okvirnu cenu pregleda. Na licu mesta proveravamo vozilo i dostupnu dokumentaciju kod prodavca, fotografišemo auto i sastavljamo pisani izveštaj. Preglede trenutno obavlja naš tim iz St. Gallena. Razvijamo mrežu eksperata širom Švajcarske kako bismo smanjili troškove dolaska. Cenu i termin potvrđujemo pre uplate; o kupovini i daljem transportu odlučujete sami.</p><a href="/pregled/" data-i18n="standaloneCta">Zatražite pregled auta</a></article>
       <article><span class="step-num">03</span><h3 data-i18n="serviceSwissTitle">Kupovina izabranog auta</h3><p data-i18n="serviceSwissText">Cena naše usluge po autu je ista, bilo da ste ga pronašli sami ili smo ga pronašli za vas. Usluga uključuje pregled, povratak po vozilo, preuzimanje, pripremu dokumentacije i predaju na mesto polaska transporta. Iznos potvrđujemo u ponudi; već plaćeni pregled odbija se od ove naknade.</p><p class="service-note" data-i18n="serviceSwissCosts">Vidite link oglasa i cenu auta iz oglasa. Na tu cenu dodaju se naša usluga i jasno navedeni troškovi prevoza, uvoza i predaje. Ukupnu cenu sa svim stavkama potvrđujemo pre zakazivanja pregleda. Registracija je posebna opcija.</p><div class="service-actions"><a href="/pregled/" data-i18n="serviceInspectionCalc">Izračunajte cenu pregleda →</a><a href="#contact" data-i18n="serviceSwissCta">Dogovorite pomoć pri kupovini →</a></div></article>
-      <article><span class="step-num">04</span><h3 data-i18n="serviceBudgetTitle">Pronalazimo auto za vas</h3><p data-i18n="serviceBudgetText">Recite nam model, uslove i najveći ukupni budžet. Tražimo odgovarajuća vozila i uz svaki predlog pokazujemo link oglasa, cenu auta, našu uslugu i sve potvrđene troškove do predaje. Budžet je granica ukupnog troška. Vi birate auto i odlučujete o kupovini nakon našeg izveštaja. Registraciju na vaše ime možete posebno dogovoriti.</p><p class="service-note" data-i18n="serviceBudgetCosts">Cena naše usluge po autu je ista kao kada sami pronađete auto, sa uključenim pregledom. Iznos potvrđujemo u ponudi; već plaćeni pregled odbija se od naknade. Cena auta i ostali troškovi prikazuju se odvojeno, a ukupnu cenu potvrđujemo pre zakazivanja pregleda.</p><div class="service-actions"><a href="#contact" data-i18n="formOpen">Pošaljite upit za auto</a><a href="/proba-uvoza/" data-i18n="importCalculatorCta">Izračunajte troškove uvoza</a></div></article>
+      <article><span class="step-num">04</span><h3 data-i18n="serviceBudgetTitle">Pronalazimo auto za vas</h3><p data-i18n="serviceBudgetText">Recite nam model, uslove i najveći ukupni budžet. Tražimo odgovarajući auto kroz našu mrežu i B2B platforme. Uz svaki predlog prikazujemo link oglasa, cenu auta, našu uslugu i sve potvrđene troškove do predaje. Budžet je granica ukupnog troška. Vi birate auto i odlučujete o kupovini nakon našeg izveštaja. Registraciju na vaše ime možete posebno dogovoriti.</p><p class="service-note" data-i18n="serviceBudgetCosts">Cena naše usluge po autu je ista kao kada sami pronađete auto, sa uključenim pregledom. Iznos potvrđujemo u ponudi; već plaćeni pregled odbija se od naknade. Cena auta i ostali troškovi prikazuju se odvojeno, a ukupnu cenu potvrđujemo pre zakazivanja pregleda.</p><div class="service-actions"><a href="#contact" data-i18n="formOpen">Pošaljite upit za auto</a><a href="/proba-uvoza/" data-i18n="importCalculatorCta">Izračunajte troškove uvoza</a></div></article>
     </div>
     <div class="service-tracking" id="platforma">
       <p class="section-kicker" data-i18n="platformKicker">Vaš lični pregled</p>
@@ -106,6 +107,29 @@
   </div>
 </section>
 
+<section class="section partner-network" id="saradnici" aria-labelledby="partner-network-title">
+  <div class="container">
+    <p class="section-kicker" data-i18n="pnKicker">Za saradnike</p>
+    <h2 id="partner-network-title" data-i18n="pnTitle">Manje brige. Ceo posao na jednom mestu.</h2>
+    <p class="partner-network-intro" data-i18n="pnIntro">Gradimo platformu koja povezuje kupce, autodilere, eksperte i prevoznike — od izbora vozila do predaje. Cilj je da dogovori, troškovi, dokumentacija i status vozila i posla budu pregledni i dostupni na jednom mestu.</p>
+    <p class="partner-network-how" data-i18n="pnHow">Bolja organizacija znači manje traženja poruka i usklađenije preglede, preuzimanja i prevoze. Kada se rute i termini poklope, otvara se i mogućnost za manje troškove.</p>
+    <p class="partner-network-choice" data-i18n="pnChoice">Vi birate potrebnu pomoć: pronađite auto sami i zatražite pregled, ili dogovorite podršku pri kupovini i prevozu. Obim usluge i cenu potvrđujemo pre početka.</p>
+    <div class="partner-network-grid">
+      <article><h3 data-i18n="navExperts">Eksperti</h3><p data-i18n="pnExperts">Iskoristite svoje znanje i blizinu vozilu za dodatne poslove pregleda u svom mestu ili kantonu. Poziv je namenjen pouzdanim automehaničarima i autolimarima; prijave i stručnost proveravamo.</p><a href="/eksperti/" data-i18n="pnExpertCta">Prijavite se kao ekspert →</a></article>
+      <article><h3 data-i18n="navCarriers">Prevoznici</h3><p data-i18n="pnCarriers">Lokalni ili međunarodni prevoz — povežite se sa partnerima kojima treba vaša usluga. Bolje usklađene relacije i termini otvaraju mogućnost za popunjavanje slobodnih mesta i manje praznih kilometara.</p><a href="/prevoznici/" data-i18n="pnCarrierCta">Prijavite se kao prevoznik →</a></article>
+      <article><h3 data-i18n="navDealers">Autodileri</h3><p data-i18n="pnDealers">Povežite nabavku vozila sa lokalnim pregledom i odgovarajućim prevozom. Lakša organizacija ostavlja više vremena za vaše kupce i posao.</p><a href="/dileri/" data-i18n="pnDealerCta">Nalog za autodilere →</a></article>
+    </div>
+    <p class="partner-network-referral" data-i18n="pnReferral">Poznajete pouzdanog saradnika? Preporučite mu SWISCARS. Svaki partner može pozvati autodilera, eksperta ili prevoznika u mrežu.</p>
+    <p class="partner-network-note" data-i18n="pnOpportunity">Moguća ušteda i dodatna zarada zavise od konkretnog posla, raspoloživosti partnera i dogovorenih uslova.</p>
+    <details class="partner-roadmap"><summary data-i18n="pnRepairTitle">Sledeći korak: povezivanje sa servisima u Srbiji</summary><p data-i18n="pnRepairText">Planiramo da kupci i autodileri mogu da pošalju nalaz pregleda servisima i dobiju okvirne ponude za popravku, kao i predlog termina pre dolaska vozila. Tako bi kupovinu, prevoz i potrebne radove planirali zajedno.</p><p data-i18n="pnRepairNote">Ova mogućnost je u planu. Procena na osnovu nalaza nije konačna dijagnoza; cenu i obim popravke servis potvrđuje nakon potrebne provere.</p></details>
+    <details class="partner-quality">
+      <summary><span data-i18n="pnReviewTitle">Poverenje gradimo kvalitetnim radom</span><small data-i18n="pnReviewState">Recenzije — u pripremi</small></summary>
+      <p data-i18n="pnReviewIntro">Planiramo obostrane recenzije nakon završenog posla. Učesnici će moći da ocene kvalitet usluge, poštovanje dogovora i komunikaciju, kako bi drugi lakše izabrali pouzdanog saradnika.</p>
+      <p data-i18n="pnReviewRules">Predviđena je provera prijava uz mogućnost odgovora. Ponovljeno ili ozbiljno kršenje pravila moći će da dovede do ograničenja ili isključenja iz mreže, nakon provere okolnosti.</p>
+    </details>
+  </div>
+</section>
+
 <section class="about" id="about">
   <div class="container about-grid">
     <a class="about-photo" href="#contact" aria-label="Vehicle Inspection">
@@ -121,8 +145,8 @@
       <p data-i18n="aboutText">Cilj je jednostavan: da kupac ne ulazi u rizik, nego da dobije jasnu sliku o stanju vozila, istoriji i realnim troškovima pre odluke.</p>
       <p class="about-subtext" data-i18n="aboutSubtext">Naš tim vodi nabavku, tehničku proveru i transport vozila — od Švajcarske do vaše adrese.</p>
       <h3 data-i18n="standaloneTitle">Pregled auta bez kupovine preko nas</h3>
-      <p data-i18n="standaloneText">Već ste našli auto? Možete naručiti samo pregled. Naš tim polazi iz St. Gallena, pregleda vozilo i dokumentaciju dostupnu kod prodavca, pa vam šalje fotografije i pisani izveštaj o stanju i nedostacima koje smo uočili na licu mesta.</p>
-      <p data-i18n="standalonePrices">Unesite grad ili poštanski broj vozila u obrazac za pregled i videćete okvirnu cenu. Polazimo iz St. Gallena. Cenu potvrđujemo pre uplate, a termin sa prodavcem dogovaramo nakon uplate.</p>
+      <p data-i18n="standaloneText">Već ste našli auto? Možete naručiti samo pregled. Na licu mesta proveravamo vozilo i dostupnu dokumentaciju kod prodavca, fotografišemo auto i sastavljamo pisani izveštaj o stanju i uočenim nedostacima. Preglede trenutno obavlja naš tim iz St. Gallena. Razvijamo mrežu eksperata širom Švajcarske kako bismo smanjili troškove dolaska.</p>
+      <p data-i18n="standalonePrices">Unesite grad ili poštanski broj vozila u obrazac za pregled i videćete okvirnu cenu. Trenutno polazimo iz St. Gallena. Cenu potvrđujemo pre uplate, a termin sa prodavcem dogovaramo nakon uplate.</p>
       <a class="btn btn-outline" href="/pregled/" data-i18n="standaloneCta">Zatražite pregled auta</a>
     </div>
   </div>
@@ -146,13 +170,34 @@
       <p class="section-kicker" data-i18n="contactKicker">Kontakt</p>
       <h2 data-i18n="formTitle">Pronađimo vaš idealan auto</h2>
       <p class="contact-lead" data-i18n="formLead">Pošaljite osnovne podatke i dobićete realan smer za vozilo, budžet i očekivanu kilometražu.</p>
-      <div class="contact-logo"><span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="30" height="30" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span></div>
-      <div class="company"><strong>SWISCARS GmbH</strong><span>Premium Swiss Vehicle Consulting</span><span>info@swiscars.com</span><span>+41 79 905 61 64</span></div>
+
+      <div class="company"><div class="company-heading"><span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="30" height="30" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span><strong>SWISCARS GmbH</strong></div><span>Premium Swiss Vehicle Consulting</span><span>info@swiscars.com</span><span>+41 79 905 61 64</span></div>
       <div class="contact-links">
         <a class="wa" href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-7.8 13.5L3 22l6.7-1.1A9 9 0 1 0 12 2Zm4.9 12.9c-.2.6-1.1 1.1-1.7 1.2-.5.1-1.1.2-3.4-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.2c.2-.2.5-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6c-.1.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.5-.2.8-.1l1.9.9c.3.2.5.3.5.5s0 .5-.1.7Z"/></svg>WhatsApp</a>
         <a class="vb" href="#" aria-label="Viber"><svg viewBox="0 0 24 24"><path d="M12 2C7 2 4 4.8 4 9.5v3.2c0 2.4 1.4 4.6 3.6 5.6V22l3.7-2.7h.7c5 0 8-2.8 8-7.5V9.5C20 4.8 17 2 12 2Zm4.8 12.4c-.2.6-1.2 1.4-1.8 1.4-.5 0-1.1-.2-1.8-.6-3-1.3-4.9-4.4-5-4.6-.5-.8-.8-1.6-.8-2.3 0-.8.4-1.5.8-1.8.2-.2.5-.2.7-.2h.5c.2 0 .4.1.5.4l.7 1.7c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.5 0 .7.7 1.2 1.6 2.1 2.8 2.8.2.1.5.1.7-.1l.7-.8c.2-.2.4-.3.7-.2l1.7.8c.3.1.4.3.4.5 0 .3-.1.7-.2 1Z"/></svg>Viber</a>
         <a class="mail" href="mailto:info@swiscars.com" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm8 8 8-5H4l8 5Zm0 2L4 10v7h16v-7l-8 5Z"/></svg>Email</a>
       </div>
+
+      <form class="general-contact-form" id="general-contact-form" name="general-contact" method="POST" data-netlify="true" netlify-honeypot="website" aria-labelledby="general-contact-title">
+        <input type="hidden" name="form-name" value="general-contact">
+        <input type="hidden" name="subject" value="SWISCARS · Kontakt poruka">
+        <input type="hidden" name="language" value="sr">
+        <p class="hidden-field" aria-hidden="true"><label>Leave empty<input name="website" tabindex="-1" autocomplete="off"></label></p>
+        <h3 id="general-contact-title" data-i18n="gcTitle">Pišite nam</h3>
+        <p class="general-contact-intro" data-i18n="gcIntro">Za pitanja, saradnju ili prijavu problema.</p>
+        <label for="gc-name"><span data-i18n="gcName">Ime i prezime</span><input id="gc-name" name="name" autocomplete="name" maxlength="120" required></label>
+        <label for="gc-email"><span data-i18n="gcEmail">Email</span><input id="gc-email" name="email" type="email" autocomplete="email" maxlength="254" required></label>
+        <label class="general-contact-wide" for="gc-topic"><span data-i18n="gcTopic">Tema</span><select id="gc-topic" name="topic" required>
+          <option value="" data-i18n="gcChoose">Izaberite temu</option>
+          <option value="question" data-i18n="gcQuestion">Opšte pitanje</option>
+          <option value="cooperation" data-i18n="gcCooperation">Saradnja</option>
+          <option value="problem" data-i18n="gcProblem">Prijava problema</option>
+          <option value="other" data-i18n="gcOther">Drugo</option>
+        </select></label>
+        <label class="general-contact-wide" for="gc-message"><span data-i18n="gcMessage">Poruka</span><textarea id="gc-message" name="message" rows="4" minlength="10" maxlength="5000" required data-i18n-placeholder="gcMessagePlaceholder" placeholder="Kako možemo da pomognemo?"></textarea></label>
+        <button class="btn btn-gold" type="submit" data-i18n="gcSend">Pošalji poruku</button>
+        <p class="form-status general-contact-wide" role="status" aria-live="polite" hidden></p>
+      </form>
     </div>
     <details class="contact-form-panel" id="order-form-panel">
     <summary data-i18n="formOpen">Pošaljite upit za auto</summary>
@@ -194,7 +239,7 @@
       <input id="cf-phone" name="phone" type="tel" autocomplete="tel" maxlength="60" required data-i18n-placeholder="phone" placeholder="Telefon / WhatsApp">
       <label class="sr-only" for="cf-email" data-i18n="email">E-mail</label>
       <input id="cf-email" name="email" type="email" required data-i18n-placeholder="email" placeholder="E-mail">
-      
+
       <p class="cf-hint" data-i18n="cfHow">Na email dobijate link za praćenje upita i predloga vozila. Usluga sa pregledom košta 700 CHF; ukupnu cenu potvrđujemo unapred, a o kupovini odlučujete posle izveštaja.</p>
       <button class="btn btn-gold" type="submit" data-i18n="send">Pošalji upit</button>
       <p class="form-status" role="status" aria-live="polite" hidden></p>
@@ -203,6 +248,8 @@
   </div>
 </section>
 </main>
-<footer><div class="brand footer-brand"><span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span><span><strong>SWISCARS</strong><small>Premium Selection</small></span></div><div class="footer-company"><strong>SWISCARS GmbH</strong><span data-i18n="footerText">Vaš tehnički ekspert za proverena vozila iz Švajcarske.</span><span data-i18n="footerCountry">Švajcarska</span></div><div class="footer-legal"><a href="/impressum" data-i18n="navImpressum">Impresum</a><a href="/agb" data-i18n="navAgb">Uslovi</a><a href="/intern/" data-i18n="navTeam" rel="nofollow">Za tim</a></div><small>&copy; 2026 SWISCARS GmbH. <span data-i18n="footerRights">Sva prava zadržana.</span></small></footer>
+<footer><div class="brand footer-brand"><span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span><span><strong>SWISCARS</strong><small>Premium Selection</small></span></div><div class="footer-company"><strong>SWISCARS GmbH</strong><span data-i18n="footerText">Vaš tehnički ekspert za proverena vozila iz Švajcarske.</span><span data-i18n="footerCountry">Švajcarska</span></div><div class="footer-legal" style="flex-wrap:wrap"><a href="/impressum" data-i18n="navImpressum">Impresum</a><a href="/agb" data-i18n="navAgb">Uslovi</a><a href="/eksperti/" data-i18n="navExperts">Za eksperte</a><a href="/prevoznici/" data-i18n="navCarriers">Za prevoznike</a></div><small>&copy; 2026 SWISCARS GmbH. <span data-i18n="footerRights">Sva prava zadržana.</span></small></footer>
 <script src="assets/js/translations.js"></script><script src="/assets/js/service-prices.js"></script><script src="assets/js/main.js"></script>
+<script src="/assets/js/general-contact.js"></script>
+<script src="/assets/js/contact-topic-picker.js"></script>
 </body></html>

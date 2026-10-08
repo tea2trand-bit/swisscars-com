@@ -2,7 +2,7 @@
   'use strict';
   const DEFAULTS = Object.freeze({ kapital: 0, rezervaKap: 0, rate: 1.057, vat: 8.1,
     pdv: 20, prevoz: 500, provizija: 900, inspKmRate: 1.5, depositPct: 10 });
-  const VISIBLE_KEYS = Object.freeze(Object.keys(DEFAULTS));
+  const VISIBLE_KEYS = Object.freeze(Object.keys(DEFAULTS).filter(key => key !== "inspKmRate"));
   const RULES = Object.freeze({
     kapital: { max: 1000000000 }, rezervaKap: { max: 1000000000 }, rate: { max: 10, positive: true },
     vat: { max: 100 }, pdv: { max: 100 },
@@ -54,7 +54,7 @@
     body.prevoz = numeric(transport, 'prevoz', RULES.prevoz);
     if (payInfo == null) payInfo = '';
     if (typeof payInfo !== 'string' || payInfo.length > 20000) throw new Error('Neispravne instrukcije za uplatu');
-    return { ...body, payInfo, swissPackageFee: body.provizija, inspBaseFee: 0 };
+    return { ...body, payInfo, swissPackageFee: body.provizija };
   }
   const api = { formValues, saveBody, VISIBLE_KEYS };
   if (typeof module === 'object' && module.exports) module.exports = api;
