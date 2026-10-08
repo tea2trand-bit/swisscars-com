@@ -12,7 +12,17 @@
     'Najnovije god.': ['Neuestes Bj.', 'Newest year'],
     'SWISCARS analiza': ['SWISCARS Analyse', 'SWISCARS analysis'],
     'Analiza ulaganja': ['Investitionsanalyse', 'Investment analysis'],
-    'Analiziraj model': ['Modell analysieren', 'Analyze model']
+    'Analiziraj model': ['Modell analysieren', 'Analyze model'],
+    'Pregled pretrage': ['Suchübersicht', 'Search overview'],
+    'Detalji analize': ['Details der Analyse', 'Analysis details'],
+    'Prihvatljivi oglasi': ['Passende Inserate', 'Suitable listings'],
+    'Prihvatljivi oglasi:': ['Passende Inserate:', 'Suitable listings:'],
+    'Različiti modeli': ['Verschiedene Modelle', 'Distinct models'],
+    'Različiti modeli:': ['Verschiedene Modelle:', 'Distinct models:'],
+    'Sačuvani modeli': ['Gespeicherte Modelle', 'Saved models'],
+    'Sačuvani modeli:': ['Gespeicherte Modelle:', 'Saved models:'],
+    'Naši oglasi': ['Eigene Inserate', 'Our listings'],
+    'Naši oglasi:': ['Eigene Inserate:', 'Our listings:']
   });
   const input = document.querySelector('input[name="searchBudgetAmount"]');
   const control = input?.closest('.company-search-number-control');

@@ -8,7 +8,7 @@
   const fallback = { transport: 500, export: 0, eco: 155, testing: 200 };
   let fx = null; let fxReady=false; let pendingResultReveal=false;
   const touched = new Set();
-  const priceStep = 100, priceMin = 1, priceMax = 30000;
+  const priceStep = 500, priceMin = 1, priceMax = 30000;
   let activated = false; let packageMode=false;
   for (const [key, value] of Object.entries(fallback)) $(key).value = value;
   $('rate').value = ''; $('rate').readOnly = true;
@@ -19,34 +19,60 @@
   }
   function updateRateNote() {
     const inEUR = $('currency').value === 'EUR';
-    const conversion = inEUR ? 'Cena vozila je već u evrima, pa je ne preračunavamo.' : 'Cena u CHF × kurs = cena u EUR.';
     if (fx) {
       const rate = fx.eurPerCHF.toLocaleString('sr-RS', { minimumFractionDigits: 5, maximumFractionDigits: 5 });
       const date = new Date(fx.asOf + 'T12:00:00Z').toLocaleDateString('sr-RS').replace(/\.$/, '');
-      $('rate-status').textContent = `Primenjeni kurs: 1 CHF ≈ ${rate} EUR · ${date}${fx.status === 'last-known' ? ' · poslednji poznati kurs' : ''}. ${conversion}${inEUR && packageMode ? ' Kurs primenjujemo na cenu SWISCARS paketa u CHF.' : ''}`;
+      $('rate-status').textContent = `1 CHF ≈ ${rate} EUR · ${date}${fx.status === 'last-known' ? ' · poslednji poznati kurs' : ''}`;
     } else {
       const state = fxReady ? 'Kurs trenutno nije dostupan.' : 'Učitavamo referentni kurs CHF/EUR…';
-      $('rate-status').textContent = `${state} ${inEUR ? conversion + (packageMode ? ' Za SWISCARS paket potreban je kurs.' : '') : 'Obračun u CHF čeka kurs; možete uneti cenu u evrima.'}`;
+      $('rate-status').textContent = `${state}${inEUR ? (packageMode ? ' Za SWISCARS paket potreban je kurs.' : '') : ' Obračun u CHF čeka kurs.'}`;
     }
   }
   function requestResultReveal(){pendingResultReveal=true;$('example-status').hidden=false;$('example-status').textContent='Pripremamo obračun…';}
   function finishResultReveal(){if(!pendingResultReveal)return;pendingResultReveal=false;$('example-status').hidden=false;$('example-status').textContent='Obračun je spreman.';if(matchMedia('(max-width:760px)').matches)requestAnimationFrame(()=>{$('result-card').scrollIntoView({behavior:'smooth',block:'start'});$('result-card').focus({preventScroll:true});});}
+  function priceParts(raw) {
+    const text = String(raw).trim().replace(/\s/g, '');
+    if (!text) return null;
+    const match = text.match(/^(\d+|\d{1,3}(?:\.\d{3})+)(?:,(\d{0,2}))?$/)
+      || text.match(/^(\d+)\.(\d{1,2})$/);
+    if (!match) return null;
+    const whole = match[1].replace(/\./g, ''), fraction = match[2];
+    const value = Number(whole + (fraction ? '.' + fraction : ''));
+    return Number.isFinite(value) ? { value, fraction } : null;
+  }
+  function formatPriceEntry() {
+    const field = $('price'), raw = field.value, parts = priceParts(raw);
+    if (!parts) return;
+    const start = field.selectionStart, atEnd = start === raw.length;
+    const digitsBefore = raw.slice(0, start ?? raw.length).replace(/\D/g, '').length;
+    const commaBefore = raw.slice(0, start ?? raw.length).includes(',');
+    const next = Math.trunc(parts.value).toLocaleString('sr-RS') + (parts.fraction !== undefined ? ',' + parts.fraction : '');
+    if (next === raw) return;
+    field.value = next;
+    if (document.activeElement === field) {
+      let caret = next.length;
+      if (!atEnd) {let digits = 0;caret = 0;while(caret < next.length && (digits < digitsBefore || commaBefore && !next.slice(0, caret).includes(','))){if(/\d/.test(next[caret]))digits++;caret++;}}
+      field.setSelectionRange(caret, caret);
+    }
+  }
   function updatePriceControls() {
     const currency = $('currency').value === 'EUR' ? 'EUR' : 'CHF';
+    $('price-unit').textContent = currency;
     $('price-step').textContent = `Korak ${priceStep} ${currency}`;
     $('price-minus').setAttribute('aria-label', `Smanjite cenu za ${priceStep} ${currency}`);
     $('price-plus').setAttribute('aria-label', `Povećajte cenu za ${priceStep} ${currency}`);
-    const raw = $('price').value.trim(), value = raw === '' ? null : Number(raw);
-    const invalid = $('price').validity.badInput || value !== null && (!Number.isFinite(value) || value < priceMin || value > priceMax);
-    $('price-minus').disabled = invalid || value === null || value <= priceMin;
-    $('price-plus').disabled = invalid || value !== null && value >= priceMax;
+    const raw = $('price').value.trim(), value = priceParts(raw)?.value ?? null;
+    const invalid = raw !== '' && (value === null || value < priceMin || value > priceMax);
+    $('price-minus').disabled = invalid || value === null || value - priceStep < priceMin;
+    $('price-plus').disabled = invalid || value !== null && value + priceStep > priceMax;
   }
   function adjustPrice(direction) {
     updatePriceControls();
     if ($(direction < 0 ? 'price-minus' : 'price-plus').disabled) return;
-    const current = $('price').value.trim() === '' ? 0 : Number($('price').value);
-    const next = Math.max(priceMin, Math.min(priceMax, Math.round((current + direction * priceStep + Number.EPSILON) * 100) / 100));
-    $('price').value = String(next);
+    const current = priceParts($('price').value)?.value ?? 0;
+    const next = Math.round((current + direction * priceStep + Number.EPSILON) * 100) / 100;
+    if (next < priceMin || next > priceMax) return;
+    $('price').value = next.toLocaleString('sr-RS', { maximumFractionDigits: 2 });
     $('price').dispatchEvent(new Event('input', { bubbles: true }));
   }
   function renderScenarios(container, scenarios) {
@@ -67,14 +93,16 @@
     if (!activated && !$('price').value) return;
     try {
       for (const key of fields) if ($(key).validity.badInput) throw new Error(key);
-      if (Number($('price').value) > priceMax) throw new Error('price');
+      const price = priceParts($('price').value)?.value;
+      if (!Number.isFinite(price) || price < priceMin || price > priceMax) throw new Error('price');
       const input = Object.fromEntries(fields.map(key => [key, $(key).value]));
+      input.price = price;
       if (input.currency === 'CHF' && !fx) throw new Error('rate');
       // An EUR-only input needs no CHF conversion, even if the source is offline.
       input.rate = fx ? fx.eurPerCHF : 1;
       const originUnconfirmed=input.origin==='unknown'; if(originUnconfirmed)input.origin='standard'; $('origin-note').textContent=originUnconfirmed?'Dok poreklo nije potvrđeno, računamo carinu 12,5%.':input.origin==='preferential'?'Carina 0% uz prihvaćen dokaz porekla.':'Carina 12,5% bez prihvaćenog dokaza porekla.'; const original=SCImportCalculator.calculate(input); if(packageMode){if(!fx)throw new Error('rate');input.price=Number(input.price)/1.081;input.origin='preferential';} const possible = SCImportCalculator.calculate(input), possibleA=possible.scenarios[0]; const result=original,a=result.scenarios[0],b=result.scenarios.at(-1); const packageFee=packageMode?700*fx.eurPerCHF:0; $('package-fee-eur').hidden=!packageMode; $('package-fee-eur').textContent=packageMode?'700 CHF':''; if(packageMode){possibleA.total=Math.round((possibleA.total+packageFee)*100)/100;} const deductions=$('package-deductions'); deductions.replaceChildren(); deductions.hidden=!packageMode; const dutySaving=packageMode?original.scenarios[0].duty-possibleA.duty:0, chVatSaving=packageMode?original.car-possible.car:0, srVatSaving=packageMode?original.scenarios[0].vat-possibleA.vat:0; for(const [label,value] of [['Carina u Srbiji', '- '+money(dutySaving)],['Švajcarski PDV (8,1%)','- '+money(chVatSaving)],['Razlika PDV-a pri uvozu','- '+money(srVatSaving)],['Ukupno uz SWISCARS',money(packageMode?possibleA.total:original.scenarios[0].total)]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;if(label==='Moguća neto ušteda'){dd.className='import-net-saving';}if(label==='Ukupno uz SWISCARS'){dt.className='import-sum';dd.className='import-sum';}deductions.append(dt,dd);} $('package-info').hidden=!packageMode; const saving=original.scenarios[0].total-possibleA.total; $('saving-label').textContent=saving>0?'Moguća neto ušteda':saving<0?'Dodatni trošak paketa':'Bez neto uštede'; $('package-info').dataset.outcome=saving>0?'saving':saving<0?'cost':'neutral'; $('package-difference').textContent=packageMode?money(Math.abs(saving)):''; $('package-note').textContent=packageMode?'Uslovna procena: važi uz potvrđen povrat švajcarskog PDV-a i prihvaćen dokaz porekla. Najpre proveravamo oba uslova za izabrano vozilo.':'';
       $('empty').hidden = true; $('result').hidden = false;
-      const rows = [['Vozilo ('+Number($('price').value).toLocaleString('sr-RS')+' '+input.currency+')', money(result.car)], ['Prevoz', money(result.costs.transport)], ['Ekološka naknada — procena', money(result.costs.eco)]];
+      const rows = [['Vozilo ('+price.toLocaleString('sr-RS')+' '+input.currency+')', money(result.car)], ['Prevoz', money(result.costs.transport)], ['Ekološka naknada — procena', money(result.costs.eco)]];
       for (const key of ['broker', 'testing', 'other']) if (result.costs[key] !== null) rows.push([labels[key][0].toUpperCase() + labels[key].slice(1), money(result.costs[key])]);
       rows.push(['Carina u Srbiji (12,5%)', result.scenarios.length > 1 ? `${money(a.duty)} – ${money(b.duty)}` : money(a.duty)], ['PDV pri uvozu (20%)', result.scenarios.length > 1 ? `${money(a.vat)} – ${money(b.vat)}` : money(a.vat)]);
       const dutyControl=$('duty-control');
@@ -93,7 +121,7 @@
       if(pendingResultReveal){$('example-status').hidden=false;$('example-status').textContent=key==='rate'&&!fx&&!fxReady?'Učitavamo dnevni kurs. Obračun će se prikazati čim bude spreman.':key==='rate'&&!fx?'Dnevni kurs nije dostupan. Unesite cenu u evrima.':$('status').textContent;if(!(key==='rate'&&!fx&&!fxReady))pendingResultReveal=false;}
     }
   }
-  for (const key of ['price','currency','origin']) $(key).addEventListener('input', () => { touched.add(key); activated = true; render(); });
+  for (const key of ['price','currency','origin']) $(key).addEventListener('input', () => { if(key==='price')formatPriceEntry();touched.add(key); activated = true; render(); });
   $('price-minus').addEventListener('click', () => adjustPrice(-1));
   $('price-plus').addEventListener('click', () => adjustPrice(1));
 
@@ -101,7 +129,7 @@
   $('package-check').addEventListener('change',()=>{packageMode=$('package-check').checked;activated=true;render();});
   updatePriceControls();
   $('form').addEventListener('submit', e => { e.preventDefault(); requestResultReveal(); activated=true; render(); if($('result').hidden&&!(pendingResultReveal&&!fxReady))$('price').focus(); });
-  $('example').addEventListener('click', () => { requestResultReveal(); $('price').value = '10000'; $('currency').value = 'CHF'; touched.add('price'); touched.add('currency'); activated = true; render(); });
+  $('example').addEventListener('click', () => { requestResultReveal(); $('price').value = '10.000'; $('currency').value = 'CHF'; touched.add('price'); touched.add('currency'); activated = true; render(); });
   SCServicePrices.ready.then(data => {
     const defaults = data?.importDefaults;
     if (defaults) {

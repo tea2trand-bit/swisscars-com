@@ -40,14 +40,13 @@
     <form id="import-form" class="import-card" novalidate>
       <h2>Vaše vozilo</h2>
       <div class="import-price-row">
-        <div class="import-field"><label for="import-price">Cena vozila u Švajcarskoj <span id="import-price-step" class="import-price-step" hidden>Korak 100 CHF</span></label><div class="import-price-control"><button id="import-price-minus" type="button" aria-label="Smanjite cenu za 100 CHF" aria-controls="import-price" disabled>−</button><input id="import-price" type="number" min="1" max="30000" step="0.01" inputmode="decimal" placeholder="Na primer 10000" required aria-describedby="price-help import-price-step"><button id="import-price-plus" type="button" aria-label="Povećajte cenu za 100 CHF" aria-controls="import-price">+</button></div></div>
+        <div class="import-field"><label for="import-price">Cena vozila u Švajcarskoj <span id="import-price-step" class="import-price-step" hidden>Korak 500 CHF</span></label><div class="import-price-control"><button id="import-price-minus" type="button" aria-label="Smanjite cenu za 500 CHF" aria-controls="import-price" disabled>−</button><div class="import-price-entry"><input id="import-price" type="text" inputmode="decimal" maxlength="12" placeholder="10.000" required aria-describedby="price-help import-price-step import-price-unit" autocomplete="off"><span id="import-price-unit">CHF</span></div><button id="import-price-plus" type="button" aria-label="Povećajte cenu za 500 CHF" aria-controls="import-price">+</button></div></div>
         <div class="import-field"><label for="import-currency">Valuta</label><select id="import-currency"><option value="CHF">CHF</option><option value="EUR">EUR</option></select></div>
       </div>
       <p id="price-help" class="import-help">Cena iz oglasa ili dogovorena cena, najviše 30.000 u izabranoj valuti. Ako je cena već bez PDV-a, unesite taj iznos.</p>
       <aside class="import-fx" aria-label="Kurs za obračun">
         <p id="import-rate-status" role="status" aria-live="polite">Učitavamo referentni kurs CHF/EUR…</p>
-        <p class="import-fx-source">Izvor: <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener noreferrer">Evropska centralna banka (ECB)</a>. Kurs se preuzima automatski iz poslednje objave.</p>
-        <p class="import-fx-note">Referentni kurs za procenu. Kurs banke i naknade pri plaćanju mogu se razlikovati.</p>
+        <p class="import-fx-source"><a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener noreferrer">ECB referentni kurs</a> · Kurs banke može se razlikovati.</p>
       </aside>
       <div hidden aria-hidden="true">
         <input id="import-rate" type="hidden"><span id="defaults-status"></span>

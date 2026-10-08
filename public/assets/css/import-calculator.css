@@ -102,3 +102,7 @@
 #import-package-info .import-experience-copy>strong{color:#344e63}
 #import-package-info .import-experience-copy p{margin:8px 0;padding:0;border:0;background:transparent;font-size:14px;line-height:1.6}
 #import-package-info .import-experience-copy #import-package-note{margin-top:14px;color:#687784;font-size:12px;line-height:1.5}
+.import-example{font-size:16px;font-weight:500;line-height:1.5;min-height:44px;padding:8px}
+.import-price-entry{display:flex;align-items:center;min-width:0;gap:4px;padding-right:6px}
+.import-price-entry input{min-width:0;width:100%;padding-right:0;text-align:right}
+.import-price-entry>span{flex:0 0 auto;font-family:inherit;font-size:13px;font-weight:500;line-height:1.4;color:#536273}

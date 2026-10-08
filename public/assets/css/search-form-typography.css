@@ -39,6 +39,15 @@
 #app #t-ai .company-search-portals {justify-content:center;text-align:center;gap:4px 16px}
 #app #t-ai .company-search-portals>span {flex-basis:100%;text-align:center}
 #app #t-ai .company-search-portals>a {text-align:center;white-space:nowrap}
+#app #companyProgressCounterPicker {display:none}
+#app #runProg .company-progress-outcome {margin:0 0 4px;font:400 13px/1.5 var(--f-body);color:var(--muted)}
+#app #runProg .company-search-info>summary {justify-content:flex-start}
+#app #runProg .company-search-info-label {margin-left:0}
+@media(max-width:760px) {
+  #app #companyProgressCounterPicker:not([hidden]) {display:block}
+  #app #runProg .company-progress-counts {display:none}
+  #app #companyProgressCounterPicker>.team-choice-trigger {min-height:44px;padding:8px 12px;font:500 14px/1.4 var(--f-body)}
+}
 #app #companyManualSearch [hidden] { display:none!important; }
 #app #companyManualSearch .search-area {
   grid-column:span 2; min-width:0; margin:0; padding:0; border:0;
