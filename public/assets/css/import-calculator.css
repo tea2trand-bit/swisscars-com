@@ -105,6 +105,7 @@
 .import-example{font-size:16px;font-weight:500;line-height:1.5;min-height:44px;padding:8px}
 .import-price-entry{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;min-width:0;gap:12px;padding:0 8px}
 .import-price-entry input{min-width:0;width:100%;padding:10px 0;text-align:center}
-.import-price-entry input,.import-price-entry>span,#import-currency{font-family:inherit;font-size:16px;font-weight:400;color:#172a3a}
+.import-price-entry input,.import-price-entry>span,#import-currency{font-family:inherit;font-size:20px;font-weight:400;color:#172a3a}
 .import-price-entry>span{line-height:1.5}
-@media(min-width:341px) and (max-width:380px){.import-price-entry{gap:8px;padding:0 4px}.import-price-entry input,.import-price-entry>span,#import-currency{font-size:14px}}
+@media(max-width:760px){.import-price-entry input,.import-price-entry>span,#import-currency{font-size:18px}}
+@media(min-width:341px) and (max-width:380px){.import-price-entry{gap:8px;padding:0 4px}.import-price-entry input,.import-price-entry>span,#import-currency{font-size:16px}}
