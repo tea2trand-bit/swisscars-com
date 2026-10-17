@@ -1,0 +1,24 @@
+/* Classic header and first screen; current service content below. */
+.site-header,.hero{max-width:1160px;margin-inline:auto}
+.hero-service-note{font-size:13px;line-height:1.65;color:#c8d0d6;margin:20px 0 0;max-width:460px}
+.simple-home{--simple-line:#dce3da;--simple-muted:#627064;--simple-ink:#294237;--simple-gold:#8b6b35;color:var(--simple-ink);background:#f7f8f5;max-width:1160px;margin:auto;padding:0 32px}
+.simple-home h2{font:600 28px/1.3 Inter,Arial,sans-serif;color:var(--simple-ink);margin:0 0 24px}
+.simple-other{padding:40px 0}
+.simple-services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.simple-service{display:flex;flex-direction:column;align-items:start;background:#fff;border:1px solid var(--simple-line);border-radius:12px;padding:26px;text-decoration:none;color:inherit;transition:box-shadow .2s}
+.simple-service:hover{box-shadow:0 7px 24px #263a2e0d}
+.simple-service>span{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--simple-gold);margin-bottom:12px}
+.simple-service h3{font:600 19px/1.35 Inter,Arial,sans-serif;margin:0 0 10px;color:var(--simple-ink)}
+.simple-service p{font-size:14px;color:var(--simple-muted);margin:0 0 20px}
+.simple-service b{margin-top:auto;font-size:13px;font-weight:600}
+.simple-steps{border-block:1px solid var(--simple-line);padding:36px 0}
+.simple-steps ol{padding:0;margin:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.simple-steps li{display:flex;gap:13px}
+.simple-steps li>span{width:30px;height:30px;flex-shrink:0;display:grid;place-items:center;background:#e8ede4;border-radius:50%;font-weight:700;font-size:13px}
+.simple-steps h3{font:600 15px/1.4 Inter,Arial,sans-serif;letter-spacing:-.01em;margin:3px 0 6px;color:var(--simple-ink)}
+.simple-steps p{font-size:13px;line-height:1.6;color:var(--simple-muted);margin:0}
+.simple-text-link{display:inline-block;color:var(--simple-ink);font-size:13px;font-weight:600;border-bottom:1px solid #b9c3b6;margin-top:24px;padding-bottom:3px}
+.simple-help{display:flex;align-items:center;gap:28px;padding:30px 0 42px}
+.simple-help h2{font-size:20px;margin:0 auto 0 0}
+.simple-help a{font-size:13px;color:var(--simple-ink)}
+@media(max-width:760px){.simple-home{padding:0 20px}.simple-home h2{font-size:24px}.simple-services,.simple-steps ol{grid-template-columns:1fr}.simple-steps{padding:27px 0}.simple-other{padding:30px 0}.simple-service{padding:22px}.simple-help{flex-wrap:wrap;gap:16px}.simple-help h2{flex-basis:100%}}
