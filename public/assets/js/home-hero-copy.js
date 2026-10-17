@@ -78,4 +78,4 @@
     "home_partnerCta": "For partners →",
     "home_serviceShort": "Service including inspection: CHF 700. Purchase after the report and agreement."
   }
-};for(const [lang,values] of Object.entries(copy))Object.assign(translations[lang],values);})();
+};Object.assign(copy.sr,{ctaProcess:'Selekcija',importCalculatorCta:'Kalkulator uvoza'});Object.assign(copy.de,{ctaProcess:'Fahrzeugauswahl',importCalculatorCta:'Importrechner'});Object.assign(copy.en,{ctaProcess:'Selection',importCalculatorCta:'Import calculator'});for(const [lang,values] of Object.entries(copy))Object.assign(translations[lang],values);})();
