@@ -11,15 +11,15 @@
     sr: { reserved: "Rezervisano", stage: { kupljen: "U Švajcarskoj", transport: "U transportu", carinjen: "Na carini", garaza: "U pripremi u Srbiji", prodaja: "U Srbiji" },
       track: ["Kupljen", "Transport", "Carina", "U Srbiji"], sale: ["U prodaji", "Rezervisano", "Prodato"], ask: "Cena na upit", photos: "fotografija", details: "Detalji →",
       spec: { year: "Godište", firstReg: "Prva registracija", km: "Kilometraža", engine: "Motor", power: "Snaga", fuel: "Gorivo", gear: "Menjač", body: "Karoserija", drive: "Pogon", doors: "Vrata", euro: "Emisiona klasa", color: "Boja", keys: "Ključeva", serviceBook: "Servisna knjiga" },
-      close: "Zatvori", noEquip: "Oprema po dogovoru — pitajte nas.", illustration: "Ilustracija modela", creditsTitle: "O fotografijama", creditsNote: "Ilustracije nisu fotografije ponuđenih vozila. Autori:", cropNote: "Prikaz skraćen na 16:9.", locale: "sr-Latn-RS" },
+      close: "Zatvori", noEquip: "Podaci o opremi još nisu upisani.", illustration: "Ilustracija modela", creditsTitle: "O fotografijama", creditsNote: "Ilustracije nisu fotografije ponuđenih vozila. Autori:", cropNote: "Prikaz skraćen na 16:9.", locale: "sr-Latn-RS" },
     de: { reserved: "Reserviert", stage: { kupljen: "In der Schweiz", transport: "Im Transport", carinjen: "Beim Zoll", garaza: "In Vorbereitung in Serbien", prodaja: "In Serbien" },
       track: ["Gekauft", "Transport", "Zoll", "In Serbien"], sale: ["Im Verkauf", "Reserviert", "Verkauft"], ask: "Preis auf Anfrage", photos: "Fotos", details: "Details →",
       spec: { year: "Baujahr", firstReg: "Erstzulassung", km: "Kilometer", engine: "Motor", power: "Leistung", fuel: "Treibstoff", gear: "Getriebe", body: "Karosserie", drive: "Antrieb", doors: "Türen", euro: "Abgasnorm", color: "Farbe", keys: "Schlüssel", serviceBook: "Serviceheft" },
-      close: "Schliessen", noEquip: "Ausstattung auf Anfrage.", illustration: "Modellillustration", creditsTitle: "Zu den Fotos", creditsNote: "Die Illustrationen zeigen nicht die angebotenen Fahrzeuge. Urheber:", cropNote: "Auf 16:9 zugeschnitten.", locale: "de-CH" },
+      close: "Schliessen", noEquip: "Ausstattungsdaten sind noch nicht eingetragen.", illustration: "Modellillustration", creditsTitle: "Zu den Fotos", creditsNote: "Die Illustrationen zeigen nicht die angebotenen Fahrzeuge. Urheber:", cropNote: "Auf 16:9 zugeschnitten.", locale: "de-CH" },
     en: { reserved: "Reserved", stage: { kupljen: "In Switzerland", transport: "In transport", carinjen: "At customs", garaza: "In preparation in Serbia", prodaja: "In Serbia" },
       track: ["Bought", "Transport", "Customs", "In Serbia"], sale: ["For sale", "Reserved", "Sold"], ask: "Price on request", photos: "photos", details: "Details →",
       spec: { year: "Year", firstReg: "First registration", km: "Mileage", engine: "Engine", power: "Power", fuel: "Fuel", gear: "Gearbox", body: "Body", drive: "Drive", doors: "Doors", euro: "Emission class", color: "Colour", keys: "Keys", serviceBook: "Service book" },
-      close: "Close", noEquip: "Equipment on request.", illustration: "Model illustration", creditsTitle: "About the photos", creditsNote: "Illustrations do not show the offered vehicles. Authors:", cropNote: "Cropped to 16:9.", locale: "en-GB" },
+      close: "Close", noEquip: "Equipment details have not been entered yet.", illustration: "Model illustration", creditsTitle: "About the photos", creditsNote: "Illustrations do not show the offered vehicles. Authors:", cropNote: "Cropped to 16:9.", locale: "en-GB" },
   };
   const VAL = {
     de: { "Dizel": "Diesel", "Benzin": "Benzin", "Hibrid": "Hybrid", "Električni": "Elektro", "Gas": "Gas", "Manuelni 5": "Manuell 5-Gang", "Manuelni 6": "Manuell 6-Gang", "Automatik": "Automatik", "DSG / S-tronic": "DSG / S-tronic", "Hečbek": "Schrägheck", "Karavan": "Kombi", "Limuzina": "Limousine", "SUV": "SUV", "Monovolumen": "Van", "Kupe": "Coupé", "Kabriolet": "Cabrio", "Prednji": "Front", "Zadnji": "Heck", "Kompletna": "Komplett", "Delimična": "Teilweise", "Nema": "Keines",
@@ -41,6 +41,7 @@
   const logisticsPhase = c => ({ kupljen: 0, transport: 1, carinjen: 2, garaza: 3, prodaja: 3 })[c.status] ?? -1;
   const salePhase = c => c.status === "prodat" ? 2 : c.reserved ? 1 : 0;
   const saleStatus = c => T().sale[salePhase(c)];
+  const cardStatus = c => salePhase(c) ? saleStatus(c) : T().stage[c.status] || saleStatus(c);
   const track = c => { const i = logisticsPhase(c); return i < 0 ? "" : T().track.map((t, k) => `<li class="${k < i ? "done" : k === i ? "now" : ""}">${esc(t)}</li>`).join(""); };
 
   function render() {
@@ -50,20 +51,19 @@
       credits.querySelector('[data-credits-note]').textContent = T().creditsNote;
       credits.querySelector('[data-crop-note]').textContent = T().cropNote;
     }
-    // where the car is: still in Switzerland (bought / on the way) or already in Serbia (customs, preparation, for sale)
-    const loc = c => ["kupljen", "transport"].includes(c.status) ? "ch" : "rs";
-    const list = CARS.filter(c => filter === "all" || loc(c) === filter);
-    $("n-all").textContent = CARS.length; $("n-ch").textContent = CARS.filter(c => loc(c) === "ch").length; $("n-rs").textContent = CARS.filter(c => loc(c) === "rs").length;
+    const group = c => ["kupljen", "transport", "carinjen"].includes(c.status) ? "incoming" : "rs";
+    const list = CARS.filter(c => filter === "all" || group(c) === filter);
+    $("n-all").textContent=CARS.length; $("n-incoming").textContent=CARS.filter(c=>group(c)==="incoming").length; $("n-rs").textContent=CARS.filter(c=>group(c)==="rs").length;
     $("cars").innerHTML = list.map(c => {
       const ph = c.photos || [];
       return `<button type="button" class="car-card" data-car="${esc(c.id)}" aria-label="${esc(c.model)}">
         <div class="car-photo">${ph.length ? `<img src="${esc(photoUrl(ph[0]))}" alt="" loading="lazy">` : `<div class="ph">${PH}</div>`}
-          <span class="car-badge ${c.reserved && c.status !== "prodat" ? "res" : c.status !== "prodat" ? "ready" : ""}">${esc(saleStatus(c))}</span>
+          <span class="car-badge ${c.reserved && c.status !== "prodat" ? "res" : c.status !== "prodat" ? "ready" : ""}">${esc(cardStatus(c))}</span>
           ${c.illustration ? `<span class="car-image-note">${esc(T().illustration)}</span>` : ""}
           ${ph.length > 1 ? `<span class="count">${ph.length} ${esc(T().photos)}</span>` : ""}</div>
-        <div class="car-info"><h2>${esc(c.model)}</h2><p class="car-stage">${esc(T().stage[c.status] || "")}</p><p class="car-meta">${esc(meta(c))}</p>
-          <ol class="car-track" aria-hidden="true">${track(c)}</ol>
-          <div class="car-row"><p class="car-price ${c.price ? "" : "ask"}">${esc(price(c))}</p><span class="car-more">${esc(T().details)}</span></div></div></button>`;
+        <div class="car-info"><h2>${esc(c.model)}</h2><p class="car-meta">${esc(meta(c))}</p>
+
+          <div class="car-row"><div><small class="car-price-label">${esc(SCStockView.text(lang()).price)}</small><p class="car-price ${c.price ? "" : "ask"}">${esc(price(c))}</p></div><span class="car-more">${esc(T().details)}</span></div></div></button>`;
     }).join("");
     $("carsEmpty").hidden = list.length > 0;
     $("cars").querySelectorAll("[data-car]").forEach(b => b.onclick = () => open(b.dataset.car));
@@ -79,12 +79,17 @@
     $("exampleInspection").hidden = c.id !== 'preview-skoda-octavia-combi-2018';
     $("dlgPrice").textContent = price(c); $("dlgPrice").className = "car-price" + (c.price ? "" : " ask");
     $("dlgTrack").innerHTML = track(c);
+    const stockWords=SCStockView.text(lang());$("dlgPriceLabel").textContent=stockWords.price;
+    $("dlgReservationFacts").innerHTML=[[stockWords.arrival,SCStockView.arrival(c,lang())],[stockWords.deposit,SCStockView.deposit(c,lang())]].map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join('');
+    $("dlgReservationTerms").textContent=SCStockView.terms(c,lang());
+    const available=SCStockView.canReserve(c);$("dlgAsk").hidden=!available;$("dlgReservationUnavailable").hidden=available;$("dlgReservationUnavailable").textContent=c.status==='prodat'?stockWords.sold:c.reserved?stockWords.reserved:stockWords.unavailable;
+
     const rows = [["year", c.year], ["firstReg", c.firstReg ? String(c.firstReg).split("-").reverse().join("/") : ""], ["km", c.km != null && c.km !== "" ? num(c.km) + " km" : ""], ["engine", c.engine], ["power", c.kw ? `${c.kw} kW / ${Math.round(c.kw * 1.36)} ${hp()}` : ""],
       ["fuel", tv(c.fuel)], ["gear", tv(c.gear)], ["body", tv(c.body)], ["drive", tv(c.drive)], ["doors", c.doors], ["euro", c.euro], ["color", c.color], ["keys", c.keys], ["serviceBook", tv(c.serviceBook)]];
     $("dlgSpecs").innerHTML = rows.filter(r => r[1]).map(([k, v]) => `<div><dt>${esc(t.spec[k])}</dt><dd>${esc(v)}</dd></div>`).join("");
     const eq = [...(c.equip || []).map(tv), ...String(c.equipOther || "").split(",").map(s => s.trim()).filter(Boolean)];
     $("dlgEquip").innerHTML = eq.length ? eq.map(e => `<li>${esc(e)}</li>`).join("") : `<li>${esc(t.noEquip)}</li>`;
-    $("dlgAsk").href = `/?auto=${encodeURIComponent([c.model, c.year].filter(Boolean).join(" "))}&ref=${encodeURIComponent(c.id)}#contact`;
+    $("dlgAsk").href = `/rezervacija/?auto=${encodeURIComponent([c.model, c.year].filter(Boolean).join(" "))}&ref=${encodeURIComponent(c.id)}`;
     $("dlgClose").setAttribute("aria-label", t.close);
     const d = $("carDlg"); if (!d.open) d.showModal(); d.scrollTop = 0;
     if (location.hash !== "#auto-" + id) history.replaceState(null, "", "#auto-" + id);
@@ -107,7 +112,7 @@
         'preview-toyota-c-hr-2019': ['https://upload.wikimedia.org/wikipedia/commons/4/41/Toyota_C-HR_01_China_2019-04-04.jpg', 'Navigator84', 'Toyota_C-HR_01_China_2019-04-04.jpg']
       };
       CARS.forEach(c => {
-        const image = illustrations[c.id] || (c.model.startsWith('VW Golf') ? illustrations['preview-vw-golf-variant-2017'] : c.model.startsWith('Toyota C-HR') ? illustrations['preview-toyota-c-hr-2019'] : null);
+        const image = illustrations[c.id] || ((/^(VW|Volkswagen) Golf/.test(c.model)) ? illustrations['preview-vw-golf-variant-2017'] : c.model.startsWith('Toyota C-HR') ? illustrations['preview-toyota-c-hr-2019'] : null);
         if (image && !(c.photos || []).length) { c.photos = [image[0]]; c.illustration = image; }
       });
       const usedIllustrations = [...new Set(CARS.map(c => c.illustration).filter(Boolean))];

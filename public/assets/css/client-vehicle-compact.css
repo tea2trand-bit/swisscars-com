@@ -1,0 +1,146 @@
+/* A single compact vehicle summary; details stay available on request. */
+.purchase-page #u_listing{padding:20px 22px}
+.purchase-page .client-vehicle-heading{gap:6px 18px}
+.purchase-page .client-vehicle-heading h2{font-size:17px!important;line-height:1.4;margin:0}
+.purchase-page .client-vehicle-heading .purchase-listing-link{font-size:12px}
+.purchase-page #u_listing .client-price-grid{gap:24px;margin-top:18px;grid-template-columns:1fr 1fr}
+.purchase-page #u_listing .client-price-part{padding:0;border:0;border-radius:0;background:none;gap:3px}
+.purchase-page #u_listing .client-price-part>span{font-size:12px}
+.purchase-page #u_listing .client-price-part>strong{font:600 17px/1.5 Inter,Arial,sans-serif}
+.purchase-page #u_listing .client-price-part>small{font-size:11px;line-height:1.4}
+.purchase-page #u_listing .client-price-part:first-child>small{display:none}
+.purchase-page #u_listing .client-verification-section{margin-top:16px;padding-top:12px}
+.purchase-page #u_listing .client-verification-section>h3{display:none}
+.purchase-page #u_listing .client-verification-grid{display:grid;grid-template-columns:1fr;gap:7px}
+.purchase-page #u_listing .client-verification-grid>div{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;padding:0;border:0;border-radius:0;background:none}
+.purchase-page #u_listing .client-verification-grid span{font-size:12px;min-width:145px}
+.purchase-page #u_listing .client-verification-grid strong{font-size:12px;font-weight:500}
+.purchase-page #u_listing .client-verification-grid small{font-size:12px;line-height:1.5}
+.purchase-page #u_listing .client-package-section{margin-top:12px;padding-top:12px}
+.purchase-page #u_listing .client-package-section>header{justify-content:flex-start;gap:14px}
+.purchase-page #u_listing .client-package-section h3,.purchase-page #u_listing .client-booking-section h3{font:600 13px/1.5 Inter,Arial,sans-serif!important}
+.purchase-page #u_listing .client-package-section>header>strong{font:400 14px/1.5 Inter,Arial,sans-serif;color:#647b8a}
+.purchase-page #u_listing .client-package-section>p{font-size:12px;line-height:1.5;margin-top:3px}
+.purchase-page #u_listing .client-package-info{margin-top:7px}
+.purchase-page #u_listing .client-package-info>summary{font-size:12px;padding:0}
+.purchase-page #u_listing .client-booking-section{display:grid;grid-template-columns:auto 1fr;gap:5px 20px;align-items:baseline;margin-top:12px;padding-top:12px}
+.purchase-page #u_listing .client-booking-actions{display:flex;align-items:baseline;justify-content:space-between;gap:8px 18px;margin:0;flex-wrap:wrap}
+.purchase-page #u_listing .client-booking-actions>strong{font:500 14px/1.5 Inter,Arial,sans-serif;white-space:nowrap}
+.purchase-page #u_listing .client-paid-label{font-size:12px;font-weight:400;color:#36806a;margin-left:4px}
+.purchase-page #u_listing .client-booking-status{max-width:none;font:400 12px/1.5 Inter,Arial,sans-serif;flex-basis:auto}
+.purchase-page #u_listing .client-booking-section>p{grid-column:1/-1;padding:9px 11px;background:#f0f5f8;border-radius:5px;font-size:12px;line-height:1.6;margin:5px 0 0;color:#36586e}
+.purchase-page #u_listing .client-booking-actions>.btn{padding:7px 12px;min-height:34px;font-size:12px}
+@media(max-width:540px){
+ .purchase-page #u_listing{padding:16px}
+ .purchase-page .client-vehicle-heading h2{font-size:15px!important}
+ .purchase-page #u_listing .client-price-grid{gap:12px}
+ .purchase-page #u_listing .client-price-part>strong{font-size:16px}
+ .purchase-page #u_listing .client-verification-grid span{min-width:0}
+ .purchase-page #u_listing .client-booking-section{grid-template-columns:1fr;gap:4px}
+ .purchase-page #u_listing .client-booking-actions{justify-content:flex-start}
+}
+.purchase-page #u_listing .client-price-grid{grid-template-columns:1fr 1.35fr 1fr 1fr;gap:18px}
+.purchase-page #u_listing .client-price-part>strong.is-paid{color:#36806a}
+.purchase-page #u_listing .client-package-amount>strong{font-weight:400;color:#647b8a}
+.purchase-page #u_listing .client-price-part>span{font-size:11px}
+.purchase-page #u_listing .client-package-section{margin-top:9px;padding:0;border:0}
+.purchase-page #u_listing .client-package-info{margin:0}
+.purchase-page #u_listing .client-booking-section{display:block}
+.purchase-page #u_listing .client-booking-section>p{padding:0;background:none;margin-top:5px}
+@media(max-width:600px){.purchase-page #u_listing .client-price-grid{grid-template-columns:1fr 1fr;gap:12px 18px}}
+.purchase-page .client-vehicle-heading>#u_withdraw>.btn{color:#245b83!important;border-color:#b9cdda!important;background:#fff!important;font:500 11px/1.4 Inter,Arial,sans-serif}
+.purchase-page .client-vehicle-heading>#u_withdraw>.btn:hover{background:#eaf3f9!important;border-color:#245b83!important}
+.purchase-page .client-vehicle-heading>#u_withdraw>.btn:focus-visible{outline:2px solid #245b83;outline-offset:3px}
+.purchase-page #u_listing .client-price-grid{grid-template-columns:1fr 1.25fr 2.2fr;gap:20px}
+.client-package-balance{min-width:0}
+.client-package-balance>span{display:block;font:500 11px/1.5 Inter,Arial,sans-serif;color:#637680;margin-bottom:3px}
+.client-package-equation{display:grid;grid-template-columns:auto auto minmax(0,1.25fr) auto auto;gap:7px;align-items:start}
+.client-package-equation>span{display:grid;gap:3px}
+.client-package-equation b{font:400 16px/1.5 Inter,Arial,sans-serif;white-space:nowrap;color:#718795}
+.client-package-equation .is-paid b{color:#36806a;font-weight:600}
+.client-package-equation small{font:400 10px/1.4 Inter,Arial,sans-serif;color:#78858e}
+.client-package-equation i{font:400 14px/1.7 Inter,Arial,sans-serif;color:#8b9aa4}
+@media(max-width:680px){.purchase-page #u_listing .client-price-grid{grid-template-columns:1fr 1fr;gap:14px}.client-package-balance{grid-column:1/-1}.client-package-equation{grid-template-columns:auto auto auto auto auto;justify-content:start;gap:12px}.client-package-equation small{max-width:115px}}
+.client-package-equation{grid-template-columns:auto auto auto auto auto;justify-content:start}
+.client-package-equation small{max-width:105px}
+.purchase-page #u_listing .client-verification-grid{gap:0}
+.purchase-page #u_listing .client-verification-grid>div{padding:8px 0;border-bottom:1px solid #dfe6eb}
+
+/* The client's next decision belongs above the report. */
+.purchase-page #u_body .btn-gold{background:#245b83;border-color:#245b83;color:#fff;box-shadow:none}
+.purchase-page #u_body .btn-gold:hover{background:#194969;border-color:#194969}
+.purchase-page .client-decision{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px;border:1px solid #b8d0e1;border-left:4px solid #245b83;border-radius:8px;background:#f1f7fb;margin:16px 0 20px}
+.purchase-page .client-decision[hidden]{display:none}
+.purchase-page .client-decision h2{font:600 19px/1.4 Inter,Arial,sans-serif;color:#245b83;margin:0 0 5px}
+.purchase-page .client-decision p{font:400 14px/1.5 Inter,Arial,sans-serif;color:#294b60;margin:0 0 5px}
+.purchase-page .client-decision small{font:400 12px/1.5 Inter,Arial,sans-serif;color:#6b8292}
+.purchase-page .client-decision .up-ans{display:flex;flex-wrap:nowrap;gap:8px;flex:none;margin:0}
+.purchase-page .client-decision .btn{min-height:42px;padding:10px 16px;font:600 14px/1.4 Inter,Arial,sans-serif;border-radius:6px}
+.purchase-page .client-decision .btn-outline{color:#245b83;border-color:#b8cedf;background:#fff}
+.purchase-page .client-report-summary{margin-top:12px}
+.purchase-page dialog.client-report-dialog{width:min(760px,calc(100vw - 32px));max-height:85dvh;margin:auto;padding:20px;border:1px solid #d4e0e9;border-radius:10px;background:#fff;color:#294b60;overflow:auto}
+.purchase-page dialog.client-report-dialog::backdrop{background:#17384d66}
+.purchase-page .client-report-dialog>button{display:block;margin:0 0 18px auto;color:#245b83;border-color:#c8d9e5;background:#fff}
+@media(max-width:650px){.purchase-page .client-decision{flex-direction:column;align-items:flex-start;gap:14px;padding:16px}.purchase-page .client-decision .up-ans{flex-wrap:wrap}}
+
+/* Match the team's compact amount and verification rows. */
+.purchase-page #u_listing .client-price-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-top:18px}
+.purchase-page #u_listing .client-price-part>strong{font:600 15px/1.4 Inter,Arial,sans-serif;color:#294b60;font-variant-numeric:tabular-nums;white-space:nowrap}
+.purchase-page #u_listing .client-price-part>span{font:400 11px/1.4 Inter,Arial,sans-serif;color:#7d8990}
+.purchase-page #u_listing .client-price-part>small{display:none}
+.purchase-page #u_listing .client-price-part.is-paid>strong{color:#397263}
+.purchase-page #u_listing .client-price-part.is-pending>strong{color:#8c9eaa}
+.purchase-page #u_listing .client-price-condition{font:400 11px/1.5 Inter,Arial,sans-serif;color:#8395a1;margin:8px 0 0}
+.purchase-page #u_listing .client-verification-section{margin-top:14px;padding-top:12px}
+.purchase-page #u_listing .client-verification-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.purchase-page #u_listing .client-verification-grid>div{display:grid;grid-template-columns:auto 1fr;gap:3px 8px;padding:0;border:0}
+.purchase-page #u_listing .client-verification-grid span{grid-column:1/-1;min-width:0;font-size:11px}
+.purchase-page #u_listing .client-verification-grid :is(strong,small){font-size:12px}
+.purchase-page #u_listing .client-verification-grid small{margin:0}
+.purchase-page .purchase-progress #u_track{grid-template-columns:repeat(6,minmax(0,1fr))}
+.purchase-page .inspection-first-offer:has([data-order-package]){padding:18px 22px}
+.purchase-page .inspection-first-offer:has([data-order-package])>h2{font:600 17px/1.4 Inter,Arial,sans-serif;margin:0 0 8px}
+.purchase-page .inspection-first-offer:has([data-order-package])>h3,.purchase-page .inspection-first-offer:has([data-order-package])>.up-price{display:none}
+.purchase-page .inspection-first-offer:has([data-order-package])>p{margin:6px 0;font:400 12px/1.5 Inter,Arial,sans-serif}
+.purchase-page .inspection-first-offer .inspection-package-choice{padding:14px 0 0;border:0;border-radius:0}
+.purchase-page .inspection-first-offer .inspection-package-choice h2{font-size:17px;margin:0 0 5px}
+.purchase-page .inspection-first-offer .inspection-package-choice p{font-size:12px;line-height:1.5}
+.purchase-page .inspection-first-offer .inspection-package-choice dl{margin:14px 0}
+.purchase-page .inspection-first-offer .inspection-package-choice dd{font-size:15px;font-weight:600}
+@media(max-width:650px){.purchase-page #u_listing .client-price-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.purchase-page #u_listing .client-verification-grid{grid-template-columns:1fr;gap:10px}.purchase-page .purchase-progress #u_track{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:10px}}
+.purchase-page #u_now{background:#f1f7fb;border-left-color:#245b83;color:#294b60}.purchase-page #u_now>b{color:#245b83}
+
+/* Package confirmation stays with the current status message. */
+.purchase-page .client-decision:has([data-order-package]){display:block;padding:16px 20px;margin-top:16px}
+.purchase-page .client-decision .client-current-label{display:block;font:500 11px/1.4 Inter,Arial,sans-serif;color:#6b8292;margin-bottom:4px}
+.purchase-page .client-decision .client-current-message{font:400 13px/1.5 Inter,Arial,sans-serif;margin:4px 0 12px}
+.purchase-page .client-decision [data-order-package]{padding:0;border:0;background:transparent;border-radius:0}
+.purchase-page .client-decision [data-order-package]>h2{display:none}
+.purchase-page .client-decision [data-order-package]>p{font-size:12px;line-height:1.5;margin:4px 0}
+.purchase-page .client-decision [data-order-package] dl{margin:14px 0;gap:16px}
+.purchase-page .client-decision [data-order-package] dt{font-size:11px}
+.purchase-page .client-decision [data-order-package] dd{font:600 15px/1.4 Inter,Arial,sans-serif;color:#294b60}
+.purchase-page .client-decision .inspection-package-actions{margin-top:12px}
+.purchase-page .client-decision .inspection-package-question{margin:10px 0 0;font-weight:600}
+
+/* Short past steps, newest first. Prices appear only in the vehicle summary. */
+.purchase-page .client-history{margin:18px 0}
+.purchase-page .client-history[hidden]{display:none}
+.purchase-page .client-history>h2{font:500 12px/1.4 Inter,Arial,sans-serif;color:#718493;margin:0 0 8px}
+.purchase-page .client-history-card{display:flex;align-items:center;gap:14px;padding:10px 12px;border:1px solid #dce6ed;border-left:3px solid #9ac1ad;border-radius:6px;background:#fff;margin:7px 0}
+.purchase-page .client-history-card>div{flex:1;min-width:0}
+.purchase-page .client-history-card h3{font:500 13px/1.4 Inter,Arial,sans-serif;margin:0;color:#294b60}
+.purchase-page .client-history-card p{font:400 12px/1.4 Inter,Arial,sans-serif;margin:3px 0 0;color:#718493}
+.purchase-page .client-history-card time{font:400 11px/1.4 Inter,Arial,sans-serif;color:#82929d;white-space:nowrap}
+.purchase-page .client-history-card .btn{font:500 12px/1.4 Inter,Arial,sans-serif;min-height:30px;padding:6px 9px;color:#245b83;border-color:#c8dae7;background:#fff;white-space:nowrap}
+@media(max-width:600px){.purchase-page .client-history-card{flex-wrap:wrap;gap:7px 10px}.purchase-page .client-history-card time{margin-left:auto}}
+.purchase-page #u_history{margin:14px 0!important}.purchase-page #u_history>h2{font:500 12px/1.4 Inter,Arial,sans-serif!important;margin:0 0 8px!important;color:#718493}.purchase-page #u_history .client-history-card h3{font:500 13px/1.4 Inter,Arial,sans-serif!important;margin:0!important}
+
+.purchase-page #u_listing .client-total-part{text-align:right;align-items:end}
+@media(max-width:650px){.purchase-page #u_listing .client-total-part{grid-column:1/-1;justify-self:stretch;padding-top:8px;border-top:1px solid #dfe7ed}}
+
+.purchase-page dialog.client-report-dialog{width:min(680px,calc(100vw - 32px));padding:16px}
+.purchase-page dialog.client-report-dialog>button{background:#245b83!important;border:1px solid #245b83!important;color:#fff!important;box-shadow:none!important;font:500 12px/1.4 Inter,Arial,sans-serif!important;min-height:32px;padding:7px 11px}
+.purchase-page .purchase-progress-heading{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px}
+.purchase-page #u_flow_vehicle{font:400 12px/1.5 Inter,Arial,sans-serif;color:#668095;text-align:center;min-width:0}
+@media(max-width:600px){.purchase-page .purchase-progress-heading{gap:10px}.purchase-page #u_flow_vehicle{font-size:11px}}

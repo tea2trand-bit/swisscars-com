@@ -56,7 +56,7 @@
     $("pg_infoT").textContent = t.infoT; $("pg_infoP").textContent = t.infoP;
     $("p_formT").textContent = t.formT;
     [["pg_url", "url"], ["pg_car", "car"], ["pg_name", "name"], ["pg_phone", "phone"], ["pg_email", "email"], ["pg_notes", "notes"]]
-      .forEach(([id, k]) => { $(id).placeholder = t[k]; $(id).setAttribute("aria-label", t[k]); });
+      .forEach(([id, k]) => { $(id).placeholder = t[k]; $(id).setAttribute("aria-label", t[k]); const label = $(id+"_label"); if(label){const labels={sr:{url:"Link oglasa",car:"Marka i model",name:"Ime i prezime",phone:"Telefon",email:"Email",notes:"Napomena (opciono)"},de:{url:"Link zum Inserat",car:"Marke und Modell",name:"Vor- und Nachname",phone:"Telefon",email:"E-Mail",notes:"Anmerkung (optional)"},en:{url:"Listing URL",car:"Make and model",name:"Full name",phone:"Phone",email:"Email",notes:"Notes (optional)"}};label.textContent=labels[lang()][k]||t[k];} });
     $("pg_send").textContent = t.send;
     $("pg_book").textContent = t.book;
     renderSuggest();
@@ -139,7 +139,7 @@
     const t = T(), o = q.origin || {};
     return fill(o.kind === "expert" ? t.originExpert : t.originTeam, { ort: o.ort || "St. Gallen" });
   }
-  // The initial zero is a visual placeholder; a server quote is required for scheduling.
+  // A price is displayed only after the server returns a quote.
   function box(prefix, amount) {
     $("pg_quote").innerHTML = `<span class="pg-q-from">${esc(prefix)}</span><strong class="pg-q-num">${esc(amount)}</strong><span class="pg-q-cur">CHF</span>`;
   }
@@ -148,7 +148,7 @@
     $("pg_book").disabled = !currentQuoteValid();
     el.removeAttribute("aria-busy"); br.hidden = true; extra.hidden = true; extra.innerHTML = ""; meta.classList.remove("pg-warn");
     el.classList.toggle("is-placeholder", !q);
-    if (!q) { meta.textContent = t.qStartNote; box("", Number(0).toLocaleString(LOCALE[lang()], { minimumFractionDigits: 2, maximumFractionDigits: 2 })); el.setAttribute("aria-label", t.qStartNote); return; }
+    if (!q) { meta.textContent = t.qStartNote; el.innerHTML = '<span class="pg-q-prompt">—</span>'; el.setAttribute("aria-label", t.qStartNote); return; }
     if (q.loading) { el.setAttribute("aria-busy", "true"); meta.textContent = t.qLoading; box("", "…"); el.setAttribute("aria-label", t.qLoading); return; }
     if (q.error) { meta.textContent = t.qError; meta.classList.add("pg-warn"); box("", "—"); el.setAttribute("aria-label", t.qError); extra.hidden = false; extra.innerHTML = `<button type="button" class="pg-retry" id="pg_retry">${esc(t.retry)}</button>`; $("pg_retry").onclick = () => calculateQuote(); return; }
     if (q.ambiguous) {
@@ -277,6 +277,8 @@
       <div class="pg-rep">${["udes", "papiri", "tehnika", "zakljucak"].filter(k => r[k]).map(k => `<div><h3>${esc(t.rep[k])}</h3><p>${esc(r[k])}</p></div>`).join("")}</div>
       ${window.SCInspectionReport?.render(r.checklist, d.lang || lang(), {photoUrl:photo}) || ""}
       ${window.SCInspectionReport && SCInspectionReport.unassignedPhotos(r.checklist,d.photos).length ? `<div class="pg-photos">${SCInspectionReport.unassignedPhotos(r.checklist,d.photos).map(p => `<a href="${esc(photo(p))}" target="_blank" rel="noopener"><img src="${esc(photo(p))}" alt="" loading="lazy"></a>`).join("")}</div>` : ""}`;
+    let serviceHost=$('v_package');if(!serviceHost){serviceHost=document.createElement('section');serviceHost.id='v_package';serviceHost.className='up-card inspection-package-choice';rep.after(serviceHost);}
+    window.SCInspectionPackageClient?.render({host:serviceHost,view:d,token:tokenOf(),lang:lang(),rpc,onChange:next=>{view=next;renderView();}});
   }
 
   function showErr() {

@@ -1,0 +1,11 @@
+.client-deposit{margin-top:12px;padding-top:12px;border-top:1px solid #cbdde9}
+.client-deposit-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.client-deposit-actions>span{margin-right:auto;font-size:14px}
+.client-deposit-actions strong{font-size:15px;font-weight:600;margin-left:5px}
+.client-deposit-actions .btn{font:600 13px/1.4 Inter,Arial,sans-serif;padding:8px 12px;min-height:36px;text-transform:none;letter-spacing:0}
+.purchase-page .client-deposit .btn-outline{color:#245b83;border-color:#bdd2e2;background:#fff}
+.purchase-page .client-deposit .btn-gold{color:#fff;border-color:#245b83;background:#245b83;box-shadow:none}
+.client-deposit-pay{margin-top:10px;padding:10px 12px;background:#fff;border:1px solid #cbdde9;border-radius:7px;white-space:pre-wrap;font-size:13px}
+.client-deposit-pay[hidden]{display:none}
+.client-deposit-feedback{font-size:13px;margin:6px 0 0}
+.client-deposit-feedback:empty{display:none}

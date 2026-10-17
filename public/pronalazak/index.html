@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pronađite auto za mene | SWISCARS</title>
+<meta name="description" content="SWISCARS GmbH - Premium Swiss Vehicle Consulting for inspected vehicles from Switzerland.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/img/favicon.svg">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/contact-topic-picker.css">
+<link rel="stylesheet" href="/assets/css/simple.css"></head>
+<body><header class="site-header">
+  <a class="brand" href="/">
+    <span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="38" height="38" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span>
+    <span><strong>SWISCARS</strong><small>Premium Selection</small></span>
+  </a>
+  <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
+  <nav class="nav"><a href="/" data-simple="navHome">Početna</a><a href="/pronalazak/" data-simple="navSearch">Pronađi auto</a><a href="/auta/" data-simple="navCars">Ponuda</a><a href="/pregled/" data-simple="navInspection">Pregled</a><details class="nav-partners"><summary><span class="nav-login-desktop" data-i18n="navLogin">Login</span><span class="nav-login-mobile" data-i18n="navAccountAccess">Prijava / Registracija</span></summary><div class="nav-partners-list"><a href="/intern/" data-i18n="navLoginTeam" rel="nofollow">Tim</a><span class="nav-partners-caption" data-i18n="navPartnersLabel">Saradnici</span><a href="/dileri/" data-i18n="navDealers">Autodileri</a><a href="/eksperti/" data-i18n="navExperts">Eksperti</a><a href="/prevoznici/" data-i18n="navCarriers">Prevoznici</a></div></details></nav>
+  <div class="language-switch">
+    <button data-lang="sr" class="active">SR</button><button data-lang="de">DE</button><button data-lang="en">EN</button>
+  </div>
+  <a class="btn btn-outline header-cta" href="/kontakt/" data-simple="navContact">Kontakt</a>
+</header><main class="simple-flow" id="top"><div class="simple-heading"><p class="section-kicker" data-simple="searchKicker">SELEKCIJA VOZILA</p><h1 data-simple="searchTitle">Kakav auto tražite?</h1><p data-simple="searchLead">Navedite želje i ukupan budžet. Mi pronalazimo i proveravamo odgovarajuća vozila.</p></div><section class="simple-form-shell" aria-label="Upit za pronalazak auta"><form class="contact-form" id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="contact">
+      <p class="hidden-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+      <p class="cf-group" data-i18n="cfCar">Kakav auto tražite?</p>
+      <label class="sr-only" for="cf-brand" data-i18n="brand">Marka</label>
+      <select id="cf-brand" name="brand"><option value="" data-i18n="brand">Marka</option><option>Volkswagen</option><option>Audi</option><option>Škoda</option><option>BMW</option><option>Mercedes-Benz</option><option>Seat</option><option>Opel</option><option>Ford</option><option>Peugeot</option><option>Renault</option><option>Toyota</option><option>Kia</option><option>Hyundai</option><option>Volvo</option><option>Mazda</option><option value="Druga marka" data-i18n="brandOther">Druga marka</option></select>
+      <label class="sr-only" for="cf-model" data-i18n="modelPh">Model</label>
+      <input id="cf-model" name="model" data-i18n-placeholder="modelPh" placeholder="Model (npr. Golf 7, 520d, C 220)">
+      <label class="sr-only" for="cf-year" data-i18n="yearFrom">Godište od</label>
+      <select id="cf-year" name="yearFrom"><option value="" data-i18n="yearFrom">Godište od</option><option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>2018</option><option>2017</option><option>2016</option><option>2015</option><option>2014</option><option>2013</option><option>2012</option><option>2011</option><option>2010</option><option>2009</option><option>2008</option><option>2007</option><option>2006</option></select>
+      <label class="sr-only" for="cf-budget" data-i18n="budget">Budžet (EUR)</label>
+      <input id="cf-budget" name="budget" inputmode="numeric" data-i18n-placeholder="budget" placeholder="Budžet (EUR)">
+      <label class="sr-only" for="cf-fuel" data-i18n="fuel">Gorivo</label>
+      <select id="cf-fuel" name="fuel"><option value="" data-i18n="fuel">Gorivo</option><option value="Dizel" data-i18n="fuelD">Dizel</option><option value="Benzin" data-i18n="fuelB">Benzin</option><option value="Hibrid" data-i18n="fuelH">Hibrid</option><option value="Električni" data-i18n="fuelE">Električni</option><option value="Svejedno" data-i18n="any">Svejedno</option></select>
+      <label class="sr-only" for="cf-gearbox" data-i18n="gearbox">Tip menjača</label>
+      <select id="cf-gearbox" name="gearbox"><option value="" data-i18n="gearbox">Tip menjača</option><option>Automatik</option><option value="Manuelni" data-i18n="manual">Manuelni</option><option value="Svejedno" data-i18n="any">Svejedno</option></select>
+      <label class="sr-only" for="cf-body" data-i18n="body">Karoserija</label>
+      <select id="cf-body" name="body"><option value="" data-i18n="body">Karoserija</option><option value="Karavan" data-i18n="bodyK">Karavan</option><option value="Limuzina" data-i18n="bodyL">Limuzina</option><option value="Hečbek" data-i18n="bodyH">Hečbek</option><option value="SUV">SUV</option><option value="Monovolumen" data-i18n="bodyM">Monovolumen</option><option value="Svejedno" data-i18n="any">Svejedno</option></select>
+      <label class="sr-only" for="cf-drive" data-i18n="drive">Pogon</label>
+      <select id="cf-drive" name="drive"><option value="" data-i18n="drive">Pogon</option><option value="Prednja vuča" data-i18n="driveFront">Prednja vuča</option><option value="Zadnja vuča" data-i18n="driveRear">Zadnja vuča</option><option value="4x4" data-i18n="drive4">4x4 obavezno</option><option value="Svejedno" data-i18n="any">Svejedno</option></select>
+      <label class="sr-only" for="cf-color" data-i18n="color">Boja</label>
+      <input id="cf-color" name="color" maxlength="80" data-i18n-placeholder="colorPh" placeholder="Boja (npr. crna, siva ili svejedno)">
+      <label class="sr-only" for="cf-mileage" data-i18n="mileage">Maksimalna kilometraža</label>
+      <select id="cf-mileage" name="mileage"><option value="" data-i18n="mileage">Maksimalna kilometraža</option><option>Do 50.000 km</option><option>Do 100.000 km</option><option>Do 150.000 km</option><option>Do 200.000 km</option><option>Do 250.000 km</option><option value="Nije presudno" data-i18n="notImportant">Nije presudno</option></select>
+      <label class="sr-only" for="cf-when" data-i18n="when">Kada vam treba auto?</label>
+      <select id="cf-when" name="when"><option value="" data-i18n="when">Kada vam treba auto?</option><option value="Što pre" data-i18n="whenNow">Što pre</option><option value="U narednih mesec dana" data-i18n="when1">U narednih mesec dana</option><option value="Nije hitno" data-i18n="when3">Nije hitno, čekam pravo auto</option></select>
+      <details class="cf-equip-panel"><summary data-i18n="equipT">Važna oprema (nije obavezno)</summary><fieldset class="cf-equip"><legend class="sr-only" data-i18n="equipT">Važna oprema (nije obavezno)</legend><label><input type="checkbox" name="equip" value="Navigacija"><span data-i18n="eqNav">Navigacija</span></label><label><input type="checkbox" name="equip" value="Kamera"><span data-i18n="eqCam">Kamera</span></label><label><input type="checkbox" name="equip" value="Parking senzori"><span data-i18n="eqPdc">Parking senzori</span></label><label><input type="checkbox" name="equip" value="Kuka"><span data-i18n="eqHitch">Kuka</span></label><label><input type="checkbox" name="equip" value="Grejanje sedišta"><span data-i18n="eqHeat">Grejanje sedišta</span></label><label><input type="checkbox" name="equip" value="Kožna sedišta"><span data-i18n="eqLeather">Kožna sedišta</span></label><label><input type="checkbox" name="equip" value="LED / Xenon farovi"><span data-i18n="eqLed">LED / Xenon farovi</span></label><label><input type="checkbox" name="equip" value="Panorama krov"><span data-i18n="eqPano">Panorama krov</span></label><label><input type="checkbox" name="equip" value="Apple CarPlay / Android Auto"><span data-i18n="eqCarplay">Apple CarPlay / Android Auto</span></label><label><input type="checkbox" name="equip" value="Adaptivni tempomat"><span data-i18n="eqAcc">Adaptivni tempomat</span></label></fieldset></details>
+      <label class="sr-only" for="cf-notes" data-i18n="notes">Dodatne želje / napomene</label>
+      <textarea id="cf-notes" name="notes" data-i18n-placeholder="notesPh" placeholder="Još nešto? Npr. boja, šta ne dolazi u obzir, za šta vam treba auto"></textarea>
+      <p class="cf-group" data-i18n="cfContact">Vaši podaci</p>
+      <label class="sr-only" for="cf-name" data-i18n="name">Ime i prezime</label>
+      <input id="cf-name" name="name" autocomplete="name" maxlength="120" data-i18n-placeholder="name" placeholder="Ime i prezime" required>
+      <label class="sr-only" for="cf-city" data-i18n="city">Grad</label>
+      <input id="cf-city" name="city" data-i18n-placeholder="city" placeholder="Grad (npr. Beograd, Niš)">
+      <label class="sr-only" for="cf-phone" data-i18n="phone">Telefon / WhatsApp</label>
+      <input id="cf-phone" name="phone" type="tel" autocomplete="tel" maxlength="60" required data-i18n-placeholder="phone" placeholder="Telefon / WhatsApp">
+      <label class="sr-only" for="cf-email" data-i18n="email">E-mail</label>
+      <input id="cf-email" name="email" type="email" required data-i18n-placeholder="email" placeholder="E-mail">
+
+      <p class="cf-hint" data-simple="serviceFee">Usluga sa pregledom: 700 CHF. Ukupnu cenu potvrđujemo pre dogovora. Link za praćenje dobijate mejlom.</p>
+      <button class="btn btn-gold" type="submit" data-i18n="send">Pošalji upit</button>
+      <p class="form-status" role="status" aria-live="polite" hidden></p>
+    </form></section></main><footer><div class="brand footer-brand"><span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span><span><strong>SWISCARS</strong><small>Premium Selection</small></span></div><div class="footer-company"><strong>SWISCARS GmbH</strong><span data-i18n="footerText">Vaš tehnički ekspert za proverena vozila iz Švajcarske.</span><span data-i18n="footerCountry">Švajcarska</span></div><div class="footer-legal" style="flex-wrap:wrap"><a href="/impressum" data-i18n="navImpressum">Impresum</a><a href="/agb" data-i18n="navAgb">Uslovi</a><a href="/eksperti/" data-i18n="navExperts">Za eksperte</a><a href="/prevoznici/" data-i18n="navCarriers">Za prevoznike</a></div><small>&copy; 2026 SWISCARS GmbH. <span data-i18n="footerRights">Sva prava zadržana.</span></small></footer><script src="/assets/js/translations.js"></script><script src="/assets/js/service-prices.js"></script><script src="/assets/js/main.js"></script>
+<script src="/assets/js/general-contact.js"></script>
+<script src="/assets/js/contact-topic-picker.js"></script>
+<script src="/assets/js/simple-ui.js"></script></body></html>

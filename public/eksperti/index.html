@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/expert-registration.css">
 <link rel="stylesheet" href="/assets/css/partner-language.css">
-<link rel="stylesheet" href="/assets/css/expert-pricing.css"></head>
+<link rel="stylesheet" href="/assets/css/expert-pricing.css"><link rel="stylesheet" href="/assets/css/simple.css"></head>
 <body>
 <header class="site-header">
   <a class="brand" href="/">
@@ -22,28 +22,19 @@
     <span><strong>SWISCARS</strong><small>Premium Selection</small></span>
   </a>
   <button class="nav-toggle" aria-label="Menu" aria-expanded="false" data-partner-aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/></line><line x1="4" y1="12" x2="20" y2="12"/></line><line x1="4" y1="17" x2="20" y2="17"/></line></svg></button>
-  <nav class="nav">
-    <a href="/#top" data-i18n="navHome">Početna</a>
-    <a href="/auta/" data-i18n="navCars">Auta u ponudi</a>
-    <a href="/pregled/#kalkulator-pregleda" data-i18n="navInsp">Kalkulator pregleda</a>
-    <a href="/proba-uvoza/" data-i18n="navImportCalculator">Kalkulator uvoza</a>
-    <a href="/#proces" data-i18n="navProcess">Proces</a>
-    <a href="/#about" data-i18n="navAbout">O nama</a>
-    <a href="/#blog" data-i18n="navBlog">Saveti</a>
-    <a class="nav-contact-mobile" href="/#contact" data-i18n="navContact">Kontakt</a>
-    <details class="nav-partners"><summary><span class="nav-login-desktop" data-i18n="navLogin">Login</span><span class="nav-login-mobile" data-i18n="navAccountAccess">Prijava / Registracija</span></summary><div class="nav-partners-list"><a href="/intern/" data-i18n="navLoginTeam" rel="nofollow">Tim</a><span class="nav-partners-caption" data-i18n="navPartnersLabel">Saradnici</span><a href="/dileri/" data-i18n="navDealers">Autodileri</a><a href="/eksperti/" data-i18n="navExperts">Eksperti</a><a href="/prevoznici/" data-i18n="navCarriers">Prevoznici</a></div></details></nav>
+  <nav class="nav"><a href="/" data-simple="navHome">Početna</a><a href="/pronalazak/" data-simple="navSearch">Pronađi auto</a><a href="/auta/" data-simple="navCars">Ponuda</a><a href="/pregled/" data-simple="navInspection">Pregled</a><details class="nav-partners"><summary><span class="nav-login-desktop" data-i18n="navLogin">Login</span><span class="nav-login-mobile" data-i18n="navAccountAccess">Prijava / Registracija</span></summary><div class="nav-partners-list"><a href="/intern/" data-i18n="navLoginTeam" rel="nofollow">Tim</a><span class="nav-partners-caption" data-i18n="navPartnersLabel">Saradnici</span><a href="/dileri/" data-i18n="navDealers">Autodileri</a><a href="/eksperti/" data-i18n="navExperts">Eksperti</a><a href="/prevoznici/" data-i18n="navCarriers">Prevoznici</a></div></details></nav>
   <div class="language-switch">
     <button data-lang="sr" class="active">SR</button><button data-lang="de">DE</button><button data-lang="en">EN</button>
   </div>
-  <a class="btn btn-outline header-cta" href="/#contact" data-i18n="navContact">Kontakt</a>
+  <a class="btn btn-outline header-cta" href="/kontakt/" data-simple="navContact">Kontakt</a>
 </header>
 
 <main class="expert-page">
 <section class="expert-head">
   <div class="container">
     <p class="section-kicker"><span data-partner-text="Za eksperte">Za eksperte</span></p>
-    <h1><span data-partner-text="Pregledajte vozila za SWISCARS u svom kantonu">Pregledajte vozila za SWISCARS u svom kantonu</span></h1>
-    <p class="expert-lead"><span data-partner-text="Tražimo nezavisne automehaničare i procenitelje koji pregledaju polovna vozila kod prodavca u Švajcarskoj, po našem izveštaju. Prijava traje oko tri minuta; posle potvrde emaila SWISCARS proverava podatke i javlja vam se.">Tražimo nezavisne automehaničare i procenitelje koji pregledaju polovna vozila kod prodavca u Švajcarskoj, po našem izveštaju. Prijava traje oko tri minuta; posle potvrde emaila SWISCARS proverava podatke i javlja vam se.</span></p>
+    <h1 data-simple="expertHeading">Pregledi vozila u vašem kantonu</h1>
+    <p class="expert-lead" data-simple="expertIntro">Za automehaničare i procenitelje. Prijavite se u tri kratka koraka.</p>
   </div>
 </section>
 <section class="expert-body">
@@ -55,19 +46,7 @@
       <p class="xp-loading"><span data-partner-text="Učitavanje…">Učitavanje…</span></p>
     </div>
     <div id="expert-pricing" class="xp-pricing" aria-live="polite" hidden></div>
-    <aside class="expert-aside">
-      <div class="xp-card">
-        <h3><span data-partner-text="Kako teče saradnja">Kako teče saradnja</span></h3>
-        <ol class="xp-steps">
-          <li><b>1</b><span><span data-partner-text="Registracija: nalog, kontakt, adresa i kantoni koje pokrivate.">Registracija: nalog, kontakt, adresa i kantoni koje pokrivate.</span></span></li>
-          <li><b>2</b><span><span data-partner-text="Potvrda emaila linkom iz poruke.">Potvrda emaila linkom iz poruke.</span></span></li>
-          <li><b>3</b><span><span data-partner-text="SWISCARS proverava podatke i javlja se telefonom ili emailom.">SWISCARS proverava podatke i javlja se telefonom ili emailom.</span></span></li>
-          <li><b>4</b><span><span data-partner-text="Svaki pregled se dogovara pojedinačno; prihvatate ga vi.">Svaki pregled se dogovara pojedinačno; prihvatate ga vi.</span></span></li>
-        </ol>
-        <h3><span data-partner-text="Šta ekspert vidi">Šta ekspert vidi</span></h3>
-        <p class="xp-help"><span data-partner-text="Svoj profil i status prijave. Interna evidencija, budžeti i zarada SWISCARS-a nisu deo ovog pristupa.">Svoj profil i status prijave. Interna evidencija, budžeti i zarada SWISCARS-a nisu deo ovog pristupa.</span></p>
-      </div>
-    </aside>
+
   </div>
 </section>
 </main>
@@ -79,7 +58,7 @@
     <p><span data-partner-text="Kratak formular. Profil nastaje tek kad potvrdite email; status prijave vidite ovde posle prijave.">Kratak formular. Profil nastaje tek kad potvrdite email; status prijave vidite ovde posle prijave.</span></p>
     <p class="form-status ok" data-role="notice" hidden></p>
     <p class="form-status err" data-role="error" hidden></p>
-    <div class="xp-actions">
+    <p class="xp-intro-process" data-simple="expertProcess">Prijava → potvrda emaila → provera podataka</p><div class="xp-actions">
       <button class="btn btn-gold" type="button" data-action="show-register"><span data-partner-text="Registruj se kao ekspert">Registruj se kao ekspert</span></button>
       <button class="btn btn-outline" type="button" data-action="show-sign-in"><span data-partner-text="Već imam nalog">Već imam nalog</span></button>
     </div>
@@ -123,12 +102,12 @@
     <h2><span data-partner-text="Registracija eksperta">Registracija eksperta</span></h2>
     <p class="xp-help"><span data-partner-text="Polja označena * su obavezna.">Polja označena * su obavezna.</span></p>
     <fieldset class="xp-group"><legend><span data-partner-text="Nalog">Nalog</span></legend>
-      <label><span data-partner-text="Email *">Email *</span><input name="email" type="email" autocomplete="email" inputmode="email" required></label>
-      <div class="xp-two">
-        <label><span data-partner-text="Lozinka *">Lozinka *</span> <small><span data-partner-text="najmanje 8 znakova">najmanje 8 znakova</span></small><input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
-        <label><span data-partner-text="Ponovite lozinku *">Ponovite lozinku *</span><input name="password2" type="password" autocomplete="new-password" required></label>
+      <div class="xp-account-row"><label><span data-partner-text="Email *">Email *</span><input name="email" type="email" autocomplete="email" inputmode="email" required></label>
+      <div class="xp-password-group">
+        <label><span data-partner-text="Lozinka *">Lozinka *</span> <small><span data-partner-text="najmanje 8 znakova">najmanje 8 znakova</span></small><div class="xp-password-row"><input id="expert-new-password" name="password" type="password" autocomplete="new-password" minlength="8" required><button type="button" data-password-toggle aria-controls="expert-new-password" aria-pressed="false">Prikaži</button></div></label>
+
       </div>
-    </fieldset>
+    </div></fieldset>
     <div data-slot="profile-fields"></div>
     <p class="xp-help"><span data-partner-text="Podatke koristimo samo za saradnju na pregledima vozila. Status prijave i zadatke određuje SWISCARS.">Podatke koristimo samo za saradnju na pregledima vozila. Status prijave i zadatke određuje SWISCARS.</span></p>
     <p class="form-status err" data-role="error" hidden></p>
@@ -268,4 +247,4 @@
 <script src="/assets/js/expert-auth-supabase.js"></script>
 <script src="/assets/js/expert-page.js"></script>
 <script src="/assets/js/inspection-pricing-rules.js"></script><script src="/assets/js/partner-language-pricing.js"></script><script src="/assets/js/expert-pricing.js"></script>
-</body></html>
+<script src="/assets/js/simple-ui.js"></script></body></html>

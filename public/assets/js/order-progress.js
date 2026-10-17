@@ -3,7 +3,7 @@
   const labels=['Primljeno','Tražimo','Kapara i pregled','Kupljeno','Transport','Carina','Priprema','Predato'];
   const carStages={pregledan:3,kupljen:3,transport:4,carinjen:5,garaza:6,prodaja:6,prodat:7};
   function stage(d,car=d.car){
-    if(d.status==='odustao')return -1;
+    if(['odustao','arhiva'].includes(d.status))return -1;
     if(d.status==='predato'||d.status==='kupio')return 7;
     if(car&&carStages[car.status]!=null)return carStages[car.status];
     if(d.status==='kupljeno')return 3;

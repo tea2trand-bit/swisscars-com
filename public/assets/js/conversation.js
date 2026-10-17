@@ -12,6 +12,18 @@
     if (root.scConversation) { root.scConversation.setLanguage(options.lang); return root.scConversation; }
     let lang=words[options.lang]?options.lang:'sr',busy=false,loading=false,requestId=null,pendingText='',oldest=null,hasMore=false;
     const messages=new Map(),t=()=>words[lang];
+    const readKey='swiscars-chat-read:'+String(options.key?.p_token||options.key?.p_lead_id||'')+':'+(options.team?'team':'client');
+    let readThrough='0';
+    function savedRead(){try{const saved=localStorage.getItem(readKey);if(saved&&/^\d+$/.test(saved))readThrough=saved;}catch{}return BigInt(readThrough);}
+    function unread(){
+      if(!options.trackUnread)return;
+      let read=savedRead();const incoming=[...messages.values()].filter(m=>m.sender===(options.team?'client':'team')&&/^\d+$/.test(String(m.id)));
+      if(options.isReading?.()&&document.visibilityState==='visible'){
+        const latest=incoming.reduce((last,m)=>BigInt(m.id)>last?BigInt(m.id):last,read);
+        if(latest>read){read=latest;readThrough=String(latest);try{localStorage.setItem(readKey,readThrough);}catch{}}
+      }
+      options.onUnreadChange?.(incoming.filter(m=>BigInt(m.id)>read).length);
+    }
     root.classList.add('sc-conversation');
     const title=element(options.team?'h4':'h2'),hint=element('p','sc-chat-hint'),older=element('button','sc-chat-button sc-chat-older'),list=element('ol','sc-chat-list'),form=element('form','sc-chat-form'),label=element('label'),input=element('textarea'),actions=element('div','sc-chat-actions'),send=element('button','sc-chat-button'),refresh=element('button','sc-chat-button sc-chat-older'),limit=element('span','sc-chat-hint'),status=element('p','sc-chat-status');
     input.id='sc-chat-input-'+(++nextId);label.htmlFor=input.id;input.maxLength=3000;input.required=true;input.rows=3;
@@ -21,18 +33,25 @@
     function paint() {
       const atBottom=list.scrollTop+list.clientHeight>=list.scrollHeight-40,scroll=list.scrollTop;
       list.replaceChildren();
-      if(!messages.size)list.append(element('li','sc-chat-hint',t().empty));
+      if(!messages.size)list.append(element('li','sc-chat-hint',options.compact?({sr:'Još nema poruka.',de:'Noch keine Nachrichten.',en:'No messages yet.'})[lang]:t().empty));
       for(const m of [...messages.values()].sort((a,b)=>BigInt(a.id)<BigInt(b.id)?-1:1)) {
         const item=element('li','sc-chat-message'+(m.sender==='team'?' sc-chat-team':'')),meta=element('div','sc-chat-meta'),time=element('time');
         const name=m.sender==='team'?(m.author||t().team):(options.team?t().client:t().you);
         time.dateTime=m.at;time.textContent=new Date(m.at).toLocaleString(t().locale,{dateStyle:'medium',timeStyle:'short'});
-        meta.append(element('strong','',name),time);item.append(meta,element('p','sc-chat-body',m.body));list.append(item);
+        const legacyNotice={
+'Oglas koji ste poslali više nije dostupan. Možete nam poslati drugi link preko svog upita. Vaši kontakt podaci i budžet ostaju sačuvani.':'Oglas nije dostupan, pošaljite novi upit.',
+'Das gesendete Inserat ist nicht mehr verfügbar. Sie können uns über Ihre Anfrage einen anderen Link senden. Kontaktdaten und Budget bleiben gespeichert.':'Inserat nicht verfügbar, bitte senden Sie eine neue Anfrage.',
+'The listing you sent is no longer available. You can send another link through your request. Your contact details and budget remain saved.':'Listing unavailable, please send a new request.'};
+        const body=m.sender==='team'&&m.author==='SWISCARS'?(legacyNotice[m.body]||m.body):m.body;
+        meta.append(element('strong','',name),time);item.append(meta,element('p','sc-chat-body',body));list.append(item);
       }
       list.scrollTop=atBottom?list.scrollHeight:scroll;older.hidden=!hasMore;
+      unread();
     }
     function language(value) {
       lang=words[value]?value:'sr';title.textContent=options.team?t().teamTitle:t().title;
       hint.textContent=options.team?t().teamHint:t().hint;
+      if(options.compact){title.textContent=({sr:'Razgovor',de:'Gespräch',en:'Conversation'})[lang];hint.hidden=true;}
       label.textContent=options.team?t().teamLabel:t().label;send.textContent=busy?t().sending:t().send;
       older.textContent=t().older;refresh.textContent=t().refresh;limit.textContent=t().limit;paint();
     }
@@ -59,10 +78,10 @@
       finally {busy=false;input.disabled=false;send.disabled=false;send.textContent=t().send;}
     });
     older.onclick=()=>load(oldest);refresh.onclick=()=>load();language(lang);
-    const widget={refresh:()=>load(),setLanguage:language,root};root.scConversation=widget;widgets.add(widget);load();return widget;
+    const widget={refresh:()=>load(),setLanguage:language,root,trackUnread:!!options.trackUnread};root.scConversation=widget;widgets.add(widget);load();return widget;
   }
-  setInterval(()=>{if(document.visibilityState==='visible')for(const widget of widgets){if(widget.root.isConnected&&widget.root.getClientRects().length)widget.refresh();else if(!widget.root.isConnected)widgets.delete(widget);}},15000);
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')for(const widget of widgets)if(widget.root.isConnected&&widget.root.getClientRects().length)widget.refresh();});
+  setInterval(()=>{if(document.visibilityState==='visible')for(const widget of widgets){if(widget.root.isConnected&&(widget.trackUnread||widget.root.getClientRects().length))widget.refresh();else if(!widget.root.isConnected)widgets.delete(widget);}},15000);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')for(const widget of widgets)if(widget.root.isConnected&&(widget.trackUnread||widget.root.getClientRects().length))widget.refresh();});
   // Evidencija (/intern/) menja jezik bez ponovnog učitavanja: svi otvoreni razgovori prate izbor.
   document.addEventListener('evidencija-language-changed',e=>{const l=e&&e.detail&&e.detail.language;if(words[l])for(const widget of widgets)widget.setLanguage(l);});
   window.SCConversation={mount};

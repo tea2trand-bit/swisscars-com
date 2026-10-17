@@ -24,6 +24,40 @@
 
   const flow = R.createFlow(adapter);
   let shown = null, root = null, urlCleaned = false;
+  const registrationWizards = new WeakMap();
+  function registrationWizard(card) {
+    const copy = () => ({sr:{titles:['Nalog','Vaši podaci','Područje rada i iskustvo'],next:'Dalje',back:'Nazad',cantons:'Izaberite kantone',selected:'izabrano',qualifications:'Kvalifikacije i sertifikati (nije obavezno)'},de:{titles:['Konto','Ihre Angaben','Einsatzgebiet und Erfahrung'],next:'Weiter',back:'Zurück',cantons:'Kantone auswählen',selected:'ausgewählt',qualifications:'Qualifikationen und Zertifikate (optional)'},en:{titles:['Account','Your details','Coverage and experience'],next:'Next',back:'Back',cantons:'Choose cantons',selected:'selected',qualifications:'Qualifications and certificates (optional)'}}[I.get()] || null);
+    const groups = [...card.querySelectorAll('.xp-group')];
+    if (groups.length !== 6) return;
+    const progress = document.createElement('nav'); progress.className='xp-wizard-progress'; progress.setAttribute('aria-label','Koraci registracije');
+    const panels = [0,1,2].map(n => { const div=document.createElement('section');div.dataset.expertStep=String(n);return div; });
+    card.querySelector('h2').after(progress);
+    progress.after(...panels);
+    panels[0].append(groups[0]); panels[1].append(groups[1],groups[2]); panels[2].append(groups[3],groups[4],groups[5]);
+    const detailsGrid=document.createElement('div');detailsGrid.className='xp-details-grid';
+    ['full_name','phone','company_name','street_address','postal_code','city','address_canton','country_code'].forEach(field=>{const label=card.querySelector('[name="'+field+'"]').closest('label'),hint=label.querySelector(':scope > small'),caption=label.querySelector(':scope > span');if(hint&&caption){const captionLine=document.createElement('span');caption.before(captionLine);captionLine.append(caption,document.createTextNode(' · '),hint);}detailsGrid.append(label);});
+    groups[1].remove();groups[2].remove();panels[1].append(detailsGrid);
+    card.querySelector(':scope > p.xp-help')?.remove();
+    panels[2].append(...card.querySelectorAll(':scope > p.xp-help'));
+    const actions=card.querySelector('.xp-actions'),submit=actions.querySelector('[type="submit"]'),back=document.createElement('button'),next=document.createElement('button');
+    const signIn=actions.querySelector('[data-action="show-sign-in"]'),title=card.querySelector('h2'),titleRow=document.createElement('div');titleRow.className='xp-form-title';title.before(titleRow);titleRow.append(title,signIn);
+    back.type=next.type='button';back.className='btn btn-outline';next.className='btn btn-gold';actions.prepend(back);actions.append(next);
+    const coverage=card.querySelector('[data-chips="coverage_cantons"]'),picker=document.createElement('details'),summary=document.createElement('summary');picker.className='xp-select-picker';coverage.before(picker);picker.append(summary);
+    const coveragePopup=document.createElement('div');coveragePopup.className='xp-picker-popup';picker.append(coveragePopup);coveragePopup.append(coverage);
+    const languages=card.querySelector('[data-chips="languages"]'),languagePicker=document.createElement('details'),languageSummary=document.createElement('summary'),languagePopup=document.createElement('div');languagePicker.className='xp-select-picker';languagePopup.className='xp-picker-popup';languages.before(languagePicker);languagePicker.append(languageSummary,languagePopup);languagePopup.append(languages);
+    languages.querySelectorAll('input').forEach(input=>{if(!['de','fr','it','en','sr'].includes(input.value))input.closest('label').remove();});
+    groups[3].querySelector('.xp-help')?.remove();
+    const coverageRow=document.createElement('div');coverageRow.className='xp-coverage-row';groups[3].before(coverageRow);coverageRow.append(groups[3],groups[4]);
+    const experience=card.querySelector('[name="experience_description"]');experience.rows=2;experience.closest('label').classList.add('xp-experience-label');const experienceHint=experience.closest('label').querySelector('small');if(experienceHint)experience.after(experienceHint);groups[5].querySelector('legend').hidden=true;
+    const qualifications=card.querySelector('[name="qualifications_description"]').closest('label'),optional=document.createElement('details'),optionalTitle=document.createElement('summary');optional.className='xp-canton-picker';qualifications.before(optional);optional.append(optionalTitle,qualifications);
+    let index=0;
+    const refresh=()=>{const c=copy();progress.replaceChildren(...c.titles.map((title,n)=>{const item=document.createElement('span');item.textContent=(n+1)+'. '+title;item.className=n===index?'is-current':n<index?'is-done':'';if(n===index)item.setAttribute('aria-current','step');return item;}));back.textContent=c.back;next.textContent=c.next;const selectedCantons=[...coverage.querySelectorAll('input:checked')].map(input=>input.value),selectedLanguages=[...languages.querySelectorAll('input:checked')].map(input=>I.t(R.LANGUAGES.find(row=>row[0]===input.value)[1]));summary.textContent=selectedCantons.length?selectedCantons.join(', '):c.cantons;languageSummary.textContent=selectedLanguages.length?selectedLanguages.join(', '):({sr:'Izaberite jezike',de:'Sprachen auswählen',en:'Choose languages'}[I.get()]);optionalTitle.textContent=c.qualifications;};
+    const show=(n,scroll=true)=>{index=n;panels.forEach((p,i)=>p.hidden=i!==n);back.hidden=n===0;next.hidden=n===2;submit.hidden=n!==2;refresh();if(scroll)progress.scrollIntoView({block:'start',behavior:'smooth'});};
+    const nextStep=()=>{const data=readForm(card),errors=index===0?R.validateAccount(data).errors:R.validateProfile(data).errors,fields=index===0?['email','password','password2']:['full_name','phone','company_name','street_address','postal_code','city','address_canton','country_code'],current=Object.fromEntries(Object.entries(errors).filter(([key])=>fields.includes(key)));showFieldErrors(current);if(!Object.keys(current).length)show(Math.min(2,index+1));};
+    next.addEventListener('click',nextStep);back.addEventListener('click',()=>show(Math.max(0,index-1)));coverage.addEventListener('change',refresh);languages.addEventListener('change',refresh);
+    picker.addEventListener('toggle',()=>{if(picker.open)languagePicker.open=false;});languagePicker.addEventListener('toggle',()=>{if(languagePicker.open)picker.open=false;});
+    const api={show,refresh,next:nextStep,get index(){return index;}};registrationWizards.set(card,api);show(0,false);
+  }
 
   function fillOptions(container) {
     container.querySelectorAll('select[data-options="cantons"]').forEach(s => R.CANTONS.forEach(([c, n]) => { const o = document.createElement('option'); o.value = c; o.textContent = c + ' · ' + n; s.append(o); }));
@@ -63,10 +97,10 @@
       target.setAttribute('aria-invalid', 'true');
       const msg = errors[field].trim();
       // Poruka ide unutar label-a (ispod polja), da u dvokolonskim redovima ne postane novi član mreže.
-      if (msg) { const s = document.createElement('small'); s.className = 'xp-error'; I.bind(s,msg); const host = target.closest('label'); if (host) host.append(s); else target.after(s); }
+      if (msg) { const s = document.createElement('small'); s.className = 'xp-error'; I.bind(s,msg); const host = target.closest('label'); if (host) host.append(s); else (target.closest('.xp-select-picker')||target).after(s); }
       if (!first) first = target;
     });
-    if (first && typeof first.scrollIntoView === 'function') first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    if (first && typeof first.scrollIntoView === 'function') { const panel=first.closest('[data-expert-step]');if(panel)registrationWizards.get(root)?.show(Number(panel.dataset.expertStep),false);(first.closest('.xp-select-picker')||first).scrollIntoView({ block: 'center', behavior: 'smooth' }); }
   }
   function renderStatus(card, state) {
     const p = state.me.profile, st = R.STATUS[p.status] || R.STATUS.pending;
@@ -93,11 +127,13 @@
     const card = tpl(map[state.screen] || 'tpl-intro');
     card.querySelectorAll('[data-slot="profile-fields"]').forEach(slot => slot.replaceWith(tpl('tpl-profile-fields')));
     fillOptions(card);
+    card.querySelectorAll('[data-password-toggle]').forEach(button=>{const input=card.querySelector('[name="password"]');button.addEventListener('click',()=>{const visible=input.type==='password';input.type=visible?'text':'password';button.setAttribute('aria-pressed',String(visible));button.textContent=I.get()==='de'?(visible?'Verbergen':'Anzeigen'):I.get()==='en'?(visible?'Hide':'Show'):(visible?'Sakrij':'Prikaži');});});
     if (state.screen === 'enroll') { text(card, 'email', state.email); fillProfile(card, state.draft); }
     if (state.screen === 'profile_edit') fillProfile(card, state.me && state.me.profile);
     if (state.screen === 'sign_in' && state.email) card.querySelector('[name="email"]').value = state.email;
     if (state.screen === 'check_email') text(card, 'email', state.email);
     if (state.screen === 'status') renderStatus(card, state);
+    if (state.screen === 'register') registrationWizard(card);
     card.querySelectorAll('select[name="country_code"]').forEach(s => { if (!s.value) s.value = 'CH'; });
     card.addEventListener('click', e => {
       const b = e.target.closest('[data-action]'); if (!b || b.disabled) return;
@@ -109,6 +145,7 @@
     if (card.matches('form')) card.addEventListener('submit', e => {
       e.preventDefault();
       const data = readForm(card), kind = card.dataset.form;
+      const wizard=registrationWizards.get(card);if(kind==='register'&&wizard&&wizard.index<2){wizard.next();return;}
       if (kind === 'register') flow.register(data); else if (kind === 'sign-in') flow.signIn(data);
       else if (kind === 'enroll') flow.enroll(data); else if (kind === 'update') flow.updateProfile(data);
       card.querySelectorAll('input[type="password"]').forEach(i => { if (kind !== 'register' || flow.state.screen !== 'register') i.value = ''; });
@@ -126,6 +163,7 @@
     root.setAttribute('aria-busy', String(state.busy));
     showFieldErrors(state.fieldErrors);
     I.apply(root);
+    registrationWizards.get(root)?.refresh();
     document.title = I.t(state.screen === 'status' ? 'Moja prijava' : 'Za eksperte') + ' | SWISCARS GmbH';
   }
   document.addEventListener('partner-language-changed',()=>render(flow.state));

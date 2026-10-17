@@ -41,7 +41,7 @@ const res=primary.result;
 const okN=!primary.rejected&&await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(fd).toString()}).then(r=>r.ok).catch(()=>false);
 if(status){status.hidden=false}
 if(res&&res.token){const link='https://swiscars.com/upit/#'+res.token;fetch(SC_URL+'/functions/v1/order-mail',{method:'POST',headers:{apikey:SC_KEY,'Content-Type':'application/json'},body:JSON.stringify({token:res.token})}).catch(()=>{});
-  if(status){status.className='form-status ok';status.innerHTML='';const p1=document.createElement('span');p1.textContent=(d.formSuccessTrack||d.formSuccess)+' ';const a=document.createElement('a');a.href=link;a.textContent=d.formTrackLink||link;a.style.textDecoration='underline';status.appendChild(p1);status.appendChild(a);
+  if(status){status.className='form-status ok';status.innerHTML='';const p1=document.createElement('span');const listingRequest=/^Upit za pomoć pri kupovini izabranog auta\. Oglas: /m.test(v('notes'));const listingSuccess={sr:'Primili smo oglas. Proveravamo vozilo i troškove pre odluke o kupovini. Status pratite ovde:',de:'Inserat erhalten. Wir prüfen Fahrzeug und Kosten vor dem Kauf. Verfolgen Sie den Status hier:',en:'Listing received. We check the vehicle and costs before your purchase decision. Track the status here:'};p1.textContent=(listingRequest?(listingSuccess[lang]||listingSuccess.sr):(d.formSuccessTrack||d.formSuccess))+' ';const a=document.createElement('a');a.href=link;a.textContent=d.formTrackLink||link;a.style.textDecoration='underline';status.appendChild(p1);status.appendChild(a);
     const p2=document.createElement('p');p2.style.margin='10px 0 0';p2.textContent=d.formSaveHint||'';status.appendChild(p2);
     const row=document.createElement('p');row.style.cssText='margin:6px 0 0;display:flex;flex-wrap:wrap;gap:8px';
     const wa=document.createElement('a');wa.href='https://wa.me/?text='+encodeURIComponent((d.formWaText||'')+' '+link);wa.target='_blank';wa.rel='noopener';wa.className='btn btn-outline';wa.textContent=d.formWa||'WhatsApp';
@@ -74,7 +74,7 @@ if (orderFormPanel) {
   const validToken = token => typeof token === 'string' && /^[a-f0-9]{24}$/.test(token);
   const stateOf = data => {
     if (!data || typeof data !== 'object') return 'unknown';
-    if (data.status === 'odustao') return 'closed';
+    if (['odustao','arhiva'].includes(data.status)) return 'closed';
     if (['predato','kupio'].includes(data.status) || data.car?.status === 'prodat') return 'finished';
     return ['novo','kontakt','kontaktiran','trazimo','ponudjeno','kapara','pregled','kupljeno','transport','carina','priprema','prodaja'].includes(data.status) ? 'active' : 'unknown';
   };

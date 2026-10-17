@@ -1,0 +1,62 @@
+-- Run inside a transaction and roll back; never commit validation records.
+begin;
+do $test$
+declare
+ tok text:=encode(extensions.gen_random_bytes(12),'hex');
+ inspection_tok text:=encode(extensions.gen_random_bytes(12),'hex');
+ rid text:='release-test-'||encode(extensions.gen_random_bytes(8),'hex');
+ iid text:='release-inspection-'||encode(extensions.gen_random_bytes(8),'hex');
+ p jsonb; l jsonb; r jsonb; v jsonb; d jsonb; c jsonb:=jsonb_build_object('model','Release validation vehicle');
+ now_ms bigint:=(extract(epoch from now())*1000)::bigint;
+ expected_package numeric:=public.sc_set('provizija',700);
+begin
+ p:=jsonb_build_object('id','release-proposal','carId','release-car','title','Release validation vehicle','at',now_ms,'serviceFlow','inspection-first','answer','zelim','avail','da','price',13391.14,'commission',700,'inspectionPaid',true,'inspectionPaymentAmount',120,'inspectionPaymentCurrency','CHF','inspectionReviewed',true,'insp','ok','inspChecklist',jsonb_build_object('overall','da'));
+ l:=jsonb_build_object('source','release-test','token',tok,'name','Release Validation','phone','+41790000000','lang','sr','status','novo','created',now_ms,'listingQuote',jsonb_build_object('result',jsonb_build_object('total',11259.04,'packageChf',700)),'proposals',jsonb_build_array(p));
+ insert into public.sc_docs(collection,id,data) values('leads',rid,l);
+ r:=public.sc_order_choose_package(tok,'release-proposal',700);
+ if r->>'ok' is distinct from 'false' then raise exception 'Unfinished inspection accepted'; end if;
+ p:=p||jsonb_build_object('inspAt',now_ms);
+ update public.sc_docs set data=data||jsonb_build_object('proposals',jsonb_build_array(p)) where collection='leads' and id=rid;
+ r:=public.sc_order_deposit_notice(tok,'release-proposal',1130);
+ if r->>'ok' is distinct from 'false' then raise exception 'Deposit notice accepted before package'; end if;
+ r:=public.sc_order_choose_package(tok,'release-proposal',701);
+ if r->>'reason' is distinct from 'price_changed' then raise exception 'Stale package price accepted'; end if;
+ r:=public.sc_order_choose_package(tok,'release-proposal',700);
+ if r->>'ok' is distinct from 'true' then raise exception 'Combined choice failed: %',r; end if;
+ select data into l from public.sc_docs where collection='leads' and id=rid;
+ p:=l->'proposals'->0;
+ if p->>'choice'<>'buy' or p->>'serviceMode'<>'package' or p->>'serviceSelectedBy'<>'client' or p ? 'depositPaidAt' or l ? 'carId' then raise exception 'Combined action changed payment or purchase'; end if;
+ r:=public.sc_order_choose_package(tok,'release-proposal',700);
+ if r->>'duplicate' is distinct from 'true' then raise exception 'Package confirmation not idempotent'; end if;
+ v:=public.sc_order_view(tok);
+ if v#>>'{proposals,0,serviceMode}' is distinct from 'package' or (v#>>'{proposals,0,depositPlan,amount}')::numeric<>1130 or (v#>>'{proposals,0,packageOffer,remainingChf}')::numeric<>580 then raise exception 'Client projection or deposit calculation incorrect'; end if;
+ r:=public.sc_order_deposit_notice(tok,'release-proposal',1131);
+ if r->>'reason' is distinct from 'amount_changed' then raise exception 'Changed deposit amount accepted'; end if;
+ r:=public.sc_order_deposit_notice(tok,'release-proposal',1130);
+ if r->>'ok' is distinct from 'true' then raise exception 'Deposit notification failed: %',r; end if;
+ select data into l from public.sc_docs where collection='leads' and id=rid;
+ p:=l->'proposals'->0;
+ if not (p ? 'depositReportedAt') or p ? 'depositPaidAt' or p ? 'depositReceivedAmount' or l ? 'carId' then raise exception 'Client notice was treated as bank receipt'; end if;
+ if public.sc_customer_purchase_ready(l,c,'release-car') then raise exception 'Purchase allowed before bank receipt'; end if;
+ r:=public.sc_order_deposit_notice(tok,'release-proposal',1130);
+ if r->>'duplicate' is distinct from 'true' then raise exception 'Deposit notice not idempotent'; end if;
+ p:=p||jsonb_build_object('depositPaidAt',now_ms);
+ l:=l||jsonb_build_object('proposals',jsonb_build_array(p));
+ if not public.sc_customer_purchase_ready(l,c,'release-car') then raise exception 'Purchase still blocked after verified receipt'; end if;
+ p:=p-'serviceMode';l:=l||jsonb_build_object('proposals',jsonb_build_array(p));
+ if public.sc_customer_purchase_ready(l,c,'release-car') then raise exception 'Purchase allowed without package'; end if;
+ if public.sc_order_choose_package('invalid','release-proposal',700)->>'ok' is distinct from 'false' then raise exception 'Invalid token accepted'; end if;
+ insert into public.sc_docs(collection,id,data) values('inspections',iid,jsonb_build_object('token',inspection_tok,'name','Release Validation','status','novo','fee',120,'paymentAmount',120,'paidAt',now_ms));
+ r:=public.sc_inspection_choose_package(inspection_tok,expected_package+1);
+ if r->>'reason' is distinct from 'price_changed' then raise exception 'Standalone price check failed'; end if;
+ r:=public.sc_inspection_choose_package(inspection_tok,expected_package);
+ if r->>'ok' is distinct from 'true' or (r#>>'{view,packageOffer,inspectionCreditChf}')::numeric<>least(120,expected_package) then raise exception 'Standalone package credit failed: %',r; end if;
+ select data into d from public.sc_docs where collection='inspections' and id=iid;
+ if (d->>'paidAt')::bigint<>now_ms or d ? 'depositPaidAt' then raise exception 'Standalone package action changed payment'; end if;
+ if public.sc_inspection_choose_package(inspection_tok,expected_package)->>'duplicate' is distinct from 'true' then raise exception 'Standalone confirmation not idempotent'; end if;
+ if has_function_privilege('anon','public.sc_team_listing_outcome(text,text,uuid)','execute') then raise exception 'Team action exposed to anonymous callers'; end if;
+ if has_function_privilege('anon','sc_private.deposit_plan(jsonb,jsonb,numeric)','execute') then raise exception 'Private helper exposed to anonymous callers'; end if;
+ if public.sc_reservation_request(jsonb_build_object('ref','release-no-such-car'))->>'reason' is distinct from 'car_unavailable' then raise exception 'Unknown stock car accepted'; end if;
+end $test$;
+
+rollback;

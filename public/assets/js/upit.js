@@ -42,13 +42,13 @@
       return result;
     }finally{clientFavoriteBusy.delete(id);}
   }
-  const clientInspectionFirst = p => Number(p.quoteCalculation?.version) === 1 && !clientDepositPaid(p);
+  const clientInspectionFirst = p => (Number(p.quoteCalculation?.version) === 1||p.serviceFlow==='inspection-first') && !clientDepositPaid(p);
   function clientInspectionHasReport(p){return !!p&&/^\d+(?:\.\d+)?$/.test(String(p.inspAt??''))&&Number(p.inspAt)>0;}
   function clientInspectionFailed(p){return clientInspectionHasReport(p)&&(p.insp==='ne'||p.inspChecklist?.overall==='ne');}
   function clientInspectionCompleted(p){
     if(!clientInspectionHasReport(p)||p.inspectionReviewed===false||clientInspectionFailed(p)||p.avail==='ne'||p.answer==='ne')return false;
     if(!['ok','da','oprez'].includes(p.insp)&&!['da','oprez'].includes(p.inspChecklist?.overall))return false;
-    if(String(p.quoteCalculation?.version)==='1'&&p.inspectionPaid!==true)return false;
+    if((String(p.quoteCalculation?.version)==='1'||p.serviceFlow==='inspection-first')&&p.inspectionPaid!==true)return false;
     return true;
   }
   function clientSelectedProposal(d){
@@ -62,6 +62,7 @@
   }
   function clientDetailedPhase(d,st){
     if(st<0)return -1;
+    if(d.listingCheck?.status==='available'&&!(d.proposals||[]).length)return 2;
     if(d.car&&d.car.status!=='pregledan')return [0,1,2,5,6,7,8,9][st];
     const p=clientSelectedProposal(d);
     if(clientInspectionCompleted(p))return p.choice==='buy'&&p.inspectionPaid===true&&clientDepositPaid(p)?5:4;
@@ -191,9 +192,23 @@
     return html+'<button class="btn btn-outline" type="button" data-refresh-quote>'+esc(w.refresh)+'</button><p role="status" data-quote-refresh-status></p></section>';
   }
 
+  function clientVerificationInfo(d){
+    const v=d.listingVehicle||{},q=d.listingQuote?.result,origin=v.originProofVerified===true,vat=v.chVatRefundVerified===true;
+    const w={sr:{heading:'Provereno za ovaj auto',origin:'EUR.1 / dokaz porekla',vat:'Švajcarski PDV',confirmed:'Potvrđeno',unknown:'Nije provereno',noProof:'Nema dokaza',noRefund:'Povrat nije moguć',duty0:'Carina 0% je uračunata.',dutyFull:'Uračunata je carina 12,5%.',refund:'Uračunat odbitak',noDeduction:'Obračun je bez odbitka CH PDV-a.'},de:{heading:'Prüfstatus dieses Fahrzeugs',origin:'EUR.1 / Ursprungsnachweis',vat:'Schweizer MwSt.',confirmed:'Bestätigt',unknown:'Noch nicht geprüft',noProof:'Kein Nachweis',noRefund:'Keine Erstattung möglich',duty0:'0% Zoll berücksichtigt.',dutyFull:'12,5% Zoll berücksichtigt.',refund:'Berücksichtigter Abzug',noDeduction:'Ohne Schweizer MwSt.-Abzug berechnet.'},en:{heading:'Checks for this car',origin:'EUR.1 / proof of origin',vat:'Swiss VAT',confirmed:'Confirmed',unknown:'Not yet checked',noProof:'No proof available',noRefund:'Refund not available',duty0:'0% duty included in calculation.',dutyFull:'12.5% duty included in calculation.',refund:'Deduction applied',noDeduction:'Calculated without a Swiss VAT deduction.'}}[lang];
+    const deduction=q?Number(q.chVatDeductionChf).toLocaleString(T().locale,{minimumFractionDigits:2,maximumFractionDigits:2})+' CHF':'';
+    return '<section class="client-verification-section"><h3>'+esc(w.heading)+'</h3><div class="client-verification-grid"><div class="'+(origin?'is-confirmed':'')+'"><span>'+esc(w.origin)+'</span><strong>'+esc(origin?w.confirmed:v.origin==='no'?w.noProof:w.unknown)+'</strong><small>'+esc(origin?w.duty0:w.dutyFull)+'</small></div><div class="'+(vat?'is-confirmed':'')+'"><span>'+esc(w.vat)+'</span><strong>'+esc(vat?w.confirmed:v.vat==='no'?w.noRefund:w.unknown)+'</strong><small>'+esc(vat?w.refund+' '+deduction:w.noDeduction)+'</small></div></div></section>';
+  }
+  function clientPackageInfo(d,isOpen){
+    const r=d.listingQuote?.result;if(!r)return '';const q=r.quote,a=r.scenario;
+    const words={sr:{summary:'Šta je uključeno u cenu i paket?',title:'SWISCARS paket',items:['Pregled auta i izveštaj sa fotografijama.','Provera dokumenata i dokaza porekla, npr. EUR.1.','Provera mogućnosti povraćaja CH PDV-a kod prodavca.','Organizacija kupovine i uvoza.'],benefit:'Prihvaćen dokaz porekla može omogućiti carinu 0% umesto 12,5%. Povrat CH PDV-a zavisi od prodavca i ispunjenih uslova izvoza.',credit:'Plaćeni pregled se uračunava u paket — ne plaća se dvaput.',costs:'Stavke ove procene',labels:['Vozilo','Transport','Izvozna dokumenta','Eko naknada','Špediter','AMSS i takse','Ostalo','Carina','Srpski PDV 20%','SWISCARS paket']},de:{summary:'Was enthalten Preis und Paket?',title:'SWISCARS Paket',items:['Fahrzeugprüfung mit Bericht und Fotos.','Prüfung der Unterlagen und des Ursprungsnachweises, z. B. EUR.1.','Abklärung einer möglichen Schweizer MwSt.-Erstattung mit dem Verkäufer.','Organisation von Kauf und Import.'],benefit:'Ein anerkannter Präferenznachweis kann 0% statt 12,5% Zoll ermöglichen. Die Schweizer MwSt.-Erstattung hängt vom Verkäufer und den erfüllten Ausfuhrbedingungen ab.',credit:'Die bezahlte Prüfung wird auf das Paket angerechnet, nicht doppelt berechnet.',costs:'Positionen dieser Schätzung',labels:['Fahrzeug','Transport','Ausfuhrdokumente','Umweltabgabe','Zollabwicklung','Prüfung und Gebühren','Sonstiges','Zoll','Serbische MwSt. 20%','SWISCARS Paket']},en:{summary:'What do the price and package include?',title:'SWISCARS package',items:['Vehicle inspection with a report and photos.','Checking documents and proof of origin, such as EUR.1.','Checking possible Swiss VAT refund eligibility with the seller.','Organising the purchase and import.'],benefit:'Accepted preferential proof of origin may allow 0% instead of 12.5% duty. Swiss VAT refunds depend on the seller and export requirements being met.',credit:'Paid inspection is credited to the package, not charged twice.',costs:'Items in this estimate',labels:['Vehicle','Transport','Export documents','Environmental fee','Customs broker','Inspection and fees','Other','Duty','Serbian VAT 20%','SWISCARS package']}}[lang];
+    const values=[q.car,q.costs.transport,q.costs.export,q.costs.eco,q.costs.broker,q.costs.testing,q.costs.other,a.duty,a.vat,r.serviceEur],money=n=>Number(n).toLocaleString(T().locale,{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+    const headings={sr:{services:'Šta radimo za vas',benefits:'Moguće uštede'},de:{services:'Unsere Leistungen',benefits:'Mögliche Einsparungen'},en:{services:'What we do for you',benefits:'Potential savings'}}[lang];
+    return '<details class="client-package-info" data-package-info'+(isOpen?' open':'')+'><summary>'+esc(words.summary)+'</summary><div><section class="package-info-part"><h3>'+esc(headings.services)+'</h3><ul>'+words.items.map(item=>'<li>'+esc(item)+'</li>').join('')+'</ul></section><section class="package-info-part"><h3>'+esc(r.chVatDeductionChf>0&&a.dutyPct===0?({sr:'Uračunate pogodnosti',de:'Berücksichtigte Vorteile',en:'Benefits applied'})[lang]:headings.benefits)+'</h3><p>'+esc(r.chVatDeductionChf>0&&a.dutyPct===0?({sr:'U ovu procenu već su uračunati carina 0% po potvrđenom dokazu porekla i odbitak CH PDV-a koji je prodavac potvrdio.',de:'Diese Schätzung berücksichtigt bereits 0% Zoll aufgrund des bestätigten Ursprungsnachweises sowie den vom Verkäufer bestätigten Schweizer MwSt.-Abzug.',en:'This estimate already applies 0% duty based on confirmed proof of origin and the Swiss VAT deduction confirmed by the seller.'})[lang]:words.benefit)+'</p><p class="package-credit-note">'+esc(words.credit)+'</p></section><section class="package-info-part"><h3>'+esc(words.costs)+'</h3><dl>'+values.map((value,i)=>'<dt>'+esc(words.labels[i]+(i===7?' '+String(a.dutyPct).replace('.',',')+'%':''))+'</dt><dd>'+esc(money(value))+'</dd>').join('')+'</dl></section></div></details>';
+
+  }
   function render() {
     const openQuotes=new Set([...document.querySelectorAll("[data-client-quote][open]")].map(el=>el.dataset.clientQuote));
-    const t = T(), d = DATA;
+    const t = T(), d = DATA,packageInfoOpen=$('u_listing')?.querySelector('[data-package-info]')?.open===true;
     document.documentElement.lang = lang;
     $("u_kicker").textContent = t.kicker;
     if (!d) {
@@ -202,57 +217,84 @@
       $("u_errT").textContent = t.e404T; $("u_errP").textContent = t.e404P; $("u_errB").textContent = t.eBtn;
       return;
     }
-    $("u_err").hidden = true; $("u_body").hidden = false;
+    $("u_err").hidden = true; $("u_body").hidden = false;document.body.classList.toggle("purchase-archived",d.status==='arhiva');
+    let scenario=$('u_preview_scenario');
+    if(d.previewScenario){if(!scenario){scenario=document.createElement('p');scenario.id='u_preview_scenario';scenario.style.cssText='padding:12px 16px;background:#edf4f8;color:#315d7d;border-radius:8px;margin-bottom:20px';$('u_body').prepend(scenario);}scenario.textContent=({sr:'Lokalni probni tok · nalaz i fotografije služe za demonstraciju. Nema stvarne kupovine ni nove uplate.',de:'Lokales Beispiel · Prüfung und Kaufentscheidung sind simuliert. Kein tatsächlicher Kauf oder neue Zahlung.',en:'Local example · inspection and purchase decision are simulated. No actual purchase or new payment.'})[lang];}
     $("u_title").textContent = d.model ? t.title.replace("{model}", d.model) : t.kicker;
     if (window.scSaveUpit) window.scSaveUpit(token, { model: d.model, created: d.created });
-    const proposalView=clientProposalView(d);
-    $("u_lead").textContent = proposalView.selected?clientInspectionWords().selected:proposalView.count?clientInspectionWords().count.replace('{n}',num(proposalView.count)):t.lead;
+    const inspectionOffer=(d.proposals||[]).find(p=>p.serviceFlow==='inspection-first'&&!p.answer),proposalView=clientProposalView(d),entry=SCPurchaseFlow.request(d),flowWords=SCPurchaseFlow.text(lang),listingEntry=entry.kind==='listing';
+    const inlineInspection=listingEntry?(inspectionOffer||(proposalView.selected?.serviceFlow==='inspection-first'&&!proposalView.selected.inspAt&&!proposalView.selected.choice?proposalView.selected:null)):null;
+    $("u_kicker").textContent=flowWords.kicker;$("u_title").textContent=flowWords.title;
+    $("u_lead").textContent = inspectionOffer?({sr:'Pregled auta iz vašeg oglasa.',de:'Prüfung des Fahrzeugs aus Ihrem Inserat.',en:'Inspection of the car in your listing.'})[lang]:proposalView.selected?clientInspectionWords().selected:proposalView.count?clientInspectionWords().count.replace('{n}',num(proposalView.count)):listingEntry?flowWords.listingLead:flowWords.searchLead;
     document.body.classList.toggle('up-selected-order',!!proposalView.selected||!!d.car);
-    if(proposalView.selected||d.car)$("u_title").textContent=lang==='de'?'Ihr Fahrzeug':lang==='en'?'Your vehicle':'Vaše vozilo';
+    $("u_flow_label").textContent=flowWords.flow;
+    let vehicleLabel=$('u_flow_vehicle');if(!vehicleLabel){vehicleLabel=document.createElement('span');vehicleLabel.id='u_flow_vehicle';$('u_flow_label').after(vehicleLabel);}vehicleLabel.textContent=proposalView.selected?.title||d.listingVehicle?.title||d.car?.model||'';
     const st = stage(d);
     $("u_track").classList.add("sc-order-progress");
-    const detailedNames=lang==='de'?['Eingegangen','Suche','Verfügbarkeit','Prüfung','Anzahlung','Gekauft','Transport','Zoll','Vorbereitung','Übergeben']:lang==='en'?['Received','Searching','Availability','Inspection','Deposit','Purchased','Transport','Customs','Preparation','Delivered']:['Primljeno','Tražimo','Provera','Pregled','Kapara','Kupljeno','Transport','Carina','Priprema','Predato'];
-    const detailedActive=proposalView.proposals;
-    const detailedStep=clientDetailedPhase(d,st);
-    $("u_track").innerHTML = SCOrderProgress.markup(detailedStep,detailedNames,lang==='de'?{done:'Abgeschlossen',now:'Aktuell',next:'Nächster',later:'Noch offen'}:lang==='en'?{done:'Done',now:'Current',next:'Next',later:'Pending'}:undefined);
-    if(st===2){
-      const trackItems=$("u_track").querySelectorAll('li');
-      const setTrackState=(index,state)=>{const el=trackItems[index];el.className=state;el.removeAttribute('aria-current');if(state==='now')el.setAttribute('aria-current','step');const badge=el.querySelector('.step-state');if(badge)badge.remove();if(state==='done'){const tick=document.createElement('span');tick.className='step-state';tick.setAttribute('aria-hidden','true');tick.textContent='✓';el.appendChild(tick);}el.setAttribute('aria-label',(index+1)+'. '+detailedNames[index]+' — '+(state==='done'?(lang==='de'?'Abgeschlossen':lang==='en'?'Done':'Završeno'):state==='now'?(lang==='de'?'Aktuell':lang==='en'?'Current':'U toku'):(lang==='de'?'Noch offen':lang==='en'?'Pending':'Nije započeto')));};
-      if(detailedStep>=4&&!detailedActive.some(clientInspectionCompleted))setTrackState(3,'');
-      if(detailedActive.some(clientDepositPaid))setTrackState(4,'done');
-    }
-    const stageDates=SCOrderProgress.dates(d,d.car,proposalView.selected);
-    $("u_track").querySelectorAll('li').forEach((el,i)=>{const state=el.classList.contains('done')?'done':el.classList.contains('now')?'now':'';el.insertAdjacentHTML('beforeend',SCOrderProgress.dateMarkup(stageDates[i],state,lang));});
+    const detailedStep=clientDetailedPhase(d,st),stageDates=SCOrderProgress.dates(d,d.car,proposalView.selected),progress=SCClientProgress.state(d),progressTerms=lang==='de'?{done:'Abgeschlossen',now:'Aktuell',next:'Danach',later:'Noch offen'}:lang==='en'?{done:'Done',now:'Current',next:'Next',later:'Pending'}:undefined;
+    const packageDecision=proposalView.selected?.choice==='buy'&&clientInspectionFirst(proposalView.selected)&&!d.car;
+    if(packageDecision&&proposalView.selected.serviceMode!=='package')progress.current=2;
+    $('u_track').innerHTML=SCOrderProgress.markup(progress.current,SCClientProgress.labels(lang,listingEntry),progressTerms);
+    $('u_track').closest('.purchase-progress').hidden=progress.current<0;
     const PS = proposalView.proposals;
     const inspectedProposal=proposalView.selected;
     const inspectionStatus=!d.car&&(inspectedProposal?.inspAt&&!clientInspectionCompleted(inspectedProposal)&&!clientInspectionFailed(inspectedProposal)?clientNegativeWords().pending:inspectedProposal?.choice==='buy'&&!clientInspectionCompleted(inspectedProposal)?clientNegativeWords().unfinished:clientInspectionStatus(inspectedProposal));
     const act = !d.car && st >= 0 ? (PS.find(p => p.choice === "buy" && clientInspectionCompleted(p)) ? t.nowBuy : PS.find(p => clientInspectionCompleted(p) && !p.choice) ? t.nowRep : PS.find(p => clientInspectionFailed(p) && !p.choice) ? t.nowFail : PS.find(p => p.plannedAt && !p.inspAt) ? t.nowInsp : PS.find(p => p.answer === "zelim" && !p.availAt && p.avail !== "ne") ? t.nowCheck : PS.find(p => p.answer === "zelim" && !p.depositPaidAt && p.avail !== "ne") ? t.nowDep : PS.find(p => p.answer === "zanima" && p.photosAt) ? t.nowPhotos : PS.find(p => p.answer === "zanima") ? t.nowZanima : "") : "";
-    const depositProposal=PS.find(p=>clientInspectionCompleted(p)&&!p.depositPaidAt&&p.avail!=='ne'&&(!clientInspectionFirst(p)||p.choice==='buy'))||null;
+    const depositProposal=PS.find(p=>clientInspectionCompleted(p)&&!p.depositPaidAt&&p.avail!=='ne'&&(!clientInspectionFirst(p)||p.choice==='buy'&&p.serviceMode==='package'))||null;
     const depositStatus=depositProposal? (lang==='de'?'Wir warten auf Ihre Anzahlung'+(depositProposal.deposit?' von '+num(depositProposal.deposit)+' €':'')+'. Die Zahlungsangaben finden Sie im Vertrag.':lang==='en'?'We are waiting for your deposit'+(depositProposal.deposit?' of '+num(depositProposal.deposit)+' €':'')+'. You will find the payment details in the contract.':'Čekamo vaš potpisan ugovor i uplatu kapare'+(depositProposal.deposit?' od '+num(depositProposal.deposit)+' €':'')+'. Podatke za uplatu naći ćete u ugovoru.'):null;
     const paidPending=proposalView.selected&&clientDepositPaid(proposalView.selected)&&!clientInspectionCompleted(proposalView.selected)&&!clientInspectionFailed(proposalView.selected)&&!d.car?(lang==='de'?'Anzahlung eingegangen. Die Prüfung ist noch nicht abgeschlossen.':lang==='en'?'Deposit received. The inspection is not yet complete.':'Kapara je primljena. Pregled još nije završen.'):null;
-    const statusText=st < 0 ? ({sr:"Potražilac odustao. Upit je zatvoren.",de:"Anfrage zurückgezogen. Die Anfrage ist geschlossen.",en:"Request withdrawn. This request is closed."})[lang] : inspectionStatus || paidPending || depositStatus || ( (act===t.nowDep?(lang==="sr"?"Proveravamo vozilo i dogovaramo pregled. Posle pregleda dobijate izveštaj sa slikama.":t.nowCheck):act) || (d.car && d.car.status === "prodaja" && st === 6 ? t.ready : t.now[st]));
-    const statusEvent=stageDates[detailedStep] || (inspectionStatus?(proposalView.selected?.inspectionPaidAt||proposalView.selected?.availAt||proposalView.selected?.answeredAt):act===t.nowBuy?PS.find(p=>p.choice==='buy')?.choiceAt:act===t.nowRep||act===t.nowFail?PS.find(p=>p.inspAt)?.inspAt:act===t.nowInsp?PS.find(p=>p.depositPaidAt)?.depositPaidAt:act===t.nowDep?PS.find(p=>p.answer==='zelim'&&!p.depositPaidAt&&p.avail!=='ne')?.availAt:act===t.nowPhotos?PS.find(p=>p.answer==='zanima'&&p.photosAt)?.photosAt:d.statusChangedAt||d.car?.statusChangedAt);
+    const inactiveWords={sr:{title:'Oglas nije dostupan',body:'Poslati oglas je uklonjen sa portala.',next:'Za drugi auto pošaljite novi upit sa novim linkom.'},de:{title:'Inserat nicht verfügbar',body:'Das gesendete Inserat wurde vom Portal entfernt.',next:'Senden Sie ein anderes Inserat oder vereinbaren Sie die weitere Suche im Gespräch unten.'},en:{title:'Listing unavailable',body:'Your submitted listing has been removed from the marketplace.',next:'Send another listing or agree the next search with the team in the conversation below.'}}[lang];
+    const availableWords={sr:{title:'Auto je dostupan',body:'Tim je potvrdio dostupnost auta.',next:'Proveravamo poreklo i CH PDV, zatim šaljemo procenu troškova i ponudu pregleda.'},de:{title:'Fahrzeug verfügbar',body:'Das Team hat die Verfügbarkeit bestätigt.',next:'Wir bereiten die Gesamtkostenschätzung und das Prüfangebot vor.'},en:{title:'Car available',body:'The team has confirmed the car’s availability.',next:'We are preparing estimated total costs and an inspection quote.'}}[lang];
+    const statusText=packageDecision?({sr:proposalView.selected.serviceMode==='package'?(clientDepositPaid(proposalView.selected)?'Kapara je primljena. Tim može da pokrene kupovinu.':'Auto i paket su izabrani. Čekamo kaparu; kupovina počinje tek kada tim potvrdi njen prijem.'):'Izabrali ste auto. Potvrdite odluku o kupovini uz SWISCARS paket.',de:proposalView.selected.serviceMode==='package'?(clientDepositPaid(proposalView.selected)?'Anzahlung eingegangen. Das Team kann den Kauf starten.':'Fahrzeug und Paket gewählt. Der Kauf beginnt erst nach bestätigtem Eingang der Anzahlung.'):'Fahrzeug gewählt. Sie können jetzt das SWISCARS Paket bestätigen.',en:proposalView.selected.serviceMode==='package'?(clientDepositPaid(proposalView.selected)?'Deposit received. The team can start the purchase.':'Car and package selected. Purchase starts only after the team confirms receipt of the deposit.'):'Car selected. You can now confirm the SWISCARS package.'})[lang]:inspectionOffer?({sr:'Možete zakazati pregled ovog auta.',de:'Sie können die Prüfung dieses Fahrzeugs anfragen.',en:'You can request an inspection for this car.'})[lang]:entry.available?availableWords.body:entry.inactive?inactiveWords.body:entry.pending?(listingEntry?(st===0?flowWords.listingReceived:flowWords.listingChecking):(st===0?flowWords.searchReceived:flowWords.searchChecking)):st < 0 ? ({sr:"Potražilac odustao. Upit je zatvoren.",de:"Anfrage zurückgezogen. Die Anfrage ist geschlossen.",en:"Request withdrawn. This request is closed."})[lang] : inspectionStatus || paidPending || depositStatus || ( (act===t.nowDep?(lang==="sr"?"Proveravamo vozilo i dogovaramo pregled. Posle pregleda dobijate izveštaj sa slikama.":t.nowCheck):act) || (d.car && d.car.status === "prodaja" && st === 6 ? t.ready : t.now[st]));
+    const statusEvent=progress.latestAt||d.listingCheck?.at||stageDates[detailedStep] || (inspectionStatus?(proposalView.selected?.inspectionPaidAt||proposalView.selected?.availAt||proposalView.selected?.answeredAt):act===t.nowBuy?PS.find(p=>p.choice==='buy')?.choiceAt:act===t.nowRep||act===t.nowFail?PS.find(p=>p.inspAt)?.inspAt:act===t.nowInsp?PS.find(p=>p.depositPaidAt)?.depositPaidAt:act===t.nowDep?PS.find(p=>p.answer==='zelim'&&!p.depositPaidAt&&p.avail!=='ne')?.availAt:act===t.nowPhotos?PS.find(p=>p.answer==='zanima'&&p.photosAt)?.photosAt:d.statusChangedAt||d.car?.statusChangedAt);
     const eventDate=statusEvent?new Date(Number(statusEvent)||statusEvent):null;
-    const statusLabel=lang==='de'?'Aktueller Status':lang==='en'?'Current status':'Trenutni status';
+    const statusLabel=entry.available?availableWords.title:entry.inactive?inactiveWords.title:entry.pending?(st===0?flowWords.received:listingEntry?flowWords.listingActive:flowWords.searchActive):lang==='de'?'Aktueller Status':lang==='en'?'Current status':'Trenutni status';
     const dateLabel=lang==='de'?'Geändert am':lang==='en'?'Changed on':'Status promenjen';
     const dateText=eventDate&&!Number.isNaN(eventDate.getTime())?eventDate.toLocaleDateString(lang==='de'?'de-CH':lang==='en'?'en-GB':'sr-Latn-RS',{timeZone:'Europe/Belgrade'}):lang==='de'?'Datum nicht erfasst':lang==='en'?'Date not recorded':'Datum promene nije zabeležen';
     $("u_now").innerHTML='<b>'+esc(statusLabel)+'</b><div>'+esc(statusText)+'</div><small>'+esc(dateLabel)+': '+esc(dateText)+'</small>';
+    SCClientDeposit.render({host:$('u_now'),record:d,proposal:proposalView.selected,lang,token,rpc,onChange:load});
+    $("u_next").hidden=!entry.pending&&!entry.inactive&&!entry.available;$("u_next").innerHTML=(entry.pending||entry.inactive||entry.available)?'<b>'+esc(flowWords.next)+'</b><p>'+esc(entry.available?availableWords.next:entry.inactive?inactiveWords.next:listingEntry?flowWords.waitListing:flowWords.waitSearch)+'</p>':'';
+    if(entry.inactive){
+      const replacementWords={sr:{label:'Link novog oglasa',send:'Pošalji novi upit',error:'Novi link nije sačuvan. Proverite link i pokušajte ponovo.'},de:{label:'Anderen Inseratslink senden',send:'Link senden',error:'Der Link wurde nicht gespeichert. Bitte prüfen und erneut versuchen.'},en:{label:'Send another listing link',send:'Send new link',error:'The new link was not saved. Check it and try again.'}}[lang];
+      $('u_next').insertAdjacentHTML('beforeend','<form class="purchase-new-listing"><label>'+esc(replacementWords.label)+'<input type="url" required placeholder="https://…" aria-label="'+esc(replacementWords.label)+'"></label><button class="btn btn-gold" type="submit">'+esc(replacementWords.send)+'</button><p role="status"></p></form>');
+      const form=$('u_next').querySelector('form'),requestId=crypto.randomUUID();form.onsubmit=async event=>{event.preventDefault();if(!form.reportValidity())return;const button=form.querySelector('button'),input=form.querySelector('input'),message=form.querySelector('[role="status"]');button.disabled=true;try{const response=await rpc('sc_order_new_listing',{p_token:token,p_url:input.value.trim(),p_request_id:requestId}),result=await response.json();if(!response.ok||result.ok!==true||!/^[a-f0-9]{24}$/.test(result.token))throw Error('new_link_failed');location.hash=result.token;}catch{button.disabled=false;message.textContent=replacementWords.error;}};
+    }
+    $('u_listing').hidden=!entry.url;
+    if(entry.url){
+      const quote=d.listingQuote?.result,adPrice=d.listingVehicle?.adChf?num(d.listingVehicle.adChf)+' CHF':({sr:'Nije upisana',de:'Nicht erfasst',en:'Not recorded'})[lang],total=quote?Number(quote.total).toLocaleString(t.locale,{minimumFractionDigits:2,maximumFractionDigits:2})+' €':'—';
+      const labels={sr:{ad:'Cena u oglasu',total:'Do Srbije · sa paketom',adNote:'Cena vozila u Švajcarskoj',totalNote:'Uvoz i usluge · bez registracije',package:'SWISCARS paket',included:'Uključen u ukupnu procenu. Pregled se uračunava u paket.',notIncluded:'Paket nije uključen.',inspection:'Pregled pre kupovine',book:'Zakaži pregled',after:'Posle izveštaja odlučujete o kupovini.'},de:{ad:'Inseratspreis',total:'Geschätzte Gesamtkosten bis Serbien',adNote:'Fahrzeugpreis in der Schweiz',totalNote:'Import und Leistungen · ohne Zulassung',package:'SWISCARS Paket',included:'In der Gesamtschätzung enthalten. Die Prüfung wird angerechnet.',notIncluded:'Paket nicht enthalten.',inspection:'Prüfung vor dem Kauf',book:'Prüfung anfragen',after:'Nach dem Bericht entscheiden Sie über den Kauf.'},en:{ad:'Listing price',total:'Estimated total to Serbia',adNote:'Vehicle price in Switzerland',totalNote:'Import and services · excluding registration',package:'SWISCARS package',included:'Included in the total estimate. Inspection is credited to the package.',notIncluded:'Package not included.',inspection:'Inspection before purchase',book:'Request inspection',after:'Decide whether to buy after the report.'}}[lang];
+      const packageProposal=proposalView.selected||inlineInspection,packageTotal=Number(quote?.packageChf)||0;
+      const receipt=Number(packageProposal?.inspectionPaymentAmount??packageProposal?.inspFee)||0;
+      const packagePaid=packageProposal?.inspectionPaid===true&&(!packageProposal.inspectionPaymentCurrency||packageProposal.inspectionPaymentCurrency==='CHF')?Math.min(packageTotal,receipt):0;
+      const packageRemaining=Math.round((packageTotal-packagePaid)*100)/100;
+      const balanceWords=({sr:{paid:'Uplaćeno',remaining:'Ako izaberete paket',total:'Ukupno'},de:{paid:'Bezahlt',remaining:'Bei Paketwahl',total:'Gesamt'},en:{paid:'Paid',remaining:'If you choose the package',total:'Total'}})[lang];
+      const packageChosen=packageProposal?.choice==='buy'&&packageProposal?.serviceMode==='package';
+      const moneyWords=({sr:{paid:'Naplaćeno',remaining:'Doplata uz paket',total:'Paket ukupno',pending:'Doplata samo ako izaberete SWISCARS paket.',chosen:'SWISCARS paket je izabran.'},de:{paid:'Bezahlt',remaining:'Paketrestbetrag',total:'Paket gesamt',pending:'Restbetrag nur bei Paketwahl.',chosen:'SWISCARS Paket gewählt.'},en:{paid:'Paid',remaining:'Package balance',total:'Package total',pending:'Balance applies only if you choose the package.',chosen:'SWISCARS package selected.'}})[lang];
+      const balanceHtml=quote?'<div class="client-price-part is-paid"><span>'+esc(moneyWords.paid)+'</span><strong>'+esc(num(packagePaid))+' CHF</strong></div><div class="client-price-part '+(packageChosen?'':'is-pending')+'"><span>'+esc(moneyWords.remaining)+'</span><strong>'+esc(num(packageRemaining))+' CHF</strong></div><div class="client-price-part '+(packageChosen?'':'is-pending')+'"><span>'+esc(moneyWords.total)+'</span><strong>'+esc(num(packageTotal))+' CHF</strong></div>':'';
+      $('u_listing').innerHTML='<header class="client-vehicle-heading"><h2>'+esc(d.listingVehicle?.title||flowWords.listing)+'</h2><a class="purchase-listing-link" href="'+esc(entry.url)+'" target="_blank" rel="noopener">'+esc(flowWords.open)+'</a></header><div class="client-price-grid"><div class="client-price-part"><span>'+esc(labels.ad)+'</span><strong>'+esc(adPrice)+'</strong><small>'+esc(labels.adNote)+'</small></div>'+balanceHtml+(quote?'<div class="client-price-part client-total-part"><span>'+esc(labels.total)+'</span><strong>'+esc(total)+'</strong><small>'+esc(labels.totalNote)+'</small></div>':'')+'</div>'+(quote?'<p class="client-price-condition">'+esc(packageChosen?moneyWords.chosen:moneyWords.pending)+'</p>':'');
+      if(quote)$('u_listing').insertAdjacentHTML('beforeend',clientVerificationInfo(d));
+      if(quote)$('u_listing').insertAdjacentHTML('beforeend','<section class="client-package-section">'+clientPackageInfo(d,packageInfoOpen)+'</section>');
+      if(inlineInspection){const p=inlineInspection,bookingStatus=p.inspectionPaid===true?((p.inspectionScheduled&&p.plannedAt?clientInspectionWords().scheduled.replace('{date}',new Date(p.plannedAt).toLocaleString(t.locale,{day:'numeric',month:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'})):clientInspectionStatus(p))||({sr:'Uplata je primljena. Dogovaramo termin.',de:'Zahlung eingegangen. Wir vereinbaren den Termin.',en:'Payment received. We are arranging the date.'})[lang]):({sr:'Zahtev je primljen. Sledeća je uplata pregleda.',de:'Anfrage eingegangen. Als Nächstes folgt die Prüfungszahlung.',en:'Request received. Next is the inspection payment.'})[lang];$('u_listing').insertAdjacentHTML('beforeend','<section class="client-booking-section"><div class="client-booking-actions">'+(inspectionOffer?'<button class="btn btn-gold" type="button" data-ans="'+esc(p.id)+'|zelim">'+esc(labels.book)+'</button>':'<span class="client-booking-status">'+esc(bookingStatus)+'</span>')+'</div><p>'+esc(inspectionOffer?labels.after:p.inspectionPaid===true?({sr:'Sledeće: izveštaj posle pregleda, zatim vaša odluka o kupovini.',de:'Danach: Prüfbericht, anschließend Ihre Kaufentscheidung.',en:'Next: inspection report, then your decision whether to buy.'})[lang]:clientInspectionWords().details)+'</p></section>');}
+
+    }else $('u_listing').replaceChildren();
     renderWithdrawal(d);
-    if(proposalView.selected||d.car){
+    if((proposalView.selected||d.car)&&!listingEntry){
       let extra=$('u_extra_options');
       if(!extra){extra=document.createElement('details');extra.id='u_extra_options';extra.className='up-extra-options';extra.appendChild(document.createElement('summary'));$('u_conversation').after(extra);}
       extra.querySelector('summary').textContent=lang==='de'?'Anfragedaten und weitere Optionen':lang==='en'?'Request details and other options':'Podaci upita i ostale opcije';
       for(const item of [document.querySelector('.up-request-details'),$('u_how'),$('u_withdraw'),document.querySelector('.up-contact'),d.car&&proposalView.selected?$('u_car'):null])if(item&&item.parentElement!==extra)extra.appendChild(item);
     }
     const pct = d.depositPct || 10;
-    $("u_how").innerHTML = `<details class="up-how-collapse"><summary>${esc(t.howT)}</summary><ol>${(followup[lang].how).map(x => `<li>${esc((window.SCServicePrices?SCServicePrices.format(x,lang):x).replace("{p}", pct))}</li>`).join("")}</ol></details>`;
-    $("u_how").hidden = !!d.car;
+    $("u_how").innerHTML = `<details class="up-how-collapse"><summary>${esc(t.howT)}</summary><ol>${(listingEntry?flowWords.listingHow:followup[lang].how).map(x => `<li>${esc((window.SCServicePrices?SCServicePrices.format(x,lang):x).replace("{p}", pct))}</li>`).join("")}</ol></details>`;
+    $("u_how").hidden = listingEntry||!!inspectionOffer||!!d.car||entry.pending||entry.inactive||entry.available;
     $("u_ai").hidden = !(d.aiAt && st >= 0 && st <= 2 && !(d.proposals || []).length);
     if (d.aiAt) $("u_ai").textContent = (d.aiN > 0 ? t.aiYes : t.aiNo).replace("{d}", new Date(d.aiAt).toLocaleDateString(t.locale)).replace("{n}", d.aiN);
+    if(entry.pending)$("u_ai").hidden=true;
     const choice = x => x === "Svejedno" ? t.any : (x || t.notSpecified);
-    const rq = [["model", d.model], ["brand", d.brand], ["yearFrom", choice(d.yearFrom)], ["fuel", choice(d.fuel)], ["gearbox", t.gear[d.gearbox] || choice(d.gearbox)], ["body", choice(d.body)], ["drive", choice(d.drive)], ["color", choice(d.color)], ["budget", d.budget ? num(d.budget) + " €" : t.notSpecified], ["mileage", choice(d.mileage)], ["when", d.when], ["city", d.city], ["equip", (d.equip || []).join(", ")], ["note", d.note], ["created", d.created ? new Date(d.created).toLocaleDateString(t.locale) : ""]];
-    $("u_req_summary").textContent=[ [d.brand,d.model].filter(Boolean).join(" "), d.yearFrom ? (lang==="de"?"ab ":lang==="en"?"from ":"od ")+d.yearFrom+"." : "", d.budget ? (lang==="de"?"bis ":lang==="en"?"up to ":"do ")+num(d.budget)+" €" : "" ].filter(Boolean).join(" · ") || (lang==="de"?"Ihre Anfrage":lang==="en"?"Your request":"Vaš upit");
-    $("u_req").innerHTML = rq.filter(r => r[1]).map(([k, v]) => `<div${k === "note" || k === "equip" ? ' class="up-req-wide"' : ""}><dt>${esc(t.req[k])}</dt><dd>${esc(v)}</dd></div>`).join("");
+    const rq = [["model", listingEntry?(d.listingVehicle?.title||flowWords.listing):d.model], ["brand", d.brand], ["yearFrom", choice(d.yearFrom)], ["fuel", choice(d.fuel)], ["gearbox", t.gear[d.gearbox] || choice(d.gearbox)], ["body", choice(d.body)], ["drive", choice(d.drive)], ["color", choice(d.color)], ["budget", d.budget ? num(d.budget) + " €" : t.notSpecified], ["mileage", choice(d.mileage)], ["when", d.when], ["city", d.city], ["equip", (d.equip || []).join(", ")], ["note", d.note], ["created", d.created ? new Date(d.created).toLocaleDateString(t.locale) : ""]];
+    document.querySelector(".up-request-details").hidden=listingEntry;
+    $("u_req_summary").textContent=listingEntry?({sr:"Podaci upita",de:"Anfragedaten",en:"Request details"})[lang]:[ [d.brand,d.model].filter(Boolean).join(" "), d.yearFrom ? (lang==="de"?"ab ":lang==="en"?"from ":"od ")+d.yearFrom+"." : "", d.budget ? (lang==="de"?"bis ":lang==="en"?"up to ":"do ")+num(d.budget)+" €" : "" ].filter(Boolean).join(" · ") || (lang==="de"?"Ihre Anfrage":lang==="en"?"Your request":"Vaš upit");
+    $("u_req").innerHTML = rq.filter(r => r[1]&&!(listingEntry&&["budget","brand","yearFrom","fuel","gearbox","body","drive","color","mileage","equip"].includes(r[0]))).map(([k, v]) => `<div${k === "note" || k === "equip" ? ' class="up-req-wide"' : ""}><dt>${esc(t.req[k])}</dt><dd>${esc(v)}</dd></div>`).join("");
     const c = d.car;
     $("u_car").innerHTML = c ? `<div class="up-card"><h2>${esc(t.carT)}: ${esc(c.model)}${c.year ? " " + c.year : ""}</h2>
       <p>${[c.km ? num(c.km) + " km" : "", c.fuel, t.gear[c.gear] || c.gear, c.kw ? Math.round(c.kw * 1.36) + (lang === "en" ? " hp" : lang === "de" ? " PS" : " KS") : "", c.color].filter(Boolean).map(esc).join(" · ")}</p>
@@ -269,7 +311,7 @@
       if(clientInspectionFailed(p))return '<div class="up-box"><p class="up-no">'+esc(clientNegativeWords().negative)+'</p>'+clientReadonlyReport(p)+(p.choice?'':'<p class="car-meta">'+esc(p.depositPaidAt?T().decHint.replace('{r}',rf(p)):clientInspectionWords().decision)+'</p><div class="up-ans">'+btn(p,'continue',T().aContinue,true)+btn(p,'refund',p.depositPaidAt?T().aRefund:clientNegativeWords().stop)+'</div>')+'</div>';
       if(p.inspAt&&!clientInspectionCompleted(p))return '<div class="up-box"><p class="up-wait">'+esc(clientNegativeWords().pending)+'</p>'+clientReadonlyReport(p)+'</div>';
       if(p.choice==='buy'&&!clientInspectionCompleted(p)&&!d.car)return '<p class="up-wait">'+esc(clientNegativeWords().unfinished)+'</p>';
-      if(p.choice==='buy'&&clientInspectionFirst(p))return '<p class="up-ok">'+esc(clientInspectionWords().buy)+'</p>';
+      if(p.choice==='buy'&&clientInspectionFirst(p))return '<p class="up-ok">'+esc(clientInspectionWords().buy)+'</p><section class="inspection-package-choice" data-order-package="'+esc(p.id)+'"></section>';
       if (p.commission || p.url) {
         if (p.depositRefundAt) return `<p class="up-ok">${esc(t.sRefunded2.replace("{r}", rf(p)))}</p>`;
         if (p.choice === "refund") return `<p class="up-wait">${esc(t.sRefund2.replace("{r}", rf(p)))}</p>`;
@@ -301,7 +343,7 @@
     const priceDetailsLabel=lang==='de'?'Preis- und Prüfungsdetails':lang==='en'?'Price and inspection details':'Detalji cene i pregleda';
     const agreedLabel=lang==='de'?'Vereinbarter Gesamtpreis':lang==='en'?'Agreed total price':'Dogovorena ukupna cena';
     const order = p => p.answer === "ne" ? 2 : 0;
-    const proposalMarkup = items => items.slice().sort((x, y) => order(x) - order(y)).map(p => `<div class="up-card up-prop up-prop-compact${agreed(p)?" up-prop-agreed":""}${p.answer === "ne" ? " up-dim" : ""}"><div class="ph">${(p.photos || []).length ? `<img src="${esc(photoUrl(p.photos[0]))}" alt="">` : (p.inspPhotos || []).length ? `<img src="${esc(photoUrl(p.inspPhotos[0]))}" alt="">` : PH}</div>
+    const proposalMarkup = items => items.slice().sort((x, y) => order(x) - order(y)).map(p => p.serviceFlow==='inspection-first'?`<section class="up-card inspection-first-offer"><h2>${esc(p.choice==='buy'?({sr:'Vaša odluka',de:'Ihre Entscheidung',en:'Your decision'})[lang]:lang==='de'?'Fahrzeugprüfung':lang==='en'?'Vehicle inspection':'Pregled vozila')}</h2><h3>${esc(p.title)}</h3><p>${esc(p.place||'')}</p><p class="up-price">${esc(num(p.inspFee))} CHF</p>${!p.answer?'<p class="car-meta">'+esc(({sr:'Posle izveštaja odlučujete o kupovini.',de:'Nach dem Bericht entscheiden Sie über den Kauf.',en:'Decide whether to buy after the report.'})[lang])+'</p><div class="up-ans">'+btn(p,'zelim',({sr:'Zakaži pregled',de:'Prüfung anfragen',en:'Request inspection'})[lang],true)+'</div>':state(p)}</section>`:`<div class="up-card up-prop up-prop-compact${agreed(p)?" up-prop-agreed":""}${p.answer === "ne" ? " up-dim" : ""}"><div class="ph">${(p.photos || []).length ? `<img src="${esc(photoUrl(p.photos[0]))}" alt="">` : (p.inspPhotos || []).length ? `<img src="${esc(photoUrl(p.inspPhotos[0]))}" alt="">` : PH}</div>
       <div class="bd"><span class="car-stage">${esc(t.propT)}${p.at ? " · " + new Date(p.at).toLocaleDateString(t.locale) : ""}</span><h3>${esc(p.title)}${p.year ? " · " + p.year : ""}</h3>${clientFavoriteControl(p,d)}
         <p class="car-meta">${[p.km ? num(p.km) + " km" : "", p.fuel, t.gear[p.gear] || p.gear].filter(Boolean).map(esc).join(" · ")}</p>
         ${p.url ? `<p class="up-listing-link"><a class="btn btn-outline up-out" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(t.cAd)}</a></p>` : ""}
@@ -317,7 +359,35 @@
         ${agreed(p)&&!p.inspAt&&!p.choice?"":state(p)}
       </div>${!agreed(p)&&(p.photos || []).length > 1 ? `<div class="up-photos up-gal">${p.photos.map(x => `<a href="${esc(photoUrl(x))}" target="_blank" rel="noopener"><img src="${esc(photoUrl(x))}" alt="" loading="lazy"></a>`).join("")}</div>` : ""}</div>`).join("");
     const f = followup[lang];
-    $("u_props").innerHTML = clientFavoriteFilters(proposalView)+(clientProposalFilter==='favorites'&&!proposalView.selected&&!props.length?'<p class="car-meta">'+esc(clientFavoriteWords().empty)+'</p>':'')+proposalMarkup(props) + (!d.car && st >= 0 && !proposalView.selected ? '<section class="up-card up-followup">'+(!props.length?'<p>'+esc(f.empty)+'</p>':'')+'<div class="up-ans">'+['search','link','b2b'].map(k=>'<button class="btn btn-outline" type="button" data-followup="'+k+'">'+esc(f[k])+'</button>').join('')+'</div><div id="u_followup_form"></div></section>' : '');
+    $("u_props").hidden=!!inlineInspection||entry.available||entry.inactive||entry.pending&&(listingEntry||!entry.searchComplete);
+    $("u_props").innerHTML = (!listingEntry&&(proposalView.count||proposalView.favoriteCount)?clientFavoriteFilters(proposalView):'')+(clientProposalFilter==='favorites'&&!proposalView.selected&&!props.length?'<p class="car-meta">'+esc(clientFavoriteWords().empty)+'</p>':'')+proposalMarkup(props) + (!listingEntry&&!d.car && st >= 0 && !proposalView.selected ? '<section class="up-card up-followup">'+(!props.length?'<p>'+esc(f.empty)+'</p>':'')+'<div class="up-ans">'+['search','link','b2b'].map(k=>'<button class="btn btn-outline" type="button" data-followup="'+k+'">'+esc(f[k])+'</button>').join('')+'</div><div id="u_followup_form"></div></section>' : '');
+    const decisionHost=$('u_decision'),decisionProposal=proposalView.selected,historyHost=$('u_history');
+    decisionHost.hidden=true;decisionHost.replaceChildren();historyHost.hidden=true;historyHost.replaceChildren();$('u_now').hidden=false;
+    const workflowWords={sr:{decision:'Vaša odluka',hint:'Kupovina uključuje SWISCARS paket.',buy:'Kupujem uz SWISCARS paket',no:'Ne kupujem',report:'Prikaži izveštaj',close:'Zatvori izveštaj',history:'Dosadašnji tok',check:'Provera auta',available:'Auto je dostupan',paid:'Pregled uplaćen',scheduled:'Pregled zakazan',sent:'Izveštaj sa pregleda',ready:'Izveštaj je spreman',chosen:'Vaš izbor: Kupujem',package:'Kupovina uz SWISCARS paket potvrđena',deposit:'Kapara primljena',waiting:'Kupovina počinje tek po prijemu kapare.'},de:{decision:'Ihre Entscheidung',hint:'Der Kauf umfasst das SWISCARS Paket.',buy:'Ich kaufe',no:'Ich kaufe nicht',report:'Bericht ansehen',close:'Bericht schließen',history:'Bisheriger Verlauf',check:'Fahrzeugprüfung',available:'Fahrzeug verfügbar',paid:'Prüfung bezahlt',scheduled:'Prüfung vereinbart',sent:'Prüfbericht',ready:'Bericht liegt vor',chosen:'Ihre Wahl: Ich kaufe',package:'Kauf mit SWISCARS Paket bestätigt',deposit:'Anzahlung eingegangen',waiting:'Der Kauf beginnt erst nach Eingang der Anzahlung.'},en:{decision:'Your decision',hint:'Purchase includes the SWISCARS package.',buy:'I am buying',no:'I am not buying',report:'View report',close:'Close report',history:'Previous steps',check:'Car check',available:'Car available',paid:'Inspection paid',scheduled:'Inspection scheduled',sent:'Inspection report',ready:'Report ready',chosen:'Your choice: I am buying',package:'Purchase with SWISCARS package confirmed',deposit:'Deposit received',waiting:'Purchase starts only after receipt of the deposit.'}}[lang];
+    const openReport=()=>{
+      const p=decisionProposal,dialog=document.createElement('dialog');dialog.className='client-report-dialog';dialog.setAttribute('aria-label',workflowWords.sent);
+      const close=document.createElement('button');close.type='button';close.className='btn btn-outline';close.textContent=workflowWords.close;close.onclick=()=>dialog.close();
+      const content=document.createElement('div');content.className='client-report-content';content.innerHTML=(DATA.previewScenario?'<small class="report-demo-label">'+esc(({sr:'Primer prikaza',de:'Ansichtsbeispiel',en:'Example view'})[lang])+'</small>':p.inspNote?'<p>'+esc(p.inspNote)+'</p>':'')+(window.SCInspectionReport?.render(p.inspChecklist,DATA.lang||lang,{photoUrl,vehicleTitle:p.title||DATA.listingVehicle?.title})||'');
+      dialog.append(close,content);$('u_body').append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
+    };
+    if(st>=0&&!d.car&&decisionProposal&&clientInspectionCompleted(decisionProposal)&&(!decisionProposal.choice||decisionProposal.choice==='buy'&&decisionProposal.serviceMode!=='package')&&!clientProposalUnavailable(decisionProposal)){
+      decisionHost.innerHTML='<div><h2>'+esc(workflowWords.decision)+'</h2><p>'+esc(workflowWords.hint)+'</p></div><div class="up-ans">'+btn(decisionProposal,'kupujem',workflowWords.buy,true)+btn(decisionProposal,'nekupujem',workflowWords.no)+'</div>';
+      decisionHost.hidden=false;$('u_now').hidden=true;
+    }
+    if(decisionProposal){
+      const p=decisionProposal,events=[],date=value=>{if(!value||typeof value==='boolean')return '';const dt=new Date(Number(value)||value);return Number.isNaN(dt.getTime())?'':dt.toLocaleString(t.locale,{day:'numeric',month:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});};
+      if(d.listingCheck?.status==='available'||p.avail==='da')events.push({key:'check',title:workflowWords.check,body:workflowWords.available,at:d.listingCheck?.at||p.availAt});
+      if(p.inspectionPaid===true)events.push({key:'payment',title:workflowWords.paid,at:p.inspectionPaidAt});
+      if(p.inspectionScheduled===true&&p.plannedAt)events.push({key:'appointment',title:workflowWords.scheduled,body:date(p.plannedAt),at:p.planningUpdatedAt});
+      if(p.inspAt&&p.inspectionReviewed!==false)events.push({key:'report',title:workflowWords.sent,body:workflowWords.ready,at:p.inspAt,report:true});
+      if(p.choice==='buy')events.push({key:'decision',title:p.serviceMode==='package'?workflowWords.package:workflowWords.chosen,at:p.serviceSelectedAt||p.choiceAt});
+      if(['continue','refund','other'].includes(p.choice))events.push({key:'decision',title:({sr:'Vaš izbor: Ne kupujem',de:'Ihre Wahl: Ich kaufe nicht',en:'Your choice: I am not buying'})[lang],at:p.choiceAt});
+      if(clientDepositPaid(p))events.push({key:'deposit',title:workflowWords.deposit,at:p.depositPaidAt});
+      historyHost.hidden=!events.length;
+      historyHost.innerHTML='<h2>'+esc(workflowWords.history)+'</h2>'+events.reverse().map(event=>'<article class="client-history-card" data-history-step="'+event.key+'"><div><h3>'+esc(event.title)+'</h3>'+(event.body?'<p>'+esc(event.body)+'</p>':'')+'</div>'+(event.report?'<button class="btn btn-outline" type="button" data-history-report>'+esc(workflowWords.report)+'</button>':'')+(date(event.at)?'<time>'+esc(date(event.at))+'</time>':'')+'</article>').join('');
+      historyHost.querySelector('[data-history-report]')?.addEventListener('click',openReport);
+      if(p.inspAt&&p.inspectionReviewed!==false){const previousCard=[...$('u_props').querySelectorAll('.inspection-first-offer')].find(card=>card.querySelector('[data-order-package]')||card.textContent.includes(p.title));if(previousCard)previousCard.remove();}
+    }
     document.querySelectorAll('[data-client-quote]').forEach(el=>{if(openQuotes.has(el.dataset.clientQuote))el.open=true;});
     document.querySelectorAll('[data-refresh-quote]').forEach(button=>button.onclick=async()=>{button.disabled=true;const message=button.parentElement.querySelector('[data-quote-refresh-status]');if(message)message.textContent=T().send;clientQuoteFx=await SCFXReferenceClient.load();await load();});
     document.querySelectorAll('[data-client-filter]').forEach(button=>button.onclick=()=>{if(proposalView.selected)return;clientProposalFilter=button.dataset.clientFilter==='favorites'?'favorites':'proposals';render();});
@@ -346,21 +416,41 @@
       const proposal=DATA?.proposals?.find(p=>p.id===id);if(["zelim","zanima","kupujem"].includes(ans)&&clientProposalUnavailable(proposal)){alertBox(b.parentElement,clientFavoriteWords().unavailable);return;}
       const note = (document.querySelector(`[data-note="${CSS.escape(id)}"]`) || {}).value || "";
       const btns = b.parentElement.querySelectorAll("button"); btns.forEach(x => x.disabled = true); b.textContent = T().send;
-      try { const r = await rpc("sc_order_answer", { p_token: token, p_id: id, p_answer: ans, p_note: note }); if (!r.ok) throw new Error(r.status); await load(); }
+      try { const combined=ans==="kupujem"&&clientInspectionFirst(proposal); const r = await rpc(combined?"sc_order_choose_package":"sc_order_answer", combined?{p_token:token,p_id:id,p_expected_price:Number(DATA.listingQuote?.result?.packageChf??proposal.commission)}:{ p_token: token, p_id: id, p_answer: ans, p_note: note }); const result=await r.json();if (!r.ok||result?.ok!==true) throw new Error("answer_not_saved"); await load(); }
       catch (e) { console.warn(e); alertBox(b.parentElement, T().err); btns.forEach(x => x.disabled = false); }
     });
     $("u_qT").textContent = t.qT; $("u_qP").textContent = t.qP;
-    window.SCConversation.mount($("u_conversation"), { lang, key: {p_token:token}, call: async (fn, body) => {
+    setupConversationDialog();
+    window.SCConversation.mount($("u_conversation"), { lang, compact:true, trackUnread:true, isReading:()=>$('u_chat_dialog')?.open===true, onUnreadChange:count=>{
+      const button=$('u_chat_open'),label=({sr:'Razgovor',de:'Gespräch',en:'Conversation'})[lang];button.textContent=label;
+      button.setAttribute('aria-label',label+(count?' · '+count+' '+({sr:'nepročitanih poruka',de:'ungelesene Nachrichten',en:'unread messages'})[lang]:''));
+      if(count){const badge=document.createElement('span');badge.className='purchase-chat-count';badge.textContent=String(count);badge.setAttribute('aria-hidden','true');button.append(badge);}
+    }, key: {p_token:token}, call: async (fn, body) => {
       const r=await rpc(fn,body), result=await r.json();
       if(!r.ok)throw new Error(result.message||"conversation_error"); return result;
     } });
   }
+  function setupConversationDialog(){
+    const words=({sr:{open:'Razgovor',close:'Zatvori razgovor'},de:{open:'Gespräch',close:'Gespräch schließen'},en:{open:'Conversation',close:'Close conversation'}})[lang];
+    const button=$('u_chat_open');let dialog=$('u_chat_dialog');
+    if(!dialog){
+      dialog=document.createElement('dialog');dialog.id='u_chat_dialog';dialog.className='up-chat-dialog';dialog.setAttribute('aria-label',words.open);
+      const close=document.createElement('button');close.type='button';close.className='up-chat-close';close.textContent='×';close.setAttribute('data-chat-close','');
+      close.onclick=()=>dialog.close();dialog.append(close,$('u_conversation'));document.body.append(dialog);
+      dialog.addEventListener('close',()=>{document.body.style.overflow=dialog.scPreviousOverflow||'';button.focus({preventScroll:true});});
+      button.onclick=()=>{if(dialog.open)return;dialog.scPreviousOverflow=document.body.style.overflow;dialog.showModal();document.body.style.overflow='hidden';$('u_conversation').scConversation?.refresh();};
+    }
+    button.textContent=words.open;dialog.setAttribute('aria-label',words.open);dialog.querySelector('[data-chat-close]').setAttribute('aria-label',words.close);
+  }
   let withdrawalRequestId=null,withdrawalBusy=false;
   function renderWithdrawal(d){
     let host=$('u_withdraw');
-    if(!host){host=document.createElement('div');host.id='u_withdraw';host.style.cssText='display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;margin:12px 0 18px';$('u_now').after(host);}
+    if(!host){host=document.createElement('div');host.id='u_withdraw';$('u_now').closest('.up-card').append(host);}
+    const vehicleHeading=$('u_listing')?.querySelector('.client-vehicle-heading');
+    if(vehicleHeading)vehicleHeading.append(host);
     if(withdrawalBusy)return;
     const words={sr:{action:'Odustajem od upita',confirm:'Potvrdi odustajanje',cancel:'Nazad',ask:'Želite da zatvorite ovaj upit?',note:'Postojeće uplate i dogovori ostaju u evidenciji. Završni obračun dogovarate sa timom.',done:'Potražilac odustao',saving:'Čuvam…'},de:{action:'Anfrage zurückziehen',confirm:'Rückzug bestätigen',cancel:'Zurück',ask:'Möchten Sie diese Anfrage schließen?',note:'Bestehende Zahlungen und Vereinbarungen bleiben gespeichert. Die Schlussabrechnung klären Sie mit dem Team.',done:'Anfrage zurückgezogen',saving:'Speichern…'},en:{action:'Withdraw my request',confirm:'Confirm withdrawal',cancel:'Back',ask:'Would you like to close this request?',note:'Existing payments and agreements remain recorded. Please agree any final settlement with the team.',done:'Request withdrawn',saving:'Saving…'}}[lang];
+    if(d.status==='arhiva'){host.replaceChildren();return;}
     if(d.status==='odustao'){host.innerHTML='<span role="status">'+esc(words.done)+'</span>';return;}
     host.innerHTML='<button class="btn btn-outline" type="button" data-withdraw>'+esc(words.action)+'</button>';
     host.querySelector('[data-withdraw]').onclick=()=>{
@@ -398,7 +488,7 @@
   window.addEventListener("hashchange", () => location.reload());
   document.addEventListener("sc-service-prices-ready",render);
   SCFXReferenceClient.ready.then(value=>{clientQuoteFx=value;if(DATA)render();});
-  window.addEventListener('focus',()=>{if(DATA&&!withdrawalBusy&&document.activeElement?.tagName!=='TEXTAREA'&&!document.querySelector('[data-withdraw-confirm]'))load();});
+  window.addEventListener('focus',()=>{if(DATA&&!withdrawalBusy&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)&&!document.querySelector('[data-withdraw-confirm]'))load();});
   load();
-  setInterval(() => { if (document.visibilityState === "visible" && DATA && !withdrawalBusy && !document.querySelector("[data-withdraw-confirm]") && document.activeElement?.tagName !== "TEXTAREA") load(); }, 60000);
+  setInterval(() => { if (document.visibilityState === "visible" && DATA && !withdrawalBusy && !document.querySelector("[data-withdraw-confirm]") && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) load(); }, 60000);
 })();
