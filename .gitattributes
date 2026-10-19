@@ -1,0 +1,2 @@
+# Keep the reviewed public snapshot byte-for-byte across Windows and Netlify.
+public/** -text

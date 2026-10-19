@@ -1,0 +1,6 @@
+<!doctype html><html lang="sr"><meta charset="utf-8"><title>Local conversation check</title><script src="/assets/js/conversation.js"></script><button id="open">Razgovor <span id="count"></span></button><button id="add">Dodaj test poruku</button><dialog id="dialog"><button id="close">Zatvori</button><div id="chat"></div></dialog><script>
+const dialog=document.querySelector('#dialog'),count=document.querySelector('#count');
+const messages=[{id:'101',sender:'team',body:'Prva test poruka',at:'2026-10-17T10:00:00Z'},{id:'102',sender:'team',body:'Druga test poruka',at:'2026-10-17T10:01:00Z'},{id:'103',sender:'client',body:'Moja poruka se ne broji',at:'2026-10-17T10:02:00Z'}];
+const widget=SCConversation.mount(document.querySelector('#chat'),{lang:'sr',compact:true,trackUnread:true,key:{p_token:'local-unread-check-20261017-01'},isReading:()=>dialog.open,onUnreadChange:n=>count.textContent=String(n),call:async()=>({messages,hasMore:false})});
+document.querySelector('#open').onclick=()=>{dialog.showModal();widget.refresh();};document.querySelector('#close').onclick=()=>dialog.close();document.querySelector('#add').onclick=()=>{messages.push({id:'104',sender:'team',body:'Nova test poruka',at:'2026-10-17T10:03:00Z'});widget.refresh();};
+</script></html>

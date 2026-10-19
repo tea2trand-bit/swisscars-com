@@ -62,7 +62,7 @@
           ${c.illustration ? `<span class="car-image-note">${esc(T().illustration)}</span>` : ""}
           ${ph.length > 1 ? `<span class="count">${ph.length} ${esc(T().photos)}</span>` : ""}</div>
         <div class="car-info"><h2>${esc(c.model)}</h2><p class="car-meta">${esc(meta(c))}</p>
-
+          
           <div class="car-row"><div><small class="car-price-label">${esc(SCStockView.text(lang()).price)}</small><p class="car-price ${c.price ? "" : "ask"}">${esc(price(c))}</p></div><span class="car-more">${esc(T().details)}</span></div></div></button>`;
     }).join("");
     $("carsEmpty").hidden = list.length > 0;

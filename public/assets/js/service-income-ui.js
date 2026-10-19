@@ -4,6 +4,7 @@ function serviceDeductions(summary){const result={};for(const field of ['refunds
 function renderServiceIncome(month){
  const report=SCServiceIncome.summarize({money:TEAM_MONEY,leads:LEADS,inspections:INSPS,month}),total=report.total;
  const metric=(label,values)=>'<div><span>'+esc(label)+'</span><strong>'+esc(CF.money(values))+'</strong></div>';
+ const overview=$('companyServiceNet');if(overview)overview.textContent=CF.money(total.income);
  $('serviceIncomeTotals').innerHTML=metric('Naplaćeno',total.income)+metric('Troškovi i povraćaji',serviceDeductions(total))+metric('Preostaje',total.remaining);
  $('serviceIncomeTable').tBodies[0].innerHTML=report.categories.filter(c=>c.id!=='transport_commission'||c.records.length).map(c=>'<tr><td><b>'+esc(c.label)+'</b>'+(Object.keys(c.expected).length?'<small>Čeka naplatu: '+esc(CF.money(c.expected))+'</small>':'')+'</td><td class="n">'+esc(CF.money(c.income))+'</td><td class="n">'+esc(CF.money(serviceDeductions(c)))+'</td><td class="n">'+esc(CF.money(c.remaining))+'</td></tr>').join('');
  const rates=SET.serviceCommissionRates||{};

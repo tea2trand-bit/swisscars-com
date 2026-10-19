@@ -133,6 +133,13 @@
   updatePriceControls();
   $('form').addEventListener('submit', e => { e.preventDefault(); requestResultReveal(); activated=true; render(); if($('result').hidden&&!(pendingResultReveal&&!fxReady))$('price').focus(); });
   $('example').addEventListener('click', () => { requestResultReveal(); $('price').value = '10.000,00'; $('currency').value = 'CHF'; touched.add('price'); touched.add('currency'); activated = true; render(); });
+  // Only a listing price and its supported currency may prefill the existing calculator.
+  // URL parameters never confirm origin, VAT refunds or selection of the SWISCARS package.
+  const listingParams=new URLSearchParams(location.search),listingPrice=listingParams.get('price'),listingCurrency=listingParams.get('currency')||'CHF';
+  if(listingParams.getAll('price').length===1&&listingParams.getAll('currency').length<=1&&/^[1-9]\d*(?:\.\d{1,2})?$/.test(listingPrice||'')&&Number.isFinite(Number(listingPrice))&&Number.isSafeInteger(Math.round(Number(listingPrice)*100))&&['CHF','EUR'].includes(listingCurrency)){
+    $('currency').value=listingCurrency;$('price').value=Number(listingPrice).toLocaleString('sr-RS',{minimumFractionDigits:2,maximumFractionDigits:2});
+    $('currency').dispatchEvent(new Event('input',{bubbles:true}));$('price').dispatchEvent(new Event('input',{bubbles:true}));$('form').requestSubmit();
+  }
   SCServicePrices.ready.then(data => {
     const defaults = data?.importDefaults;
     if (defaults) {

@@ -4,6 +4,7 @@
    Texts live in pregled-texts.js (window.SCPregledTexts). The server (sc_insp_quote_place / sc_submit_inspection) is the
    only authority for price, origin and the proposed expert; this page only displays what it returns. */
 (function () {
+  if(window.SC_INSPECTION_MARKET_ENABLED===true)return;
   const URL_ = typeof SC_URL !== "undefined" ? SC_URL : "https://qghrrnqsvsrcwdhgufkv.supabase.co";
   const KEY = typeof SC_KEY !== "undefined" ? SC_KEY : "";
   const $ = id => document.getElementById(id);
@@ -23,7 +24,9 @@
   const T = () => L[lang()] || L.sr;
   const tokenOf = () => { const h = location.hash.slice(1); return /^[a-f0-9]{24}$/.test(h) ? h : null; };
   const KEYLS = "sc_my_pregled";
-  let view = null;
+  let view = null, submitting = false, confirmingPrice = false; const requestKey=crypto.randomUUID();
+  const cardText=()=>({sr:{send:"Pošaljite upit za podatke",pay:"Platite pregled",ready:"Znam da je auto dostupan i imam potrebne podatke za pregled.",needReady:"Za plaćanje potvrdite da je auto dostupan i da imate potrebne podatke.",paying:"Otvaramo plaćanje…",checking:"Proveravamo dostupnost vozila, EUR.1 i mogućnost povrata PDV-a. Posle odgovora možete platiti pregled.",unavailable:"Vozilo nije dostupno. Pregled se ne naplaćuje.",paid:"Uplata je potvrđena. SWISCARS tim dogovara termin sa prodavcem.",simulation:"Uplata je potvrđena samo u lokalnoj simulaciji. Stvarnog terećenja nema.",postal:"Lokacija oglasa",price:"Cena pregleda"},de:{send:"Daten zuerst prüfen lassen",pay:"Prüfung bezahlen",ready:"Das Fahrzeug ist verfügbar und die nötigen Angaben liegen mir vor.",needReady:"Bitte bestätigen Sie Verfügbarkeit und Fahrzeugangaben.",paying:"Zahlung wird geöffnet…",checking:"Wir prüfen Verfügbarkeit, EUR.1 und die mögliche MWST-Rückerstattung. Danach können Sie die Prüfung bezahlen.",unavailable:"Das Fahrzeug ist nicht verfügbar. Es erfolgt keine Zahlung.",paid:"Zahlung bestätigt. Das SWISCARS-Team vereinbart den Termin.",simulation:"Nur lokal simuliert. Keine echte Belastung.",postal:"Postleitzahl des Fahrzeugs",price:"Preis der Prüfung"},en:{send:"Check details first",pay:"Pay for inspection",ready:"The car is available and I have the required details.",needReady:"Confirm availability and the required details before paying.",paying:"Opening payment…",checking:"We are checking availability, EUR.1 and possible VAT refund. You can pay after the response.",unavailable:"The vehicle is unavailable. No payment is taken.",paid:"Payment confirmed. The SWISCARS team will arrange the appointment.",simulation:"Local simulation only. No real charge.",postal:"Vehicle postal code",price:"Inspection price"}}[lang()]);
+  async function startCard(token){const r=await fetch("/__preview/inspection-card/start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token})});const d=await r.json();if(!r.ok||!d.url)throw Error(d.error||"Plaćanje nije dostupno.");const u=new URL(d.url,location.origin);if(u.origin!==location.origin&&u.origin!=="https://checkout.stripe.com")throw Error("Neispravno odredište plaćanja.");location.href=u.href;}
   // Cena: quote = poslednji odgovor servera; quotePlace = unos za koji važi; selected = izabrani predlog (plz+ort).
   let quote = null, quotePlace = "", quoteSeq = 0, selected = null, pendingConfirm = null;
   // Predlozi mesta.
@@ -39,8 +42,23 @@
     if ($("pg_ctaK")) { $("pg_ctaK").textContent = t.ctaK; $("pg_ctaT").textContent = t.ctaT; $("pg_ctaP").textContent = t.ctaP; $("pg_ctaDealer").textContent = t.ctaDealer; $("pg_ctaBtn").textContent = t.ctaBtn; }
   }
 
+  function orderOptions() {
+    return ({sr:{title:"Izaberite opciju",option:"Opcija",one:"Nemam sve podatke",oneText:"Pošaljite upit za proveru dostupnosti auta, EUR.1 i mogućnosti povrata PDV-a.",two:"Imam sve podatke",twoText:"Znam da je auto dostupan i imam potrebne podatke. Želim odmah da platim pregled."},de:{title:"Wählen Sie eine Option",option:"Option",one:"Angaben fehlen",oneText:"Verfügbarkeit, EUR.1 und eine mögliche MWST-Rückerstattung zuerst prüfen lassen.",two:"Alle Angaben liegen vor",twoText:"Das Fahrzeug ist verfügbar und die nötigen Angaben liegen mir vor. Ich möchte die Prüfung jetzt bezahlen."},en:{title:"Choose an option",option:"Option",one:"I need the details checked",oneText:"Ask us to check availability, EUR.1 and a possible VAT refund first.",two:"I have all the details",twoText:"The car is available and I have the required details. I want to pay for the inspection now."}})[lang()];
+  }
+  function updateOrderChoice() {
+    const ready = $("pg_ready").checked;
+    $("pg_send").hidden = ready;
+    $("pg_pay_now").hidden = !ready;
+    $("pg_send").disabled = $("pg_pay_now").disabled = submitting || confirmingPrice;
+    $("pg_inquiry").disabled = $("pg_ready").disabled = submitting || confirmingPrice;
+    $("pg_option_one").classList.toggle("is-selected", !ready);
+    $("pg_ready").closest(".pg-ready-choice").classList.toggle("is-selected", ready);
+  }
+  ["pg_inquiry", "pg_ready"].forEach(id => $(id).addEventListener("change", updateOrderChoice));
+  const inspectionTimingText=()=>({sr:"Do pregleda može proći do 5 radnih dana od potvrđene uplate; tačan termin dogovaramo sa prodavcem.",de:"Die Prüfung kann bis zu 5 Arbeitstage nach bestätigter Zahlung dauern; den Termin vereinbaren wir mit dem Verkäufer.",en:"The inspection may take place up to 5 working days after payment is confirmed; we arrange the date with the seller."})[lang()];
   function renderOrder() {
     const t = T();
+    $("pg_timing").textContent=inspectionTimingText();
     $("p_whatT").textContent = t.whatT;
     $("p_what").innerHTML = t.what.map(([b, s]) => `<li><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join("");
     $("p_priceT").textContent = t.priceT;
@@ -54,10 +72,10 @@
     $("pg_clear").setAttribute("aria-label", t.clear); $("pg_clear").title = t.clear;
     $("pg_sugg").setAttribute("aria-label", t.sugLabel);
     $("pg_infoT").textContent = t.infoT; $("pg_infoP").textContent = t.infoP;
-    $("p_formT").textContent = t.formT;
+    $("p_formT").textContent = ({sr:"Naručite pregled auta",de:"Fahrzeugprüfung anfragen",en:"Request a car inspection"})[lang()];
     [["pg_url", "url"], ["pg_car", "car"], ["pg_name", "name"], ["pg_phone", "phone"], ["pg_email", "email"], ["pg_notes", "notes"]]
       .forEach(([id, k]) => { $(id).placeholder = t[k]; $(id).setAttribute("aria-label", t[k]); const label = $(id+"_label"); if(label){const labels={sr:{url:"Link oglasa",car:"Marka i model",name:"Ime i prezime",phone:"Telefon",email:"Email",notes:"Napomena (opciono)"},de:{url:"Link zum Inserat",car:"Marke und Modell",name:"Vor- und Nachname",phone:"Telefon",email:"E-Mail",notes:"Anmerkung (optional)"},en:{url:"Listing URL",car:"Make and model",name:"Full name",phone:"Phone",email:"Email",notes:"Notes (optional)"}};label.textContent=labels[lang()][k]||t[k];} });
-    $("pg_send").textContent = t.send;
+    $("pg_send").textContent = cardText().send; $("pg_pay_now").textContent=cardText().pay; const options=orderOptions(); $("pg_options_title").textContent=options.title; $("pg_option_one_number").textContent=options.option+" 1"; $("pg_option_two_number").textContent=options.option+" 2"; $("pg_option_one_title").textContent=options.one; $("pg_option_one_text").textContent=options.oneText; $("pg_ready_label").textContent=options.two; $("pg_option_two_text").textContent=options.twoText; updateOrderChoice(); $("pg_placeLabel").textContent=cardText().postal; $("pg_place").setAttribute("aria-label",cardText().postal); $("pg_quoteLabel").textContent=cardText().price;
     $("pg_book").textContent = t.book;
     renderSuggest();
     showQuote();
@@ -132,9 +150,9 @@
   /* ---------- cena ---------- */
   let qTimer = null;
   const currentQuoteValid = () => !!(quote && quote.found && quote.fee != null && quotePlace === $("pg_place").value.trim());
-  function closeOrder() { $("pgForm").hidden = true; $("pg_book").setAttribute("aria-expanded", "false"); }
+  function closeOrder() { $("pgForm").hidden = false; $("pg_book").setAttribute("aria-expanded", "false"); }
   function openOrder() { $("pgForm").hidden = false; $("pg_book").setAttribute("aria-expanded", "true"); }
-  function invalidateQuote() { ++quoteSeq; clearTimeout(qTimer); quote = null; quotePlace = ""; pendingConfirm = null; closeOrder(); showQuote(); }
+  function invalidateQuote() { ++quoteSeq; clearTimeout(qTimer); quote = null; quotePlace = ""; pendingConfirm = null; clearPriceConfirmation(); updateOrderChoice(); closeOrder(); showQuote(); }
   function originText(q) {
     const t = T(), o = q.origin || {};
     return fill(o.kind === "expert" ? t.originExpert : t.originTeam, { ort: o.ort || "St. Gallen" });
@@ -163,7 +181,7 @@
     if (q.fee == null) { meta.textContent = fill(t.qAgree, { ort: q.ort, plz: q.plz || "" }); box("", "—"); el.setAttribute("aria-label", meta.textContent); return; }
     const p = q.pricing || {}, o = q.origin || {};
     meta.textContent = `${q.ort}${q.plz ? " (" + q.plz + ")" : ""} · ${originText(q)}`;
-    const estimate = Math.round(Number(q.fee));
+    const estimate = Number(q.fee);
     const estimateText = estimate.toLocaleString(LOCALE[lang()], { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     box("", estimateText);
     el.setAttribute("aria-label", fill(t.qFee, { ort: q.ort, plz: q.plz || "", f: estimateText, o: o.ort || "St. Gallen" }));
@@ -176,7 +194,7 @@
     if (Number(p.travelKm) > 0 || o.kind !== "expert") rows.push([fill(t.bTravel, { km: num(p.travelKm || 0), rate: num(p.kmRate) }), money(p.travel || 0) + " CHF"]);
     if (p.roundTo) rows.push([fill(t.bRound, { min: num(p.minimum) }), ""]);
     br.hidden = false;
-    br.innerHTML = `<summary>${esc(t.breakT)}</summary><dl>` + rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("") +
+    br.innerHTML = `<dl>` + rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("") +
       `<dt class="pg-total">${esc(t.bTotal)}</dt><dd class="pg-total">${esc(money(q.fee))} CHF</dd></dl><p class="pg-q-sub2">${esc(fill(t.bDist, { d: num(q.dist) }))}</p>`;
   }
   $("pg_book").addEventListener("click", () => {
@@ -188,7 +206,7 @@
   async function calculateQuote() {
     clearTimeout(qTimer);
     const value = $("pg_place").value.trim(), sequence = ++quoteSeq, sel = selected;
-    quote = null; quotePlace = ""; pendingConfirm = null; closeOrder();
+    quote = null; quotePlace = ""; clearPriceConfirmation(); updateOrderChoice(); closeOrder();
     if (value.length < 3 && !(sel && sel.plz)) { showQuote(); return null; }
     quote = { loading: true }; showQuote();
     try {
@@ -203,18 +221,32 @@
   /* ---------- slanje ---------- */
   ["pg_name", "pg_phone", "pg_email"].forEach(id => $(id).addEventListener("input", () => $(id).setCustomValidity("")));
   function status(cls, html) { const st = $("pg_status"); st.hidden = false; st.className = "form-status " + cls; st.innerHTML = html; }
+  function clearPriceConfirmation() {
+    // Promena mesta odmah poništava staru cenu i njeno dugme za potvrdu.
+    // Proveravamo i dugme, ne samo klasu, da stari prikaz ne ostane vidljiv
+    // ako je drugi prikaz prethodno menjao klasu statusa.
+    confirmingPrice = false;
+    pendingConfirm = null;
+    const st = $("pg_status");
+    if (st.classList.contains("pg-confirm") || st.querySelector("#pg_confirm")) {
+      st.hidden = true;
+      st.replaceChildren();
+      st.className = "form-status";
+    }
+  }
   function showConfirm() {
     // Server je odbio zastarelu ponudu; nova je već izračunata (quote). Ništa nije poslato dok korisnik ne potvrdi.
     const t = T(), q = quote;
     pendingConfirm = q.offer || null;
     status("pg-confirm", `<strong>${esc(t.confirmT)}</strong><span>${esc(fill(t.confirmP, { f: money(q.fee), ort: (q.origin && q.origin.ort) || "St. Gallen" }))}</span><button type="button" class="btn btn-gold" id="pg_confirm">${esc(t.confirmBtn)}</button>`);
-    $("pg_send").disabled = true;
-    $("pg_confirm").onclick = () => { $("pg_send").disabled = false; $("pgForm").requestSubmit ? $("pgForm").requestSubmit() : $("pg_send").click(); };
+    confirmingPrice = true; updateOrderChoice();
+    $("pg_confirm").onclick = () => { confirmingPrice = false; updateOrderChoice(); const action = $("pg_ready").checked ? $("pg_pay_now") : $("pg_send"); $("pgForm").requestSubmit ? $("pgForm").requestSubmit(action) : action.click(); };
   }
   $("pgForm").addEventListener("submit", async e => {
     e.preventDefault();
-    if ($("pgForm").hidden) return;
-    const t = T(), btn = $("pg_send");
+    if ($("pgForm").hidden || submitting || confirmingPrice) return;
+    const ready = $("pg_ready").checked, submitIntent = ready ? "immediate" : "inquiry";
+    const t = T(), btn = ready ? $("pg_pay_now") : $("pg_send");
     const v = id => $(id).value.trim();
     const contact = window.SCContactValidation;
     const reject = (id, message) => { status("err", esc(message)); $(id).setCustomValidity(message); $(id).focus(); $(id).reportValidity(); };
@@ -224,27 +256,18 @@
     if (!contact.validPhone(v("pg_phone"))) { reject("pg_phone", t.phoneNeeded); return; }
     if (!$("pg_email").checkValidity()) { $("pg_email").focus(); $("pg_email").reportValidity(); return; }
     if (!(v("pg_url") || v("pg_car")) || !v("pg_place") || !v("pg_email")) { status("err", esc(t.need)); return; }
-    if (btn.disabled) return;
     if (!currentQuoteValid()) { await calculateQuote(); if (!currentQuoteValid()) { status("err", esc(quote && quote.ambiguous ? t.ambiguousSubmit : quote && quote.found === false ? t.qNo : t.qError)); } return; }
     if (pendingConfirm && pendingConfirm !== quote.offer) { showConfirm(); return; }
     const q = quote;
-    btn.disabled = true; btn.textContent = t.sending;
+    submitting = true; updateOrderChoice(); btn.textContent = t.sending;
     try {
-      const r = await rpc("sc_submit_inspection", { p: { url: v("pg_url"), car: v("pg_car"), place: v("pg_place"), plz: q.plz, ort: q.ort, name: v("pg_name"), phone: v("pg_phone"), email: v("pg_email"), notes: v("pg_notes"), website: $("pgForm").website.value, expectedFee: q.fee, expectedOffer: q.offer, lang: lang() } });
+      const r = await rpc("sc_submit_inspection", { p: { url: v("pg_url"), car: v("pg_car"), place: v("pg_place"), plz: q.plz, ort: q.ort, name: v("pg_name"), phone: v("pg_phone"), email: v("pg_email"), notes: v("pg_notes"), website: $("pgForm").website.value, expectedFee: q.fee, expectedOffer: q.offer, requestKey, requestType:submitIntent, availabilityConfirmed:ready, lang: lang() } });
       if (!r || !r.token) throw new Error("no token");
-      const link = `https://swiscars.com/pregled/#${r.token}`;
-      try { localStorage.setItem(KEYLS, JSON.stringify({ t: r.token, at: Date.now() })); } catch (e2) {}
-      fetch(`${URL_}/functions/v1/order-mail`, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: "{}" }).catch(() => {});
-      status("ok", `${esc(t.ok)} <a href="/pregled/#${esc(r.token)}" style="text-decoration:underline">${esc(t.okLink)}</a>
-        <span style="display:block;margin-top:10px">${esc(t.saveHint)}</span>
-        <span style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"><a class="btn btn-outline" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(t.waText + " " + link)}">${esc(t.wa)}</a><button type="button" class="btn btn-outline" id="pg_copy">${esc(t.copy)}</button></span>`);
-      $("pg_copy").onclick = () => (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => { $("pg_copy").textContent = t.copied; }).catch(() => window.prompt("", link));
-      $("pgForm").reset(); $("pg_place").value = ""; selected = null; updateClear(); quote = null; quotePlace = ""; pendingConfirm = null; ++quoteSeq; clearTimeout(qTimer); showQuote();
-      btn.disabled = false; btn.textContent = t.send;
-      return;
+      if(submitIntent==="immediate"){await startCard(r.token);return;}
+      location.href="/pregled/#"+r.token;return;
     } catch (err) {
       console.warn(err);
-      btn.disabled = false; btn.textContent = t.send;
+      submitting = false; updateOrderChoice(); $("pg_send").textContent=cardText().send; $("pg_pay_now").textContent=cardText().pay;
       const m = err.message;
       if (m === "price_changed") {
         // Ponuda je zastarela: nova cena se računa i korisnik je potvrđuje; nema tihog ponovnog slanja.
@@ -265,12 +288,15 @@
     const step = d.status === "gotovo" || d.reportAt ? 3 : d.plannedAt ? 2 : d.paidAt ? 1 : 0;
     $("v_track").innerHTML = t.track.map((x, k) => `<li class="${k < step ? "done" : k === step ? "now" : ""}"${k === step ? ' aria-current="step"' : ''}>${esc(x)}</li>`).join("");
     $("v_now").textContent = d.status === "otkazano" ? t.cancelled : step === 0 && d.fee == null ? t.nowAgree : t.now[step].replace("{p}", d.plannedAt || "");
-    const rows = [[t.rCar, d.car], [t.rPlace, d.ort || d.place], [t.rOrigin, d.origin && d.origin.ort ? d.origin.ort : null], [t.rFee, d.fee != null ? money(d.fee) + " CHF" : t.agree]];
+    const rows = [[t.rCar, d.car], [t.rPlace, d.ort || d.place], [t.rFee, d.fee != null ? money(d.fee) + " CHF" : t.agree]];
     $("v_req").innerHTML = rows.filter(r => r[1]).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")
       + (d.url ? `<div><dt>${esc(t.rAd)}</dt><dd><a href="${esc(d.url)}" target="_blank" rel="noopener nofollow">${esc(t.open)}</a></dd></div>` : "");
     const pay = $("v_pay");
     pay.hidden = !!(d.paidAt || d.status === "otkazano" || d.fee == null);
+    if(d.swiscarsOwnTeam&&d.needsVehicleCheck)pay.hidden=true;
     if (!pay.hidden) pay.innerHTML = `<h2>${esc(t.payT)}</h2><p>${esc(t.payP.replace("{f}", money(d.fee)).replace("{n}", d.name || ""))}</p><p class="up-pay" style="white-space:pre-line">${esc(d.pay || t.payNone)}</p>`;
+    if(d.swiscarsOwnTeam){const c=cardText();if(d.vehicleUnavailable)$("v_now").textContent=c.unavailable;else if(d.needsVehicleCheck)$("v_now").textContent=c.checking;else if(d.paidAt&&!d.plannedAt)$("v_now").textContent=c.paid;if(!pay.hidden){pay.innerHTML=`<h2>${esc(c.pay)}</h2><p><strong>${money(d.fee)} CHF</strong></p><button type="button" class="btn btn-gold" id="pg_card">${esc(c.pay)}</button><p class="car-meta">Lokalni prikaz: nema stvarnog terećenja kartice.</p>`;$("pg_card").onclick=async()=>{const b=$("pg_card");b.disabled=true;try{await startCard(tokenOf());}catch(e){b.disabled=false;const p=document.createElement("p");p.setAttribute("role","alert");p.textContent=e.message;pay.append(p);}};}if(d.vehicleReview){const r=d.vehicleReview,a=v=>({yes:"Da",no:"Ne",unclear:"Nije potvrđeno"}[v]||"Nije potvrđeno");const box=document.createElement("section");box.className="up-card";box.id="pg_vehicle_review";box.innerHTML=`<h2>Provereni podaci vozila</h2><dl class="pg-check-results"><div><dt>Dostupno:</dt><dd>${a(r.availability)}</dd></div><div><dt>EUR.1:</dt><dd>${a(r.originDocument)}</dd></div><div><dt>Povrat PDV-a:</dt><dd>${a(r.vatRefund)}</dd></div></dl>`;$("pg_vehicle_review")?.remove();pay.before(box);}}
+    if(!pay.hidden){const timing=document.createElement('p');timing.className='pg-timing';timing.textContent=inspectionTimingText();pay.append(timing);}
     const rep = $("v_report"), r = d.report || {};
     rep.hidden = !d.reportAt;
     if (!rep.hidden) rep.innerHTML = `<h2>${esc(t.repT)}</h2>${r.ocena && t.verdict[r.ocena] ? `<p class="pg-verdict">${esc(t.verdict[r.ocena])}</p>` : ""}
@@ -278,7 +304,8 @@
       ${window.SCInspectionReport?.render(r.checklist, d.lang || lang(), {photoUrl:photo}) || ""}
       ${window.SCInspectionReport && SCInspectionReport.unassignedPhotos(r.checklist,d.photos).length ? `<div class="pg-photos">${SCInspectionReport.unassignedPhotos(r.checklist,d.photos).map(p => `<a href="${esc(photo(p))}" target="_blank" rel="noopener"><img src="${esc(photo(p))}" alt="" loading="lazy"></a>`).join("")}</div>` : ""}`;
     let serviceHost=$('v_package');if(!serviceHost){serviceHost=document.createElement('section');serviceHost.id='v_package';serviceHost.className='up-card inspection-package-choice';rep.after(serviceHost);}
-    window.SCInspectionPackageClient?.render({host:serviceHost,view:d,token:tokenOf(),lang:lang(),rpc,onChange:next=>{view=next;renderView();}});
+    serviceHost.hidden = !!(d.swiscarsOwnTeam && !d.reportAt);
+    if(!serviceHost.hidden)window.SCInspectionPackageClient?.render({host:serviceHost,view:d,token:tokenOf(),lang:lang(),rpc,onChange:next=>{view=next;renderView();}});
   }
 
   function showErr() {
@@ -294,6 +321,7 @@
 
   async function boot() {
     const tok = tokenOf();
+    document.querySelector('.inspection-page').classList.toggle('inspection-status-view',!!tok);
     $("p_err").hidden = true;
     if (!tok) { $("p_order").hidden = false; $("p_view").hidden = true; render(); return; }
     $("p_order").hidden = true;
@@ -314,6 +342,7 @@
     render();
   }, 0)));
   window.addEventListener("hashchange", boot);
+  setInterval(async()=>{const tok=tokenOf();if(!tok||document.hidden)return;try{const d=await rpc("sc_inspection_view",{p_token:tok});if(d&&JSON.stringify(d)!==JSON.stringify(view)){view=d;renderView();}}catch{}},5000);
   updateClear();
   boot();
 })();

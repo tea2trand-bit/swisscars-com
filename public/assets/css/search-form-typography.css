@@ -149,7 +149,13 @@ dialog.team-choice-pane[data-choice$=Profit] {inset:0;margin:auto;width:min(360p
   #app #t-ai #companyManualSearch>.note:not([data-company-search-result]):not([data-company-search-pending]) {grid-column:1/8;grid-row:3;order:1}
   #app #t-ai #companyManualSearch>.company-layout-explanation {grid-column:1/8;grid-row:4;order:1}
 }
-#app #t-ai #companyManualSearch .vehicle-picker-field {grid-column:1/-1}
+#app #t-ai #companyManualSearch .vehicle-picker-field {grid-column:span 2}
+@media(min-width:1200px) {
+  #app #t-ai #companyManualSearch .vehicle-picker-field {grid-column:span 4}
+}
+@media(max-width:760px) {
+  #app #t-ai #companyManualSearch .vehicle-picker-field {grid-column:1/-1}
+}
 
 /* Centre the chosen search mode and mileage; clicking the whole field opens choices. */
 #app #t-ai #companySearchCriteriaForm #companyAutomaticPriority + .team-choice-trigger,

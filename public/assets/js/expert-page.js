@@ -168,7 +168,7 @@
   }
   document.addEventListener('partner-language-changed',()=>render(flow.state));
   flow.onChange(render);
-  flow.start(location.href);
+  flow.start(location.href).then(()=>{if(new URLSearchParams(location.search).get('prijava')==='1'&&flow.state.screen==='intro')flow.show('register');});
   window.__expertFlow = flow; // samo za provere u pregledaču; ne sadrži lozinke ni tokene
   window.SCExpertRuntime = { flow, adapter }; // za odvojene module na istoj stranici (cenovnik: expert-pricing.js); isti adapter, bez novog klijenta
 })();

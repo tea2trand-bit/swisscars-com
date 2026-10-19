@@ -1,14 +1,16 @@
-/* SWISCARS evidencija · sloj jezika (SR/DE/EN) za /intern/.
+/* SWISCARS evidencija · interni prikaz samo na srpskom za /intern/.
    Princip: aplikacija i dalje radi i renderuje na srpskom (nijedna poslovna, SQL ili API funkcija nije dirana);
    ovaj sloj prevodi PRIKAZ: tekstualne čvorove i atribute (placeholder, aria-label, title, alt) čim se pojave u DOM-u
    (MutationObserver), preko rečnika srpski → [de, en] (evidencija-i18n-dict.js) i obrazaca sa {x} za sastavljene
    tekstove. Za svaki čvor pamti srpski original, pa promena jezika ne briše unos, izabranu karticu, filtere ni sesiju.
    Ne prevodi: sadržaj polja (input/textarea), poruke klijenata (.sc-chat-body), [translate=no], sačuvane vrednosti
    (<option> bez value dobija value = srpski tekst, pa se u bazu i dalje upisuje srpska vrednost).
-   Jezik: localStorage['swiscars-lang'] (sr/de/en, isti ključ kao javni sajt), podrazumevano srpski. */
+   Jezik: localStorage['swiscars-intern-lang'] (samo sr), nezavisno od javnog sajta.
+   Postojeći prevodilački API ostaje zbog poziva iz aplikacije; izbor drugih jezika je isključen. */
 (function () {
   'use strict';
-  const KEY = 'swiscars-lang', LANGS = ['sr', 'de', 'en'];
+  // Internal workspace is Serbian-only; public-site language stays independent.
+  const KEY = 'swiscars-intern-lang', LANGS = ['sr'];
   const LOCALES = { sr: 'sr-Latn-RS', de: 'de-CH', en: 'en-GB' };
   const ATTRS = ['placeholder', 'aria-label', 'title', 'alt', 'data-label']; // data-label: zaglavlje kolone na telefonu (CSS attr), JS ga ne čita
   const SKIP_SEL = 'script,style,template,[contenteditable=""],[contenteditable="true"],[translate="no"],.sc-chat-body,.ev-no-translate'; // textarea: sadržaj se ne dira (doText), placeholder se prevodi
@@ -129,6 +131,7 @@
     return box;
   }
   function mountSwitchers() {
+    if (LANGS.length === 1) return;
     if (!document.querySelector('header.top .user > .ev-lang')) { const user = document.querySelector('header.top .user'); if (user) user.prepend(switcher()); }
     // vrlo uzak telefon (≤360px): prekidač u zaglavlju ne staje pored naziva, pa isti prekidač stoji u meniju naloga („Ivan T. ▾“)
     if (!document.querySelector('#teamAccountActions .ev-lang')) { const acc = document.getElementById('teamAccountActions'); if (acc) { const row = document.createElement('div'); row.className = 'ev-lang-row'; row.append(switcher()); acc.append(row); } }

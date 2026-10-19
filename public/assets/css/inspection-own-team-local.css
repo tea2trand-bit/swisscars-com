@@ -1,0 +1,63 @@
+.inspection-page .inspection-entry-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:24px}
+.inspection-entry-form{display:flex;min-width:0}
+.inspection-page #pgForm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;width:100%;margin:0;padding:24px;align-content:start}
+.inspection-page #pgForm .pg-form-field{min-width:0;margin:0;display:flex;flex-direction:column;gap:5px}
+.inspection-page #pgForm input:not([type=checkbox]),.inspection-page #pgForm textarea{min-height:42px;padding:10px 12px;margin:0;font-size:14px}
+.inspection-page #pgForm textarea{height:62px;min-height:62px}
+.inspection-page #pgForm #p_formT{grid-column:1/-1;font-size:21px;margin:0 0 4px}
+.inspection-page #pgForm>label[for=pg_url],.inspection-page #pgForm>label[for=pg_car],.inspection-page #pgForm>label[for=pg_email],.inspection-page #pgForm>.pg-form-note{grid-column:1/-1}
+.inspection-page #pgForm>#kalkulator-pregleda{grid-column:1/-1;display:block;border:0;border-radius:0;padding:0;margin:0;background:transparent;box-shadow:none}
+.inspection-page #pgForm #p_priceT,.inspection-page #pg_book,.inspection-page .pg-price-info,.inspection-page #pg_break{display:none!important}
+.inspection-page #pgForm #kalkulator-pregleda .pg-price-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start;width:100%}
+.inspection-page #pgForm #kalkulator-pregleda .pg-place-field{grid-column:auto;min-width:0;gap:5px}
+.inspection-page #pgForm #kalkulator-pregleda .pg-price-box{display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:0;border:0;background:none;min-width:0}
+.inspection-page #pgForm #pg_placeLabel,.inspection-page #pgForm #pg_quoteLabel{font-size:13px;font-weight:500;line-height:20px}
+.inspection-page #pgForm #pg_place,.inspection-page #pgForm #pg_quote{min-height:42px;height:42px;font-size:14px;margin:0;border:1px solid #d5e0e6;background:#f9fbfc;border-radius:7px}
+.inspection-page #pgForm #pg_quote{display:flex;justify-content:center;align-items:center;padding:8px}
+.inspection-page #pgForm #pg_quote .pg-q-num{font-size:20px;font-weight:600}
+.inspection-page #pgForm .pg-combobox input{width:100%}
+.inspection-page .inspection-process{height:100%;margin:0;padding:24px;display:flex;flex-direction:column}
+.inspection-page .inspection-process h2{font-size:21px;margin:0 0 20px}
+.inspection-page .inspection-process .inspection-steps{display:flex;flex-direction:column;gap:20px;flex:1;margin:0;padding:0}
+.inspection-page .inspection-process .inspection-steps li{flex:1;align-content:start;padding:20px;background:#f6f9fb;border:1px solid #e0e8ed;border-radius:9px;display:block}
+.inspection-page .inspection-process .inspection-steps li>span{display:none}
+.inspection-page .inspection-process .inspection-steps h3{font-size:17px;margin:0 0 10px}
+.inspection-page .inspection-process .inspection-option-number{display:block;font-size:11px;font-weight:500;color:#627887;margin-bottom:3px}
+.inspection-page .inspection-process .inspection-steps p{font-size:14px;line-height:1.65;margin:0}
+.inspection-page #pgForm #pg_quoteExtra:not([hidden]){display:block!important;grid-column:1/-1}
+.inspection-page #pgForm #pg_quoteExtra .pg-q-sub2{display:none}
+.inspection-page #pgForm .pg-order-options{grid-column:1/-1;min-width:0;border:0;padding:0;margin:4px 0 0}
+.inspection-page #pgForm .pg-order-options legend{font-weight:600;font-size:14px;margin:0 0 8px;padding:0}
+.inspection-page #pgForm .pg-order-option{display:flex;align-items:flex-start;gap:10px;padding:12px;margin:0 0 8px;border:1px solid #e0e8ed;border-radius:7px;font-size:13px;line-height:1.5;cursor:pointer}
+.inspection-page #pgForm .pg-order-option .pg-option-copy{display:grid;gap:3px;min-width:0}
+.inspection-page #pgForm .pg-order-option .pg-option-number{font-size:11px;font-weight:500;color:#627887}
+.inspection-page #pgForm .pg-order-option strong{display:block;font-size:13px;line-height:1.5}
+.inspection-page #pgForm .pg-order-option .pg-option-description{display:block;margin:0;color:#627887;font-size:12px}
+.inspection-page #pgForm .pg-order-option.is-selected{background:#f3f8fb;border-color:#82a9be}
+.inspection-page #pgForm .pg-order-option:focus-within{outline:2px solid #45768d;outline-offset:2px}
+.inspection-page #pgForm .pg-order-option:has(input:disabled){cursor:wait}
+.inspection-page #pgForm .pg-order-option input[type=radio]{width:18px;height:18px;min-height:18px;padding:0;margin:1px 0 0;flex:0 0 18px;accent-color:#45768d}
+.inspection-page #pgForm .pg-order-actions{grid-column:1/-1;display:flex;gap:12px;flex-wrap:wrap}
+.inspection-page .pg-timing{grid-column:1/-1;margin:0;color:#627887;font:400 12px/1.5 Inter,Arial,sans-serif}
+.inspection-page #pgForm .pg-order-actions button[hidden]{display:none!important}
+.inspection-page.inspection-status-view .cars-head{padding:18px 0 14px!important}
+.inspection-page.inspection-status-view .cars-head h1{font-size:28px!important;margin:4px 0 6px}
+.inspection-status-view .cars-head .section-kicker{margin-bottom:5px}
+.inspection-status-view .cars-list{padding-top:16px;padding-bottom:32px}
+.inspection-status-view #p_view{display:grid;gap:12px}
+.inspection-status-view #p_view>.up-card{padding:16px 20px;gap:10px}
+.inspection-status-view #p_view .up-card h2{font:600 18px/1.4 Inter,Arial,sans-serif!important}
+.inspection-status-view #v_now{font-size:14px;line-height:1.5;padding:9px 12px}
+.inspection-status-view #v_req{grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:8px 16px;margin:0;font-size:14px;align-items:start}
+.inspection-status-view .pg-check-results{display:flex;gap:12px 28px;flex-wrap:wrap;margin:0;font-size:14px}
+.inspection-status-view .pg-check-results>div{display:flex;gap:6px}
+.inspection-status-view .pg-check-results dt{color:#627887}
+.inspection-status-view .pg-check-results dd{font-weight:600;margin:0}
+.inspection-status-view #pg_vehicle_review>p{font-size:13px;line-height:1.5}
+.inspection-status-view #v_pay:not([hidden]){grid-template-columns:1fr auto;gap:4px 16px;align-items:center}
+.inspection-status-view #v_pay>h2,.inspection-status-view #v_pay>p:first-of-type{grid-column:1}
+.inspection-status-view #pg_card{grid-column:2;grid-row:1/span 2}
+.inspection-status-view #v_pay>p:last-child{grid-column:1/-1;font-size:12px!important}
+.inspection-status-view .pg-help-strip{padding-top:16px;margin-top:0}
+@media(max-width:540px){.inspection-status-view #v_req{grid-template-columns:repeat(2,minmax(0,1fr))}.inspection-status-view #p_view>.up-card{padding:15px}.inspection-status-view #v_pay:not([hidden]){grid-template-columns:1fr}.inspection-status-view #pg_card{grid-column:1;grid-row:auto}.inspection-status-view .pg-check-results{gap:8px 16px}}
+@media(max-width:760px){.inspection-page .inspection-entry-grid{grid-template-columns:1fr}.inspection-page #pgForm,.inspection-page .inspection-process{padding:20px}.inspection-page .inspection-process .inspection-steps li{padding:16px}.inspection-page #pgForm #kalkulator-pregleda .pg-price-controls{gap:12px}.inspection-page #pgForm #pg_placeLabel,.inspection-page #pgForm #pg_quoteLabel{font-size:12px}}

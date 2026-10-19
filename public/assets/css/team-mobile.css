@@ -1,0 +1,182 @@
+/* Phone is the everyday workspace. Desktop keeps the shared team layout. */
+#mobileInquiryStep {display:none!important}
+@media (max-width:760px) {
+  html {scroll-padding-top:80px}
+  #app {padding:12px;--team-column:100%;font-size:15px}
+  #app input:not([type=checkbox]):not([type=radio]),#app select,#app textarea,
+  dialog input:not([type=checkbox]):not([type=radio]),dialog select,dialog textarea {
+    min-width:0;max-width:100%;box-sizing:border-box;font-size:14px;
+  }
+  #app input:not([type=checkbox]):not([type=radio]),#app select,
+  #app .b,dialog .b {min-height:44px}
+  #app button,dialog button {touch-action:manipulation}
+  #app>.top {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;margin-bottom:8px}
+  #app>.top .brand h1 {font-size:16px}
+  #app>.top>.user {grid-column:1/-1;display:flex;justify-content:flex-end;flex-wrap:wrap;margin:0;gap:6px}
+  #app>.top .user>.ev-lang {display:flex;margin-right:auto}
+  #app>.top .user>.ev-lang .b {min-width:38px;min-height:44px;font-size:12px;padding:8px}
+  #app #teamAppearanceOpen,#app #teamAccountToggle {min-height:44px;height:44px;font-size:12px;padding-inline:8px}
+  #app>.tabs {position:sticky;top:0;z-index:30;display:grid;grid-template-columns:minmax(0,.65fr) minmax(0,1.05fr) minmax(0,1fr) minmax(0,1.3fr);gap:0;margin:0 0 18px;padding:0;background:var(--bg,#f7f8f6);min-height:48px;border-bottom:1px solid #d6e1e8}
+  #app>.tabs>button {grid-row:1;min-width:0;min-height:48px;padding:8px 2px;white-space:nowrap;font-size:12px;line-height:1.3;justify-content:center}
+  #app>.tabs>.team-available-budget {grid-column:1/-1;grid-row:2;justify-self:end;display:grid;justify-items:end;gap:2px;margin:4px 0 8px;padding:0;color:#526c7d}
+  #app>.tabs>.team-available-budget .team-available-budget-label {font-size:11px;line-height:1.3}
+  #app>.tabs>.team-available-budget strong {padding:4px 9px;border:1px solid #dce5eb;border-radius:6px;background:#f8fbfc;color:#315e79;font-size:16px;line-height:1.2;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+  #app>.tabs>button[aria-selected=true] {background:#edf4fa;border-radius:6px 6px 0 0}
+  #app>.tabs .tbadge {margin-left:2px}
+  #app .sheet,#app .settings-main {max-width:100%;box-sizing:border-box}
+  #app #t-ai {gap:16px!important}
+  #app #t-ai>.sheet {padding:16px 12px}
+  #app #t-ai .search-page-head h2,#app #t-pod>.top h2 {font-size:22px}
+  #app #t-ai #aiTools {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+  #app #t-ai #aiTools .b {padding:8px;font-size:13px;min-height:46px}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px;justify-content:stretch;max-width:none}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(.company-layout-main,.company-search-core,.company-layout-extra,.company-layout-extra>.company-search-grid,.company-manual-fields) {display:contents}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) .company-layout-budget {grid-column:1;grid-row:auto;width:100%;min-width:0;max-width:100%}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(.company-layout-profit,.company-layout-year,.company-layout-priority,.company-layout-mileage,.company-layout-body) {grid-column:auto;grid-row:auto;min-width:0;padding:0}
+  #app #t-ai #companySearchBudgetManual {width:100%;min-width:0;max-width:100%;margin:0;display:grid;gap:8px}
+  #app #t-ai .company-search-form .company-search-number-control {display:grid;grid-template-columns:minmax(0,1fr)!important;width:100%;min-width:0;max-width:100%}
+  #app #t-ai .company-search-form .company-search-number-control>input {width:100%;min-width:0;max-width:100%;padding:8px 28px 8px 8px;box-sizing:border-box}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(.company-search-number-field,.company-layout-profit,.company-layout-year,.company-layout-priority,.company-layout-mileage,.company-layout-body) {display:grid;grid-template-rows:28px 44px;gap:6px;align-content:start}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(.company-search-number-field>label,#companySearchBudgetManual>label) {min-height:28px;display:flex;align-items:end;font-size:12px;line-height:1.4}
+  #app #t-ai .company-search-form .team-choice-trigger {width:100%;min-width:0;min-height:46px;height:auto;padding:8px;font-size:14px}
+  #app #t-ai #companyManualSearch .vehicle-picker-field {grid-column:1/-1;grid-row:auto;min-width:0}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch)>:is(.note,.company-layout-explanation,.btns,.company-search-criteria-actions) {grid-column:1/-1;grid-row:auto;order:initial}
+  #app #t-ai #companyAutomaticLaunch,#app #t-ai #companyManualSearch button[type=submit] {width:100%;min-height:48px;font-size:15px}
+  #app #t-ai #teamSearchStatus {padding:16px}
+  #app #t-ai #findList .frow {padding:16px;gap:14px}
+  #app #t-narudzbine {grid-template-columns:minmax(0,1fr);min-width:0}
+  #app #t-narudzbine>*,#app #t-narudzbine .top>* {min-width:0;max-width:100%;box-sizing:border-box}
+  #app #t-narudzbine :is(#pgSheet,#pgList,#leadList) {grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+  #app #t-narudzbine :is(#pgList>.pgc,#leadList>.workcard) {grid-template-columns:minmax(0,1fr);min-width:0;max-width:100%;width:100%;padding:0;box-sizing:border-box}
+  #app #t-narudzbine .team-lead-collapse {min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+  #app #t-narudzbine .team-lead-collapse>.team-lead-body {padding:16px;min-width:0;max-width:100%;box-sizing:border-box}
+  #app #t-narudzbine .inquiry-kinds {display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;width:100%;min-width:0}
+  #app #t-narudzbine .inquiry-kinds button {min-height:44px;min-width:0;padding:8px 4px;font-size:12px;gap:4px;justify-content:center;white-space:nowrap}
+  #app #t-narudzbine .inquiry-kinds button[hidden] {display:none!important}
+  #app #t-narudzbine .inquiry-search-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;width:100%;margin-top:14px}
+  #app #t-narudzbine .inquiry-search-row>label {grid-column:1/-1;max-width:none}
+  #app #t-narudzbine .inquiry-steps {display:none!important}
+  #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger {display:flex;align-items:center;justify-content:space-between;width:100%;max-width:280px;min-width:0;min-height:46px;margin:12px auto 0;font-size:13px;box-sizing:border-box}
+  #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger>span {flex:1;min-width:0;white-space:nowrap;text-align:center}
+  #app #t-narudzbine .inquiry-summary {display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important;padding:12px!important}
+  #app #t-narudzbine .inquiry-summary>:is(.iq-person,.iq-vehicle,.iq-contact,.iq-inline-quote,.iq-progress) {grid-column:1/-1!important;grid-row:auto!important;min-width:0;justify-self:stretch;align-self:start;padding:0!important}
+  #app #t-narudzbine .inquiry-summary>.iq-person {grid-row:2!important}
+  #app #t-narudzbine .inquiry-summary>.iq-vehicle {grid-row:3!important}
+  #app #t-narudzbine .inquiry-summary>.iq-contact {grid-row:4!important}
+  #app #t-narudzbine .inquiry-summary>.iq-amount {grid-column:1!important;grid-row:5!important;min-width:0;align-self:center}
+  #app #t-narudzbine .inquiry-summary>.iq-amount>b {white-space:nowrap}
+  #app #t-narudzbine .inquiry-summary>.iq-next {grid-column:2!important;grid-row:5!important;align-self:center;min-width:0;width:100%}
+  #app #t-narudzbine .inquiry-summary>.iq-kind {grid-column:1;grid-row:4;justify-self:start;align-self:center}
+  #app #t-narudzbine .inquiry-summary:not(.has-top-kind):not(.has-inline-quote)>.iq-contact {grid-column:2!important}
+  #app #t-narudzbine .inquiry-summary>.iq-contact:empty {display:none}
+  #app .inquiry-summary .iq-name-row {display:flex;gap:10px;align-items:center}
+  #app .inquiry-summary .iq-name-row>b {flex:1;min-width:0;font-size:15px;line-height:1.4;white-space:normal;overflow-wrap:break-word}
+  #app .inquiry-summary .iq-name-row>.b {min-height:44px;min-width:64px;font-size:12px}
+  #app .inquiry-summary .iq-vehicle>strong {font-size:14px;white-space:normal;overflow-wrap:break-word}
+  #app .inquiry-summary .iq-contact {flex-wrap:wrap;gap:8px;font-size:13px}
+  #app #t-narudzbine .inquiry-summary .iq-next .b {width:100%;min-height:46px!important;white-space:normal;font-size:13px}
+  #app #t-narudzbine .inquiry-summary>.iq-progress {display:grid!important;grid-column:1/-1!important;grid-row:1!important;grid-template-columns:minmax(0,1fr);border:0;border-bottom:1px solid #e5edf2;margin:0!important;padding:0 0 8px!important;gap:0!important}
+  #app #t-narudzbine .inquiry-summary .iq-progress>* {grid-column:1/-1;grid-row:auto}
+  #app #t-narudzbine .inquiry-summary .iq-progress>:is(.iq-progress-status,.iq-origin,.iq-progress-track,.iq-progress-steps) {display:none!important}
+  #app #t-narudzbine .inquiry-summary .iq-progress-mobile {display:block;font-size:13px;font-weight:600;line-height:1.4;color:#315d7d}
+  #app #t-narudzbine .inquiry-summary .iq-progress>.team-current-task {display:block;min-width:0;margin-top:4px;font-size:12px;line-height:1.4;font-weight:400;color:#637c8d}
+  #app #t-narudzbine .inquiry-summary .iq-progress>.team-current-task>.work-owner {display:none}
+  #app #t-narudzbine .team-lead-collapse>.team-lead-body>.lnext:not(:has(button,.team-current-task)) {display:none}
+  #app #t-narudzbine .work-detail-body {display:grid;gap:12px;min-width:0}
+  #app #t-narudzbine .work-detail-body>.sc-order-progress {margin:0}
+  #app #t-auta {grid-template-columns:minmax(0,1fr);min-width:0}
+  #app #t-auta>.team-car-toolbar,#app #t-auta>#cards {min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+  #app #t-auta .team-car-toolbar {display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:16px}
+  #app #t-auta .team-car-toolbar #pipe {display:none!important}
+  #app #t-auta .team-car-toolbar>.team-choice-trigger {grid-column:1;grid-row:1;width:100%;max-width:100%;min-width:0;min-height:46px;height:auto;box-sizing:border-box;justify-content:space-between}
+  #app #t-auta .team-car-toolbar>.team-choice-trigger>span {white-space:nowrap;overflow-wrap:normal;word-break:normal}
+  #app #t-auta .team-car-actions {grid-column:1;grid-row:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;min-width:0}
+  #app #t-auta .team-car-actions>.b {width:100%;max-width:100%;min-width:0;min-height:46px;height:auto;padding:8px;font-size:13px;white-space:normal;box-sizing:border-box}
+  #app #t-auta .cardg {background:#e5eff7;color:#365d78;border-bottom-color:#cbddea}
+  #app #t-auta .team-car-card {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));min-width:0;max-width:100%;width:100%;box-sizing:border-box;padding:16px;gap:10px;background:#f0f6fb;border-bottom:1px solid #cbddea}
+  #app #t-auta .team-car-card.sel {background:#e2eef8;box-shadow:inset 3px 0 0 #457da2}
+  #app #t-auta .team-car-card>* {min-width:0;width:auto;grid-row:auto;white-space:normal}
+  #app #t-auta .team-car-card .team-car-identity {grid-column:1/-1;min-height:44px;padding:0;text-align:left;font-size:16px;white-space:normal}
+  #app #t-auta .team-car-card .team-car-identity b {white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word}
+  #app #t-auta .team-car-card .team-car-metrics {grid-column:1/-1;display:block;font-size:13px;white-space:normal}
+  #app #t-auta .team-car-card .team-car-place {grid-column:1;display:block;font-size:13px;text-align:left;max-width:none;white-space:normal}
+  #app #t-auta .team-car-card .team-car-status {grid-column:2;display:block;text-align:right;font-size:13px;white-space:normal}
+  #app #t-auta .team-car-card .team-car-action {grid-column:1/-1;display:block;width:100%;margin-top:4px}
+  #app #t-auta .team-car-card .team-car-action .b {width:100%;max-width:100%;min-width:0;min-height:46px;height:auto;font-size:13px;white-space:normal;box-sizing:border-box}
+  #app #t-auta .team-car-card .team-car-action .b.primary {background:#245b83;border-color:#245b83;color:#fff!important;text-align:center}
+  #app #t-auta .team-car-card .team-car-action .b.primary:hover {background:#194969;border-color:#194969}
+  #app #newFields .new-car-basics>.grid,#app #newFields .new-car-more>.grid,#app #editFields .grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #app #newFields .new-car-basics .field {grid-column:auto;grid-row:auto;min-width:0}
+  #app #newFields .new-car-basics .field:has(#n_model),#app #newFields .new-car-basics .field:has(#n_boughtDate) {grid-column:1/-1}
+  #app #newFields :is(input,select,textarea),#app #editFields :is(input,select,textarea) {width:100%;min-width:0;box-sizing:border-box}
+  #app #newFields .new-car-more summary {min-height:44px;box-sizing:border-box;display:flex;align-items:center;padding:10px 12px}
+  #app #newFields .new-car-more summary::after {content:"+";margin-left:auto;font-size:18px}
+  #app #newFields .new-car-more[open] summary::after {content:"−"}
+  #app #newFields .field {min-width:0}
+  #app #newBox {padding:16px 12px}
+  #app #newForm>.btns {display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  #app #t-pod {row-gap:6px!important}
+  #app #t-pod>h2 {margin-bottom:0!important}
+  #app #podTiles {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:4px 6px;overflow:visible;margin-top:0}
+  #app #podTiles button {min-width:0;min-height:44px!important;height:auto!important;padding:6px 2px!important;white-space:normal;font-size:13px!important}
+  #app #t-pod .settings-main {padding:16px 12px}
+  #app #t-pod .settings-main :is(#setGrid,#calculatorCostGrid) {grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}
+  #app #t-pod .settings-main .setgrid .field {grid-template-rows:minmax(36px,auto) 44px;gap:6px}
+  #app #t-pod .settings-save-row>.b {width:100%}
+  #app>#kpis {background:transparent;border-color:#e5ebef;border-radius:6px;box-shadow:none}
+  #app>#kpis>.kpi,#app>#kpis>#kapTile.click {grid-template-rows:18px 23px 16px;gap:2px;padding:9px 10px;border-color:#e5ebef;background:transparent;border-radius:0;box-shadow:none}
+  #app>#kpis>#kapTile.click:hover {background:transparent}
+  #app>#kpis>.kpi>.l {font-size:12px;font-weight:400;color:#718594}
+  #app>#kpis>.kpi>.v,#app>#kpis>.kpi>.v>span {font-size:18px;line-height:23px;font-weight:400;letter-spacing:0;color:#45677d}
+  #app>#kpis>.kpi:nth-child(4)>.v>.pos {color:#517c70}
+  #app>#kpis>.kpi:nth-child(5)>.v>span {color:#657e8f}
+  #app>#kpis>.kpi>.v>.neg {color:#a34f4a}
+  #app>#kpis>.kpi>.s,#app>#kpis>#kapTile>.s {font-size:11px;line-height:16px;font-weight:400;color:#7e909d}
+  #app #soldSheet .scroll {overflow:visible}
+  #app #soldTbl {display:block;min-width:0;width:100%}
+  #app #soldTbl thead {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  #app #soldTbl tbody {display:grid;gap:12px}
+  #app #soldTbl tbody tr {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:16px 0;border-top:1px solid #dce5eb}
+  #app #soldTbl tbody td {display:grid;gap:4px;min-width:0;padding:0;border:0;text-align:left;white-space:normal;font-size:14px}
+  #app #soldTbl tbody td:nth-child(-n+2),#app #soldTbl tbody td:last-child {grid-column:1/-1}
+  #app #soldTbl tbody td::before {content:attr(data-label);color:#78909f;font-size:11px;font-weight:400}
+  dialog.team-choice-pane,dialog.vehicle-picker {box-sizing:border-box;width:calc(100% - 16px);max-width:560px;max-height:calc(100dvh - 24px);border-radius:12px;border-color:#d5e0e8;color:#294d65}
+  dialog .team-choice-option,.vehicle-make-list button,.vehicle-model-list label {min-height:46px}
+  dialog.vehicle-picker .vehicle-picker-actions [data-apply] {background:#245b83;border-color:#245b83;color:#fff}
+  dialog.vehicle-picker>header h3 {font-size:18px}
+  dialog.vehicle-picker .vehicle-picker-actions button {min-height:46px}
+  dialog#teamCarWorkPane #nextBox>.grid {display:grid;grid-template-columns:minmax(0,1fr);gap:16px;width:100%;max-width:340px;margin:0 auto}
+  dialog#teamCarWorkPane #nextBox .field {min-width:0;width:100%;gap:6px}
+  dialog#teamCarWorkPane #nextBox :is(input,.team-sale-person-trigger) {width:100%;min-height:46px;font-size:13px;font-weight:400;color:#637c8d}
+  dialog#teamCarWorkPane #nextBox>.btns {max-width:340px;margin:20px auto 0}
+  dialog#teamCarWorkPane #teamCarWorkBody #nextBox #doStep {width:100%!important;min-height:48px;background:#245b83!important;border-color:#245b83!important;color:white}
+  dialog#teamCarWorkPane #teamCarWorkBack {min-height:44px}
+  dialog#teamCarWorkPane #teamCarWorkTitle {font-size:18px;line-height:1.4}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(input,.team-choice-trigger,#vehiclePickerTrigger),
+  #app input:not([type=checkbox]):not([type=radio]),#app select,#app textarea,dialog input:not([type=checkbox]):not([type=radio]),dialog select,dialog textarea {
+    font-size:13px!important;font-weight:400!important;line-height:1.4;color:#637c8d!important;
+  }
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(.team-choice-trigger,#vehiclePickerTrigger)>span {font-size:13px!important;font-weight:400!important;color:#637c8d!important}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) input::placeholder,
+  #app input::placeholder,#app textarea::placeholder,dialog input::placeholder,dialog textarea::placeholder {font-size:13px!important;font-weight:400!important;color:#7a8e9b!important;opacity:1!important}
+  #app #t-ai .budget-entry-currency,#app #t-ai .company-layout-profit .team-choice-trigger::after {font-size:13px!important;font-weight:400!important}
+  #app #t-ai #companySearchBudgetManual .budget-manual-entry>input {padding:8px 34px 8px 10px!important;text-align:left!important}
+  #app #t-ai #companySearchBudgetManual .budget-entry-currency {width:18px;right:9px;text-align:center}
+  #app #t-ai :is(#companySearchCriteriaForm,#companyManualSearch) :is(input,.team-choice-trigger) {height:44px!important;min-height:44px!important}
+  #app #t-ai #companySearchCriteriaForm .company-layout-budget {grid-column:1!important;grid-row:1!important}
+  #app #t-ai #companySearchCriteriaForm .company-layout-profit {grid-column:2!important;grid-row:1!important}
+  #app #t-ai #companySearchCriteriaForm .company-layout-year:has([name=yearFrom]) {grid-column:1;grid-row:2}
+  #app #t-ai #companySearchCriteriaForm .company-layout-year:has([name=yearTo]) {grid-column:2;grid-row:2}
+  #app #t-ai #companySearchCriteriaForm .company-layout-priority {grid-column:1;grid-row:3}
+  #app #t-ai #companySearchCriteriaForm .company-layout-mileage {grid-column:2;grid-row:3}
+  #app #t-ai #companySearchCriteriaForm .company-search-criteria-actions {grid-row:4}
+  #app #t-ai #companyManualSearch .vehicle-picker-field {grid-row:1}
+  #app #t-ai #companyManualSearch .company-layout-budget {grid-column:1!important;grid-row:2!important}
+  #app #t-ai #companyManualSearch .company-layout-profit {grid-column:2!important;grid-row:2!important}
+  #app #t-ai #companyManualSearch .company-layout-year:has([name=yearFrom]) {grid-column:1;grid-row:3}
+  #app #t-ai #companyManualSearch .company-layout-year:has([name=yearTo]) {grid-column:2;grid-row:3}
+  #app #t-ai #companyManualSearch .company-layout-mileage {grid-column:1;grid-row:4}
+  #app #t-ai #companyManualSearch .company-layout-body {grid-column:2;grid-row:4}
+  #app #t-ai #companySearchBudgetManual {grid-template-rows:28px 44px;gap:6px}
+  #app :is(input,button,select,textarea):focus-visible,dialog :is(input,button,select,textarea):focus-visible {outline:2px solid #7fa4be;outline-offset:2px;box-shadow:none}
+}

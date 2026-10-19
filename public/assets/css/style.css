@@ -1371,3 +1371,53 @@ footer .footer-legal { margin-bottom: 8px }
 @media(min-width:601px){.hero-copy .hero-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:510px}.hero-copy .hero-actions .btn{width:100%;padding-left:12px;padding-right:12px;white-space:normal;}}
 .hero-photo{filter:brightness(1.925) saturate(1.12) contrast(1.06);}
 @media(max-width:760px){.contact-form-panel>summary{position:relative;box-sizing:border-box;min-height:44px;padding:12px 36px;justify-content:center;text-align:center;font-size:13px;line-height:18px;text-transform:uppercase;letter-spacing:.5px}.contact-form-panel>summary::after{position:absolute;right:16px;font-size:20px;}}
+
+/* Quiet header actions; the count represents saved requests, not unread messages. */
+.site-header .header-cta.btn-outline{min-height:36px;padding:7px 10px;background:transparent;border-color:transparent;box-shadow:none;color:#245f85;font:500 14px/1.4 Inter,Arial,sans-serif;letter-spacing:0;text-transform:none}
+.site-header .header-cta.btn-outline:hover{background:#edf4f8;border-color:transparent;color:#194c6b;box-shadow:none;transform:none}
+.site-header .header-cta.btn-outline:focus-visible{outline:2px solid #245f85;outline-offset:2px}
+.site-header .nav-contact-mobile{color:#245f85}
+.nav-requests summary{display:flex;align-items:center;gap:6px}
+.nav-saved-count{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;border-radius:5px;background:#edf4f8;color:#245f85;font-size:11px;font-weight:500;line-height:1}
+
+/* Saved requests are a compact jump list, not a second page in the header. */
+.nav-requests-list{width:min(290px,calc(100vw - 32px));max-height:320px;padding:8px 12px;gap:0;border-color:#dce5eb;border-radius:8px;box-shadow:0 10px 24px #2030401a}
+.nav-requests-list>small{display:block;padding:1px 0 6px;color:#7a8993;font-size:11px;line-height:1.35}
+.nav-request-row{position:relative;display:block;padding:8px 0;border-color:#e5ebef}
+.nav .nav-request-row a{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:12px;row-gap:2px;align-items:center}
+.nav-request-row strong{grid-column:1;grid-row:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:1.35;color:#263b48}
+.nav-request-row a>small{grid-column:1;grid-row:2;color:#7a8993;font-size:11px;line-height:1.35}
+.nav-request-status{grid-column:2;grid-row:1 / span 2;display:inline-flex;align-items:center;gap:5px;padding:0;background:transparent;border-radius:0;font-size:11px;line-height:1.35;font-weight:500;white-space:nowrap}
+.nav-request-status::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.nav-request-status.is-active{color:#397263;background:transparent}
+.nav-request-status.is-closed,.nav-request-status.is-finished{color:#7a8993;background:transparent}
+.nav-request-status.is-unknown{color:#a06d26;background:transparent}
+.nav-request-remove{position:absolute;right:0;bottom:7px;padding:0;color:#7a8993;font-size:11px;line-height:1.35;text-underline-offset:2px}
+.nav-request-row:has(.nav-request-remove) a{padding-right:56px}
+.nav-request-row:has(.nav-request-remove) .nav-request-status{right:56px}
+@media(max-width:900px){.nav-requests-list{width:min(290px,calc(100vw - 32px));margin-top:8px}.nav-requests-list>small{padding-bottom:6px}}
+
+/* Separate site navigation and customer links from partner sign-in. */
+@media(min-width:901px){
+ .site-header>.header-cta{order:1}
+ .site-header>.language-switch{order:2}
+ .site-header>.nav-partners{order:3;border-left:1px solid #dde3e7;padding-left:14px}
+ .site-header>.nav-partners summary{color:#627482}
+}
+@media(min-width:1251px){.site-header>.nav{order:0}.site-header>.language-switch{margin-left:0}}
+
+@media(min-width:901px) and (max-width:1250px){.site-header>.nav{order:4}}
+
+/* One stable public header width across every page; forms keep their reading width. */
+html{scrollbar-gutter:stable}
+.site-header{width:min(1160px,92%);margin-inline:auto}
+@media(min-width:1251px){.site-header>.nav{gap:14px}}
+
+/* Shared header metrics override individual page themes. */
+@media(min-width:901px){
+ body>.site-header{padding:0 22px;gap:12px;min-height:48px}
+ body>.site-header>.nav{gap:14px}
+ body>.site-header .brand strong{font-size:22px}
+ body>.site-header .brand small{font-size:9px}
+ body>.site-header .language-switch button{min-height:30px;padding:4px 8px;font-size:10px}
+}

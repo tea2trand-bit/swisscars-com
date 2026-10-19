@@ -12,14 +12,12 @@
   heading.append(intro);
   root.insertBefore(heading,criteria);
   const status=document.createElement('section');
-  status.id='teamSearchStatus';status.className='sheet';
+  status.id='teamSearchStatus';status.className='company-search-live';
   status.setAttribute('aria-label','Status pretrage');
-  const statusHeading=document.createElement('h3');statusHeading.textContent='Status pretrage';
-  status.append(statusHeading);
   for(const id of ['runInfo','companyAutomaticStatus','runProg','companyProgressCounterPicker']){
     const node=document.getElementById(id);if(node)status.append(node);
   }
-  const results=document.createElement('section');results.id='teamSearchResults';results.className='sheet';
+  const results=document.createElement('section');results.id='teamSearchResults';results.className='company-search-results';
   let node=document.getElementById('companyBudgetPlan');
   while(node){const next=node.nextSibling;results.append(node);node=next;}
   const portals=criteria.querySelector('.company-search-portals');
@@ -28,7 +26,13 @@
   const updateStatus=()=>{
     const info=document.getElementById('runInfo');
     if(info&&!info.textContent.trim())info.textContent='Pretraga još nije pokrenuta.';
+    const infoText=info?.textContent||'';
+    const resultCount=Number(document.getElementById('companyFindTotal')?.textContent||0);
+    const hasRun=resultCount>0||!/(Još nije pokrenuta|Pretraga još nije pokrenuta)/i.test(infoText)||Boolean(document.getElementById('runProg')?.textContent?.trim());
+    status.hidden=!hasRun;
+    results.hidden=!hasRun;
   };
+  window.SCUpdateSearchLayout=updateStatus;
   updateStatus();
   for(const button of root.querySelectorAll('[data-company-search-view]'))button.addEventListener('click',updateStatus);
 })();

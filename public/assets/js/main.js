@@ -10,7 +10,7 @@ const SC_URL='https://qghrrnqsvsrcwdhgufkv.supabase.co',SC_KEY='sb_publishable_o
   const targets=onHome?[...new Set(links.map(a=>new URL(a.href,location.href).hash).filter(Boolean))].map(hash=>document.getElementById(hash.slice(1))).filter(Boolean):[];
   function mark(id) {
     for(const a of links){const u=new URL(a.href,location.href),same=u.pathname===location.pathname||onHome&&u.pathname==='/';
-      const active=same&&(onHome?u.hash==='#'+id:!u.hash||a.getAttribute('data-i18n')==='navInsp'&&u.hash==='#kalkulator-pregleda');
+      const active=same&&(onHome?(u.hash?u.hash==='#'+id:!id):!u.hash||a.getAttribute('data-i18n')==='navInsp'&&u.hash==='#kalkulator-pregleda');
       if(active)a.setAttribute('aria-current',onHome?'location':'page');else a.removeAttribute('aria-current');}
   }
   function update(){let current=targets[0]?.id;const line=(document.querySelector('.site-header')?.getBoundingClientRect().bottom||80)+40;
@@ -23,9 +23,10 @@ const SC_URL='https://qghrrnqsvsrcwdhgufkv.supabase.co',SC_KEY='sb_publishable_o
 // Shared required contact validation for search and inspection requests.
 window.SCContactValidation=Object.freeze({
   validFullName(value){if(typeof value!=='string')return false;const words=value.trim().split(/\s+/);return words.length>=2&&words.every(word=>/\p{L}/u.test(word));},
-  validPhone(value){if(typeof value!=='string')return false;const phone=value.trim();if(!/^\+?[0-9][0-9\s().\/-]*$/.test(phone))return false;const digits=phone.replace(/\D/g,'').replace(/^00/,'');return digits.length>=7&&digits.length<=15;}
+  validPhone(value){if(typeof value!=='string')return false;const phone=value.trim();if(!/^\+?[0-9][0-9\s().\/-]*$/.test(phone))return false;const digits=phone.replace(/\D/g,'').replace(/^00/,'');return digits.length>=7&&digits.length<=15;},
+  parseListingPrice(value){if(typeof value!=='string')return null;const raw=value.trim().replace(/[\s'’]/g,'');let normalized;if(/^\d+(?:[.,]\d{1,2})?$/.test(raw))normalized=raw.replace(',','.');else if(/^\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?$/.test(raw))normalized=raw.replace(/\./g,'').replace(',','.');else return null;const amount=Number(normalized);return Number.isFinite(amount)&&amount>0&&Number.isSafeInteger(Math.round(amount*100))?amount:null;}
 });
-const contactForm=document.getElementById('contact-form');if(contactForm){
+document.querySelectorAll('#contact-form,#listing-contact-form').forEach(contactForm=>{
 const status=contactForm.querySelector('.form-status');const submitBtn=contactForm.querySelector('button[type="submit"]');
 const nameField=contactForm.querySelector('[name="name"]'),phoneField=contactForm.querySelector('[name="phone"]');
 const contactMessages=()=>localStorage.getItem('swiscars-lang')==='de'?{name:'Bitte geben Sie Ihren Vor- und Nachnamen ein.',phone:'Bitte geben Sie eine gültige Telefonnummer mit 7 bis 15 Ziffern ein.'}:{name:'Unesite ime i prezime.',phone:'Unesite ispravan broj telefona sa 7 do 15 cifara.'};
@@ -35,8 +36,11 @@ function checkContact(){const messages=contactMessages(),nameOK=!!nameField&&win
 contactForm.addEventListener('submit',async function(e){e.preventDefault();const lang=localStorage.getItem('swiscars-lang')||'sr';const d=translations[lang]||translations.sr;
 const checked=checkContact();if(!checked.nameOK||!checked.phoneOK){const invalid=checked.nameOK?phoneField:nameField;if(status){status.hidden=false;status.className='form-status err';status.textContent=checked.nameOK?checked.messages.phone:checked.messages.name;}if(invalid){invalid.focus();invalid.reportValidity();}return;}
 if(!contactForm.reportValidity())return;
-const sendLabel=submitBtn?submitBtn.textContent:'';if(submitBtn){submitBtn.disabled=true;submitBtn.textContent=d.formSending||'...'}const fd=new FormData(contactForm);fd.set('name',nameField.value.trim().replace(/\s+/g,' '));fd.set('phone',phoneField.value.trim());const v=k=>(fd.get(k)||'').toString();
-const primary=await fetch(SC_URL+'/rest/v1/rpc/sc_submit_order',{method:'POST',headers:{apikey:SC_KEY,'Content-Type':'application/json'},body:JSON.stringify({p:{name:v('name'),phone:v('phone'),email:v('email'),city:v('city'),budget:v('budget'),brand:v('brand'),model:v('model'),yearFrom:v('yearFrom'),fuel:v('fuel'),gearbox:v('gearbox'),body:v('body'),drive:v('drive'),color:v('color'),mileage:v('mileage'),when:v('when'),equip:fd.getAll('equip').map(String),notes:v('notes'),website:v('bot-field'),lang}})}).then(async r=>{const body=await r.json().catch(()=>null);return{rejected:r.status>=400&&r.status<500,result:r.ok?body:null,reason:body&&typeof body.message==='string'?body.message:''};}).catch(()=>({rejected:false,result:null,reason:''}));
+const listingForm=contactForm.id==='listing-contact-form',listingPriceField=listingForm?contactForm.querySelector('[name="listingPriceChf"]'):null,listingPrice=listingForm?window.SCContactValidation.parseListingPrice(listingPriceField?.value):null;
+if(listingForm&&listingPrice===null){listingPriceField?.setCustomValidity(({sr:'Unesite cenu iz oglasa veću od nule.',de:'Bitte geben Sie einen Inseratspreis über null ein.',en:'Enter a listing price greater than zero.'})[lang]||'Unesite cenu iz oglasa veću od nule.');listingPriceField?.reportValidity();return;}
+const sendLabel=submitBtn?submitBtn.textContent:'';if(submitBtn){submitBtn.disabled=true;submitBtn.textContent=d.formSending||'...'}const fd=new FormData(contactForm);fd.set('name',nameField.value.trim().replace(/\s+/g,' '));fd.set('phone',phoneField.value.trim());if(listingForm){fd.delete('budget');fd.set('listingPriceChf',String(listingPrice));}const v=k=>(fd.get(k)||'').toString();
+const order={name:v('name'),phone:v('phone'),email:v('email'),city:v('city'),brand:v('brand'),model:v('model'),yearFrom:v('yearFrom'),fuel:v('fuel'),gearbox:v('gearbox'),body:v('body'),drive:v('drive'),color:v('color'),mileage:v('mileage'),when:v('when'),equip:fd.getAll('equip').map(String),notes:v('notes'),website:v('bot-field'),lang};if(listingForm)Object.assign(order,{listingUrl:v('listingUrl'),listingPriceChf:listingPrice});else order.budget=v('budget');
+const primary=await fetch(SC_URL+'/rest/v1/rpc/sc_submit_order',{method:'POST',headers:{apikey:SC_KEY,'Content-Type':'application/json'},body:JSON.stringify({p:order})}).then(async r=>{const body=await r.json().catch(()=>null);return{rejected:r.status>=400&&r.status<500,result:r.ok?body:null,reason:body&&typeof body.message==='string'?body.message:''};}).catch(()=>({rejected:false,result:null,reason:''}));
 const res=primary.result;
 const okN=!primary.rejected&&await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(fd).toString()}).then(r=>r.ok).catch(()=>false);
 if(status){status.hidden=false}
@@ -50,7 +54,7 @@ if(res&&res.token){const link='https://swiscars.com/upit/#'+res.token;fetch(SC_U
     if(window.scSaveUpit)window.scSaveUpit(res.token,{model:v('model'),created:Date.now()})}contactForm.reset()}
 else if(!primary.rejected&&(okN||(res&&res.ok))){if(status){status.className='form-status ok';status.textContent=d.formSuccess}contactForm.reset()}
 else if(status){status.className='form-status err';const rejectedField=primary.rejected&&(primary.reason==='full_name'?nameField:primary.reason==='phone'?phoneField:null);const message=rejectedField?(primary.reason==='full_name'?contactMessages().name:contactMessages().phone):primary.rejected?(lang==='de'?'Ihre Anfrage wurde nicht angenommen. Prüfen Sie Ihre Angaben und versuchen Sie es erneut.':'Upit nije prihvaćen. Proverite podatke i pokušajte ponovo.'):d.formError;status.textContent=message;if(rejectedField){setContactValidity(rejectedField,false,message);rejectedField.focus();rejectedField.reportValidity();}}
-if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=sendLabel}})}
+if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=sendLabel}})});
 
 const orderFormPanel = document.getElementById('order-form-panel');
 if (orderFormPanel) {
@@ -106,10 +110,10 @@ if (orderFormPanel) {
   }
   function labels() {
     return ({
-      sr:{locale:'sr-Latn-RS',title:'Upiti',request:'Upit',device:'Sačuvano u ovom browseru',menu:'Otvori meni',active:'Aktivan',closed:'Neaktivan — zatvoren',finished:'Neaktivan — završen',unknown:'Status nije potvrđen',checking:'Proveravamo status',remove:'Ukloni iz ovog browsera',removed:'Link je uklonjen iz ovog browsera. Upit i razgovor ostaju u evidenciji.'},
-      de:{locale:'de-CH',title:'Anfragen',request:'Anfrage',device:'In diesem Browser gespeichert',menu:'Menü öffnen',active:'Aktiv',closed:'Inaktiv — geschlossen',finished:'Inaktiv — abgeschlossen',unknown:'Status nicht bestätigt',checking:'Status wird geprüft',remove:'Aus diesem Browser entfernen',removed:'Der Link wurde aus diesem Browser entfernt. Anfrage und Nachrichten bleiben erhalten.'},
-      en:{locale:'en-GB',title:'Requests',request:'Request',device:'Saved in this browser',menu:'Open menu',active:'Active',closed:'Inactive — closed',finished:'Inactive — completed',unknown:'Status unconfirmed',checking:'Checking status',remove:'Remove from this browser',removed:'The link was removed from this browser. The request and conversation remain on record.'}
-    })[document.documentElement.lang || 'sr'] || {locale:'sr-Latn-RS',title:'Upiti',request:'Upit',device:'Sačuvano u ovom browseru',menu:'Otvori meni',active:'Aktivan',closed:'Neaktivan — zatvoren',finished:'Neaktivan — završen',unknown:'Status nije potvrđen',checking:'Proveravamo status',remove:'Ukloni iz ovog browsera',removed:'Link je uklonjen iz ovog browsera. Upit i razgovor ostaju u evidenciji.'};
+      sr:{locale:'sr-Latn-RS',title:'Moji upiti',request:'Upit',device:'Samo na ovom uređaju',menu:'Otvori meni',active:'Aktivan',closed:'Zatvoren',finished:'Završen',unknown:'Status nije potvrđen',checking:'Proveravamo status',remove:'Ukloni',removed:'Link je uklonjen iz ovog uređaja. Upit i razgovor ostaju u evidenciji.'},
+      de:{locale:'de-CH',title:'Meine Anfragen',request:'Anfrage',device:'Nur auf diesem Gerät',menu:'Menü öffnen',active:'Aktiv',closed:'Geschlossen',finished:'Abgeschlossen',unknown:'Status nicht bestätigt',checking:'Status wird geprüft',remove:'Entfernen',removed:'Der Link wurde von diesem Gerät entfernt. Anfrage und Nachrichten bleiben erhalten.'},
+      en:{locale:'en-GB',title:'My requests',request:'Request',device:'Only on this device',menu:'Open menu',active:'Active',closed:'Closed',finished:'Completed',unknown:'Status unconfirmed',checking:'Checking status',remove:'Remove',removed:'The link was removed from this device. The request and conversation remain on record.'}
+    })[document.documentElement.lang || 'sr'] || {locale:'sr-Latn-RS',title:'Moji upiti',request:'Upit',device:'Samo na ovom uređaju',menu:'Otvori meni',active:'Aktivan',closed:'Zatvoren',finished:'Završen',unknown:'Status nije potvrđen',checking:'Proveravamo status',remove:'Ukloni',removed:'Link je uklonjen iz ovog uređaja. Upit i razgovor ostaju u evidenciji.'};
   }
   function announce(text) {
     let live = document.querySelector('.nav-request-feedback');
@@ -139,7 +143,10 @@ if (orderFormPanel) {
       menu.addEventListener('toggle',()=>{if(menu.open)refreshSaved(true);});
       nav.insertBefore(menu,nav.querySelector('.nav-team-portal'));
     }
-    menu.querySelector('summary').textContent=text.title+' ('+saved.length+')';
+    const summary=menu.querySelector('summary');
+    const name=document.createElement('span');name.textContent=text.title;
+    const count=document.createElement('span');count.className='nav-saved-count';count.textContent=String(saved.length);count.setAttribute('aria-hidden','true');
+    summary.replaceChildren(name,count);summary.setAttribute('aria-label',text.title+': '+saved.length);
     const list=menu.querySelector('.nav-requests-list');list.replaceChildren();
     const hint=document.createElement('small');hint.textContent=text.device;list.appendChild(hint);
     const rank = state => state === 'active' ? 0 : state === 'unknown' ? 1 : 2;
@@ -204,3 +211,15 @@ document.querySelectorAll('.nav-partners').forEach(partners=>{
  document.addEventListener('click',e=>{if(!partners.contains(e.target)||e.target.closest('a'))partners.open=false});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&partners.open){partners.open=false;partners.querySelector('summary').focus()}});
 });
+
+// Keep partner access separate on desktop, inside the navigation on mobile.
+(function(){
+ const header=document.querySelector('.site-header'),nav=header?.querySelector('.nav'),access=nav?.querySelector('.nav-partners');
+ if(!header||!nav||!access)return;
+ const desktop=matchMedia('(min-width:901px)');
+ function placeAccess(){access.open=false;if(desktop.matches){const contact=header.querySelector('.header-cta'),languages=header.querySelector('.language-switch');if(contact&&languages)header.insertBefore(contact,languages);header.appendChild(access);}else nav.appendChild(access);}
+ desktop.addEventListener('change',placeAccess);placeAccess();
+})();
+
+// Contact remains available in the page footer and contact section.
+document.querySelectorAll('.site-header .header-cta,.site-header .nav-contact-mobile').forEach(link=>link.remove());

@@ -5,9 +5,12 @@
 #app>.top>.user{margin-left:auto;gap:12px}
 #app #teamAppearanceOpen,#app #teamAccountToggle{font-size:13px;min-height:36px;height:36px;padding-inline:8px}
 #app>.top .user>.ev-lang .b{font-size:12px;height:32px;min-height:32px;min-width:28px}
-#app>.tabs{max-width:var(--team-column);width:100%;margin:0 auto 32px;min-height:48px;gap:20px;border-bottom:1px solid #e0e7eb;overflow:visible}
+#app>.tabs{max-width:var(--team-column);width:100%;margin:0 auto 24px;min-height:48px;gap:4px 16px;border-bottom:1px solid #e0e7eb;overflow:visible;flex-wrap:wrap}
 #app>.tabs>button,#app>.tabs .team-main-more>summary{font:500 14px/1.4 Inter,Arial,sans-serif;padding:13px 6px;min-height:48px}
 #app>.tabs>button[aria-selected=true],#app>.tabs .team-main-more:has(button[aria-selected=true])>summary{font-weight:600;color:#245b83;border-bottom-color:#245b83}
+#app>.tabs>button{font:500 14px/1.4 Inter,Arial,sans-serif;white-space:nowrap;background:transparent}
+#app>.tabs>button[aria-selected=true]{font-weight:600;background:transparent}
+#app:has(#t-novac[hidden])>#kpis,#app:has(#t-novac[hidden])>#teamBudgetBar{display:none!important}
 #app>.tabs .tbadge,#app>.top .tbadge{font:600 11px/1.4 Inter,Arial,sans-serif;height:18px;min-width:18px;padding:1px 5px;background:#eaf1f6;color:#496c84;border-radius:5px}
 #app>section.wrap{box-sizing:border-box;max-width:var(--team-column);width:100%;padding:0;margin:0 auto;min-width:0}
 #app #t-pod>.top{margin:0 0 20px}
@@ -34,7 +37,7 @@
  #app>.top .brand h1{font-size:14px}
  #app #teamAppearanceOpen,#app #teamAccountToggle{font-size:11px;padding-inline:3px}
  #app>.top .user>.ev-lang .b{min-width:22px;font-size:10px;padding-inline:2px}
- #app>.tabs{display:flex;overflow-x:auto;overflow-y:visible;max-width:100%;margin:0 auto 24px;gap:2px;min-height:44px;scrollbar-width:none}
+ #app>.tabs{display:flex;flex-wrap:wrap;overflow:visible;max-width:100%;margin:0 auto 20px;gap:2px 10px;min-height:44px}
  #app>.tabs::-webkit-scrollbar{display:none}
  #app>.tabs>button,#app>.tabs .team-main-more>summary{font-size:14px;min-height:44px;padding:11px 10px}
  #app>.tabs>.team-main-more{position:static}
@@ -260,7 +263,7 @@
 #app #t-ai #companyManualSearch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 20px;margin:0}
 #app #t-ai #companyManualSearch .company-manual-fields{display:contents}
 #app #t-ai #companyManualSearch :is(.company-layout-budget,.company-layout-profit,.company-layout-year,.company-layout-mileage,.company-layout-body){grid-column:auto;grid-row:auto}
-#app #t-ai #companyManualSearch .vehicle-picker-field{grid-column:1/-1;grid-template-rows:20px 44px;gap:8px}
+#app #t-ai #companyManualSearch .vehicle-picker-field{grid-column:span 2;grid-template-rows:20px 44px;gap:8px}
 #app #t-ai #companyManualSearch :is(.search-area>.company-layout-text,.company-search-number-field){grid-template-rows:20px 44px;gap:8px}
 #app #t-ai #companyManualSearch .search-area{grid-column:span 2;grid-row:auto;gap:8px 20px}
 #app #t-ai #companyManualSearch>.btns,#app #t-ai #companyManualSearch>.note,#app #t-ai #companyManualSearch>.note:not([data-company-search-result]):not([data-company-search-pending]),#app #t-ai #companyManualSearch>.company-layout-explanation{grid-column:1/-1;grid-row:auto;order:0;margin:0;justify-content:flex-start}
@@ -274,9 +277,9 @@
 
 /* Inspection work starts from a concrete paid job, not an empty daily calendar. */
 #app:has(#t-izvestaji:not([hidden]))>#kpis{display:none}
-#app #t-izvestaji>.sheet{padding:26px 28px;border:1px solid #dce4ea;border-radius:10px;background:#fff;gap:22px}
+#app #t-izvestaji>.sheet{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;gap:12px}
 #app #t-izvestaji .team-inspections-head{display:flex;align-items:center;justify-content:space-between;gap:24px}
-#app #t-izvestaji .team-inspections-head h2{font:650 26px/1.3 Inter,Arial,sans-serif;color:#253f4b;margin:0 0 6px}
+#app #t-izvestaji .team-inspections-head h2{font:600 23px/1.3 Inter,Arial,sans-serif;color:#304d60;margin:0 0 4px}
 #app #t-izvestaji .team-inspections-head p{font:400 13px/1.6 Inter,Arial,sans-serif;color:#73838e;margin:0}
 #app #t-izvestaji .team-inspections-head-tools{display:flex;gap:12px;align-items:end}
 #app #t-izvestaji .team-inspections-head-tools .field{display:grid;gap:6px;width:190px}
@@ -284,12 +287,36 @@
 #app #t-izvestaji #teamReportPeriod,#app #t-izvestaji .team-choice-trigger,#app #t-izvestaji .team-report-filters :is(select,input){min-height:40px;height:40px;border:1px solid #d4dfe7;border-radius:6px;background:#fff;color:#425d70;font:400 13px Inter,Arial,sans-serif;box-shadow:none;padding:8px 12px;margin:0}
 #app #t-izvestaji #teamPlannerOpen{min-height:40px;height:40px;border:1px solid #d4dfe7;background:#fff;color:#315d7d;font:600 12px Inter,Arial,sans-serif;padding:8px 12px;box-shadow:none}
 #app #t-izvestaji .team-report-filters:not(:has(.field:not([hidden]))){display:none}
-#app #t-izvestaji #teamReportSummary{margin:0;font:500 13px/1.6 Inter,Arial,sans-serif;color:#617b8d}
+#app #t-izvestaji #teamReportSummary{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 #app #t-izvestaji #teamReportQueue>.note{padding:18px 20px;margin:0;background:#f3f7fa;border-radius:7px;font:400 13px/1.8 Inter,Arial,sans-serif;color:#6e8391}
-#app #t-izvestaji .team-report-group:only-child>h3{display:none}
-#app #t-izvestaji .team-report-group{display:grid;gap:16px}
+#app #t-izvestaji .team-report-group>h3{display:none}
+#app #t-izvestaji .team-report-group{display:grid;gap:8px}
 #app #t-izvestaji .team-report-group>h3{font:600 15px/1.5 Inter,Arial,sans-serif;color:#425d70}
-#app #t-izvestaji .team-inspection-task{display:block;border:1px solid #dce4ea;border-radius:9px;background:#fff;padding:22px;box-shadow:none;margin:0}
+#app #t-izvestaji .team-inspection-task{display:grid;grid-template-columns:minmax(200px,1.15fr) minmax(150px,1.4fr) 132px 120px 54px 116px;align-items:center;gap:10px;border:1px solid #dce4ea;border-radius:8px;background:#fff;padding:12px 16px;box-shadow:none;margin:0;color:#586d79;font:400 15px/1.4 Inter,Arial,sans-serif}
+#app #t-izvestaji .team-inspection-task:focus-within{border-color:#b7c7d2;background:#fafcfd;box-shadow:inset 2px 0 0 #9bb6c8}
+#app #t-izvestaji #teamReportQueue{display:grid;gap:8px}
+#app #t-izvestaji .inspection-task-person{display:flex;align-items:center;gap:8px;min-width:0}
+#app #t-izvestaji .inspection-task-person>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#app #t-izvestaji .inspection-task-person>.b,#app #t-izvestaji .inspection-task-ad>.b{flex-shrink:0;font:400 12px/1.4 Inter,Arial,sans-serif;color:#547186;background:#fff;border:1px solid #dce4ea;padding:7px 8px;min-height:34px;box-shadow:none;white-space:nowrap}
+#app #t-izvestaji .inspection-task-vehicle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;min-width:0}
+#app #t-izvestaji .inspection-task-place{display:grid;grid-template-columns:1fr 4ch;gap:6px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+#app #t-izvestaji .inspection-task-date{font-size:13px;color:#73838e;white-space:nowrap}
+#app #t-izvestaji .inspection-task-date>button{border:0;padding:0;background:transparent;font:inherit;color:#315d7d;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+#app #t-izvestaji .inspection-task-next{min-height:34px;padding:7px 10px;font:600 12px/1.4 Inter,Arial,sans-serif;white-space:nowrap;background:#245b83;border-color:#245b83;color:#fff;box-shadow:none}
+#app #t-izvestaji .team-report-location{position:relative;grid-column:3;grid-row:1;display:block;margin:0!important;text-align:left}
+#app #t-izvestaji .team-report-location>summary{display:grid;grid-template-columns:1fr 4ch;gap:6px;font:600 15px/1.4 Inter,Arial,sans-serif;list-style:none;text-align:right;cursor:pointer;color:#586d79;padding:0}
+#app #t-izvestaji .team-report-location>summary::-webkit-details-marker{display:none}
+#app #t-izvestaji .team-report-location>[data-work-city-form]{position:absolute;right:0;top:36px;z-index:10;display:grid;gap:10px;width:280px;padding:16px;background:#fff;border:1px solid #cbd7df;border-radius:8px;box-shadow:0 8px 24px #23374620}
+#app #t-izvestaji .team-report-location label{display:grid;gap:4px}
+#app #t-izvestaji .inspection-periods,#app #t-izvestaji #teamReportCities{display:flex;align-items:center;flex-wrap:wrap;gap:22px}
+#app #t-izvestaji .inspection-periods{border-bottom:1px solid #dce3e8}
+#app #t-izvestaji :is(.inspection-periods,#teamReportCities)>button{display:flex;align-items:center;gap:8px;padding:10px 0;font:500 15px/1.35 Inter,Arial,sans-serif;color:#687b87;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;box-shadow:none;cursor:pointer}
+#app #t-izvestaji :is(.inspection-periods,#teamReportCities)>button[aria-pressed=true]{color:#245b83;border-bottom-color:#245b83}
+#app #t-izvestaji :is(.inspection-periods,#teamReportCities)>button>span{font-size:13px;font-weight:600}
+#app #t-izvestaji .team-report-filters{display:flex;align-items:center;gap:18px;margin:0}
+#app #t-izvestaji #teamReportCityField{width:auto;flex:1;margin:0}
+#app #t-izvestaji #teamReportCities>button{padding:4px 0 7px;font-size:14px}
+#app #t-izvestaji :is(#teamReportPeriod,#teamReportCity)+.team-choice-trigger{display:none!important}
 #app #t-izvestaji .inspection-task-head{display:flex;justify-content:space-between;gap:20px;align-items:center}
 #app #t-izvestaji .inspection-task-head>div:first-child{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 #app #t-izvestaji .inspection-task-head strong{font:600 16px/1.5 Inter,Arial,sans-serif;color:#304d60}
@@ -311,11 +338,19 @@
 #app #t-izvestaji .team-report-location{margin-top:16px;font:400 12px/1.5 Inter,Arial,sans-serif;color:#8798a5}
 #app #t-izvestaji [hidden]{display:none!important}
 @media(max-width:760px){
- #app #t-izvestaji>.sheet{padding:22px 18px}
+ #app #t-izvestaji>.sheet{padding:0}
  #app #t-izvestaji .team-inspections-head{gap:18px;align-items:flex-start;flex-wrap:wrap}
  #app #t-izvestaji .team-inspections-head h2{font-size:23px}
  #app #t-izvestaji .team-inspections-head-tools .field{width:160px}
- #app #t-izvestaji .team-inspection-task{padding:18px}
+ #app #t-izvestaji .team-inspection-task{grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;padding:12px 14px}
+ #app #t-izvestaji .inspection-task-person{grid-column:1/-1}
+ #app #t-izvestaji .inspection-task-vehicle{grid-column:1;grid-row:2;white-space:normal}
+ #app #t-izvestaji .inspection-task-place{grid-column:2;grid-row:2}
+ #app #t-izvestaji .inspection-task-date{grid-column:1;grid-row:3}
+ #app #t-izvestaji .inspection-task-ad{grid-column:1;grid-row:4}
+ #app #t-izvestaji .inspection-task-next{grid-column:2;grid-row:4}
+ #app #t-izvestaji .team-report-location{grid-column:2;grid-row:2;justify-self:stretch}
+ #app #t-izvestaji :is(.inspection-periods,#teamReportCities){gap:16px}
  #app #t-izvestaji .inspection-task-head{align-items:flex-start;gap:12px}
  #app #t-izvestaji .inspection-task-head>div:first-child{display:grid;gap:3px}
  #app #t-izvestaji .inspection-task-footer{align-items:flex-start;flex-wrap:wrap;gap:18px}
@@ -702,3 +737,147 @@ body.team-inquiry-focus #t-narudzbine .team-lead-body{padding-top:12px;margin-to
 #app .has-inline-quote .iq-progress-steps,#app .has-top-kind:not(:has(.iq-kind-inspection)) .iq-progress-steps{grid-template-columns:repeat(6,minmax(0,1fr))}
 
 #app .has-inline-quote .iq-price-line .iq-quote-total{justify-items:end;text-align:right}
+
+/* Keep the contact action beside the client's name. */
+#app #leadQuery::placeholder{color:#98a3ad;opacity:1}
+#app .inquiry-search-row>label[for="leadQuery"]{max-width:336px}
+#app #pgList>.pgc[hidden],#app #leadList>.workcard[hidden],#app #leadList>.inquiry-archive-row[hidden]{display:none}
+@media(max-width:700px){#app .inquiry-search-row>label[for="leadQuery"]{max-width:none}}
+#app .inquiry-kinds{gap:22px;border-bottom:1px solid #dce3e8}
+#app .inquiry-kinds button{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;box-shadow:none;padding:10px 0;color:#687b87;font-size:15px}
+#app .inquiry-kinds button[aria-pressed=true]{background:transparent;border-color:#245b83;color:#245b83;box-shadow:none}
+#app .inquiry-kinds button:hover{color:#245b83;background:transparent}
+#app .inquiry-kinds button span{background:transparent;padding:0;color:inherit;border-radius:0;font-size:13px;font-weight:600}
+#app .inquiry-steps{display:flex;flex-wrap:wrap;gap:22px;margin:12px 0 0;border-bottom:1px solid #dce3e8}
+#app .inquiry-steps button{display:flex;align-items:center;gap:9px;font:500 15px/1.35 Inter,Arial,sans-serif;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;box-shadow:none;padding:10px 0;color:#687b87;cursor:pointer}
+#app .inquiry-steps button span{font-size:13px;font-weight:600}
+#app .inquiry-steps button[aria-pressed=true]{border-color:#245b83;color:#245b83}
+#app .inquiry-steps button:hover{color:#245b83}
+#app .inquiry-heading-actions{display:flex;align-items:center;gap:10px}
+#app:has(#t-narudzbine:not([hidden]))>#kpis,#app:has(#t-narudzbine:not([hidden]))>#teamBudgetBar{display:none!important}
+#app #t-narudzbine .inquiry-kinds{display:flex}
+#app .team-field-summary>summary.inquiry-summary{cursor:default}
+#app #pgList>.pgc.is-active-inquiry,#app #leadList>.workcard.is-active-inquiry{border-color:#b7c7d2;background:#fafcfd;box-shadow:inset 2px 0 0 #9bb6c8}
+#app #t-narudzbine .is-active-inquiry [data-lead-card]>summary{background:transparent}
+#app .inquiry-summary .iq-name-row{display:flex;align-items:center;gap:8px;min-width:0}
+#app .inquiry-summary .iq-name-row>b{min-width:0;overflow-wrap:anywhere}
+#app .inquiry-summary .iq-name-row>.b{flex:none;min-height:28px;padding:5px 8px;font-size:11px;line-height:1.3}
+@media(min-width:701px){
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary{grid-template-columns:230px minmax(0,1fr) 160px}
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary.has-inline-quote{grid-template-columns:230px minmax(0,1fr) max-content}
+}
+
+/* Requests share the same columns in the overview. */
+#app .inquiry-summary.has-inline-quote>.iq-amount{display:none}
+#app .is-compact-row .iq-name-row>b,#app .is-compact-row>.iq-vehicle>strong,#app .is-compact-row>.iq-amount>b{font-weight:500;color:#586d79}
+#app .is-compact-row .iq-name-row>b,#app .is-compact-row>.iq-amount>b{font-weight:400}
+@media(min-width:1000px){
+ #app #pgList>.pgc,#app #leadList>.workcard{padding:12px 16px}
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row{display:grid;grid-template-columns:minmax(180px,1.15fr) minmax(160px,1.5fr) minmax(75px,.65fr) 70px 64px 124px;grid-template-rows:auto;gap:10px;min-height:34px;align-items:center}
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-person{grid-column:1;grid-row:1;align-self:center;padding:0;display:block}
+ #app .is-compact-row .iq-name-row>b{font-size:15px;flex:1}
+ #app .is-compact-row .iq-name-row>b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+ #app .is-compact-row .iq-person>small,#app .is-compact-row>.iq-status,#app .is-compact-row .iq-kind,#app .is-compact-row>.iq-progress,#app .is-compact-row>.iq-amount>small,#app .is-compact-row>.iq-next>small{display:none}
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-vehicle{display:contents}
+ #app .is-compact-row>.iq-vehicle>strong{grid-column:2;grid-row:1;font-size:15px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right:16px}
+ #app .is-compact-row>.iq-vehicle>small{grid-column:3;grid-row:1;font-size:14px;font-weight:500;color:#586d79;line-height:1.4;white-space:nowrap;display:grid;grid-template-columns:60px 4ch;gap:6px;justify-content:start}
+ #app .is-compact-row .iq-city{min-width:max-content;justify-self:end;text-align:right}
+ #app .is-compact-row .iq-postal{font-variant-numeric:tabular-nums;text-align:right}
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-amount{grid-column:4;grid-row:1;align-self:center;display:block}
+ #app .is-compact-row>.iq-amount>b{font-size:15px;white-space:nowrap}
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-contact{grid-column:5;grid-row:1;justify-self:end;align-self:center;display:flex}
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-next{grid-column:6;grid-row:1;min-width:0;align-self:center}
+ #app .is-compact-row>.iq-next .b{white-space:nowrap;min-height:34px;padding:7px 10px;font-size:12px}
+ #app .is-compact-row>.iq-next .iq-current-state{font-size:11px;line-height:1.4}
+ #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-inline-quote{display:none}
+ #app #t-narudzbine [data-inspection-card][open]>.inquiry-summary.is-compact-row>.iq-progress{display:block;grid-column:1/-1;grid-row:2;margin-top:8px}
+ #app #t-narudzbine [data-lead-card][open]>.inquiry-summary.is-compact-row>.iq-inline-quote{display:grid;grid-column:1/-1;grid-row:2;margin-top:12px}
+ #app #t-narudzbine [data-lead-card][open]>.inquiry-summary.is-compact-row>.iq-progress{display:block;grid-column:1/-1;grid-row:3;margin-top:8px}
+}
+
+/* Finance starts with one clear capital allocation, then the detailed ledgers. */
+#app>#teamMemberBudgets{display:none}
+#app:has(#t-novac:not([hidden]))>#teamMemberBudgets{display:block;max-width:var(--team-column);width:100%;margin:16px auto 0;padding:14px 16px;border:1px solid #dce5eb;border-radius:9px;background:#fff;box-sizing:border-box}
+#app #teamMemberBudgets[hidden]{display:none!important}
+#app .team-member-budget-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 12px}
+#app .team-member-budget-head h3{margin:0;font:600 15px/1.35 Inter,Arial,sans-serif;color:#314c5f}
+#app .team-member-budget-head p{margin:3px 0 0;font:400 12px/1.45 Inter,Arial,sans-serif;color:#788995}
+#app .team-member-budget-head>span{font:500 12px/1.4 Inter,Arial,sans-serif;color:#5f7789;white-space:nowrap}
+#app .team-member-budget-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+#app .team-member-budget{display:grid;gap:3px;min-width:0;padding:2px 16px;border-left:1px solid #e0e8ed}
+#app .team-member-budget:first-child{padding-left:0;border-left:0}
+#app .team-member-budget>span{font:500 12px/1.4 Inter,Arial,sans-serif;color:#6f818e}
+#app .team-member-budget>strong{font:600 18px/1.25 Inter,Arial,sans-serif;color:#365d78;font-variant-numeric:tabular-nums}
+#app .team-member-budget>small{font:400 11px/1.45 Inter,Arial,sans-serif;color:#81919c}
+#app .team-member-budget-note{margin:12px 0 0;padding-top:10px;border-top:1px solid #edf1f4;font:400 12px/1.5 Inter,Arial,sans-serif;color:#738692}
+@media(max-width:760px){
+ #app:has(#t-novac:not([hidden]))>#teamMemberBudgets{margin-top:12px;padding:13px}
+ #app .team-member-budget-head{align-items:flex-start;flex-wrap:wrap;gap:8px}
+ #app .team-member-budget-grid{grid-template-columns:1fr;gap:10px}
+ #app .team-member-budget{padding:10px 0 0;border-left:0;border-top:1px solid #e6edf1}
+ #app .team-member-budget:first-child{padding-top:0;border-top:0}
+}
+
+/* Finance starts with a short overview; ledgers only open when needed. */
+#app #t-novac .company-finance-overview{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:22px;padding:14px 0;border-top:1px solid #dfe7ec;border-bottom:1px solid #dfe7ec}
+#app #t-novac .company-finance-overview[hidden]{display:none!important}
+#app #t-novac .company-finance-overview-copy h3{margin:0;color:#314c5f;font:600 15px/1.35 Inter,Arial,sans-serif}
+#app #t-novac .company-finance-overview-copy p{margin:3px 0 0;color:#778893;font:400 12px/1.45 Inter,Arial,sans-serif}
+#app #t-novac .company-finance-overview-total{display:grid;gap:2px;text-align:right}
+#app #t-novac .company-finance-overview-total span{color:#788995;font:500 11px/1.35 Inter,Arial,sans-serif}
+#app #t-novac .company-finance-overview-total strong{color:#365d78;font:600 17px/1.3 Inter,Arial,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+#app #t-novac .company-finance-overview>.b,#app #t-novac .finance-budget-back{min-height:32px;padding:6px 10px;border:1px solid #dce5eb;border-radius:6px;background:#fff;color:#496b82;font:500 12px/1.4 Inter,Arial,sans-serif;box-shadow:none}
+#app #t-novac .finance-budget-back{border:0;padding-inline:0}
+#app #t-novac .finance-budget-back:hover{color:#245b83}
+#app #t-novac #companyFinanceDetailNav[hidden]{display:none!important}
+
+/* Administration uses the same quiet secondary navigation as Finance. */
+#app #t-pod{max-width:var(--team-column);margin-inline:auto}
+#app #t-pod>h2{font:650 22px/1.35 Inter,Arial,sans-serif;color:#253f4b;margin:0 0 12px!important}
+#app #podTiles{display:flex;align-items:center;gap:20px;max-width:var(--team-column);margin:0 0 20px;padding:0;border-bottom:1px solid #dce4e9}
+#app #podTiles .admin-menu-group,#app #podTiles .admin-menu-group>div,#app #podTiles .admin-menu-tools{display:contents;margin:0;padding:0;border:0}
+#app #podTiles .admin-menu-group>small{display:none}
+#app #podTiles button,#app #podTiles button.only{height:40px;min-height:40px;padding:9px 0!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;background:transparent!important;color:#667987!important;font:500 14px/1.4 Inter,Arial,sans-serif!important;box-shadow:none!important}
+#app #podTiles button[aria-pressed=true]{border-bottom-color:#245b83!important;color:#245b83!important}
+#app #podTiles button .v,#app #podTiles button[aria-pressed=true] .v{font:inherit!important}
+#app #podTiles [data-pt=users],#app #podTiles [data-pt=reset]{margin-inline-start:0!important}
+@media(max-width:760px){
+ #app #t-novac .company-finance-overview{grid-template-columns:1fr auto;gap:12px}
+ #app #t-novac .company-finance-overview>.b{grid-column:1/-1;justify-self:start}
+ #app #podTiles{gap:16px;overflow-x:auto;flex-wrap:nowrap}
+ #app #podTiles button,#app #podTiles button.only{flex:none;font-size:13px!important}
+}
+
+/* Changing an administration page must never move the main navigation. */
+#app:has(#t-pod:not([hidden])){--team-header-edge:var(--team-column)}
+#app:has(#t-pod:not([hidden]))>.top,#app:has(#t-pod:not([hidden]))>.tabs{max-width:var(--team-column);margin-left:auto;margin-right:auto}
+#app:has(#t-pod:not([hidden])) #podTiles{max-width:var(--team-column)}
+
+/* Team accounts use the same compact work-row pattern as the active records. */
+#app #usersBox{max-width:var(--team-column);width:100%;margin:0 auto;padding:16px!important;border-color:#dce5eb;box-sizing:border-box}
+#app #usersBox>.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 10px}
+#app #usersBox>.top h2{margin:0!important;font:600 17px/1.35 Inter,Arial,sans-serif!important;color:#314c5f}
+#app #usersBox>.top .btns{margin:0}
+#app #usersBox .scroll{overflow:visible}
+#app #usersTbl{width:100%;border-collapse:collapse}
+#app #usersTbl thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#app #usersTbl tbody,#app #usersTbl tr{display:block;width:100%}
+#app #usersTbl tr{display:grid;grid-template-columns:minmax(200px,1.45fr) minmax(130px,.85fr) minmax(130px,.8fr) auto;align-items:center;gap:14px;border-top:1px solid #e1e8ed}
+#app #usersTbl td{display:block;border:0;padding:10px 0;font:400 14px/1.4 Inter,Arial,sans-serif;color:#405b6e}
+#app #usersTbl td:nth-child(1){font-weight:500;color:#253f4b}
+#app #usersTbl td:nth-child(2){display:none}
+#app #usersTbl td:nth-child(3)::before{content:"Mesto · ";color:#82929e;font-weight:400}
+#app #usersTbl td:nth-child(4)::before{content:"Uloga · ";color:#82929e;font-weight:400}
+#app #usersTbl td:last-child{justify-self:end;padding-left:4px}
+#app #usersTbl .btns{margin:0;justify-content:flex-end;gap:6px}
+#app #usersTbl .b.small{min-height:32px;padding:6px 10px;border-color:#d6e1e8;background:#fff;color:#496b82;font:500 12px/1.35 Inter,Arial,sans-serif;box-shadow:none}
+#app #usersMsg:empty{display:none}
+@media(max-width:760px){
+ #app #usersBox{padding:14px!important}
+ #app #usersTbl tr{grid-template-columns:minmax(0,1fr) auto;gap:4px 12px}
+ #app #usersTbl td{padding:8px 0}
+ #app #usersTbl td:nth-child(1){grid-column:1/-1;padding-bottom:0}
+ #app #usersTbl td:nth-child(3){grid-column:1;grid-row:2}
+ #app #usersTbl td:nth-child(4){grid-column:1;grid-row:3}
+ #app #usersTbl td:last-child{grid-column:2;grid-row:2/4;align-self:center}
+}

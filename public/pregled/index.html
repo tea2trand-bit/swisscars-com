@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/inspection-report.css">
 <link rel="stylesheet" href="/assets/css/cars.css">
-<link rel="stylesheet" href="/assets/css/simple.css"><link rel="stylesheet" href="/assets/css/inspection-package-client.css"></head>
+<link rel="stylesheet" href="/assets/css/simple.css"><link rel="stylesheet" href="/assets/css/inspection-package-client.css"><link rel="stylesheet" href="/assets/css/inspection-own-team-local.css"></head>
 <body>
 <header class="site-header">
   <a class="brand" href="/">
@@ -21,7 +21,7 @@
     <span><strong>SWISCARS</strong><small>Premium Selection</small></span>
   </a>
   <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
-  <nav class="nav"><a href="/" data-simple="navHome">Početna</a><a href="/pronalazak/" data-simple="navSearch">Pronađi auto</a><a href="/auta/" data-simple="navCars">Ponuda</a><a href="/pregled/" data-simple="navInspection">Pregled</a><details class="nav-partners"><summary><span class="nav-login-desktop" data-i18n="navLogin">Login</span><span class="nav-login-mobile" data-i18n="navAccountAccess">Prijava / Registracija</span></summary><div class="nav-partners-list"><a href="/intern/" data-i18n="navLoginTeam" rel="nofollow">Tim</a><span class="nav-partners-caption" data-i18n="navPartnersLabel">Saradnici</span><a href="/dileri/" data-i18n="navDealers">Autodileri</a><a href="/eksperti/" data-i18n="navExperts">Eksperti</a><a href="/prevoznici/" data-i18n="navCarriers">Prevoznici</a></div></details></nav>
+  <nav class="nav"><a href="/" data-i18n="headerHome">Početna</a><a href="/pronalazak/" data-i18n="headerSearch">Pronađi auto</a><a href="/auta/" data-i18n="headerStock">Ponuda</a><a href="/pregled/" data-i18n="headerInspection">Pregled</a><a href="/proba-uvoza/" data-i18n="headerImport">Uvoz</a><a href="/kako-radimo/" data-i18n="headerProcess">Kako radimo</a><details class="nav-partners"><summary><span class="nav-login-desktop" data-i18n="navLogin">Login</span><span class="nav-login-mobile" data-i18n="navAccountAccess">Prijava / Registracija</span></summary><div class="nav-partners-list"><a href="/intern/" data-i18n="navLoginTeam" rel="nofollow">Tim</a><span class="nav-partners-caption" data-i18n="navPartnersLabel">Saradnici</span><a href="/dileri/" data-i18n="navDealers">Autodileri</a><a href="/eksperti/" data-i18n="navExperts">Eksperti</a><a href="/prevoznici/" data-i18n="navCarriers">Prevoznici</a></div></details></nav>
   <div class="language-switch">
     <button data-lang="sr" class="active">SR</button><button data-lang="de">DE</button><button data-lang="en">EN</button>
   </div>
@@ -50,7 +50,7 @@
         <dl class="car-specs" id="p_prices" hidden></dl>
         <div class="pg-price-controls">
           <div class="pg-place-field">
-            <label for="pg_place" id="pg_placeLabel">Poštanski broj ili mesto vozila</label>
+            <label for="pg_place" id="pg_placeLabel">Lokacija oglasa</label>
             <div class="pg-combobox">
               <input id="pg_place" name="place" form="pgForm" placeholder="npr. 8001 Zürich" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="search" maxlength="80" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="pg_sugg" aria-describedby="pg_quoteMeta pg_quote" required>
               <button type="button" class="pg-clear" id="pg_clear" aria-label="Obriši unos" hidden>&times;</button>
@@ -66,11 +66,11 @@
           <div class="pg-price-info">
             <p class="pg-quote-meta" id="pg_quoteMeta" aria-live="polite"></p>
             <p class="car-meta" id="p_priceNote"></p>
-            <details class="pg-info"><summary id="pg_infoT"></summary><p id="pg_infoP"></p></details>
+            <div class="pg-info-note"><span id="pg_infoT" hidden></span><p id="pg_infoP"></p></div>
           </div>
         </div>
         <div class="pg-quote-extra" id="pg_quoteExtra" hidden></div>
-        <details class="pg-breakdown" id="pg_break" hidden></details>
+        <section class="pg-breakdown" id="pg_break" hidden></section>
       </div>
       <form class="contact-form up-card" id="pgForm" novalidate hidden>
         <h2 id="p_formT" style="grid-column:1/-1"></h2>
@@ -81,7 +81,19 @@
         <label class="pg-form-field" for="pg_phone"><span id="pg_phone_label"></span><input id="pg_phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="60" required></label>
         <label class="pg-form-field" for="pg_email"><span id="pg_email_label"></span><input id="pg_email" name="email" type="email" required></label>
         <label class="pg-form-field pg-form-note" for="pg_notes"><span id="pg_notes_label"></span><textarea id="pg_notes" name="notes" rows="2"></textarea></label>
-        <button class="btn btn-gold" type="submit" id="pg_send"></button>
+        <fieldset class="pg-order-options">
+          <legend id="pg_options_title">Izaberite opciju</legend>
+          <label class="pg-order-option is-selected" id="pg_option_one" for="pg_inquiry">
+            <input type="radio" name="inspection-order-choice" id="pg_inquiry" value="inquiry" aria-labelledby="pg_option_one_number pg_option_one_title" aria-describedby="pg_option_one_text" checked>
+            <span class="pg-option-copy"><span class="pg-option-number" id="pg_option_one_number">Opcija 1</span><strong id="pg_option_one_title">Nemam sve podatke</strong><span class="pg-option-description" id="pg_option_one_text">Pošaljite upit za proveru dostupnosti auta, EUR.1 i mogućnosti povrata PDV-a.</span></span>
+          </label>
+          <label class="pg-order-option pg-ready-choice" for="pg_ready">
+            <input type="radio" name="inspection-order-choice" id="pg_ready" value="immediate" aria-labelledby="pg_option_two_number pg_ready_label" aria-describedby="pg_option_two_text">
+            <span class="pg-option-copy"><span class="pg-option-number" id="pg_option_two_number">Opcija 2</span><strong id="pg_ready_label">Imam sve podatke</strong><span class="pg-option-description" id="pg_option_two_text">Znam da je auto dostupan i imam potrebne podatke. Želim odmah da platim pregled.</span></span>
+          </label>
+        </fieldset>
+        <p class="pg-timing" id="pg_timing"></p>
+        <div class="pg-order-actions"><button class="btn btn-outline" type="submit" id="pg_send"></button><button class="btn btn-gold" type="submit" id="pg_pay_now" hidden>Platite pregled</button></div>
         <p class="form-status" id="pg_status" hidden></p>
       </form>
     </div>
@@ -106,4 +118,5 @@
 
 <footer><div class="brand footer-brand"><span class="brand-mark"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34" aria-hidden="true"><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" fill="currentColor" opacity="0.08"/><path d="M24 4 8 8.6v13.1C8 31.4 14.7 38.2 24 41c9.3-2.8 16-9.6 16-19.3V8.6L24 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.6 19.6 14.5 12.9l4.7 3.2 4.8-5.2 4.8 5.2 4.7-3.2-1.1 6.7H15.6Z" fill="currentColor"/><path d="M22.3 23.7h3.4v3.4h3.4v3.4h-3.4v3.4h-3.4v-3.4h-3.4v-3.4h3.4z" fill="currentColor"/></svg></span><span><strong>SWISCARS</strong><small>Premium Selection</small></span></div><div class="footer-company"><strong>SWISCARS GmbH</strong><span data-i18n="footerText">Vaš tehnički ekspert za proverena vozila iz Švajcarske.</span><span data-i18n="footerCountry">Švajcarska</span></div><div class="footer-legal"><a href="/impressum" data-i18n="navImpressum">Impresum</a><a href="/agb" data-i18n="navAgb">Uslovi</a><a href="/intern/" data-i18n="navTeam" rel="nofollow">Za tim</a></div><small>&copy; 2026 SWISCARS GmbH. <span data-i18n="footerRights">Sva prava zadržana.</span></small></footer>
 <script src="/assets/js/translations.js"></script><script src="/assets/js/main.js"></script><script src="/assets/js/inspection-report.js"></script><script src="/assets/js/pregled-texts.js"></script><script src="/assets/js/inspection-package-client.js"></script><script src="/assets/js/pregled.js"></script>
-<script src="/assets/js/simple-ui.js"></script></body></html>
+<style>#pg_quoteExtra,#pg_break,#pg_quoteMeta,#p_priceNote,.pg-info-note,.inspection-partners{display:none!important}</style>
+<script src="/assets/js/simple-ui.js"></script><script src="/assets/js/inspection-market.js"></script></body></html>

@@ -4,8 +4,8 @@ The production website source is `public/`. Netlify publishes only that director
 
 Server functions are in `netlify/functions/`. The FX function also imports `assets/js/fx-reference.js`. The production build uses Node 24 and pnpm, with `pnpm-lock.yaml`. Supabase sources are separate and are not deployed by this website build.
 
-## Recovered production baseline
+## Production baseline and mobile update
 
-Restored from Netlify deploy `6ac2fd5d2b86ed850798eedd` (5 October 2026, 03:29 Europe/Berlin). The only website change is the user-supplied `<style id="novi-izgled">` block immediately before `</head>` in `public/intern/index.html`. All other 57 public files and all 5 build input files match that frozen source byte for byte.
+The public source was synchronized with the published Netlify deploy `6ad4d4dc2f4f17449f53d92a` on 20 October 2026, preserving its existing pages and assets. The same update adds the approved compact mobile layout, short work filters, a step-filter dialog, Serbian-only internal workspace, and matching inspection options.
 
-Before unlocking automatic publishing, verify the GitHub main deployment against the reviewed production manifest, both Netlify functions, `/api/fx-reference`, and `/intern/`.
+Netlify builds the `main` branch and publishes `public/`. Make future website edits here and deploy through Git so the repository and live site stay aligned. Local preview wrappers and the isolated Stripe production candidate are not part of this release.

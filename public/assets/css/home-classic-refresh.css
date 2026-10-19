@@ -1,5 +1,6 @@
 /* Classic header and first screen; current service content below. */
-.site-header,.hero{max-width:1160px;margin-inline:auto}
+.site-header{max-width:1160px;margin-inline:auto}
+.hero{max-width:1360px;margin-inline:auto}
 .hero-service-note{font-size:13px;line-height:1.65;color:#c8d0d6;margin:20px 0 0;max-width:460px}
 .simple-home{--simple-line:#dce3da;--simple-muted:#627064;--simple-ink:#294237;--simple-gold:#8b6b35;color:var(--simple-ink);background:#f7f8f5;max-width:1160px;margin:auto;padding:0 32px}
 .simple-home h2{font:600 28px/1.3 Inter,Arial,sans-serif;color:var(--simple-ink);margin:0 0 24px}
@@ -22,3 +23,53 @@
 .simple-help h2{font-size:20px;margin:0 auto 0 0}
 .simple-help a{font-size:13px;color:var(--simple-ink)}
 @media(max-width:760px){.simple-home{padding:0 20px}.simple-home h2{font-size:24px}.simple-services,.simple-steps ol{grid-template-columns:1fr}.simple-steps{padding:27px 0}.simple-other{padding:30px 0}.simple-service{padding:22px}.simple-help{flex-wrap:wrap;gap:16px}.simple-help h2{flex-basis:100%}}
+
+/* Keep secondary tools with the primary actions, leaving more room for the photo. */
+.hero-calculator-link{display:inline-flex;align-items:center;gap:7px;margin-top:18px;padding:4px 0;color:#d9e2e8;font:400 16px/1.5 Inter,Arial,sans-serif;text-decoration:none}
+.hero-calculator-link span:first-child{border-bottom:1px solid #ffffff60}
+.hero-calculator-link:hover{color:#fff}
+.hero-calculator-link:focus-visible{outline:2px solid #fff;outline-offset:5px}
+@media(min-width:901px){.hero-content{grid-template-columns:1fr 1.05fr;gap:32px}}
+
+.customer-reviews{padding:34px 0;border-bottom:1px solid var(--simple-line)}
+.customer-reviews[hidden]{display:none!important}
+.customer-reviews-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.customer-review{padding:22px;background:#fff;border:1px solid var(--simple-line);border-radius:10px;min-width:0}
+.customer-review header{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}
+.customer-review-stars{color:#a47b3c;font-size:14px;letter-spacing:1px;white-space:nowrap}
+.customer-review p{font-size:14px;line-height:1.7;color:var(--simple-muted);white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0}
+.customer-review small{font-size:11px;color:var(--simple-muted)}
+@media(max-width:760px){.customer-reviews-grid{grid-template-columns:1fr}.customer-reviews{padding:26px 0}}
+
+/* Homepage: two clear buyer decisions; the complete forms live on /pronalazak/. */
+.home-decision-home{padding-bottom:0}
+.home-choice{padding:46px 0 38px;border-bottom:1px solid var(--simple-line)}
+.home-choice-heading{max-width:640px;margin-bottom:22px}
+.home-choice-heading .section-kicker{margin:0 0 9px;color:#58748a;font-size:11px;font-weight:700;letter-spacing:.1em}
+.home-choice-heading h2{margin-bottom:8px}
+.home-choice-heading>p:last-child{max-width:520px;margin:0;color:var(--simple-muted);font-size:15px;line-height:1.6}
+.home-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.home-choice-card{display:grid;grid-template-columns:38px minmax(0,1fr);column-gap:15px;row-gap:16px;min-width:0;padding:24px;background:#fff;border:1px solid #d5e0e7;border-radius:12px;color:inherit;text-decoration:none;transition:border-color .18s,box-shadow .18s,transform .18s}
+.home-choice-card:hover{border-color:#8eafc3;box-shadow:0 9px 24px #24485a12;transform:translateY(-1px)}
+.home-choice-card:focus-visible,.home-stock-action:focus-visible{outline:3px solid #8ab3cf;outline-offset:3px}
+.home-choice-number{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#e9f1f6;color:#2f668d;font-size:14px;font-weight:700}
+.home-choice-label{margin:0 0 8px;color:#58748a;font-size:10px;font-weight:700;letter-spacing:.1em}
+.home-choice-card h3{margin:0 0 8px;font:600 20px/1.32 Inter,Arial,sans-serif;color:var(--simple-ink)}
+.home-choice-card p:not(.home-choice-label){margin:0;color:var(--simple-muted);font-size:14px;line-height:1.65}
+.home-choice-card b{grid-column:2;font-size:13px;font-weight:600;color:#2f668d}
+.home-stock-strip{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:30px 0;border-bottom:1px solid var(--simple-line)}
+.home-stock-strip h2{margin:0 0 6px;font-size:20px}
+.home-stock-strip p:not(.home-choice-label){margin:0;color:var(--simple-muted);font-size:14px;line-height:1.6}
+.home-stock-action{flex:0 0 auto;color:#2f668d;font-size:13px;font-weight:600;text-decoration:none;border-bottom:1px solid #aac4d4;padding-bottom:3px}
+.home-stock-action:hover{color:#1f536f;border-color:#2f668d}
+@media(max-width:760px){.home-choice{padding:32px 0 28px}.home-choice-grid{grid-template-columns:1fr;gap:14px}.home-choice-card{padding:21px}.home-stock-strip{align-items:flex-start;flex-direction:column;gap:14px;padding:26px 0}.home-stock-strip h2{font-size:19px}}
+
+/* The homepage explains the path once; the two actions stay in the hero. */
+.home-flow{padding-top:42px}
+.home-flow-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.home-flow-card{display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;min-width:0;padding:22px 20px;background:#fff;border:1px solid #d5e0e7;border-radius:12px}
+.home-flow-card .home-choice-number{width:36px;height:36px;font-size:13px}
+.home-flow-card h3{margin:1px 0 8px;font:600 18px/1.34 Inter,Arial,sans-serif;color:var(--simple-ink)}
+.home-flow-card p{margin:0;color:var(--simple-muted);font-size:13px;line-height:1.62}
+@media(min-width:1180px){.hero-content{width:min(1240px,92%);gap:54px}}
+@media(max-width:900px){.home-flow-grid{grid-template-columns:1fr}.home-flow-card{padding:19px}}
