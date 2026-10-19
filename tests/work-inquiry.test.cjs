@@ -54,6 +54,27 @@ test('actual list filtering shows only the selected work step and counts all job
  assert.equal(context.inquiryStepFilter,'archive');
  assert.deepEqual(rows.map(r=>r.hidden),[false,false,false]);
  assert.equal(controls.teamInquiryCount.textContent,'Arhiva: 3');
+ rows.splice(0);context.applyInquiryStepFilter();
+ assert.equal(controls.mobileInquiryStep.disabled,false,'search must remain available when no results match');
+});
+
+test('search in the filter finds names, selected vehicles and proposal links across work types',()=>{
+ const source=html.slice(html.indexOf('function refreshInquiryKinds('),html.indexOf('\nfunction renderInsp('));
+ const controls={teamInquiryTitle:{},teamInquiryPlanner:{}};
+ const context={
+  SCWorkInquiry:W,SCInquiryView:require('../public/assets/js/inquiry-view.js'),SCPurchaseFlow:require('../public/assets/js/purchase-flow.js'),
+  teamPendingInquiry:'',leadFilter:'open',leadQuery:'golf',inquiryKindFilter:'inspection',
+  LEADS:[{_id:'lead-1',name:'Jelena Ilić',model:'Volkswagen',proposals:[{title:'VW Golf',url:'https://example.test/vehicle/123'}]}],
+  INSPS:[{_id:'inspection-1',name:'Marko',car:'Toyota'}],FINDS:[],
+  leadStage:()=>({done:false}),activeInspectionInquiry:()=>true,teamInquiryReference:x=>x._id,buildTeamWorkTasks:()=>[],
+  $:id=>controls[id],document:{querySelectorAll:()=>[]}
+ };
+ vm.createContext(context);vm.runInContext(source,context);context.refreshInquiryKinds();
+ assert.equal(context.inquiryKindFilter,'budget');
+ assert.equal(context.matchesLeadQuery(context.LEADS[0]),true);
+ for(const query of ['jelena ilic','vehicle/123','vw golf']){context.leadQuery=query;assert.equal(context.matchesLeadQuery(context.LEADS[0]),true,query);}
+ context.leadQuery='nepostojeci';assert.equal(context.matchesLeadQuery(context.LEADS[0]),false);
+ context.leadQuery='';assert.equal(context.matchesLeadQuery(context.LEADS[0]),true);
 });
 
 test('card shows one specific primary action and puts the ad link with the vehicle',()=>{

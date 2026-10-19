@@ -1,17 +1,25 @@
 /* Phone is the everyday workspace. Desktop keeps the shared team layout. */
 #mobileInquiryStep {display:none!important}
 #mobileAdminSection {display:none!important}
-#mobileAdminSection+.team-choice-trigger,#mobileInquiryStep+.team-choice-trigger {display:none}
+#mobileAdminSection+.team-choice-trigger {display:none}
 #app #t-narudzbine .inquiry-search-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px}
-#app #t-narudzbine .inquiry-search-heading {grid-column:1;grid-row:1;display:flex;align-items:center;max-width:none;font-size:12px}
 #app #t-narudzbine .inquiry-search-row #leadFilter {grid-column:2;grid-row:1;justify-self:end;margin:0}
-#app #t-narudzbine .inquiry-search-row #leadQuery {grid-column:1/-1;grid-row:2}
-#app #t-narudzbine .inquiry-search-row #teamInquiryCount {grid-column:1/-1;grid-row:3;margin:0;padding:0}
+#app #t-narudzbine .inquiry-search-row #teamInquiryCount {grid-column:1/-1;grid-row:2;margin:0;padding:0}
+#app #t-narudzbine .inquiry-steps {display:none!important}
+#app #t-narudzbine #mobileInquiryStep+.team-choice-trigger {grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:space-between;width:100%;max-width:none;min-width:0;min-height:46px;margin:0;font-size:16px;box-sizing:border-box;background:#edf4fa;border-color:#c7dbe9;color:#315d79}
+#app #t-narudzbine #mobileInquiryStep+.team-choice-trigger>span {min-width:0;white-space:nowrap}
+.team-choice-pane .team-inquiry-search {display:grid;gap:7px;margin:0 0 16px}
+.team-choice-pane .team-inquiry-search[hidden],.team-choice-pane .team-inquiry-results[hidden] {display:none!important}
+.team-choice-pane .team-inquiry-search-heading {display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:#48677a}
+.team-choice-pane .team-inquiry-search-heading button {min-height:44px;padding:7px 10px;font-size:13px}
+.team-choice-pane .team-inquiry-search input {box-sizing:border-box;width:100%;min-width:0;min-height:46px;margin:0;padding:10px 12px;font-size:16px;border:1px solid #c7dbe9;border-radius:7px;background:#fff;color:#36596f}
+.team-choice-pane .team-inquiry-results {width:100%;min-height:46px;margin:14px 0 0;font-size:15px;background:#467895;border-color:#467895;color:#fff}
 #app .inquiry-summary .iq-now {display:none}
 #app .inquiry-summary .iq-vehicle-title {display:flex;align-items:flex-start;gap:10px;min-width:0}
 #app .inquiry-summary .iq-vehicle-title>strong {flex:1;min-width:0;font:600 15px/1.4 Inter,Arial,sans-serif;color:#253f4b;overflow-wrap:break-word}
 #app .inquiry-summary .iq-vehicle-title>.team-field-ad {flex:0 0 auto;min-height:44px;display:inline-flex;align-items:center}
 #app #leadList .team-next-flow {min-height:44px;margin-top:12px}
+#repOld .stock-short-name,#repOld .stock-short-status {display:none}
 @media (max-width:760px) {
   html {scroll-padding-top:80px}
   #app {padding:12px;--team-column:100%;--team-nav-font:14px;font-size:15px}
@@ -52,6 +60,31 @@
   #app:has(#teamBudgetPageHead:not([hidden]))>#kpis:not([hidden]) {display:grid!important;margin-top:2px}
   #app #teamFinanceNav {gap:14px;margin:0;min-height:44px}
   #app #teamFinanceNav button {min-height:44px;font-size:14px}
+  #app #businessReports .report-page-head {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 10px;margin:0 0 10px}
+  #app #businessReports .report-page-head>div:first-child {display:contents}
+  #app #businessReports .report-page-head h2 {grid-column:1;grid-row:1;margin:0;font-size:20px;line-height:1.25}
+  #app #businessReports .report-page-head p {grid-column:1/-1;grid-row:2;margin:0;font-size:12px;line-height:1.4}
+  #app #businessReports .report-page-head>label {grid-column:2;grid-row:1;display:block;justify-self:end;min-width:0;max-width:128px}
+  #app #businessReports .report-page-head>label>span {display:none}
+  #app #businessReports .report-page-head .team-choice-trigger {width:100%;max-width:128px;min-width:0;min-height:44px;margin:0;padding:7px 8px;font-size:13px;box-sizing:border-box}
+  #app #businessReports .report-page-head .team-choice-trigger>span {min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #app #businessReports .report-page-head .team-choice-trigger>svg {flex:0 0 18px}
+  #app #businessReports {gap:14px}
+  #app #businessReports .report-stock {padding:14px 12px;min-width:0;box-sizing:border-box}
+  #app #businessReports .report-stock h3 {margin:0 0 5px;font-size:17px}
+  #app #businessReports .report-stock-help {margin:0 0 12px;font-size:12px;line-height:1.4}
+  #app #repOldTable {width:100%;min-width:0;overflow:visible}
+  #app #repOld {table-layout:fixed;width:100%;min-width:0!important;border-collapse:collapse}
+  #app #businessReports #repOld th {box-sizing:border-box;font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;padding:8px 4px;white-space:nowrap;vertical-align:bottom}
+  #app #businessReports #repOld td {box-sizing:border-box;font-size:12px;line-height:1.4;padding:10px 4px;vertical-align:top;border-bottom:1px solid #dce5eb;overflow-wrap:break-word}
+  #app #repOld :is(th,td):nth-child(1) {width:42%;text-align:left}
+  #app #repOld :is(th,td):nth-child(2) {width:22%;text-align:left}
+  #app #repOld :is(th,td):nth-child(3) {width:12%;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  #app #repOld :is(th,td):nth-child(4) {width:24%;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  #app #repOld :is(th,td):not(:first-child) {border-left:1px solid #edf2f5}
+  #app #repOld .stock-full-name,#app #repOld .stock-full-status {display:none}
+  #app #repOld .stock-short-name,#app #repOld .stock-short-status {display:block}
+  #app #repOld .sub {display:block;margin-top:3px;font-size:11px;color:#7b8c97}
   #app>.tabs>button[aria-selected=true] {background:#edf4fa;border-radius:6px 6px 0 0}
   #app>.tabs .tbadge {margin-left:2px}
   #app .sheet,#app .settings-main {max-width:100%;box-sizing:border-box}
@@ -85,14 +118,12 @@
   #app #t-narudzbine .inquiry-kinds button {min-height:44px;min-width:0;padding:8px 4px;font-size:var(--team-nav-font);gap:4px;justify-content:center;white-space:nowrap}
   #app #t-narudzbine .inquiry-kinds button[hidden] {display:none!important}
   #app #t-narudzbine .inquiry-search-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;width:100%;margin-top:14px}
-  #app #t-narudzbine .inquiry-search-row>label {grid-column:1;grid-row:1;max-width:none}
-  #app #t-narudzbine .inquiry-search-row #leadQuery {grid-column:1/-1;grid-row:2;height:44px;min-height:44px}
-  #app #t-narudzbine .inquiry-search-row #teamInquiryCount {grid-column:1/-1;grid-row:3;justify-self:start;margin:0;padding:0;font-size:12px}
+  #app #t-narudzbine .inquiry-search-row #teamInquiryCount {grid-column:1/-1;grid-row:2;justify-self:start;margin:0;padding:0;font-size:12px}
   #app #t-narudzbine .inquiry-search-row #leadFilter {grid-column:2;grid-row:1;justify-self:end;margin:0;align-self:center}
   #app #t-narudzbine .inquiry-search-row #leadFilter button {min-height:44px;font-size:14px;padding:6px 12px}
   #app #t-narudzbine .inquiry-steps {display:none!important}
-  #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger {grid-column:1/-1;grid-row:4;display:flex;align-items:center;justify-content:space-between;width:100%;max-width:none;min-width:0;min-height:46px;margin:0;font-size:16px;box-sizing:border-box;background:#edf4fa;border-color:#c7dbe9;color:#315d79}
-  #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger>span {flex:1;min-width:0;white-space:nowrap;text-align:center}
+  #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger {grid-column:1;grid-row:1}
+  #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger>span {flex:1;text-align:center}
   #app #t-narudzbine .inquiry-summary {display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important;padding:12px!important}
   #app #t-narudzbine .inquiry-summary>:is(.iq-person,.iq-vehicle,.iq-contact,.iq-inline-quote,.iq-progress) {grid-column:1/-1!important;grid-row:auto!important;min-width:0;justify-self:stretch;align-self:start;padding:0!important}
   #app #t-narudzbine .inquiry-summary>.iq-person {grid-row:2!important}
@@ -228,6 +259,8 @@
   #app {--team-nav-font:13px}
   #app>.top {flex-wrap:wrap}
   #app>.top>.user {margin-left:auto}
+  #app #businessReports .report-page-head h2 {font-size:18px}
+  #app #businessReports .report-page-head>label,#app #businessReports .report-page-head .team-choice-trigger {max-width:112px}
 }
 
 @media (min-width:1000px) {
