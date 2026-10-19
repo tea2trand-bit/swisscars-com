@@ -1,8 +1,20 @@
 /* Phone is the everyday workspace. Desktop keeps the shared team layout. */
 #mobileInquiryStep {display:none!important}
+#mobileAdminSection {display:none!important}
+#mobileAdminSection+.team-choice-trigger,#mobileInquiryStep+.team-choice-trigger {display:none}
+#app #t-narudzbine .inquiry-search-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px}
+#app #t-narudzbine .inquiry-search-heading {grid-column:1;grid-row:1;display:flex;align-items:center;max-width:none;font-size:12px}
+#app #t-narudzbine .inquiry-search-row #leadFilter {grid-column:2;grid-row:1;justify-self:end;margin:0}
+#app #t-narudzbine .inquiry-search-row #leadQuery {grid-column:1/-1;grid-row:2}
+#app #t-narudzbine .inquiry-search-row #teamInquiryCount {grid-column:1/-1;grid-row:3;margin:0;padding:0}
+#app .inquiry-summary .iq-now {display:none}
+#app .inquiry-summary .iq-vehicle-title {display:flex;align-items:flex-start;gap:10px;min-width:0}
+#app .inquiry-summary .iq-vehicle-title>strong {flex:1;min-width:0;font:600 15px/1.4 Inter,Arial,sans-serif;color:#253f4b;overflow-wrap:break-word}
+#app .inquiry-summary .iq-vehicle-title>.team-field-ad {flex:0 0 auto;min-height:44px;display:inline-flex;align-items:center}
+#app #leadList .team-next-flow {min-height:44px;margin-top:12px}
 @media (max-width:760px) {
   html {scroll-padding-top:80px}
-  #app {padding:12px;--team-column:100%;font-size:15px}
+  #app {padding:12px;--team-column:100%;--team-nav-font:14px;font-size:15px}
   #app input:not([type=checkbox]):not([type=radio]),#app select,#app textarea,
   dialog input:not([type=checkbox]):not([type=radio]),dialog select,dialog textarea {
     min-width:0;max-width:100%;box-sizing:border-box;font-size:14px;
@@ -10,17 +22,36 @@
   #app input:not([type=checkbox]):not([type=radio]),#app select,
   #app .b,dialog .b {min-height:44px}
   #app button,dialog button {touch-action:manipulation}
-  #app>.top {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;margin-bottom:8px}
-  #app>.top .brand h1 {font-size:16px}
-  #app>.top>.user {grid-column:1/-1;display:flex;justify-content:flex-end;flex-wrap:wrap;margin:0;gap:6px}
+  #app>.top {display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:6px 8px;margin-bottom:8px}
+  #app>.top .brand {flex:0 1 auto;gap:6px}
+  #app>.top .brand .mark {width:35px;height:35px;flex:0 0 35px}
+  #app>.top .brand h1 {font-size:20px;line-height:1.2}
+  #app>.top>.user {display:flex;justify-content:flex-end;flex-wrap:nowrap;margin:0;gap:2px;min-width:0}
   #app>.top .user>.ev-lang {display:flex;margin-right:auto}
   #app>.top .user>.ev-lang .b {min-width:38px;min-height:44px;font-size:12px;padding:8px}
-  #app #teamAppearanceOpen,#app #teamAccountToggle {min-height:44px;height:44px;font-size:12px;padding-inline:8px}
+  #app #teamAppearanceOpen,#app #teamAccountToggle {min-height:44px;height:44px;font-size:14px;padding-inline:4px}
+  #app #teamAccountToggle {min-width:54px;max-width:92px}
   #app>.tabs {position:sticky;top:0;z-index:30;display:grid;grid-template-columns:minmax(0,.65fr) minmax(0,1.05fr) minmax(0,1fr) minmax(0,1.3fr);gap:0;margin:0 0 12px;padding:0;background:var(--bg,#f7f8f6);min-height:44px;border-bottom:1px solid #d6e1e8}
-  #app>.tabs>button {grid-row:1;min-width:0;min-height:44px;padding:6px 2px;white-space:nowrap;font-size:14px;line-height:1.3;justify-content:center}
+  #app>.tabs>button {grid-row:1;min-width:0;min-height:44px;padding:6px 2px;white-space:nowrap;font-size:var(--team-nav-font);line-height:1.3;justify-content:center}
   #app>.tabs>.team-available-budget {grid-column:1/-1;grid-row:2;justify-self:end;display:grid;justify-items:end;gap:2px;margin:4px 0 8px;padding:0;color:#526c7d}
   #app>.tabs>.team-available-budget .team-available-budget-label {font-size:11px;line-height:1.3}
   #app>.tabs>.team-available-budget strong {padding:4px 9px;border:1px solid #dce5eb;border-radius:6px;background:#f8fbfc;color:#315e79;font-size:16px;line-height:1.2;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+  #app>.tabs>.team-available-budget {display:flex;flex-direction:row;align-items:center;gap:6px;margin:2px 0 4px}
+  #app:has(#teamBudgetPageHead:not([hidden]))>.tabs>.team-available-budget,
+  #app:has(#teamBudgetPageHead:not([hidden]))>#teamBudgetBar {display:none!important}
+  #app:has(#t-novac:not([hidden]))>#teamBudgetPageHead:not([hidden]) {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:7px 12px;margin:0;padding:0}
+  #app #teamBudgetPageHead>div:first-child {display:contents}
+  #app #teamBudgetTitle {grid-column:1;grid-row:1;margin:0;font-size:20px;line-height:1.25}
+  #app #teamBudgetPageHead>div>p {grid-column:1/-1;grid-row:2;margin:0;font-size:12px;line-height:1.4}
+  #app #financePeriodControl {grid-column:2;grid-row:1;min-width:0;justify-self:end;max-width:100%}
+  #app #financePeriodControl>span {display:none}
+  #app #financeMonthControl {width:100%;min-width:0}
+  #app #financeMonthControl .team-choice-trigger {width:100%;min-width:0;max-width:100%;min-height:44px;margin:0;padding:7px 9px;font-size:13px;box-sizing:border-box}
+  #app #financeMonthControl .team-choice-trigger>span {min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #app #financeMonthControl .team-choice-trigger>svg {flex:0 0 18px}
+  #app:has(#teamBudgetPageHead:not([hidden]))>#kpis:not([hidden]) {display:grid!important;margin-top:2px}
+  #app #teamFinanceNav {gap:14px;margin:0;min-height:44px}
+  #app #teamFinanceNav button {min-height:44px;font-size:14px}
   #app>.tabs>button[aria-selected=true] {background:#edf4fa;border-radius:6px 6px 0 0}
   #app>.tabs .tbadge {margin-left:2px}
   #app .sheet,#app .settings-main {max-width:100%;box-sizing:border-box}
@@ -51,31 +82,40 @@
   #app #t-narudzbine .team-lead-collapse {min-width:0;max-width:100%;width:100%;box-sizing:border-box}
   #app #t-narudzbine .team-lead-collapse>.team-lead-body {padding:16px;min-width:0;max-width:100%;box-sizing:border-box}
   #app #t-narudzbine .inquiry-kinds {display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;width:100%;min-width:0}
-  #app #t-narudzbine .inquiry-kinds button {min-height:44px;min-width:0;padding:8px 4px;font-size:12px;gap:4px;justify-content:center;white-space:nowrap}
+  #app #t-narudzbine .inquiry-kinds button {min-height:44px;min-width:0;padding:8px 4px;font-size:var(--team-nav-font);gap:4px;justify-content:center;white-space:nowrap}
   #app #t-narudzbine .inquiry-kinds button[hidden] {display:none!important}
   #app #t-narudzbine .inquiry-search-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;width:100%;margin-top:14px}
-  #app #t-narudzbine .inquiry-search-row>label {grid-column:1/-1;max-width:none}
+  #app #t-narudzbine .inquiry-search-row>label {grid-column:1;grid-row:1;max-width:none}
+  #app #t-narudzbine .inquiry-search-row #leadQuery {grid-column:1/-1;grid-row:2;height:44px;min-height:44px}
+  #app #t-narudzbine .inquiry-search-row #teamInquiryCount {grid-column:1/-1;grid-row:3;justify-self:start;margin:0;padding:0;font-size:12px}
+  #app #t-narudzbine .inquiry-search-row #leadFilter {grid-column:2;grid-row:1;justify-self:end;margin:0;align-self:center}
+  #app #t-narudzbine .inquiry-search-row #leadFilter button {min-height:44px;font-size:14px;padding:6px 12px}
   #app #t-narudzbine .inquiry-steps {display:none!important}
-  #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger {display:flex;align-items:center;justify-content:space-between;width:100%;max-width:280px;min-width:0;min-height:46px;margin:12px auto 0;font-size:13px;box-sizing:border-box}
+  #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger {grid-column:1/-1;grid-row:4;display:flex;align-items:center;justify-content:space-between;width:100%;max-width:none;min-width:0;min-height:46px;margin:0;font-size:16px;box-sizing:border-box;background:#edf4fa;border-color:#c7dbe9;color:#315d79}
   #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger>span {flex:1;min-width:0;white-space:nowrap;text-align:center}
   #app #t-narudzbine .inquiry-summary {display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important;padding:12px!important}
   #app #t-narudzbine .inquiry-summary>:is(.iq-person,.iq-vehicle,.iq-contact,.iq-inline-quote,.iq-progress) {grid-column:1/-1!important;grid-row:auto!important;min-width:0;justify-self:stretch;align-self:start;padding:0!important}
   #app #t-narudzbine .inquiry-summary>.iq-person {grid-row:2!important}
   #app #t-narudzbine .inquiry-summary>.iq-vehicle {grid-row:3!important}
   #app #t-narudzbine .inquiry-summary>.iq-contact {grid-row:4!important}
-  #app #t-narudzbine .inquiry-summary>.iq-amount {grid-column:1!important;grid-row:5!important;min-width:0;align-self:center}
+  #app #t-narudzbine .inquiry-summary>.iq-now {display:grid!important;grid-column:1/-1!important;grid-row:1!important;gap:3px;padding:10px 12px!important;background:#eaf3f9;border-radius:7px;color:#245b83}
+  #app #t-narudzbine .inquiry-summary>.iq-now>small {font-size:11px;color:#638097}
+  #app #t-narudzbine .inquiry-summary>.iq-now>strong {font-size:17px;line-height:1.35;font-weight:650}
+  #app #t-narudzbine .inquiry-summary>.iq-amount {grid-column:2!important;grid-row:4!important;min-width:0;align-self:center;text-align:right;justify-items:end}
   #app #t-narudzbine .inquiry-summary>.iq-amount>b {white-space:nowrap}
-  #app #t-narudzbine .inquiry-summary>.iq-next {grid-column:2!important;grid-row:5!important;align-self:center;min-width:0;width:100%}
+  #app #t-narudzbine .inquiry-summary>.iq-next {grid-column:1/-1!important;grid-row:5!important;align-self:center;min-width:0;width:100%}
   #app #t-narudzbine .inquiry-summary>.iq-kind {grid-column:1;grid-row:4;justify-self:start;align-self:center}
-  #app #t-narudzbine .inquiry-summary:not(.has-top-kind):not(.has-inline-quote)>.iq-contact {grid-column:2!important}
+  #app #t-narudzbine .inquiry-summary>.iq-contact {grid-column:1!important;grid-row:4!important;align-self:center}
   #app #t-narudzbine .inquiry-summary>.iq-contact:empty {display:none}
   #app .inquiry-summary .iq-name-row {display:flex;gap:10px;align-items:center}
   #app .inquiry-summary .iq-name-row>b {flex:1;min-width:0;font-size:15px;line-height:1.4;white-space:normal;overflow-wrap:break-word}
   #app .inquiry-summary .iq-name-row>.b {min-height:44px;min-width:64px;font-size:12px}
   #app .inquiry-summary .iq-vehicle>strong {font-size:14px;white-space:normal;overflow-wrap:break-word}
   #app .inquiry-summary .iq-contact {flex-wrap:wrap;gap:8px;font-size:13px}
-  #app #t-narudzbine .inquiry-summary .iq-next .b {width:100%;min-height:46px!important;white-space:normal;font-size:13px}
-  #app #t-narudzbine .inquiry-summary>.iq-progress {display:grid!important;grid-column:1/-1!important;grid-row:1!important;grid-template-columns:minmax(0,1fr);border:0;border-bottom:1px solid #e5edf2;margin:0!important;padding:0 0 8px!important;gap:0!important}
+  #app #t-narudzbine .inquiry-summary .iq-next .b {width:100%;max-width:none;min-height:46px!important;white-space:normal;text-align:center;font-size:15px;box-sizing:border-box}
+  #app #t-narudzbine .inquiry-summary>.iq-progress,#app #t-narudzbine .inquiry-summary>.iq-status {display:none!important}
+  #app #t-narudzbine .inquiry-summary.has-inline-quote>.iq-inline-quote {grid-column:1/-1!important;grid-row:5!important}
+  #app #t-narudzbine .inquiry-summary.has-inline-quote>.iq-next {grid-row:6!important}
   #app #t-narudzbine .inquiry-summary .iq-progress>* {grid-column:1/-1;grid-row:auto}
   #app #t-narudzbine .inquiry-summary .iq-progress>:is(.iq-progress-status,.iq-origin,.iq-progress-track,.iq-progress-steps) {display:none!important}
   #app #t-narudzbine .inquiry-summary .iq-progress-mobile {display:block;font-size:13px;font-weight:600;line-height:1.4;color:#315d7d}
@@ -117,7 +157,10 @@
   #app #newForm>.btns {display:grid;grid-template-columns:1fr 1fr;gap:10px}
   #app #t-pod {row-gap:6px!important}
   #app #t-pod>h2 {margin-bottom:0!important}
-  #app #podTiles {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:4px 6px;overflow:visible;margin-top:0}
+  #app #podTiles {display:none!important}
+  #app #t-pod #mobileAdminSection+.team-choice-trigger {display:flex;align-items:center;justify-content:space-between;width:100%;max-width:none;min-height:46px;margin:0 0 12px;font-size:16px;box-sizing:border-box;background:#edf4fa;color:#315d79;border:1px solid #c7dbe9;border-radius:7px}
+  #app #t-pod .device-theme-options>div {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+  #app #t-pod .device-theme-options button {width:100%;min-width:0;min-height:44px;margin:0;font-size:14px}
   #app #podTiles button {min-width:0;min-height:44px!important;height:auto!important;padding:6px 2px!important;white-space:normal;font-size:13px!important}
   #app #t-pod .settings-main {padding:16px 12px}
   #app #t-pod .settings-main :is(#setGrid,#calculatorCostGrid) {grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}
@@ -182,5 +225,16 @@
 }
 
 @media (max-width:359px) {
-  #app>.tabs>button {font-size:13px}
+  #app {--team-nav-font:13px}
+  #app>.top {flex-wrap:wrap}
+  #app>.top>.user {margin-left:auto}
+}
+
+@media (min-width:1000px) {
+  #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row {grid-template-columns:minmax(160px,1.1fr) minmax(230px,2fr) 100px 150px}
+  #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-vehicle {display:grid;grid-column:2;grid-row:1;gap:3px}
+  #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-vehicle>small {display:block;grid-column:auto;grid-row:auto;white-space:normal;font-size:12px;font-weight:400}
+  #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-amount {grid-column:3}
+  #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-contact {display:none}
+  #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-next {grid-column:4}
 }
