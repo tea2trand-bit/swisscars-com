@@ -11,7 +11,7 @@ test('service card separates client, requested criteria, selected vehicle and th
  assert.match(card,/Miroslav &lt;Ilić&gt;/);assert.match(card,/Klijent je tražio:/);
  assert.ok(card.indexOf('sc-identity')<card.indexOf('sc-vehicle'));
  assert.ok(card.indexOf('Kontakt')<card.indexOf('sc-vehicle'));
- assert.match(card,/Otvori karticu →/);assert.doesNotMatch(card,/>Čeka uplatu<\/button>/);
+ assert.match(card,/Detalji upita/);assert.doesNotMatch(card,/Otvori karticu|sc-stage|>Čeka uplatu<\/button>/);
 });
 
 test('only concrete types and work steps are offered; all is not a hidden fallback',()=>{

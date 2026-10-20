@@ -20,6 +20,7 @@
 #app .sc-price{flex:none;text-align:right}.sc-price strong{display:block;font-size:18px;white-space:nowrap}
 #app .sc-ad{flex:none}#app .is-service-card>.sc-next{align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;border-top:1px solid #e2e8ec;background:#fbfcfd}
 #app .sc-next>span{min-width:0}.sc-next strong{font-size:15px}.sc-next>.b{flex:none}
+#app .is-service-card .sc-expand{color:#315e7d;font-size:13px;cursor:pointer;white-space:nowrap}
 #app .is-service-card~.team-lead-body{padding:18px;margin-top:0;border-top:1px solid #e2e8ec}
 #app .is-service-card~.team-lead-body .sc-order-progress,#app .is-service-card~.team-lead-body>.lnext{display:none}
 @media(max-width:700px){

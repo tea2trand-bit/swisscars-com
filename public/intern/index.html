@@ -4990,6 +4990,7 @@ function bindInquiryPages(){
   highlightActiveInquiry();
   applyInquiryStepFilter();
   document.querySelectorAll('[data-lead-card]>summary,[data-inspection-card]>summary').forEach(summary=>{
+    if(summary.classList.contains('is-service-card')){summary.removeAttribute('role');summary.tabIndex=0;summary.onclick=null;summary.onkeydown=null;return;}
     summary.tabIndex=-1;
     summary.setAttribute('role','group');
     summary.onclick=event=>{if(!event.target.closest('button,a,input,select,textarea'))event.preventDefault();};
