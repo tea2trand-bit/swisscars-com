@@ -5003,7 +5003,15 @@ function teamInquiryLocation(value){
  return '<span class="iq-city" title="'+esc(city)+'">'+esc(city)+'</span> <span class="iq-postal">'+esc(postal)+'</span>';
 }
 function teamInquirySummary(c){
- return SCWorkInquiry.summary(c,{kindLabel:SCInquiryView.labels[c.kind]||SCInquiryView.labels.unknown,location:teamInquiryLocation(c.context)});
+ const record=c.kind==='inspection'?INSPS.find(x=>teamInquiryReference(x,'inspection')===c.ref):LEADS.find(x=>teamInquiryReference(x)===c.ref);
+ let criteria='';
+ if(c.kind==='budget'&&record){
+  const model=[record.brand,record.model].filter(Boolean).join(' ').replace(/\s+SWISCARS TEST.*$/i,'');
+  const km=String(record.mileage||'').trim();
+  criteria=[model,record.yearFrom?'od '+record.yearFrom+'.':'',km&&km!=='Nije presudno'?( /^\d+$/.test(km)?'do '+Number(km).toLocaleString('sr-RS')+' km':km):'',record.fuel,record.gearbox,record.color?'boja: '+record.color:'',record.equip?.length?'oprema: '+record.equip.join(', '):'',record.budget?'budžet do '+fmt(record.budget)+' €':''].filter(Boolean).join(' · ');
+ }
+ const vehicle=/^SWISCARS TEST\b/i.test(c.vehicle||'')?'Vozilo nije upisano':c.vehicle;
+ return SCWorkInquiry.summary({...c,serviceCard:true,criteria,vehicle},{kindLabel:SCInquiryView.labels[c.kind]||SCInquiryView.labels.unknown,location:teamInquiryLocation(c.context)});
 }
 function applyInquiryStepFilter(){
  const counts=Object.fromEntries(SCWorkInquiry.steps.map(s=>[s.value,0]));
@@ -6276,5 +6284,5 @@ dialog#teamCarWorkPane::backdrop{background:rgba(36,55,67,.20)}
  #app #t-auta .team-car-action .b{width:100%;min-width:0}
 }
 </style>
-<script src="/assets/js/transport-jobs.js"></script><script src="/assets/js/transport-admin-seed.js"></script><script src="/assets/js/search-location-preview.js"></script><script src="/assets/js/search-vehicle-picker.js"></script><script src="/assets/js/search-budget-entry.js"></script><script src="/assets/js/team-search-layout.js"></script><script src="/assets/js/inspection-market.js"></script><script src="/assets/js/inspection-team-precheck-local.js"></script><link rel="stylesheet" href="/assets/css/team-mobile.css"><script src="/assets/js/team-mobile.js"></script><link rel="stylesheet" href="/assets/css/listing-proposal.css"><script src="/assets/js/listing-details.js"></script><script src="/assets/js/proposal-facts.js"></script><script src="/assets/js/team-listing-proposal.js"></script></body>
+<script src="/assets/js/transport-jobs.js"></script><script src="/assets/js/transport-admin-seed.js"></script><script src="/assets/js/search-location-preview.js"></script><script src="/assets/js/search-vehicle-picker.js"></script><script src="/assets/js/search-budget-entry.js"></script><script src="/assets/js/team-search-layout.js"></script><script src="/assets/js/inspection-market.js"></script><script src="/assets/js/inspection-team-precheck-local.js"></script><link rel="stylesheet" href="/assets/css/team-mobile.css"><script src="/assets/js/team-mobile.js"></script><link rel="stylesheet" href="/assets/css/listing-proposal.css"><script src="/assets/js/listing-details.js"></script><script src="/assets/js/proposal-facts.js"></script><script src="/assets/js/team-listing-proposal.js"></script><link rel="stylesheet" href="/assets/css/team-service-card.css"><script src="/assets/js/team-client-name.js"></script></body>
 </html>

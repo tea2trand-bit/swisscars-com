@@ -50,6 +50,16 @@
  }
  function summary(c,options){
   const step=stepFor(c.action,c.status),title=steps.find(s=>s.value===step).title;
+  if(c.serviceCard){
+   const service=c.kind==='inspection'?(c.kindLabel||'Pregled vozila'):c.kind==='budget'?'Pronalazak auta':'Kupovina vozila';
+   const action=String(c.action||'').includes('data-inquiry-expand')?'<button class="b primary" type="button" data-inquiry-expand>Otvori karticu →</button>':primaryAction(c.action);
+   const request=c.criteria?'<span class="sc-request"><span>Klijent je tražio:</span> <strong>'+escape(c.criteria)+'</strong></span>':'';
+   return '<summary class="inquiry-summary is-service-card" data-work-step="'+step+'">'+
+    '<span class="sc-service"><span>Usluga <strong>'+escape(service)+'</strong></span><span class="sc-stage">'+escape(title)+'</span></span>'+
+    '<span class="sc-identity"><span class="sc-client"><small>Klijent</small><strong>'+escape(c.person||'Ime nije upisano')+'</strong></span>'+request+'<span class="sc-contact">'+(c.personContact||'')+'</span></span>'+
+    '<span class="sc-vehicle"><span><small>'+(c.kind==='inspection'?'Vozilo za pregled':'Izabrano vozilo')+'</small><strong>'+escape(c.vehicle||'Vozilo još nije izabrano')+'</strong><span class="sc-location">'+options.location+'</span></span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>'+
+    '<span class="sc-next"><span><small>Sledeći korak</small><strong>'+escape(c.status||title)+'</strong></span>'+action+'</span>'+(c.quoteHtml||'')+'</summary>';
+  }
   const kind='<span class="iq-kind iq-kind-'+escape(c.kind)+'">'+escape(c.kindLabel||options.kindLabel)+'</span>';
   const progress=c.progressHtml?c.progressHtml.replace('<span class="iq-progress">','<span class="iq-progress"><span class="iq-progress-status">'+escape(c.status)+'</span>'):'';
   return '<summary class="inquiry-summary is-compact-row'+(c.kind==='inspection'?' is-inspection':'')+(c.quoteHtml?' has-inline-quote':'')+'" data-work-step="'+step+'">'+

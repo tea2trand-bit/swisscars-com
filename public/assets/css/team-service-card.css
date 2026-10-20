@@ -1,0 +1,36 @@
+/* The work card is the primary view, with a distinct client header and vehicle row. */
+.team-client-name-dialog{width:min(440px,calc(100vw - 24px));padding:24px;border:1px solid #d6e0e6;border-radius:10px}.team-client-name-dialog label{display:grid;gap:8px;margin:16px 0}.team-client-name-dialog input{width:100%;box-sizing:border-box;min-height:44px;padding:10px;border:1px solid #cbdbe6;border-radius:6px;font:16px Inter,Arial,sans-serif}
+#app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-service-card{display:flex;flex-direction:column;align-items:stretch;gap:0;min-height:0;padding:0;margin:0;cursor:default;list-style:none;color:#233744;font:14px/1.5 Inter,Arial,sans-serif}
+#app #leadList>.workcard:has(.is-service-card),#app #pgList>.pgc:has(.is-service-card){padding:0;border:1px solid #d6e0e6;border-radius:10px;overflow:hidden;background:#fff}
+#app .is-service-card>span{display:flex;min-width:0;margin:0;box-sizing:border-box}
+#app .is-service-card small{display:block;margin:0 0 3px;color:#657782;font-size:12px;font-weight:400}
+#app .is-service-card strong{color:#233744;font-weight:600}
+#app .is-service-card>.sc-service{align-items:center;justify-content:space-between;gap:16px;padding:10px 18px;background:#edf4f8;border-bottom:1px solid #dce7ee;color:#526c7d;font-size:13px}
+#app .sc-service strong{margin-left:8px;color:#214f70;font-size:15px}
+#app .is-service-card .sc-stage{color:#315e7d;font-size:13px;font-weight:600}
+#app .is-service-card>.sc-identity{align-items:center;gap:18px;padding:14px 18px;border-bottom:1px solid #e4e9ed}
+#app .sc-client{flex:0 1 180px;min-width:0}.sc-client>strong{display:block;font-size:16px;overflow-wrap:anywhere}
+#app .sc-request{flex:1;min-width:0;border-left:1px solid #e4e9ed;padding-left:18px;color:#657782;font-size:13px;overflow-wrap:anywhere}
+#app .sc-request strong{font-weight:500;color:#314e61}
+#app .sc-contact{margin-left:auto;flex:none}
+#app .is-service-card .b{min-height:40px;padding:8px 12px;font:500 13px/1.4 Inter,Arial,sans-serif;white-space:normal;border-radius:6px}
+#app .is-service-card>.sc-vehicle{align-items:center;gap:18px;padding:16px 18px}
+#app .sc-vehicle>span:first-child{flex:1;min-width:0}.sc-vehicle>span:first-child>strong{display:block;font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+#app .sc-location{display:block;color:#657782;font-size:13px;margin-top:3px}
+#app .sc-price{flex:none;text-align:right}.sc-price strong{display:block;font-size:18px;white-space:nowrap}
+#app .sc-ad{flex:none}#app .is-service-card>.sc-next{align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;border-top:1px solid #e2e8ec;background:#fbfcfd}
+#app .sc-next>span{min-width:0}.sc-next strong{font-size:15px}.sc-next>.b{flex:none}
+#app .is-service-card~.team-lead-body{padding:18px;margin-top:0;border-top:1px solid #e2e8ec}
+#app .is-service-card~.team-lead-body .sc-order-progress,#app .is-service-card~.team-lead-body>.lnext{display:none}
+@media(max-width:700px){
+ #app .is-service-card>.sc-service{padding:10px 14px;align-items:start;gap:10px}
+ #app .is-service-card .sc-service>span:first-child{display:grid;gap:3px}#app .sc-service strong{margin:0}
+ #app .is-service-card>.sc-identity{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:13px 14px}
+ #app .sc-client{grid-column:1;grid-row:1}#app .sc-contact{grid-column:2;grid-row:1}
+ #app .sc-request{grid-column:1/-1;grid-row:2;border-left:0;border-top:1px solid #e4e9ed;padding:10px 0 0}
+ #app .is-service-card>.sc-vehicle{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:14px}
+ #app .sc-vehicle>span:first-child{grid-column:1/-1}#app .sc-ad{grid-column:1;grid-row:2}#app .sc-price{grid-column:2;grid-row:2}
+ #app .is-service-card>.sc-next{display:flex;flex-direction:column;align-items:stretch;padding:13px 14px;gap:12px}
+ #app .sc-next>.b{width:100%;text-align:center;justify-content:center}
+ #app .is-service-card .b{min-height:44px}#app .is-service-card~.team-lead-body{padding:14px}
+}

@@ -5,6 +5,15 @@ const vm=require('node:vm');
 const W=require('../public/assets/js/work-inquiry.js');
 const html=fs.readFileSync(require.resolve('../public/intern/index.html'),'utf8');
 
+test('service card separates client, requested criteria, selected vehicle and the next step',()=>{
+ const card=W.summary({serviceCard:true,kind:'budget',person:'Miroslav <Ilić>',criteria:'Golf 7 · bela · do 150.000 km',vehicle:'VW Golf Variant',amountLabel:'Cena oglasa',amount:'8.990 CHF',status:'Čeka uplatu pregleda',personContact:'<button>Kontakt</button>',contact:'<a>Oglas</a>',action:'<button data-inquiry-expand>Čeka uplatu</button>'},{kindLabel:'Pronađi',location:'Lienz'});
+ assert.match(card,/is-service-card/);assert.match(card,/data-work-step="check-payment"/);
+ assert.match(card,/Miroslav &lt;Ilić&gt;/);assert.match(card,/Klijent je tražio:/);
+ assert.ok(card.indexOf('sc-identity')<card.indexOf('sc-vehicle'));
+ assert.ok(card.indexOf('Kontakt')<card.indexOf('sc-vehicle'));
+ assert.match(card,/Otvori karticu →/);assert.doesNotMatch(card,/>Čeka uplatu<\/button>/);
+});
+
 test('only concrete types and work steps are offered; all is not a hidden fallback',()=>{
  assert.ok(!W.steps.some(s=>s.value==='all'));
  assert.doesNotMatch(html,/data-inquiry-(?:kind|step)="all"|inquiryKindFilter===?"all"/);
