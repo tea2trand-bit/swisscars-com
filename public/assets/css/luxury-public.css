@@ -1,0 +1,273 @@
+/* An editorial public-site layer. No business, price, status, or account rules. */
+body.luxury-public{
+  --bg:#f7f5f0;--paper:#fffefa;--soft:#f0ece3;--text:#202522;--muted:#6b6e68;
+  --line:#ddd9cf;--gold:#a3834b;--gold2:#d1b47c;--charcoal:#151b1c;
+  --simple-ink:#202522;--simple-muted:#6b6e68;--simple-line:#ddd9cf;--simple-gold:#a3834b;
+  --r-sm:3px;--r-md:5px;--r-lg:8px;
+  color:var(--text);background:var(--bg);font-family:Inter,Arial,sans-serif;
+}
+.luxury-public .container{width:min(1240px,calc(100% - 96px))}
+.luxury-public .site-header{max-width:none;width:100%;min-height:84px;padding:16px max(40px,calc((100vw - 1280px)/2));gap:24px;background:#fdfcf8f5;border-bottom:1px solid #ddd9cf;box-shadow:none;backdrop-filter:blur(20px)}
+.luxury-public .brand{gap:10px}
+.luxury-public .brand strong{font-size:21px;font-weight:600;letter-spacing:3px;color:#aa8c56;line-height:1.3}
+.luxury-public .brand small{font-size:8px;font-weight:500;letter-spacing:2.9px;line-height:1.7;color:#84847c}
+.luxury-public .brand-mark{width:34px;height:40px;color:#aa8c56}
+.luxury-public .brand-mark svg{width:34px;height:38px}
+.luxury-public .nav{align-items:center;gap:25px}
+.luxury-public .nav a,.luxury-public .nav-partners>summary{font-size:12px;font-weight:400;letter-spacing:.015em;color:#343b37}
+.luxury-public .nav a[aria-current]{box-shadow:none;color:#94733b;text-decoration:underline;text-underline-offset:8px;text-decoration-thickness:1px}
+.luxury-public .language-switch{gap:1px}
+.luxury-public .language-switch button{border:0;min-height:34px;min-width:31px;padding:7px 6px;background:none;color:#777d75;font-size:10px;font-weight:500;box-shadow:none;border-radius:0}
+.luxury-public .language-switch button.active{color:#9b793e;background:#a3834b12;box-shadow:inset 0 -1px #a3834b}
+.luxury-public .header-cta{display:none!important}
+.luxury-public .nav-partners-list{border-radius:4px;box-shadow:0 18px 50px #10181618;border-color:var(--line);padding:16px}
+.luxury-public .nav-partners-list a{font-size:13px;min-height:40px;display:flex;align-items:center;color:#343b37!important}
+.luxury-public .site-header .nav-partners-list{gap:0;padding:8px 14px}
+.luxury-public .site-header .nav-partners-list a{min-height:34px;line-height:1.5;padding:7px 2px}
+.luxury-public .site-header .nav-partners-caption{padding:8px 2px 4px;font-size:10px;line-height:1.5;color:#727766}
+.luxury-public .btn{min-height:52px;padding:14px 25px;border-radius:2px;box-shadow:none;letter-spacing:.035em;font-size:12px;font-weight:500;text-transform:none;transition:background .2s,color .2s,border-color .2s}
+.luxury-public .btn:after{display:none}
+.luxury-public .btn-gold{background:#c4a268;color:#171e1e;border:1px solid #c4a268}
+.luxury-public .btn:hover{transform:none;filter:none;box-shadow:none}
+.luxury-public .btn-gold:hover{background:#d0b17d;border-color:#d0b17d}
+.luxury-public .btn-outline{border:1px solid #b7b5aa;background:none;color:var(--text)}
+.luxury-public :is(a,button,input,select,textarea,summary):focus-visible{outline:2px solid #ad8c54;outline-offset:4px}
+.luxury-public .section-kicker,.luxury-public .home-choice-label{font:500 10px/1.6 Inter,Arial,sans-serif;letter-spacing:.21em;color:#8e723f;text-transform:uppercase}
+.luxury-home .site-header{background:#141a1df5;border-color:#ffffff15}
+.luxury-home .site-header .nav>a,.luxury-home .site-header .nav-partners>summary{color:#e1e1d8}
+.luxury-home .site-header .nav>a[aria-current]{color:#d0b17d}
+.luxury-home .site-header .language-switch button{color:#a9b0aa}
+.luxury-home .site-header .language-switch button.active{color:#dfc38d;background:#d0b17d0d;box-shadow:inset 0 -1px #c4a268}
+.luxury-home .site-header .brand small{color:#aaa99f}
+.luxury-home .hero{max-width:none;min-height:720px;padding:0;display:flex;align-items:center;background:#141a1d;border-bottom:1px solid #242c2c;isolation:isolate}
+.luxury-home .hero-grid,.luxury-home .hero-glow{display:none}
+.luxury-home .hero-bg{background:#141a1d}
+.luxury-home .hero-content{display:block;position:relative;width:min(1240px,calc(100% - 96px));padding:82px 0 100px;z-index:2}
+.luxury-home .hero-copy{position:relative;max-width:520px;z-index:3}
+.luxury-home .hero .eyebrow{font:500 10px/1.7 Inter,Arial,sans-serif;letter-spacing:.27em;color:#cbb17f;margin:0 0 26px;gap:15px}
+.luxury-home .eyebrow-tick{width:30px;height:1px;background:#bda16b}
+.luxury-home .hero h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(62px,6.15vw,89px);font-weight:400;line-height:1.02;letter-spacing:-.035em;max-width:510px;color:#f8f5ed;text-shadow:none;margin:0 0 28px;text-wrap:balance}
+.luxury-home .hero .lead{font:400 15px/1.85 Inter,Arial,sans-serif;color:#c0c5bf;max-width:400px;margin:0 0 35px}
+.luxury-home .hero-actions{margin:0;gap:12px;flex-wrap:nowrap}
+.luxury-home .hero-actions .btn{min-height:52px;padding:15px 22px;white-space:nowrap;font-size:12px;letter-spacing:.015em}
+.luxury-home .hero-actions .btn-outline{color:#e6e5dc;background:transparent;border-color:#8b928b80;backdrop-filter:none}
+.luxury-home .hero-actions .btn-outline:hover{background:#ffffff0a;border-color:#d0b17d}
+.luxury-home .luxury-hero-note{font:400 10px/1.6 Inter,Arial,sans-serif;color:#858f87;margin:20px 0 0;letter-spacing:.04em}
+.luxury-home .hero-visual{position:absolute;z-index:1;right:calc((1240px - 100vw)/2 - 5px);top:0;width:min(900px,70vw);height:100%;pointer-events:none}
+.luxury-home .hero-frame{position:relative;width:100%;height:100%;border-radius:0;padding:0;background:none;box-shadow:none}
+.luxury-home .hero-photo{width:100%;height:100%;aspect-ratio:auto;border-radius:0;background-position:62% center;background-size:cover;filter:brightness(1.17) saturate(.78);box-shadow:none}
+.luxury-home .hero-visual:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#141a1d 0%,#141a1db0 15%,#141a1d12 42%,#141a1d10 90%,#141a1d36),linear-gradient(0deg,#141a1d90,transparent 25%);pointer-events:none}
+.luxury-home .hero-frame-corner{display:none}
+.luxury-assurances{max-width:none;padding:25px max(48px,calc((100vw - 1240px)/2));display:grid;grid-template-columns:repeat(3,1fr);gap:24px;background:#eeebe2;border-bottom:1px solid #dedacf}
+.luxury-assurances>div{display:flex;align-items:center;gap:16px;color:#515a52;font:400 11px/1.6 Inter,Arial,sans-serif}
+.luxury-assurances>div+div{border-left:1px solid #d4cfbf;padding-left:28px}
+.luxury-mark{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:500;color:#a18655;line-height:1}
+.luxury-home .simple-home{max-width:1240px;padding:0;margin:auto;background:transparent}
+.luxury-home .home-flow{padding:94px 0 80px;border:0}
+.luxury-home .home-choice-heading{max-width:none;display:grid;grid-template-columns:1.15fr 1fr;gap:14px 90px;margin:0 0 42px;align-items:end}
+.luxury-home .home-choice-heading .section-kicker{grid-column:1/-1;margin:0;color:#967843;font-size:9px;letter-spacing:.2em;font-weight:500}
+.luxury-home .home-choice-heading h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:48px;font-weight:500;line-height:1.1;letter-spacing:-.025em;margin:0;max-width:520px;color:#232b26}
+.luxury-home .home-choice-heading>p:last-child{font-size:13px;line-height:1.85;max-width:400px;margin:0 0 3px;color:#71766c}
+.luxury-home .home-flow-grid{gap:42px}
+.luxury-home .home-flow-card{display:block;border:0;border-top:1px solid #cfc7b6;border-radius:0;background:none;padding:24px 0 0}
+.luxury-home .home-flow-card .home-choice-number{display:block;width:auto;height:auto;background:none;border-radius:0;font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:36px;color:#a58a56;margin:0 0 20px}
+.luxury-home .home-flow-card .home-choice-number:before{content:'0'}
+.luxury-home .home-flow-card h3{font:500 16px/1.45 Inter,Arial,sans-serif;letter-spacing:-.02em;margin:0 0 12px;color:#29332a}
+.luxury-home .home-flow-card p{font-size:12px;line-height:1.85;max-width:315px;color:#747a70}
+.luxury-home .home-stock-strip{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0;margin:0 0 54px;border:0;background:#eae7de;min-height:330px;overflow:hidden}
+.luxury-stock-photo{min-height:360px;background:url('../img/blog-used-car.jpg') center/cover no-repeat;filter:saturate(.65)}
+.luxury-stock-copy{padding:52px 54px;display:flex;flex-direction:column;align-items:start;justify-content:center}
+.luxury-stock-copy>div{width:100%}
+.luxury-home .home-stock-strip h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:40px;font-weight:500;line-height:1.12;letter-spacing:-.02em;max-width:420px;margin:15px 0 20px;color:#263029}
+.luxury-home .home-stock-strip p:not(.home-choice-label){font-size:12px;line-height:1.9;color:#6b7469;margin:0 0 26px;max-width:360px}
+.luxury-home .home-stock-action{font-size:11px;font-weight:500;color:#4d583f;letter-spacing:.03em;border-color:#a4946c;padding:0 0 8px}
+.luxury-home .simple-help{padding:0 0 54px;gap:36px;border:0}
+.luxury-home .simple-help h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:32px;font-weight:500;letter-spacing:-.02em;margin:0 auto 0 0}
+.luxury-home .simple-help a{font-size:11px;color:#757b6c;border-bottom:1px solid #c5c3b5;padding-bottom:4px}
+.luxury-home .contact{background:#eeebe2;border-top:1px solid #dfdbcf;padding:80px 0}
+.luxury-home .contact-grid{display:block}
+.luxury-home .contact-grid>div:first-child{display:grid;grid-template-columns:.88fr 1.12fr;gap:0 100px;align-items:start}
+.luxury-home .contact-grid>div:first-child>:not(form){grid-column:1}
+.luxury-home .contact-grid>div:first-child>.section-kicker{margin:0 0 15px}
+.luxury-home .contact h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:48px;font-weight:500;line-height:1.1;letter-spacing:-.02em;margin:0 0 20px}
+.luxury-home .contact-lead{font-size:13px;line-height:1.85;margin:0 0 30px;max-width:350px;color:#6e776c}
+.luxury-home .company{margin:0 0 20px;padding:0;border:0;background:none;color:#667061;font-size:12px}
+.luxury-home .company-heading{margin-bottom:12px;color:#434d42}
+.luxury-home .company-heading .brand-mark{display:none}
+.luxury-home .company-heading strong{font-weight:500;font-size:14px}
+.luxury-home .contact-links{margin:5px 0 0;gap:18px}
+.luxury-home .contact-links a{border:0;border-bottom:1px solid #b8b8a6;border-radius:0;padding:4px 0;color:#5d6758;background:none!important;font-size:11px;gap:6px;box-shadow:none}
+.luxury-home .contact-links svg{width:13px;height:13px}
+.luxury-home .contact-grid>div:first-child>form{grid-column:2;grid-row:1/span 7;margin:0;background:#faf9f4;border:1px solid #ded9cb;border-radius:3px;padding:34px;box-shadow:none}
+.luxury-home .general-contact-form h3{font-family:'Cormorant Garamond',Georgia,serif;font-size:29px;font-weight:500;letter-spacing:-.02em;margin:0 0 4px}
+.luxury-home .general-contact-intro{font-size:11px;color:#7d8275;margin:0 0 20px}
+.luxury-public :is(input,select,textarea){border-color:#d9d5ca;border-radius:3px;background:#fffefa;font-size:14px;box-shadow:none}
+.luxury-public :is(input,select,textarea):focus{box-shadow:0 0 0 3px #a3834b14;border-color:#a3834b}
+.luxury-home .general-contact-form>label{font-size:11px;font-weight:400;color:#747c6d}
+.luxury-home .general-contact-form button[type=submit]{justify-self:stretch;width:100%;min-height:48px;font-size:11px}
+.luxury-public footer{background:#151c1d;color:#c6cabe;border-color:#ffffff0d;padding:60px 24px 35px;text-align:left;display:grid;grid-template-columns:1fr 1fr;gap:14px 60px}
+.luxury-public footer>*{width:min(570px,100%)}
+.luxury-public footer .footer-brand{margin:0 0 10px;justify-content:flex-start;justify-self:end}
+.luxury-public footer .footer-company{justify-self:end;font-size:11px;grid-column:1;color:#919c8d}
+.luxury-public footer .footer-company strong{font-size:11px;font-weight:400;color:#a9b0a3}
+.luxury-public footer .footer-brand small{color:#858f83}
+.luxury-public .footer-legal{justify-content:flex-end;align-content:start;flex-wrap:wrap;gap:22px;grid-column:2;grid-row:1;padding-top:10px}
+.luxury-public .footer-legal a{font-size:11px;font-weight:400;letter-spacing:.02em;color:#b7b7a5}
+.luxury-public footer>small{grid-column:1/-1;width:min(1200px,100%);justify-self:center;border-top:1px solid #ffffff12;padding-top:26px;margin-top:18px;font-size:10px;color:#778272}
+/* The same material and typography on the main customer pages. */
+.luxury-public .simple-flow{max-width:1160px;padding:70px 24px 80px}
+.luxury-public .simple-heading{max-width:740px;margin-bottom:38px}
+.luxury-public .simple-heading h1,.luxury-public .stock-page .cars-head h1,.luxury-public .cars-head h1,.luxury-public .expert-head h1,.luxury-public .import-heading h1{font-family:'Cormorant Garamond',Georgia,serif!important;font-size:58px!important;font-weight:500!important;color:#252e27!important;line-height:1.08;letter-spacing:-.025em}
+.luxury-public .simple-heading>p:not(.section-kicker),.luxury-public .cars-lead{font-size:14px!important;line-height:1.85;color:#74806e!important;max-width:610px}
+.luxury-public .simple-form-shell{background:#fffefa;border:1px solid #ded9cd;border-radius:4px;padding:32px;box-shadow:0 12px 30px #38372603}
+.luxury-public .request-card-heading h2{font-family:'Cormorant Garamond',Georgia,serif!important;font-weight:500!important;font-size:32px!important;color:#303b2d!important}
+.luxury-public .request-card-heading p{font-size:13px;color:#74806e}
+.luxury-public .cars-head{padding:64px 0 26px!important;background:var(--bg);border-color:#dcd7cb}
+.luxury-public .cars-list{padding-top:36px}
+.luxury-public .stock-page .cars-filter button{border-radius:2px;border-color:#ddd8cc;padding:11px 20px;background:#fffefa;font-size:12px;font-weight:400}
+.luxury-public .stock-page .cars-filter button[aria-pressed=true]{background:#a3834b13;border-color:#a3834b;color:#6f5c34}
+.luxury-public .stock-page .car-card{border:1px solid #e2ddd0;border-radius:4px;box-shadow:none;background:#fffefa}
+.luxury-public .stock-page .car-card:hover{box-shadow:0 15px 40px #3b392911;transform:translateY(-2px)}
+.luxury-public .stock-page .car-info{padding:26px;gap:12px}
+.luxury-public .stock-page .car-info h2{font-size:19px;font-weight:500;letter-spacing:-.015em;color:#2c3529}
+.luxury-public .stock-page .car-price{font-family:'Cormorant Garamond',Georgia,serif;font-size:33px;font-weight:600;line-height:1.1}
+.luxury-public .stock-page .car-photo{aspect-ratio:3/2}
+.luxury-public .stock-page .car-badge{border-radius:2px;background:#fffef8eb;font-size:10px;font-weight:500;padding:7px 12px;box-shadow:none}
+.luxury-public .stock-page .car-meta{font-size:12px;color:#79806f}
+.luxury-public .car-dlg{border-radius:5px;background:#fffefa}
+.luxury-public .simple-form-shell :is(input,select,textarea){font-size:14px;background:#fffefa;border-color:#ddd8cb;border-radius:3px}
+.luxury-public .simple-form-shell .cf-group{font-size:16px;font-weight:500;color:#77643d}
+.luxury-public .request-choice-grid .luxury-empty-fields label.sr-only{font-weight:500!important;color:#68705f;margin-top:18px!important;margin-bottom:7px!important}
+.luxury-public .luxury-empty-fields input,.luxury-public .luxury-empty-fields select,.luxury-public .luxury-empty-fields textarea{background:#ffffff;min-height:48px;box-shadow:none;color:#283025}
+.luxury-public .luxury-empty-fields select:has(option[value=""]:checked){color:#858b7e}
+.luxury-public .luxury-empty-fields .simple-optional{border-top:1px solid #e4dfd2;margin:21px 0 0;padding:13px 0 5px}
+.luxury-public .luxury-empty-fields .simple-optional>summary{display:flex;align-items:center;justify-content:space-between;gap:18px;list-style:none;font-size:13px;font-weight:400;color:#65705c;min-height:32px;cursor:pointer}
+.luxury-public .luxury-empty-fields .simple-optional>summary::-webkit-details-marker{display:none}
+.luxury-public .luxury-empty-fields .simple-optional>summary:after{content:'+';font-size:22px;font-weight:400;line-height:1;color:#9c8552}
+.luxury-public .luxury-empty-fields .simple-optional[open]>summary:after{content:'−'}
+.luxury-public .request-choice-grid .luxury-empty-fields .simple-form-actions{margin-top:25px}
+.luxury-public .request-card-heading p{margin-top:10px}
+.luxury-public .request-choice-grid .simple-progress{margin:24px 0 2px;color:#969986;font-size:10px}
+@media(min-width:1360px){.luxury-home .hero-visual{right:calc((1240px - 100vw)/2 - 5px)}}
+@media(min-width:1101px) and (max-width:1359px){.luxury-home .hero-visual{right:-48px}.luxury-home .simple-home{margin-inline:48px}.luxury-public .site-header{gap:18px;padding-inline:40px}.luxury-public .nav{gap:18px}}
+@media(max-width:1100px){
+  .luxury-public .site-header{padding:14px 30px;min-height:74px;flex-wrap:wrap;gap:16px}
+  .luxury-public .language-switch{margin-left:auto;order:1}
+  .luxury-public .nav-toggle{display:block;order:2;background:none;border:1px solid #b4ad9740;color:#484f43;border-radius:2px;padding:8px;min-width:38px;min-height:38px}
+  .luxury-home .nav-toggle{color:#d4d3c6;border-color:#d1bd8c50}
+  .luxury-public .nav{display:none;order:4;width:100%;margin:0;padding:16px 8px 20px;flex-direction:column;align-items:stretch;gap:0}
+  .luxury-public .nav.open{display:flex}
+  .luxury-public .nav>a,.luxury-public .nav-partners>summary{font-size:15px;padding:13px 0;min-height:44px}
+  .luxury-public .nav-partners-list{position:static;width:100%;background:#f6f3ea;margin-top:8px}
+  .luxury-home .simple-home{margin-inline:36px}
+  .luxury-home .hero{min-height:650px}
+  .luxury-home .hero-content{padding:75px 0 85px;width:calc(100% - 72px)}
+  .luxury-home .hero h1{font-size:72px;max-width:450px}
+  .luxury-home .hero-visual{right:-36px;width:78vw}
+  .luxury-home .hero-visual:after{background:linear-gradient(90deg,#141a1d 0%,#141a1dd0 20%,#141a1d40 75%)}
+  .luxury-home .home-choice-heading{gap:14px 50px}
+  .luxury-home .home-choice-heading h2{font-size:41px}
+  .luxury-stock-copy{padding:36px}
+  .luxury-home .contact-grid>div:first-child{gap:0 50px}
+  .luxury-home .simple-help{gap:22px}
+}
+@media(max-width:760px){
+  .luxury-public .container{width:calc(100% - 44px)}
+  .luxury-public .site-header{padding:13px 20px;min-height:72px;gap:10px}
+  .luxury-public .brand{gap:7px}
+  .luxury-public .brand-mark{width:28px;height:34px}
+  .luxury-public .brand-mark svg{width:28px!important;height:32px!important}
+  .luxury-public .brand strong{font-size:18px;letter-spacing:2px}
+  .luxury-public .brand small{font-size:6px;letter-spacing:2.6px;line-height:1.9}
+  .luxury-public .language-switch button{font-size:9px;min-height:34px;min-width:27px;padding:6px 4px}
+  .luxury-public .nav-toggle{min-height:34px;min-width:34px;padding:6px;border:0}
+  .luxury-public .nav-toggle svg{width:22px;height:22px}
+  .luxury-home .hero{min-height:0;display:block;overflow:hidden}
+  .luxury-home .hero-content{display:flex;flex-direction:column;width:100%;padding:41px 24px 0;gap:0}
+  .luxury-home .hero-copy{max-width:none;width:100%}
+  .luxury-home .hero .eyebrow{font-size:8px;letter-spacing:.23em;gap:11px;margin-bottom:21px}
+  .luxury-home .eyebrow-tick{width:24px}
+  .luxury-home .hero h1{font-size:57px;line-height:1.03;letter-spacing:-.03em;max-width:390px;margin:0 0 23px;text-wrap:balance}
+  .luxury-home .hero .lead{font-size:12px;line-height:1.85;max-width:320px;margin:0 0 26px;color:#b6c0b4}
+  .luxury-home .hero-actions{gap:10px;flex-wrap:wrap}
+  .luxury-home .hero-actions .btn{width:auto;flex:1 1 140px;min-height:47px;padding:13px 12px;font-size:10px;letter-spacing:0}
+  .luxury-home .luxury-hero-note{font-size:9px;margin:16px 0 0;color:#838f82}
+  .luxury-home .hero-visual{position:relative;right:auto;top:auto;width:calc(100% + 48px);height:auto;aspect-ratio:3/2;margin:15px -24px 0}
+  .luxury-home .hero-photo{background-size:cover;background-position:center;filter:brightness(1.14) saturate(.8)}
+  .luxury-home .hero-visual:after{background:linear-gradient(180deg,#141a1d 0%,#141a1d20 23%,transparent 55%,#141a1d20 100%)}
+  .luxury-assurances{padding:23px 24px;grid-template-columns:1fr;gap:15px}
+  .luxury-assurances>div{font-size:10px;gap:13px}
+  .luxury-assurances>div+div{border:0;padding:0}
+  .luxury-mark{font-size:22px;width:24px}
+  .luxury-home .simple-home{margin-inline:24px}
+  .luxury-home .home-flow{padding:52px 0 48px}
+  .luxury-home .home-choice-heading{display:block;margin-bottom:30px}
+  .luxury-home .home-choice-heading .section-kicker{font-size:8px;letter-spacing:.17em;margin-bottom:16px}
+  .luxury-home .home-choice-heading h2{font-size:36px;line-height:1.08;max-width:330px;margin:0 0 17px}
+  .luxury-home .home-choice-heading>p:last-child{font-size:12px;line-height:1.8;max-width:330px}
+  .luxury-home .home-flow-grid{grid-template-columns:1fr;gap:24px}
+  .luxury-home .home-flow-card{display:grid;grid-template-columns:34px 1fr;gap:16px;padding:22px 0 0}
+  .luxury-home .home-flow-card .home-choice-number{font-size:29px;margin:0;line-height:1}
+  .luxury-home .home-flow-card h3{font-size:14px;margin:0 0 9px}
+  .luxury-home .home-flow-card p{font-size:11px;line-height:1.9;max-width:none}
+  .luxury-home .home-stock-strip{grid-template-columns:1fr;margin:0 0 32px}
+  .luxury-stock-photo{min-height:0;aspect-ratio:1.55}
+  .luxury-stock-copy{padding:30px 25px}
+  .luxury-home .home-stock-strip h2{font-size:35px;line-height:1.08;margin:14px 0 17px}
+  .luxury-home .home-stock-strip p:not(.home-choice-label){font-size:11px;line-height:1.85;margin-bottom:23px}
+  .luxury-home .home-stock-action{font-size:10px}
+  .luxury-home .simple-help{padding-bottom:38px;gap:18px;flex-wrap:wrap}
+  .luxury-home .simple-help h2{font-size:29px;flex-basis:100%}
+  .luxury-home .simple-help a{font-size:10px}
+  .luxury-home .contact{padding:45px 0}
+  .luxury-home .contact-grid>div:first-child{display:block}
+  .luxury-home .contact h2{font-size:38px;max-width:330px;margin-bottom:18px}
+  .luxury-home .contact-lead{font-size:12px;max-width:330px;margin-bottom:26px}
+  .luxury-home .contact-grid>div:first-child>form{margin:30px 0 0;padding:25px 21px}
+  .luxury-home .general-contact-form h3{font-size:29px}
+  .luxury-home .company{font-size:11px;gap:7px}
+  .luxury-public footer{display:block;padding:38px 24px 26px;text-align:left}
+  .luxury-public footer .footer-brand{justify-content:flex-start;margin-bottom:23px}
+  .luxury-public footer .footer-company{font-size:10px;line-height:1.8;margin-bottom:24px}
+  .luxury-public .footer-legal{justify-content:flex-start;gap:18px;padding-top:0;margin-bottom:24px}
+  .luxury-public .footer-legal a{font-size:10px}
+  .luxury-public footer>small{display:block;padding-top:20px;font-size:9px}
+  .luxury-public .simple-flow{padding:40px 22px 55px}
+  .luxury-public .simple-heading h1,.luxury-public .stock-page .cars-head h1,.luxury-public .cars-head h1,.luxury-public .expert-head h1,.luxury-public .import-heading h1{font-size:43px!important}
+  .luxury-public .simple-heading>p:not(.section-kicker),.luxury-public .cars-lead{font-size:12px!important}
+  .luxury-public .simple-form-shell{padding:25px 20px}
+  .luxury-public .request-card-heading h2{font-size:29px!important}
+  .luxury-public .cars-head{padding:36px 0 22px!important}
+  .luxury-public .stock-page .cars-filter{gap:8px}
+  .luxury-public .stock-page .cars-filter button{padding:10px 13px;font-size:11px}
+  .luxury-public .stock-page .car-info{padding:22px}
+  .luxury-public .stock-page .car-price{font-size:31px}
+  .luxury-public .car-dlg{border-radius:0}
+}
+@media(max-width:355px){.luxury-public .site-header{padding-inline:14px;gap:5px}.luxury-public .brand strong{font-size:16px;letter-spacing:1.7px}.luxury-public .brand small{letter-spacing:2px}.luxury-public .language-switch button{min-width:24px}.luxury-home .hero h1{font-size:50px}.luxury-home .hero-actions .btn{font-size:10px;flex-basis:100%;min-height:44px}}
+@media(prefers-reduced-motion:reduce){.luxury-public *{scroll-behavior:auto!important;transition:none!important}}
+/* Keep the restrained typography comfortably readable. */
+.luxury-home .home-choice-heading>p:last-child,.luxury-home .home-flow-card p,.luxury-home .home-stock-strip p:not(.home-choice-label),.luxury-home .contact-lead{font-size:14px}
+.luxury-mark{display:block;flex:0 0 20px;width:20px;height:1px;background:#a58a56;font-size:0}
+@media(max-width:760px){
+  .luxury-home .hero h1{font-size:54px}
+  .luxury-home .hero .lead{font-size:14px;line-height:1.8}
+  .luxury-home .hero-actions .btn{font-size:12px;min-height:49px}
+  .luxury-home .home-choice-heading>p:last-child,.luxury-home .home-flow-card p,.luxury-home .home-stock-strip p:not(.home-choice-label),.luxury-home .contact-lead{font-size:14px;line-height:1.8}
+  .luxury-home .home-flow-card h3{font-size:16px}
+  .luxury-home .home-stock-action,.luxury-home .simple-help a{font-size:12px}
+  .luxury-home .general-contact-form>label,.luxury-home .general-contact-intro{font-size:12px}
+  .luxury-home .general-contact-form button[type=submit]{font-size:12px}
+  .luxury-public input,.luxury-public select,.luxury-public textarea,.luxury-public .simple-form-shell input,.luxury-public .simple-form-shell select,.luxury-public .simple-form-shell textarea{font-size:16px}
+  .luxury-public .simple-heading>p:not(.section-kicker),.luxury-public .cars-lead{font-size:14px!important}
+}
+/* The shared mobile menu was white; match its surface to the dark home header. */
+@media(max-width:1100px){
+  .luxury-public .site-header .nav.open{position:absolute;top:100%;left:0;right:0;width:100%;margin:0;padding:12px 24px 14px;border-bottom:1px solid #d7d0bf;box-shadow:0 22px 36px #11191420;background:#fffefa}
+  .luxury-public .site-header .nav.open>a,.luxury-public .site-header .nav.open .nav-partners>summary{font-size:15px;font-weight:400;line-height:1.5;padding:7px 0;min-height:38px}
+  .luxury-home .site-header .nav.open{background:#192224;border-bottom-color:#b99a6250;box-shadow:0 22px 36px #080d1038}
+  .luxury-home .site-header .nav.open>a,.luxury-home .site-header .nav.open .nav-partners>summary{color:#f1f0e8}
+  .luxury-home .site-header .nav.open>a[aria-current]{color:#dfc38d}
+  .luxury-home .site-header .nav.open>a:hover{color:#dfc38d}
+  .luxury-home .site-header .nav.open .nav-partners-list{margin-top:12px;background:#fffefa;border:1px solid #d7d0bf}
+}
