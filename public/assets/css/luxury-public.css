@@ -57,6 +57,8 @@ body.luxury-public{
 .luxury-home .hero-frame{position:relative;width:100%;height:100%;border-radius:0;padding:0;background:none;box-shadow:none}
 .luxury-home .hero-photo{width:100%;height:100%;aspect-ratio:auto;border-radius:0;background-position:62% center;background-size:cover;filter:brightness(1.17) saturate(.78);box-shadow:none}
 .luxury-home .hero-visual:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#141a1d 0%,#141a1db0 15%,#141a1d12 42%,#141a1d10 90%,#141a1d36),linear-gradient(0deg,#141a1d90,transparent 25%);pointer-events:none}
+/* Reduce the shading over the existing wall logo by 30%, with a soft edge. */
+.luxury-home .hero-visual:after{mask-image:radial-gradient(ellipse 27% 34% at 10% 25%,rgba(0,0,0,.7) 0%,rgba(0,0,0,.7) 35%,#000 100%)}
 .luxury-home .hero-frame-corner{display:none}
 .luxury-assurances{max-width:none;padding:25px max(48px,calc((100vw - 1240px)/2));display:grid;grid-template-columns:repeat(3,1fr);gap:24px;background:#eeebe2;border-bottom:1px solid #dedacf}
 .luxury-assurances>div{display:flex;align-items:center;gap:16px;color:#515a52;font:400 11px/1.6 Inter,Arial,sans-serif}
