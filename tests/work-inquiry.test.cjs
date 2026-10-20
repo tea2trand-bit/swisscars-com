@@ -28,11 +28,33 @@ test('only concrete types and work steps are offered; all is not a hidden fallba
 test('work queues follow recorded business state across both entry points without changing the record',()=>{
  for(const kind of ['budget','listing']){
   const d={status:'novo',proposals:[]};assert.equal(W.queue(d,{kind}),kind==='listing'?'car':'budget');
-  d.proposals=[{answer:'zelim',avail:'da'}];assert.equal(W.queue(d,{kind}),'inspection');
+  d.proposals=[{answer:'zelim',avail:'da'}];assert.equal(W.queue(d,{kind}),'documents');Object.assign(d.proposals[0],{originProofVerified:true,chVatRefundVerified:false});assert.equal(W.queue(d,{kind}),'inspection');
   d.proposals[0].choice='buy';assert.equal(W.queue(d,{kind}),'purchase');
-  for(const [status,queue] of [['kupljen','purchase'],['transport','transport'],['carinjen','customs'],['garaza','delivery']]){const before=JSON.stringify(d);assert.equal(W.queue(d,{kind,car:{status}}),queue);assert.equal(JSON.stringify(d),before);}
+  for(const [status,queue] of [['kupljen','purchase'],['transport','transport'],['carinjen','customs'],['garaza','customs']]){const before=JSON.stringify(d);assert.equal(W.queue(d,{kind,car:{status}}),queue);assert.equal(JSON.stringify(d),before);}
  }
  assert.equal(W.queue({status:'novo'},{kind:'inspection'}),'inspection');
+});
+
+test('numbered phases distinguish three parallel entries, document checks and the two destinations',()=>{
+ assert.equal(W.queues.length,10);assert.deepEqual(W.queues.map(q=>q.number),[1,1,1,2,3,4,5,6,7,8]);
+ assert.equal(W.queue({listingVehicle:{title:'Audi'}},{kind:'listing'}),'documents');
+ assert.equal(W.queue({listingReview:{at:1}},{kind:'listing'}),'inspection');
+ assert.equal(W.companyQueue({status:'favoriti'},null),'documents');
+ assert.equal(W.companyQueue({status:'favoriti'},null,{conditionsReviewed:true}),'inspection');
+ assert.equal(W.companyQueue({status:'pregled'},{internalReportAt:1},{purchaseReady:true}),'purchase');
+ assert.equal(W.carQueue({status:'prodaja',readyFor:'sale'}),'sale');
+ assert.equal(W.carQueue({status:'prodaja',orderId:'client'}),'delivery');
+ assert.equal(W.carQueue({status:'garaza'}),'customs','preparation must not be called ready for sale');
+ const card=W.summary({serviceCard:true,kind:'listing',workQueue:'car',vehicle:'Audi RS3',vehicleMeta:'2023 · 73.500 km',person:'Miroslav Ilić',action:'',status:'Upit primljen'},{location:'6850 Mendrisio'});
+ assert.equal((card.match(/Audi RS3/g)||[]).length,1);assert.doesNotMatch(card,/Vozilo iz oglasa|Grad nije upisan/);
+ assert.match(card,/sc-phase-number">1\./);assert.match(card,/Kupovina vozila \(upit sa oglasom\)/);
+});
+
+test('company jobs do not duplicate client-linked vehicles or finds already converted into a vehicle',()=>{
+ const source=html.slice(html.indexOf('function teamCompanyWorkJobs('),html.indexOf('\nfunction renderCompanyWorkCards('));
+ const context={SCWorkInquiry:W,leadFilter:'open',LEADS:[{carId:'client-car'}],CARS:[{_id:'client-car',status:'transport'},{_id:'own-car',status:'prodaja',fromFind:'old-find'},{_id:'own-linked',status:'kupljen',orderId:'client'}],FINDS:[{_id:'old-find',status:'kupljeno'},{_id:'new-find',status:'favoriti'},{_id:'client-find',status:'novo',client:true}],isCompanyFind:f=>!f.client,companyFindUnavailable:()=>false,companyFindInspection:()=>null,companyFindConditionsReviewed:()=>false,companyFindPurchaseReady:()=>false,matchesLeadQuery:()=>true};
+ vm.createContext(context);vm.runInContext(source,context);const before=JSON.stringify([context.LEADS,context.CARS,context.FINDS]);
+ assert.deepEqual(Array.from(context.teamCompanyWorkJobs(),j=>[j.record._id,j.queue]),[['own-car','sale'],['new-find','documents']]);assert.equal(JSON.stringify([context.LEADS,context.CARS,context.FINDS]),before);
 });
 
 test('each actionable stage remains reachable after removing all steps',()=>{
@@ -68,7 +90,7 @@ test('the selected queue shows all its work steps together and retains the job c
  vm.createContext(context);vm.runInContext(source,context);context.applyInquiryStepFilter();
  assert.deepEqual(rows.map(r=>r.hidden),[false,false,false]);
  assert.equal(context.inquiryStepFilter,'check-data');
- assert.equal(controls.teamInquiryCount.textContent,'Aktivni upiti: 3');
+ assert.equal(controls.teamInquiryCount.textContent,'Aktivni poslovi: 3');
  context.inquiryStepFilter='schedule';context.applyInquiryStepFilter();
  assert.deepEqual(rows.map(r=>r.hidden),[false,false,false]);
  context.leadFilter='done';context.applyInquiryStepFilter();
@@ -85,7 +107,7 @@ test('search in the filter finds names, selected vehicles and proposal links acr
  const context={
   SCWorkInquiry:W,SCInquiryView:require('../public/assets/js/inquiry-view.js'),SCPurchaseFlow:require('../public/assets/js/purchase-flow.js'),
   teamPendingInquiry:'',leadFilter:'open',leadQuery:'golf',inquiryKindFilter:'inspection',inquiryKindPinned:false,
-  teamInquiryQueue:record=>W.queue(record,{kind:'budget'}),
+  teamCompanyWorkJobs:()=>[],teamInquiryQueue:record=>W.queue(record,{kind:'budget'}),
   LEADS:[{_id:'lead-1',name:'Jelena Ilić',model:'Volkswagen',proposals:[{title:'VW Golf',url:'https://example.test/vehicle/123'}]}],
   INSPS:[{_id:'inspection-1',name:'Marko',car:'Toyota'}],FINDS:[],
   leadStage:()=>({done:false}),activeInspectionInquiry:()=>true,teamInquiryReference:x=>x._id,buildTeamWorkTasks:()=>[],

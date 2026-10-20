@@ -124,7 +124,7 @@
   #app #t-narudzbine .inquiry-steps {display:none!important}
   #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger {grid-column:1;grid-row:1}
   #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger>span {flex:1;text-align:center}
-  #app #t-narudzbine .inquiry-summary {display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important;padding:12px!important}
+  #app #t-narudzbine .inquiry-summary:not(.is-service-card) {display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important;padding:12px!important}
   #app #t-narudzbine .inquiry-summary>:is(.iq-person,.iq-vehicle,.iq-contact,.iq-inline-quote,.iq-progress) {grid-column:1/-1!important;grid-row:auto!important;min-width:0;justify-self:stretch;align-self:start;padding:0!important}
   #app #t-narudzbine .inquiry-summary>.iq-person {grid-row:2!important}
   #app #t-narudzbine .inquiry-summary>.iq-vehicle {grid-row:3!important}

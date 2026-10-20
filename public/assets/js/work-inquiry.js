@@ -44,17 +44,31 @@
   return steps.find(s=>counts[s.value]>0)?.value||'check-data';
  }
  function kindGroup(kind){return kind==='inspection'?'inspection':kind==='budget'?'budget':'car';}
- const queues=[['budget','Pronađite auto'],['car','Upiti sa oglasom'],['inspection','Pregledi'],['purchase','Kupovina'],['transport','Transport'],['customs','Carina'],['delivery','Priprema i predaja']].map(([value,label])=>({value,label}));
+ const queues=[['budget','Pronađite auto',1],['car','Upiti sa oglasom',1],['company','Pronađi vozilo za firmu',1],['documents','Provera dokumentacije',2],['inspection','Pregledi',3],['purchase','Kupovina',4],['transport','Transport',5],['customs','Carina',6],['delivery','Predaja klijentu',7],['sale','Spremno za prodaju',8]].map(([value,label,number])=>({value,label,number}));
+ function carQueue(car){
+  if(!car)return null;
+  if(car.status==='prodaja'&&!car.orderId&&car.readyFor!=='handover')return 'sale';
+  if(car.status==='garaza')return 'customs';
+  if(['prodaja','prodat'].includes(car.status))return 'delivery';
+  return {carinjen:'customs',transport:'transport',kupljen:'purchase'}[car.status]||null;
+ }
  function queue(record,{kind='budget',car=null}={}){
-  if(kind==='inspection')return 'inspection';
-  const stage=car?.status;
-  if(['garaza','prodaja','prodat'].includes(stage)||record.status==='predato')return 'delivery';
-  if(stage==='carinjen')return 'customs';
-  if(stage==='transport')return 'transport';
+  if(kind==='inspection')return record.needsVehicleCheck?'documents':'inspection';
+  const savedCarQueue=carQueue(car);if(savedCarQueue)return savedCarQueue;
+  if(record.status==='predato')return 'delivery';
   const proposals=(record.proposals||[]).filter(p=>p.answer!=='ne'&&p.avail!=='ne'&&!p.depositRefundAt&&!['refund','continue','other'].includes(p.choice));
-  if(stage==='kupljen'||record.status==='kupljeno'||proposals.some(p=>p.choice==='buy'))return 'purchase';
-  if(record.listingCheck?.status==='available'||proposals.some(p=>p.inspectionPaid===true||p.inspAt||p.plannedAt||p.inspectionScheduled===true||p.answer==='zelim'&&p.avail==='da'))return 'inspection';
+  if(record.status==='kupljeno'||proposals.some(p=>p.choice==='buy'))return 'purchase';
+  if(proposals.some(p=>p.inspectionPaid===true||p.inspAt||p.plannedAt||p.inspectionScheduled===true))return 'inspection';
+  const selected=proposals.filter(p=>p.answer==='zelim'||p.serviceFlow==='inspection-first');
+  if(selected.length)return selected.every(p=>p.avail==='da'&&typeof p.originProofVerified==='boolean'&&typeof p.chVatRefundVerified==='boolean')?'inspection':'documents';
+  if(record.listingReview)return 'inspection';
+  if(record.listingVehicle||record.listingCheck?.status==='available')return 'documents';
   return kindGroup(kind);
+ }
+ function companyQueue(find,inspection,{conditionsReviewed=false,purchaseReady=false}={}){
+  if(purchaseReady)return 'purchase';
+  if(inspection)return 'inspection';
+  return ['favoriti','izabrano','evidencija','pogledano','favorit','pregled'].includes(find.status)?(conditionsReviewed?'inspection':'documents'):'company';
  }
  function selectKind(counts,current){return ['inspection','car','budget'].includes(current)&&counts[current]>0?current:['inspection','car','budget'].find(k=>counts[k]>0)||'inspection';}
  function primaryAction(html){
@@ -63,15 +77,19 @@
  function summary(c,options){
   const step=stepFor(c.action,c.status),title=steps.find(s=>s.value===step).title;
   if(c.serviceCard){
-   const service=c.kind==='inspection'?(c.kindLabel||'Pregled vozila'):c.kind==='budget'?'Pronalazak auta':'Kupovina vozila';
+   const phase=queues.find(q=>q.value===(c.workQueue||kindGroup(c.kind)))||queues[0];
+   const phaseLabel=phase.value==='car'?'Kupovina vozila (upit sa oglasom)':phase.label;
    const action=step==='check-payment'||String(c.action||'').includes('data-inquiry-expand')?'':primaryAction(c.action);
-   const request=c.criteria?'<span class="sc-request"><span>Klijent je tražio:</span> <strong>'+escape(c.criteria)+'</strong></span>':'';
+   const request=c.requestFacts?'<span class="sc-request" aria-label="Klijent je tražio"><strong class="sc-request-model">'+escape(c.requestFacts.model)+'</strong><span class="sc-request-facts">'+c.requestFacts.facts.map(([label,value])=>'<span><small>'+escape(label)+'</small><strong>'+escape(value)+'</strong></span>').join('')+'</span></span>':c.criteria?'<span class="sc-request"><span>Klijent je tražio:</span> <strong>'+escape(c.criteria)+'</strong></span>':'';
+   const person=escape(c.person||'Ime nije upisano');
+   const client=c.personContact?c.personContact.replace(/<button\b/,'<button title="Otvori kontakt" aria-label="Kontakt: '+person+'"').replace(/class="([^"]*)"/,'class="$1 sc-client-link"').replace(/>[^<]*<\/button>/,'>'+person+'</button>'):'<strong>'+person+'</strong>';
    const photo=/^https:\/\//.test(c.thumbnail||'')?'<img class="sc-vehicle-photo" src="'+escape(c.thumbnail)+'" alt="Fotografija vozila" loading="lazy" referrerpolicy="no-referrer">':'';
-   const vehicle=c.vehiclePending?'':'<span class="sc-vehicle">'+photo+'<span class="sc-vehicle-info"><small>'+(c.kind==='inspection'?'Vozilo za pregled':c.kind==='budget'?'Izabrano vozilo':'Vozilo iz oglasa')+'</small><strong>'+escape(c.vehicle||'Vozilo još nije izabrano')+'</strong>'+(c.vehicleMeta?'<span class="sc-location">'+escape(c.vehicleMeta)+'</span>':'')+'<span class="sc-location">'+options.location+'</span></span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>';
+   const vehicle=c.vehiclePending?'':'<span class="sc-vehicle">'+photo+'<span class="sc-vehicle-info"><strong>'+escape(c.vehicle||'Podaci vozila još nisu preuzeti')+'</strong>'+(c.vehicleMeta?'<span class="sc-location">'+escape(c.vehicleMeta)+'</span>':'')+(options.location?'<span class="sc-location">'+options.location+'</span>':'')+'</span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>';
    return '<summary class="inquiry-summary is-service-card" data-work-step="'+step+'">'+
-    '<span class="sc-service"><span>Usluga <strong>'+escape(service)+'</strong></span></span>'+
-    '<span class="sc-identity"><span class="sc-client"><small>Klijent</small><strong>'+escape(c.person||'Ime nije upisano')+'</strong></span>'+request+'<span class="sc-contact">'+(c.personContact||'')+'</span></span>'+
+    '<span class="sc-service"><span class="sc-phase"><b class="sc-phase-number">'+phase.number+'.</b><strong>'+escape(phaseLabel)+'</strong></span>'+(c.headerActionHtml?'<span class="sc-header-action">'+c.headerActionHtml+'</span>':'<span class="sc-purpose">'+(c.company?'Za firmu':'Za klijenta')+'</span>')+'</span>'+
+    '<span class="sc-identity"><span class="sc-client">'+client+'</span>'+request+'</span>'+
     vehicle+
+    '<span class="sc-proposal-slot"></span>'+
     '<span class="sc-next"><span><small>Status</small><strong>'+escape(c.status||title)+'</strong></span>'+(action||'<span class="sc-expand">Detalji upita <span aria-hidden="true">⌄</span></span>')+'</span>'+(c.quoteHtml||'')+'</summary>';
   }
   const kind='<span class="iq-kind iq-kind-'+escape(c.kind)+'">'+escape(c.kindLabel||options.kindLabel)+'</span>';
@@ -85,6 +103,6 @@
    '<span class="iq-next">'+primaryAction(c.action)+'</span>'+progress+'</summary>';
  }
  function nextFlow(checks,allowed){return checks.find(s=>s.flow&&s.field!=='deposit'&&!s.done&&allowed(s.field))||null;}
- const api={steps,stepFor,selectStep,kindGroup,selectKind,summary,nextFlow,queues,queue};
+ const api={steps,stepFor,selectStep,kindGroup,selectKind,summary,nextFlow,queues,queue,carQueue,companyQueue};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.SCWorkInquiry=api;
 })(typeof window==='undefined'?this:window);
