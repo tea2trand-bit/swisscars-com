@@ -123,7 +123,7 @@ export async function readListing(url,key,{fetchFn=fetch,readPage=readCdpPage,de
 }
 
 // No page actions, logins or challenge handling: read rendered DOM only.
-export async function readCdpPage(cdpUrl,url,signal,{WebSocketImpl=WebSocket,pollMs=700,emptyStableMs=5000,now=()=>performance.now(),onDiagnostic}={}) {
+export async function readCdpPage(cdpUrl,url,signal,{WebSocketImpl=WebSocket,pollMs=700,emptyStableMs=5000,interstitialWaitMs=15000,now=()=>performance.now(),onDiagnostic}={}) {
   const connection=new URL(cdpUrl);
   diagnostic(onDiagnostic,'websocket_connecting',connection);
   const ws=new WebSocketImpl(cdpUrl),pending=new Map();let seq=0;
@@ -154,13 +154,21 @@ export async function readCdpPage(cdpUrl,url,signal,{WebSocketImpl=WebSocket,pol
     diagnostic(onDiagnostic,'page_reading',connection);
     const expression=`JSON.stringify({url:location.href,readyState:document.readyState,title:document.title,heading:document.querySelector('h1')?.innerText.trim()||'',text:document.body?.innerText.slice(0,50000)||'',photos:Array.from(document.querySelectorAll('img')).filter(img=>/-image-\\d+$/.test(img.alt||'')).map(img=>img.currentSrc||img.src).filter(Boolean).slice(0,50),place:Array.from(document.querySelectorAll('a[href]')).find(a=>{try{return /(^|\\.)google\\.[a-z.]+$/.test(new URL(a.href).hostname)&&new URL(a.href).pathname.startsWith('/maps/search')&&/\\b\\d{4}\\b/.test(a.innerText);}catch{return false;}})?.innerText.trim()||'',cards:Array.from(document.querySelectorAll('a[href]')).filter(a=>/\\/details\\/show\\/\\d+|\\/auto-oglasi\\/\\d+/.test(a.getAttribute('href')||'')&&a.innerText.trim()).map(a=>({url:a.href,text:a.innerText.trim().slice(0,3000)})).slice(0,100)})`;
     // Readiness is based on page contents; a loading screen never means zero listings.
-    let stable='',emptySince=null;
+    let stable='',emptySince=null,blockedSince=null;
     while(!signal.aborted){
       try{
         const v=await send('Runtime.evaluate',{expression,returnByValue:true},sessionId);
         const snapshot=JSON.parse(v.result.value),status=classify(snapshot);
-        if(status==='blocked')return snapshot;
-        if(status==='ok'&&snapshot.readyState==='complete'){
+        if(status==='blocked'){
+          // A normal navigation can briefly show the site's automatic connection
+          // check. Let the page finish its own loading, without clicks, challenge
+          // handling, refreshes or changed browser settings. A persistent check
+          // still ends the read and never becomes listing data.
+          blockedSince??=now();
+          if(now()-blockedSince>=interstitialWaitMs)return snapshot;
+          stable='';emptySince=null;
+        }else if(status==='ok'&&snapshot.readyState==='complete'){
+          blockedSince=null;
           allowedUrl(snapshot.url);
           if(new URL(snapshot.url).hostname!==new URL(url).hostname)throw Error('unexpected_redirect');
           const populated=Boolean(snapshot.heading&&/\/de\/d\//.test(snapshot.url||''))||(snapshot.cards||[]).some(card=>card.text&&card.url);
@@ -174,7 +182,7 @@ export async function readCdpPage(cdpUrl,url,signal,{WebSocketImpl=WebSocket,pol
             stable=current;
             emptySince=populated?null:now();
           }
-        }else{stable='';emptySince=null;}
+        }else{stable='';emptySince=null;blockedSince=null;}
       }catch(e){
         // The navigation can replace a context while the first DOM read is in flight.
         if(!/execution context was destroyed|cannot find context with specified id|cannot find default execution context/i.test(e.cdpMessage||''))throw e;
