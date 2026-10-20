@@ -667,6 +667,21 @@ dialog#teamReportPane{max-width:780px}
 /* Inquiry work happens on its own page, leaving the list compact. */
 #leadList [data-lead-chat]{display:none}
 #teamContactPane [data-lead-chat]{display:block}
+#teamContactPane .team-contact-details{display:grid;gap:14px;min-width:0;margin:0 0 20px;padding:16px;border:1px solid #dce5eb;border-radius:9px;background:#f7fafc}
+#teamContactPane .team-contact-address{display:grid;gap:5px;min-width:0}
+#teamContactPane #teamContactPhone,#teamContactPane #teamContactEmail{margin:0;font:400 14px/1.5 Inter,Arial,sans-serif;color:#486577;overflow-wrap:anywhere}
+#teamContactPane #teamContactPhone{font-size:16px;font-weight:600;color:#294d63}
+#teamContactPane #teamContactEmail:empty{display:none}
+#teamContactPane #teamContactLinks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+#teamContactPane #teamContactLinks:empty{display:none}
+#teamContactPane #teamContactLinks .team-contact-action{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;min-height:44px;padding:9px 10px;font-size:14px;box-sizing:border-box}
+#teamContactPane #teamContactLinks .team-contact-icon{display:grid}
+#teamContactPane #teamContactLinks .team-contact-action>span:last-child{display:inline}
+#teamContactPane .team-contact-chat-heading{margin:0 0 12px;font:600 15px/1.4 Inter,Arial,sans-serif;color:#294d63}
+#teamPhonePane .team-phone-head{display:flex;align-items:center;justify-content:space-between;gap:14px;position:sticky;top:0;z-index:2;background:var(--paper);padding-block:4px}
+#teamPhonePane .team-phone-head h2{margin:0;min-width:0}
+#teamPhonePane #teamPhoneClose{display:grid;place-items:center;width:44px;min-width:44px;height:44px;padding:4px;font-size:26px;line-height:1;background:transparent;border:0;color:#627683}
+@media(max-width:600px){dialog#teamContactPane{width:calc(100% - 24px);max-width:calc(100% - 24px);padding:18px}#teamContactPane .contact-compact-header{gap:12px}#teamContactPane #teamContactName{min-width:0;overflow-wrap:anywhere}#teamContactPane .contact-compact-person{min-width:0;flex:1}#teamContactPane .team-contact-details{padding:14px}#teamContactPane .sc-chat-actions .sc-chat-button{width:100%;min-height:44px}}
 #app .inquiry-summary .iq-person a{color:inherit;text-decoration:none}
 #app .inquiry-summary .iq-person a:hover{text-decoration:underline;text-underline-offset:3px}
 #app .listing-review-flow .b,#app [data-ppaid]{color:#245b83;background:#fff;border-color:#b9cdda;box-shadow:none;font-size:12px}
@@ -754,6 +769,12 @@ body.team-inquiry-focus #t-narudzbine .team-lead-body{padding-top:12px;margin-to
 #app .inquiry-steps button[aria-pressed=true]{border-color:#245b83;color:#245b83}
 #app .inquiry-steps button:hover{color:#245b83}
 #app .inquiry-heading-actions{display:flex;align-items:center;gap:10px}
+#app .inquiry-heading-copy{flex:1;min-width:0}
+#app .inquiry-heading-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#app .inquiry-heading-title h2{margin:0}
+#app #leadNewBtn.team-inline-link{display:inline-flex;align-items:center;justify-content:center;flex:none;margin:0;min-height:44px;padding:6px 0;border:0;border-radius:0;background:transparent;box-shadow:none;color:#245b83;font:500 14px/1.3 Inter,Arial,sans-serif;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;cursor:pointer}
+#app #leadNewBtn.team-inline-link:hover{color:#194969;text-decoration-thickness:2px}
+#app #leadNewBtn.team-inline-link:disabled{opacity:.5;cursor:default}
 #app:has(#t-narudzbine:not([hidden]))>#kpis,#app:has(#t-narudzbine:not([hidden]))>#teamBudgetBar{display:none!important}
 #app #t-narudzbine .inquiry-kinds{display:flex}
 #app .team-field-summary>summary.inquiry-summary{cursor:default}

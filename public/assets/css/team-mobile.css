@@ -8,12 +8,12 @@
 #app #t-narudzbine .inquiry-steps {display:none!important}
 #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger {grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:space-between;width:100%;max-width:none;min-width:0;min-height:46px;margin:0;font-size:16px;box-sizing:border-box;background:#edf4fa;border-color:#c7dbe9;color:#315d79}
 #app #t-narudzbine #mobileInquiryStep+.team-choice-trigger>span {min-width:0;white-space:nowrap}
-.team-choice-pane .team-inquiry-search {display:grid;gap:7px;margin:0 0 16px}
+.team-choice-pane .team-inquiry-search {display:grid;gap:8px;margin:0;padding:14px 16px}
 .team-choice-pane .team-inquiry-search[hidden],.team-choice-pane .team-inquiry-results[hidden] {display:none!important}
 .team-choice-pane .team-inquiry-search-heading {display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:#48677a}
 .team-choice-pane .team-inquiry-search-heading button {min-height:44px;padding:7px 10px;font-size:13px}
 .team-choice-pane .team-inquiry-search input {box-sizing:border-box;width:100%;min-width:0;min-height:46px;margin:0;padding:10px 12px;font-size:16px;border:1px solid #c7dbe9;border-radius:7px;background:#fff;color:#36596f}
-.team-choice-pane .team-inquiry-results {width:100%;min-height:46px;margin:14px 0 0;font-size:15px;background:#467895;border-color:#467895;color:#fff}
+#teamChoicePane .team-inquiry-results {width:calc(100% - 32px);min-height:46px;margin:14px 16px 16px;font-size:15px;background:#467895;border-color:#467895;color:#fff}
 #app .inquiry-summary .iq-now {display:none}
 #app .inquiry-summary .iq-vehicle-title {display:flex;align-items:flex-start;gap:10px;min-width:0}
 #app .inquiry-summary .iq-vehicle-title>strong {flex:1;min-width:0;font:600 15px/1.4 Inter,Arial,sans-serif;color:#253f4b;overflow-wrap:break-word}
@@ -256,7 +256,9 @@
 }
 
 @media (max-width:359px) {
-  #app {--team-nav-font:13px}
+  body {padding-inline:8px}
+  #app {--team-nav-font:12px;padding-inline:8px}
+  #app>.tabs>button {font-size:12px}
   #app>.top {flex-wrap:wrap}
   #app>.top>.user {margin-left:auto}
   #app #businessReports .report-page-head h2 {font-size:18px}
@@ -270,4 +272,24 @@
   #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-amount {grid-column:3}
   #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-contact {display:none}
   #app #t-narudzbine .team-field-summary>summary.inquiry-summary.is-compact-row>.iq-next {grid-column:4}
+}
+
+/* Keep the phone header and section navigation together, below open overlays. */
+@media (max-width:760px) {
+  #app>.top {position:sticky;top:0;z-index:60;min-height:56px;margin-bottom:0;padding-block:6px;background:var(--bg);flex-wrap:nowrap}
+  #app>.tabs {top:56px;z-index:50}
+  #app #t-narudzbine .inquiry-heading{display:flex;flex-wrap:wrap;gap:8px}
+  #app #t-narudzbine .inquiry-heading-copy{flex-basis:100%}
+  #app #leadNewBtn.team-inline-link{font-size:13px}
+  #teamContactPane .team-planning-body{padding:16px 0 0}
+  #teamContactPane #teamContactLinks .team-contact-action{padding-inline:6px;gap:5px}
+  #teamContactPane #teamContactLinks .team-contact-icon{width:20px;height:20px;flex-basis:20px}
+  #app>.top #teamAppearanceOpen {display:none!important}
+  #app>.top .user #bellBtn {width:44px;min-width:44px;height:44px;min-height:44px;padding:10px;color:#446577}
+  #app>.top .user #bellBtn svg {width:24px;height:24px;stroke-width:1.8}
+  #app>.top .user #teamAccountToggle {min-width:68px;max-width:140px;height:44px;min-height:44px;padding:8px 6px;gap:7px;font-size:16px;font-weight:600;line-height:1.25;color:var(--ink)}
+  #app>.top #teamAccountToggle>span[aria-hidden="true"] {display:inline-flex;align-items:center;justify-content:center;min-width:16px;font-size:20px;line-height:1}
+  #app>.top .user>.ev-lang .b {min-width:26px;padding-inline:3px;font-size:10px}
+  #app #bellBox {position:fixed;top:64px;left:12px;right:12px;width:auto;max-width:none;max-height:calc(100dvh - 80px);z-index:80;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  #app #bellBox h4 {position:sticky;top:0;z-index:1;background:var(--paper)}
 }

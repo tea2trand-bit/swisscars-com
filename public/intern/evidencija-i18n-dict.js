@@ -3,6 +3,7 @@
    vrednosti/ključevi, modeli automobila, API parametri i identifikatori NISU u rečniku i ne prevode se.
    EV_PATTERNS: sastavljeni tekstovi sa {x} (vrednosti ostaju, fiksni deo se prevodi; uhvaćeni deo prolazi kroz rečnik). */
 window.EV_DICT = Object.assign(window.EV_DICT || {}, {
+  "Unesi ručno upit": ["Anfrage manuell erfassen", "Enter inquiry manually"],
   "Prevoz vozila": ["Fahrzeugtransport", "Vehicle transport"],
   "Prevoznik": ["Transporteur", "Carrier"],
   "Vrsta prevoza": ["Transportart", "Transport type"],
@@ -81,6 +82,11 @@ window.EV_DICT = Object.assign(window.EV_DICT || {}, {
   "Novac koji uvek ostaje na računu": ["Geld, das immer auf dem Konto bleibt", "Money that always stays in the account"],
   "početni kapital + zarađeno − u autima": ["Startkapital + verdient − in Fahrzeugen", "starting capital + earned − in cars"],
   "Sačuvano": ["Gespeichert", "Saved"],
+  "Podaci su sačuvani.": ["Daten gespeichert.", "Data saved."],
+  "Podaci za kontakt": ["Kontaktdaten", "Contact details"],
+  "Razgovor preko platforme": ["Nachrichten über die Plattform", "Platform conversation"],
+  "Pretraži upite": ["Anfragen suchen", "Search requests"],
+  "Zatvori novi upit": ["Neue Anfrage schliessen", "Close new request"],
   "Koliko je uloženo": ["Wie viel investiert ist", "How much is invested"],
   "Uloženo": ["Investiert", "Invested"],
   "Uloženo / plaćeno": ["Investiert / bezahlt", "Invested / paid"],
