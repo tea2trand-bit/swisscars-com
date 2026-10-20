@@ -138,6 +138,10 @@ test('search in the filter finds names, selected vehicles and proposal links acr
  for(const query of ['jelena ilic','vehicle/123','vw golf']){context.leadQuery=query;assert.equal(context.matchesLeadQuery(context.LEADS[0]),true,query);}
  context.leadQuery='nepostojeci';assert.equal(context.matchesLeadQuery(context.LEADS[0]),false);
  context.leadQuery='';assert.equal(context.matchesLeadQuery(context.LEADS[0]),true);
+ const leads=context.LEADS;context.LEADS=[];context.INSPS=[];context.teamCompanyWorkJobs=()=>[{queue:'transport',record:{_id:'company-car'}}];context.inquiryKindPinned=false;context.refreshInquiryKinds();assert.equal(context.inquiryKindFilter,'transport');
+ context.LEADS=leads;context.refreshInquiryKinds();assert.equal(context.inquiryKindFilter,'budget','late inquiries must replace the provisional transport selection');
+ context.inquiryKindPinned=true;context.inquiryKindFilter='transport';context.refreshInquiryKinds();assert.equal(context.inquiryKindFilter,'transport','a deliberate user selection must not be reset by background loads');
+
 });
 
 test('card shows one specific primary action and puts the ad link with the vehicle',()=>{

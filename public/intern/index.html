@@ -5016,10 +5016,10 @@ function applyInquiryStepFilter(){
  $('leadEmpty').hidden=visible>0;
 }
 function refreshInquiryKinds(){
- if(teamPendingInquiry){const linked=LEADS.find(l=>l._id===teamPendingInquiry),inspection=INSPS.find(x=>x._id===teamPendingInquiry);if(linked)inquiryKindFilter=teamInquiryQueue(linked);else if(inspection)inquiryKindFilter=SCWorkInquiry.queue(inspection,{kind:'inspection'});}
+ if(teamPendingInquiry){const linked=LEADS.find(l=>l._id===teamPendingInquiry),inspection=INSPS.find(x=>x._id===teamPendingInquiry);if(linked){inquiryKindFilter=teamInquiryQueue(linked);inquiryKindPinned=true;}else if(inspection){inquiryKindFilter=SCWorkInquiry.queue(inspection,{kind:'inspection'});inquiryKindPinned=true;}}
  const counts=Object.fromEntries(SCWorkInquiry.queues.map(q=>[q.value,0]));INSPS.filter(x=>activeInspectionInquiry(x)&&matchesLeadQuery(x)&&leadFilter!=='done').forEach(x=>counts[SCWorkInquiry.queue(x,{kind:'inspection'})]++);teamCompanyWorkJobs().forEach(job=>counts[job.queue]++);
  LEADS.filter(l=>!l.demo&&matchesLeadQuery(l)&&(leadFilter==='done'?leadStage(l,0).done:!leadStage(l,0).done)).forEach(l=>counts[teamInquiryQueue(l)]++);
- if(!inquiryKindPinned&&!(counts[inquiryKindFilter]>0))inquiryKindFilter=SCWorkInquiry.queues.find(q=>counts[q.value]>0)?.value||'budget';
+ if(!inquiryKindPinned)inquiryKindFilter=SCWorkInquiry.queues.find(q=>counts[q.value]>0)?.value||'budget';
  $('teamInquiryTitle').textContent='Svi poslovi';
  const transportCars=[...teamCompanyWorkJobs().filter(j=>j.queue==='transport').map(j=>j.record),...LEADS.filter(l=>!l.demo&&!leadStage(l,0).done&&matchesLeadQuery(l)&&teamInquiryQueue(l)==='transport').map(l=>CARS.find(c=>c._id===l.carId)||{})];
  const overview=window.SCTransportOverview,transportCounts={local:0,international:0};let unknown=0;
