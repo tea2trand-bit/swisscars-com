@@ -11,7 +11,15 @@ const refreshButton=el('button',t(8));refreshButton.type='button';refreshButton.
 document.addEventListener('partner-language-changed',()=>{refreshButton.textContent=t(8);refresh();});
 if(carrier){document.addEventListener('transport-profile-ready',refresh);}else{
  const form=document.getElementById('transportAssignForm');let loaded=null;
- window.SCTransportJobs={async show(carId){currentCar=carId;const admin=window.SC.member?.active&&window.SC.member?.role==='admin';document.getElementById('teamTransportSection').hidden=!admin;if(!admin)return;if(loaded!==carId){loaded=carId;refresh();const {data,error}=await sb.from('sc_partner_profiles').select('user_id,role,profile').eq('status','active').in('role',['local_transport','international_transport','transport_both']);const s=form.elements.carrier;s.replaceChildren(el('option','—'));s.firstChild.value='';if(!error)for(const p of data){const o=el('option',p.profile.full_name+' · '+p.profile.city);o.value=p.user_id;s.append(o);}}}};
- form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('button');if(b.disabled)return;b.disabled=true;try{const {error}=await sb.rpc('sc_transport_assign',{p_car:currentCar,p_carrier:form.elements.carrier.value,p_kind:form.elements.kind.value,p_pickup:form.elements.pickup.value,p_destination:form.elements.destination.value,p_note:form.elements.note.value});if(error)throw error;form.reset();await refresh();}catch{root.append(el('p',t(10)));}finally{b.disabled=false;}};
+ let overviewBusy=false;window.SCTransportOverview={ready:false,jobs:[]};
+ async function refreshOverview(){
+  if(overviewBusy||!window.SC.member?.active)return;overviewBusy=true;
+  try{const jobs=[];for(let from=0;;from+=500){const {data,error}=await sb.from('sc_transport_jobs').select('id,car_id,kind,status').in('status',['assigned','accepted','collected']).order('id').range(from,from+499);if(error)throw error;jobs.push(...data);if(data.length<500)break;}window.SCTransportOverview={ready:true,jobs};}
+  catch{window.SCTransportOverview={ready:false,jobs:[],error:true};}
+  finally{overviewBusy=false;window.dispatchEvent(new Event('transport-work-updated'));}
+ }
+ window.SCTransportJobs={refreshOverview,async show(carId){currentCar=carId;const admin=window.SC.member?.active&&window.SC.member?.role==='admin';document.getElementById('teamTransportSection').hidden=!admin;if(!admin)return;if(loaded!==carId){loaded=carId;refresh();const {data,error}=await sb.from('sc_partner_profiles').select('user_id,role,profile').eq('status','active').in('role',['local_transport','international_transport','transport_both']);const s=form.elements.carrier;s.replaceChildren(el('option','—'));s.firstChild.value='';if(!error)for(const p of data){const o=el('option',p.profile.full_name+' · '+p.profile.city);o.value=p.user_id;s.append(o);}}}};
+ form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('button');if(b.disabled)return;b.disabled=true;try{const {error}=await sb.rpc('sc_transport_assign',{p_car:currentCar,p_carrier:form.elements.carrier.value,p_kind:form.elements.kind.value,p_pickup:form.elements.pickup.value,p_destination:form.elements.destination.value,p_note:form.elements.note.value});if(error)throw error;form.reset();await refresh();await refreshOverview();}catch{root.append(el('p',t(10)));}finally{b.disabled=false;}};
+ refreshOverview();
 }
 })();

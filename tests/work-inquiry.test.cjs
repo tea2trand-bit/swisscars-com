@@ -122,10 +122,10 @@ test('the selected queue shows all its work steps together and retains the job c
 
 test('search in the filter finds names, selected vehicles and proposal links across work types',()=>{
  const source=html.slice(html.indexOf('function refreshInquiryKinds('),html.indexOf('\nfunction renderInsp('));
- const controls={teamInquiryTitle:{},teamInquiryPlanner:{}};
+ const controls={teamInquiryTitle:{},teamInquiryPlanner:{},transportWorkNotice:{}};
  const context={
   SCWorkInquiry:W,SCInquiryView:require('../public/assets/js/inquiry-view.js'),SCPurchaseFlow:require('../public/assets/js/purchase-flow.js'),
-  teamPendingInquiry:'',leadFilter:'open',leadQuery:'golf',inquiryKindFilter:'inspection',inquiryKindPinned:false,
+  window:{addEventListener(){}},teamPendingInquiry:'',leadFilter:'open',leadQuery:'golf',inquiryKindFilter:'inspection',inquiryKindPinned:false,
   teamCompanyWorkJobs:()=>[],teamInquiryQueue:record=>W.queue(record,{kind:'budget'}),
   LEADS:[{_id:'lead-1',name:'Jelena Ilić',model:'Volkswagen',proposals:[{title:'VW Golf',url:'https://example.test/vehicle/123'}]}],
   INSPS:[{_id:'inspection-1',name:'Marko',car:'Toyota'}],FINDS:[],
@@ -176,4 +176,11 @@ test('compact next action retains the existing business gates for purchase, tran
  assert.equal(next({car:{status:'carinjen'}}),null);
  assert.equal(next({car:{status:'kupljen'}},{status:'odustao'}),null);
  assert.equal(next({car:{status:'kupljen'},avail:'ne'}),null);
+});
+
+test('local and international transport use actual active assignments, never a guess from a car phase',()=>{
+ const car={_id:'car-1',status:'transport'},jobs=[{car_id:'car-1',kind:'local',status:'delivered'},{car_id:'car-1',kind:'international',status:'assigned'},{car_id:'other',kind:'local',status:'accepted'}];
+ assert.deepEqual(W.transportKinds(car,jobs),['international']);assert.deepEqual(W.transportKinds(car,[]),[]);
+ jobs.push({car_id:'car-1',kind:'local',status:'collected'});assert.deepEqual(W.transportKinds(car,jobs),['international','local']);
+ assert.deepEqual(W.transportKinds({_id:'car-1',transportKind:'local'},[]),['local']);assert.equal(car.transportKind,undefined);
 });

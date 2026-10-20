@@ -52,6 +52,11 @@
   if(['prodaja','prodat'].includes(car.status))return 'delivery';
   return {carinjen:'customs',transport:'transport',kupljen:'purchase'}[car.status]||null;
  }
+ function transportKinds(car,jobs=[]){
+  const kinds=jobs.filter(job=>job.car_id===(car?._id||car?.carId)&&!['cancelled','delivered'].includes(job.status)).map(job=>job.kind);
+  if(!kinds.length&&['local','international'].includes(car?.transportKind))kinds.push(car.transportKind);
+  return [...new Set(kinds.filter(kind=>['local','international'].includes(kind)))];
+ }
  function queue(record,{kind='budget',car=null}={}){
   if(kind==='inspection')return record.needsVehicleCheck?'documents':'inspection';
   const savedCarQueue=carQueue(car);if(savedCarQueue)return savedCarQueue==='sale'&&record.carId&&!record.internalRequest?'delivery':savedCarQueue;
@@ -90,16 +95,18 @@
    const phase=queues.find(q=>q.value===(c.workQueue||kindGroup(c.kind)))||queues[0];
    const phaseLabel=phase.value==='car'?'Kupovina vozila (upit sa oglasom)':phase.label;
    const action=step==='check-payment'||String(c.action||'').includes('data-inquiry-expand')?'':primaryAction(c.action);
-   const request=c.requestFacts?'<span class="sc-request" aria-label="Klijent je tražio"><strong class="sc-request-model">'+escape(c.requestFacts.model)+'</strong><span class="sc-request-facts">'+c.requestFacts.facts.map(([label,value])=>'<span><small>'+escape(label)+'</small><strong>'+escape(value)+'</strong></span>').join('')+'</span></span>':c.criteria?'<span class="sc-request"><span>Klijent je tražio:</span> <strong>'+escape(c.criteria)+'</strong></span>':'';
+   const request=c.requestFacts?'<span class="sc-request" aria-label="Klijent je tražio"><span class="sc-request-facts">'+c.requestFacts.facts.map(([label,value])=>'<span><small>'+escape(label)+'</small><strong>'+escape(value)+'</strong></span>').join('')+'</span></span>':c.criteria?'<span class="sc-request"><span>Klijent je tražio:</span> <strong>'+escape(c.criteria)+'</strong></span>':'';
+   const requestModel=c.requestFacts?(c.requestFacts.editable?'<button class="sc-model-link" type="button" data-edit-inquiry="'+escape(c.requestFacts.id)+'" title="Izmeni kriterijume vozila" aria-label="Izmeni kriterijume: '+escape(c.requestFacts.model)+'">'+escape(c.requestFacts.model)+' <span aria-hidden="true">✎</span></button>':'<strong>'+escape(c.requestFacts.model)+'</strong>'):'';
    const person=escape(c.person||'Ime nije upisano');
    const client=c.personContact?c.personContact.replace(/<button\b/,'<button title="Otvori kontakt" aria-label="Kontakt: '+person+'"').replace(/class="([^"]*)"/,'class="$1 sc-client-link"').replace(/>[^<]*<\/button>/,()=>'>'+person+'</button>'):'<strong>'+person+'</strong>';
    const photo=/^https:\/\//.test(c.thumbnail||'')?'<img class="sc-vehicle-photo" src="'+escape(c.thumbnail)+'" alt="Fotografija vozila" loading="lazy" referrerpolicy="no-referrer">':'';
-   const vehicle=c.vehiclePending?'':'<span class="sc-vehicle">'+photo+'<span class="sc-vehicle-info"><strong>'+escape(c.vehicle||'Podaci vozila još nisu preuzeti')+'</strong>'+(c.vehicleMeta?'<span class="sc-location">'+escape(c.vehicleMeta)+'</span>':'')+(options.location?'<span class="sc-location">'+options.location+'</span>':'')+'</span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>';
+   const listing=c.kind==='listing'||c.kind==='car';
+   const vehicle=c.vehiclePending?'':'<span class="sc-vehicle'+(listing?' sc-listing-vehicle':'')+'">'+(listing?'<span class="sc-client">'+client+'</span>':'')+photo+'<span class="sc-vehicle-info"><strong>'+escape(c.vehicle||(listing?'Oglas primljen':'Podaci vozila još nisu preuzeti'))+'</strong>'+(c.vehicleMeta?'<span class="sc-location">'+escape(c.vehicleMeta)+'</span>':'')+(options.location?'<span class="sc-location">'+options.location+'</span>':'')+(listing?'<span class="sc-import-status" role="status"></span>':'')+'</span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>';
    return '<summary class="inquiry-summary is-service-card" data-work-step="'+step+'">'+
-    '<span class="sc-service'+(c.company?' sc-company':'')+'"><span class="sc-phase"><b class="sc-phase-number">Faza '+phase.number+'</b><strong>'+escape(phaseLabel)+'</strong></span>'+(c.headerActionHtml?'<span class="sc-header-action">'+c.headerActionHtml+'</span>':'<span class="sc-purpose">'+(c.company?'Za firmu · SWISCARS':'Za klijenta')+'</span>')+'</span>'+
-    (c.company?'':'<span class="sc-identity"><span class="sc-client">'+client+'</span>'+request+'</span>')+
+    '<span class="sc-service'+(c.company?' sc-company':'')+'"><span class="sc-phase"><b class="sc-phase-number">Faza '+phase.number+'</b><strong>'+escape(phaseLabel)+'</strong>'+requestModel+'</span>'+(c.headerActionHtml?'<span class="sc-header-action">'+c.headerActionHtml+'</span>':'<span class="sc-purpose">'+(c.company?'Za firmu · SWISCARS':'Za klijenta')+'</span>')+'</span>'+
+    (c.company||listing?'':'<span class="sc-identity"><span class="sc-client">'+client+'</span>'+request+(c.vehiclePending?'<span class="sc-proposal-slot"></span>':'')+'</span>')+
     vehicle+
-    '<span class="sc-proposal-slot"></span>'+
+    (c.vehiclePending?'':'<span class="sc-proposal-slot"></span>')+
     '<span class="sc-next"><span><small>Status</small><strong>'+escape(c.status||title)+'</strong></span><span class="sc-work-actions">'+(action||'<span class="sc-expand">Detalji upita <span aria-hidden="true">⌄</span></span>')+(c.secondaryActionHtml||'')+'</span></span>'+(c.quoteHtml||'')+'</summary>';
   }
   const kind='<span class="iq-kind iq-kind-'+escape(c.kind)+'">'+escape(c.kindLabel||options.kindLabel)+'</span>';
@@ -113,6 +120,6 @@
    '<span class="iq-next">'+primaryAction(c.action)+'</span>'+progress+'</summary>';
  }
  function nextFlow(checks,allowed){return checks.find(s=>s.flow&&s.field!=='deposit'&&!s.done&&allowed(s.field))||null;}
- const api={steps,stepFor,selectStep,kindGroup,selectKind,summary,nextFlow,queues,queue,carQueue,companyQueue,listingKey,findExcluded};
+ const api={steps,stepFor,selectStep,kindGroup,selectKind,summary,nextFlow,queues,queue,carQueue,companyQueue,listingKey,findExcluded,transportKinds};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.SCWorkInquiry=api;
 })(typeof window==='undefined'?this:window);

@@ -117,6 +117,7 @@
     const heading=document.createElement('strong'),body=document.createElement('span');
     heading.textContent=title;body.textContent=message;
     readStatus.append(heading,body);
+    if(listingMode)parent.postMessage({type:'swiscars-proposal-import-status',state:kind,detail:title+'. '+message},location.origin);
   }
   setListingStatus('info','Uvoz oglasa','Unesi AutoScout24 link. Za ovo dugme potreban je uključen SWISCARS čitač u ovom Chrome-u. Podatke iz oglasa proveri pre čuvanja. Link ostaje samo timu.');
   function clearLoadedVehicle() {
@@ -202,6 +203,10 @@
     loadedFields.hidden=false;offerActions.hidden=false;if(listingMode)publishButton.disabled=false;
     loadedFields.querySelector('summary').textContent='Učitani podaci vozila';
     offerForm.querySelector('.local-loaded-fields').open = true;
+    if(listingMode&&record.autoImport){
+      if(offerForm.checkValidity())publishButton.click();
+      else setListingStatus('error','Podaci oglasa nisu potpuni','Čitač nije preuzeo sva obavezna polja. Otvori oglas i proveri podatke pre ponovnog pokušaja.');
+    }
   }
   function showListingError(error) {
     setListingStatus('error',error.message==='extension_missing'?'SWISCARS čitač nije povezan':error.message==='cloud_not_configured'?'Cloud čitač nije povezan':'Greška pri učitavanju oglasa',reasons[error.message]||'Automatsko preuzimanje nije uspelo. To ne znači da oglas ne postoji ili da se ne otvara u brauzeru. Podaci i fotografije nisu učitani.');
@@ -218,7 +223,7 @@
     // The button reads through the SWISCARS reader extension in this (normal) browser:
     // it opens the link in a normal tab, reads the page after normal loading and returns
     // it here; the local reader only parses it. No demo data, no separate manual transfer.
-    if(!window.SCReaderExtension?.available()){showListingError(Error('extension_missing'));readButton.disabled=false;return;}
+    if(!await window.SCReaderExtension?.ready()){showListingError(Error('extension_missing'));readButton.disabled=false;return;}
     setListingStatus('loading','Učitavanje oglasa…','Oglas se otvara u novoj kartici ovog brauzera i zatvara se posle čitanja.');
     const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary';cancel.textContent='Prekini čitanje';
     cancel.onclick=()=>{cancel.disabled=true;window.SCReaderExtension.cancel();};
@@ -237,6 +242,7 @@
     } catch (error) { showListingError(error); }
     finally { readButton.disabled = false; }
   });
+  window.addEventListener('message',event=>{if(event.source===parent&&event.origin===location.origin&&event.data?.type==='swiscars-proposal-cancel')window.SCReaderExtension?.cancel();});
   const clientDialog = document.createElement('dialog');
   clientDialog.className = 'local-client-dialog';
   clientDialog.innerHTML = '<p class="preview">Pregled predloga pre slanja</p><h2>SWISCARS predlog vozila</h2><div data-client-vehicle></div><p class="demo-note">Pregled pre slanja — odluku donosi klijent na svom linku.</p><button class="secondary" type="button">Zatvori</button>';

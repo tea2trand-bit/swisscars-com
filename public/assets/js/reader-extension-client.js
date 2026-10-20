@@ -4,6 +4,10 @@
   'use strict';
   const api = {
     available: () => document.documentElement.dataset.swiscarsReaderExtension === '1',
+    ready() {
+      if(api.available())return Promise.resolve(true);
+      return new Promise(resolve=>{const done=()=>{clearTimeout(timer);observer.disconnect();resolve(api.available());};const observer=new MutationObserver(()=>{if(api.available())done();});const timer=setTimeout(done,1500);observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-swiscars-reader-extension']});});
+    },
     read(url, {onStage} = {}) {
       return new Promise((resolve, reject) => {
         const id = crypto.randomUUID();
