@@ -49,7 +49,7 @@ test('numbered phases distinguish three parallel entries, document checks and th
  assert.equal(W.carQueue({status:'garaza'}),'customs','preparation must not be called ready for sale');
  const card=W.summary({serviceCard:true,kind:'listing',workQueue:'car',vehicle:'Audi RS3',vehicleMeta:'2023 · 73.500 km',person:'Miroslav Ilić',action:'',status:'Upit primljen'},{location:'6850 Mendrisio'});
  assert.equal((card.match(/Audi RS3/g)||[]).length,1);assert.doesNotMatch(card,/Vozilo iz oglasa|Grad nije upisan/);
- assert.match(card,/sc-phase-number">1\./);assert.match(card,/Kupovina vozila \(upit sa oglasom\)/);
+ assert.match(card,/sc-phase-number">Faza 1/);assert.match(card,/Kupovina vozila \(upit sa oglasom\)/);
 });
 
 test('the client name is the single accessible contact control and retains its existing handler',()=>{
@@ -58,9 +58,20 @@ test('the client name is the single accessible contact control and retains its e
  assert.doesNotMatch(card,/>Kontakt<|<small>Klijent<\/small>/);
 });
 
+test('discarded and archived findings never count as active work and discarded URLs stay excluded on reimport',()=>{
+ const old={status:'odbijeno',url:'https://www.autoscout24.ch/de/d/audi-rs3-123456?ref=old'};
+ assert.equal(W.findExcluded(old),true);assert.equal(W.findExcluded({status:'arhiva'}),true);
+ assert.equal(W.findExcluded({status:'novo',url:'https://www.autoscout24.ch/it/d/nuovo-titolo-123456'},[old]),true);
+ assert.equal(W.findExcluded({status:'novo',url:'https://www.autoscout24.ch/de/d/audi-rs3-765432'},[old]),false);
+ assert.equal(W.findExcluded({status:'novo',url:'https://www.comparis.ch/carfinder/marktplatz/details/show/888?source=new'},[{status:'odbijeno',url:'https://www.comparis.ch/carfinder/marktplatz/details/show/888'}]),true);
+ assert.equal(W.findExcluded({status:'novo',excludeFromSearch:true}),true);
+ const card=W.summary({serviceCard:true,company:true,workQueue:'company',person:'SWISCARS',vehicle:'Audi',action:'<button>Pregledaj vozilo</button>',secondaryActionHtml:'<button data-work-remove="find-1">Ukloni vozilo</button>'},{location:''});
+ assert.match(card,/Faza 1/);assert.match(card,/Za firmu · SWISCARS/);assert.doesNotMatch(card,/sc-identity/);assert.match(card,/data-work-remove="find-1"/);
+});
+
 test('company jobs do not duplicate client-linked vehicles or finds already converted into a vehicle',()=>{
  const source=html.slice(html.indexOf('function teamCompanyWorkJobs('),html.indexOf('\nfunction renderCompanyWorkCards('));
- const context={SCWorkInquiry:W,leadFilter:'open',LEADS:[{carId:'client-car'}],CARS:[{_id:'client-car',status:'transport'},{_id:'own-car',status:'prodaja',fromFind:'old-find'},{_id:'own-linked',status:'kupljen',orderId:'client'}],FINDS:[{_id:'old-find',status:'kupljeno'},{_id:'new-find',status:'favoriti'},{_id:'client-find',status:'novo',client:true}],isCompanyFind:f=>!f.client,companyFindUnavailable:()=>false,companyFindInspection:()=>null,companyFindConditionsReviewed:()=>false,companyFindPurchaseReady:()=>false,matchesLeadQuery:()=>true};
+ const context={SCWorkInquiry:W,leadFilter:'open',LEADS:[{carId:'client-car'}],CARS:[{_id:'client-car',status:'transport'},{_id:'own-car',status:'prodaja',fromFind:'old-find'},{_id:'own-linked',status:'kupljen',orderId:'client'}],FINDS:[{_id:'old-find',status:'kupljeno'},{_id:'new-find',status:'favoriti'},{_id:'client-find',status:'novo',client:true}],isCompanyFind:f=>!f.client,companyFindExcluded:f=>W.findExcluded(f),companyFindUnavailable:()=>false,companyFindInspection:()=>null,companyFindConditionsReviewed:()=>false,companyFindPurchaseReady:()=>false,matchesLeadQuery:()=>true};
  vm.createContext(context);vm.runInContext(source,context);const before=JSON.stringify([context.LEADS,context.CARS,context.FINDS]);
  assert.deepEqual(Array.from(context.teamCompanyWorkJobs(),j=>[j.record._id,j.queue]),[['own-car','sale'],['new-find','documents']]);assert.equal(JSON.stringify([context.LEADS,context.CARS,context.FINDS]),before);
 });

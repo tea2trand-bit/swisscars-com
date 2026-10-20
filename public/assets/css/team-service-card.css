@@ -1,10 +1,10 @@
 /* The work card is the primary view, with a distinct client header and vehicle row. */
 #app #t-narudzbine .inquiry-kinds{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:auto;gap:6px;margin:0 0 16px;border:0}
-#app #t-narudzbine .inquiry-kinds>button{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;align-content:start;justify-content:start;align-items:start;gap:3px 7px;min-width:0;min-height:60px;padding:8px 10px;border:1px solid #d6e0e6;border-radius:5px;background:transparent;color:#526b7a;font:500 13px/1.4 Inter,Arial,sans-serif;white-space:normal;text-align:left}
+#app #t-narudzbine .inquiry-kinds>button{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto;align-content:center;justify-content:start;align-items:center;gap:6px;min-width:0;min-height:44px;padding:8px;border:1px solid #d6e0e6;border-radius:5px;background:transparent;color:#526b7a;font:500 13px/1.4 Inter,Arial,sans-serif;white-space:normal;text-align:left}
 #app #t-narudzbine .inquiry-kinds>button[aria-pressed="true"]{background:#edf4f8;border-color:#245b83;color:#214f70;box-shadow:inset 0 -2px #245b83;font-weight:600}
 #app #t-narudzbine .inquiry-kinds .work-phase-number{grid-column:1;grid-row:1;font-size:16px;font-weight:650;color:#214f70;line-height:1.3}
 #app #t-narudzbine .inquiry-kinds .work-phase-label{grid-column:2;grid-row:1;min-width:0;font:inherit;color:inherit;overflow-wrap:anywhere}
-#app #t-narudzbine .inquiry-kinds .work-phase-count{grid-column:2;grid-row:2;font-size:11px;font-weight:400;color:#657782;white-space:nowrap}
+#app #t-narudzbine .inquiry-kinds .work-phase-count{grid-column:3;grid-row:1;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 5px;box-sizing:border-box;border-radius:50%;background:#e8f0f5;font-size:12px;font-weight:500;color:#526c7e;white-space:nowrap}
 #app #t-narudzbine .inquiry-heading{align-items:start;flex-wrap:wrap;gap:12px}
 #app #t-narudzbine .inquiry-heading-actions,#app #t-narudzbine .team-car-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-width:0}
 #app #t-narudzbine #newCar{margin:0;min-height:44px;height:auto;white-space:normal}
@@ -24,6 +24,9 @@
 #app .sc-service strong{margin-left:8px;color:#214f70;font-size:15px}
 #app .is-service-card .sc-service>.sc-phase{display:flex;gap:8px;align-items:baseline;min-width:0}
 #app .sc-phase-number{flex:none;color:#214f70;font-size:17px}
+#app .is-service-card .sc-phase-number{font-size:11px;font-weight:500;white-space:nowrap}
+#app .is-service-card>.sc-service.sc-company{justify-content:flex-start;gap:12px}
+#app .sc-company .sc-purpose{white-space:normal}
 #app .sc-service .sc-phase>strong{margin:0;overflow-wrap:anywhere}
 #app .sc-purpose{font-size:11px;color:#657782;white-space:nowrap}
 #app .sc-header-action{margin-left:auto;flex:none}#app .is-service-card .sc-header-action>.b{background:transparent;color:#6f5353;border-color:#d9c9c9;font-size:12px;min-height:36px;max-width:150px}
@@ -51,6 +54,8 @@
 #app .sc-price{flex:none;text-align:right}.sc-price strong{display:block;font-size:18px;white-space:nowrap}
 #app .sc-ad{flex:none}#app .is-service-card>.sc-next{align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;border-top:1px solid #e2e8ec;background:#fbfcfd}
 #app .sc-next>span{min-width:0}.sc-next strong{font-size:15px}.sc-next>.b{flex:none}
+#app .sc-work-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+#app .sc-work-actions>.b{margin:0}#app .sc-work-actions>.danger{background:transparent;border-color:#d9c9c9;color:#785d5d}
 #app .is-service-card .sc-expand{color:#315e7d;font-size:13px;cursor:pointer;white-space:nowrap}
 #app .is-service-card~.team-lead-body{padding:18px;margin-top:0;border-top:1px solid #e2e8ec}
 #app .is-service-card~.team-lead-body .sc-order-progress,#app .is-service-card~.team-lead-body .team-current-task{display:none}
@@ -73,12 +78,13 @@ dialog#teamChoicePane:has(.team-inquiry-search:not([hidden])) h2{font-size:17px}
  #app .sc-vehicle:has(.sc-vehicle-photo)>.sc-ad,#app .sc-vehicle:has(.sc-vehicle-photo)>.sc-price{grid-row:3}
  #app .is-service-card>.sc-next{display:flex;flex-direction:column;align-items:stretch;padding:13px 14px;gap:12px}
  #app .sc-next>.b{width:100%;text-align:center;justify-content:center}
+ #app .sc-work-actions{justify-content:flex-start}#app .sc-work-actions>.b{max-width:100%}
  #app .is-service-card .b{min-height:44px}#app .is-service-card~.team-lead-body{padding:14px}
  #app #t-narudzbine .inquiry-heading-actions{width:100%}
  #app #t-narudzbine .team-car-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
  #app #t-narudzbine .team-car-actions>.b{width:100%;min-width:0;min-height:44px;padding:8px;font-size:13px;white-space:normal;box-sizing:border-box}
  #app #t-narudzbine .inquiry-kinds>button{grid-template-columns:20px minmax(0,1fr) auto;grid-template-rows:auto;align-items:center;min-height:44px;padding:8px;gap:6px;font-size:12px}
- #app #t-narudzbine .inquiry-kinds .work-phase-count{grid-column:3;grid-row:1;font-size:10px}
+ #app #t-narudzbine .inquiry-kinds .work-phase-count{grid-column:3;grid-row:1;font-size:12px}
  #app .is-service-card>.sc-service{flex-wrap:wrap}
  #app .is-service-card .sc-service>.sc-phase:first-child{display:flex;align-items:baseline;gap:7px}
  #app .is-service-card .sc-header-action>.b{max-width:128px;min-height:44px}

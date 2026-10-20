@@ -70,6 +70,16 @@
   if(inspection)return 'inspection';
   return ['favoriti','izabrano','evidencija','pogledano','favorit','pregled'].includes(find.status)?(conditionsReviewed?'inspection':'documents'):'company';
  }
+ function listingKey(value){
+  try{const u=new URL(String(value||'')),host=u.hostname.replace(/^www\./,'').toLowerCase();
+   const id=host==='autoscout24.ch'?u.pathname.match(/\/(?:d|detail)\/(?:[^/]*-)?(\d+)\/?$/)?.[1]:host==='comparis.ch'?u.pathname.match(/\/details\/show\/(\d+)\/?$/)?.[1]:null;
+   return id?host+':'+id:['http:','https:'].includes(u.protocol)?host+u.pathname.replace(/\/$/,''):'';
+  }catch{return '';}
+ }
+ function findExcluded(find,records=[]){
+  if(['odbijeno','arhiva'].includes(find.status)||find.excludeFromSearch===true)return true;
+  const key=listingKey(find.url);return !!key&&records.some(old=>(old.status==='odbijeno'||old.excludeFromSearch===true)&&listingKey(old.url)===key);
+ }
  function selectKind(counts,current){return ['inspection','car','budget'].includes(current)&&counts[current]>0?current:['inspection','car','budget'].find(k=>counts[k]>0)||'inspection';}
  function primaryAction(html){
   return String(html||'').replace(/<button\b([^>]*?)class="([^"]*)"/,(_m,attrs,classes)=>'<button'+attrs+'class="'+classes.replace(/\binquiry-primary\b/g,'').trim()+' inquiry-primary"');
@@ -86,11 +96,11 @@
    const photo=/^https:\/\//.test(c.thumbnail||'')?'<img class="sc-vehicle-photo" src="'+escape(c.thumbnail)+'" alt="Fotografija vozila" loading="lazy" referrerpolicy="no-referrer">':'';
    const vehicle=c.vehiclePending?'':'<span class="sc-vehicle">'+photo+'<span class="sc-vehicle-info"><strong>'+escape(c.vehicle||'Podaci vozila još nisu preuzeti')+'</strong>'+(c.vehicleMeta?'<span class="sc-location">'+escape(c.vehicleMeta)+'</span>':'')+(options.location?'<span class="sc-location">'+options.location+'</span>':'')+'</span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>';
    return '<summary class="inquiry-summary is-service-card" data-work-step="'+step+'">'+
-    '<span class="sc-service"><span class="sc-phase"><b class="sc-phase-number">'+phase.number+'.</b><strong>'+escape(phaseLabel)+'</strong></span>'+(c.headerActionHtml?'<span class="sc-header-action">'+c.headerActionHtml+'</span>':'<span class="sc-purpose">'+(c.company?'Za firmu':'Za klijenta')+'</span>')+'</span>'+
-    '<span class="sc-identity"><span class="sc-client">'+client+'</span>'+request+'</span>'+
+    '<span class="sc-service'+(c.company?' sc-company':'')+'"><span class="sc-phase"><b class="sc-phase-number">Faza '+phase.number+'</b><strong>'+escape(phaseLabel)+'</strong></span>'+(c.headerActionHtml?'<span class="sc-header-action">'+c.headerActionHtml+'</span>':'<span class="sc-purpose">'+(c.company?'Za firmu · SWISCARS':'Za klijenta')+'</span>')+'</span>'+
+    (c.company?'':'<span class="sc-identity"><span class="sc-client">'+client+'</span>'+request+'</span>')+
     vehicle+
     '<span class="sc-proposal-slot"></span>'+
-    '<span class="sc-next"><span><small>Status</small><strong>'+escape(c.status||title)+'</strong></span>'+(action||'<span class="sc-expand">Detalji upita <span aria-hidden="true">⌄</span></span>')+'</span>'+(c.quoteHtml||'')+'</summary>';
+    '<span class="sc-next"><span><small>Status</small><strong>'+escape(c.status||title)+'</strong></span><span class="sc-work-actions">'+(action||'<span class="sc-expand">Detalji upita <span aria-hidden="true">⌄</span></span>')+(c.secondaryActionHtml||'')+'</span></span>'+(c.quoteHtml||'')+'</summary>';
   }
   const kind='<span class="iq-kind iq-kind-'+escape(c.kind)+'">'+escape(c.kindLabel||options.kindLabel)+'</span>';
   const progress=c.progressHtml?c.progressHtml.replace('<span class="iq-progress">','<span class="iq-progress"><span class="iq-progress-status">'+escape(c.status)+'</span>'):'';
@@ -103,6 +113,6 @@
    '<span class="iq-next">'+primaryAction(c.action)+'</span>'+progress+'</summary>';
  }
  function nextFlow(checks,allowed){return checks.find(s=>s.flow&&s.field!=='deposit'&&!s.done&&allowed(s.field))||null;}
- const api={steps,stepFor,selectStep,kindGroup,selectKind,summary,nextFlow,queues,queue,carQueue,companyQueue};
+ const api={steps,stepFor,selectStep,kindGroup,selectKind,summary,nextFlow,queues,queue,carQueue,companyQueue,listingKey,findExcluded};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.SCWorkInquiry=api;
 })(typeof window==='undefined'?this:window);
