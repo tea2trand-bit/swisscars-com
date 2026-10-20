@@ -12,6 +12,8 @@ test('service card separates client, requested criteria, selected vehicle and th
  assert.ok(card.indexOf('sc-identity')<card.indexOf('sc-vehicle'));
  assert.ok(card.indexOf('Kontakt')<card.indexOf('sc-vehicle'));
  assert.match(card,/Detalji upita/);assert.doesNotMatch(card,/Otvori karticu|sc-stage|>Čeka uplatu<\/button>/);
+ const pending=W.summary({serviceCard:true,vehiclePending:true,kind:'budget',person:'Miroslav Ilić',criteria:'Golf 7 · siva',vehicle:'Golf 7',status:'Upit primljen',action:'<button data-inquiry-expand>Pregledaj kriterijume</button>'},{kindLabel:'Pronađi',location:''});
+ assert.doesNotMatch(pending,/Izabrano vozilo|sc-vehicle/);assert.match(pending,/Klijent je tražio:/);
 });
 
 test('only concrete types and work steps are offered; all is not a hidden fallback',()=>{

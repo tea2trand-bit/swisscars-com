@@ -54,10 +54,11 @@
    const service=c.kind==='inspection'?(c.kindLabel||'Pregled vozila'):c.kind==='budget'?'Pronalazak auta':'Kupovina vozila';
    const action=step==='check-payment'||String(c.action||'').includes('data-inquiry-expand')?'':primaryAction(c.action);
    const request=c.criteria?'<span class="sc-request"><span>Klijent je tražio:</span> <strong>'+escape(c.criteria)+'</strong></span>':'';
+   const vehicle=c.vehiclePending?'':'<span class="sc-vehicle"><span><small>'+(c.kind==='inspection'?'Vozilo za pregled':c.kind==='budget'?'Izabrano vozilo':'Vozilo iz oglasa')+'</small><strong>'+escape(c.vehicle||'Vozilo još nije izabrano')+'</strong><span class="sc-location">'+options.location+'</span></span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>';
    return '<summary class="inquiry-summary is-service-card" data-work-step="'+step+'">'+
     '<span class="sc-service"><span>Usluga <strong>'+escape(service)+'</strong></span></span>'+
     '<span class="sc-identity"><span class="sc-client"><small>Klijent</small><strong>'+escape(c.person||'Ime nije upisano')+'</strong></span>'+request+'<span class="sc-contact">'+(c.personContact||'')+'</span></span>'+
-    '<span class="sc-vehicle"><span><small>'+(c.kind==='inspection'?'Vozilo za pregled':'Izabrano vozilo')+'</small><strong>'+escape(c.vehicle||'Vozilo još nije izabrano')+'</strong><span class="sc-location">'+options.location+'</span></span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>'+
+    vehicle+
     '<span class="sc-next"><span><small>Status</small><strong>'+escape(c.status||title)+'</strong></span>'+(action||'<span class="sc-expand">Detalji upita <span aria-hidden="true">⌄</span></span>')+'</span>'+(c.quoteHtml||'')+'</summary>';
   }
   const kind='<span class="iq-kind iq-kind-'+escape(c.kind)+'">'+escape(c.kindLabel||options.kindLabel)+'</span>';

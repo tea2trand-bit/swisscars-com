@@ -5012,7 +5012,8 @@ function teamInquirySummary(c){
   criteria=[model,record.yearFrom?'od '+record.yearFrom+'.':'',km&&km!=='Nije presudno'?( /^\d+$/.test(km)?'do '+Number(km).toLocaleString('sr-RS')+' km':km):'',record.fuel,record.gearbox,record.color?'boja: '+record.color:'',record.equip?.length?'oprema: '+record.equip.join(', '):'',record.budget?'budžet do '+fmt(record.budget)+' €':''].filter(Boolean).join(' · ');
  }
  const vehicle=/^SWISCARS TEST\b/i.test(c.vehicle||'')?'Vozilo nije upisano':c.vehicle;
- return SCWorkInquiry.summary({...c,serviceCard:true,criteria,vehicle},{kindLabel:SCInquiryView.labels[c.kind]||SCInquiryView.labels.unknown,location:teamInquiryLocation(c.context)});
+ const vehiclePending=c.kind==='budget'&&!record?.carId&&!(record?.proposals||[]).some(p=>p.answer!=='ne'&&p.avail!=='ne');
+ return SCWorkInquiry.summary({...c,serviceCard:true,criteria,vehicle,vehiclePending},{kindLabel:SCInquiryView.labels[c.kind]||SCInquiryView.labels.unknown,location:teamInquiryLocation(c.context)});
 }
 function applyInquiryStepFilter(){
  const counts=Object.fromEntries(SCWorkInquiry.steps.map(s=>[s.value,0]));
