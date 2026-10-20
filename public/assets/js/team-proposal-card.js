@@ -1,7 +1,8 @@
-/* Local demonstration only. Never included in the production release. */
+/* Team proposal and listing-data editor, initialized only by its authenticated parent. */
 (() => {
   if(!window.SCProposalRecord?.id)return;
-  const storageKey='swiscars.proposal-draft:'+window.SCProposalRecord.id;
+  const listingMode=window.SCProposalRecord.entry==='listing';
+  const storageKey='swiscars.proposal-draft:'+window.SCProposalRecord.id+(listingMode?':listing':'');
   const form = document.getElementById('contact-form');
   if (form) {
     const notice = document.createElement('p');
@@ -29,7 +30,7 @@
   try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved?.localProposal)record.localProposal=saved.localProposal;}catch{}
   document.body.classList.remove('awaiting-request');
   const text = (id, value) => { document.getElementById(id).textContent = value; };
-  const money = Number(record.budget.replace(/[\s.]/g, '').replace(',', '.'));
+  const money = record.budget.trim()?Number(record.budget.replace(/[\s.]/g, '').replace(',', '.')):NaN;
   const vehicle = [record.brand, record.model].filter(Boolean).join(' ');
   const mileageLimit=Number(String(record.mileage||'').replace(/[^0-9]/g,''));
   const criteria = [vehicle, record.yearFrom ? 'od ' + record.yearFrom + '.' : '', mileageLimit?'do '+mileageLimit.toLocaleString('sr-RS')+' km':record.mileage, record.fuel, record.gearbox,record.color?'boja: '+record.color:'',Array.isArray(record.equip)&&record.equip.length?'oprema: '+record.equip.join(', '):'', Number.isFinite(money) ? 'budžet do ' + money.toLocaleString('sr-RS') + ' €' : ''].filter(Boolean);
@@ -70,13 +71,13 @@
   const readButton = offerForm.querySelector('[data-read-listing]');
   const publishButton=document.createElement('button');publishButton.type='button';publishButton.className='primary';publishButton.textContent='Pošalji predlog klijentu';publishButton.disabled=true;
   offerForm.querySelector('.local-offer-actions').append(publishButton);
-  offerForm.addEventListener('input',()=>{currentQuote=null;publishButton.disabled=true;});
+  offerForm.addEventListener('input',()=>{currentQuote=null;publishButton.disabled=listingMode?!listingDetailsRead:true;});
   publishButton.onclick=()=>{
-    if(!offerForm.reportValidity()||!currentQuote||currentQuote.adChf!==Number(offerForm.elements.price.value))return;
+    if(!offerForm.reportValidity()||!listingMode&&(!currentQuote||currentQuote.adChf!==Number(offerForm.elements.price.value)))return;
     publishButton.disabled=true;
     parent.postMessage({type:'swiscars-proposal-publish',fields:Object.fromEntries(new FormData(offerForm)),equipment:listingEquipment,photos:listingPhotos,quote:currentQuote},location.origin);
   };
-  window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='swiscars-proposal-published')return;offerForm.querySelector('[data-save-result]').textContent=event.data.ok?'Predlog je objavljen na linku klijenta.':event.data.error||'Predlog nije sačuvan.';publishButton.disabled=!!event.data.ok;});
+  window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='swiscars-proposal-published')return;offerForm.querySelector('[data-save-result]').textContent=event.data.ok?(listingMode?'Podaci oglasa su sačuvani.':'Predlog je objavljen na linku klijenta.'):event.data.error||'Podaci nisu sačuvani.';publishButton.disabled=!!event.data.ok;});
 
   let currentQuote=null;
   let listingPhotos=[];
@@ -198,7 +199,7 @@
     const mismatch = maxMileage > 0 && result.fields.mileage > maxMileage;
     const how = mode==='browser_capture' ? 'Učitano iz tvog brauzera (snimak otvorene strane oglasa). ' : mode==='extension' ? 'Učitano dugmetom preko SWISCARS čitača u ovom brauzeru. ' : mode==='local_browser' ? 'Učitano dugmetom: lokalni brauzer je otvorio oglas. ' : 'Učitano automatskim čitačem. ';
     setListingStatus('success','Podaci oglasa su učitani', how + listingPhotos.length + ' fotografija. Proveri pre čuvanja.' + (result.missing.length ? ' Nedostaje: ' + result.missing.map(key=>names[key]||key).join(', ') + '.' : '') + (mismatch ? ' Odstupanje: oglas ima ' + Number(result.fields.mileage).toLocaleString('sr-RS') + ' km, a zahtev je do ' + maxMileage.toLocaleString('sr-RS') + ' km.' : ''));
-    loadedFields.hidden=false;offerActions.hidden=false;
+    loadedFields.hidden=false;offerActions.hidden=false;if(listingMode)publishButton.disabled=false;
     loadedFields.querySelector('summary').textContent='Učitani podaci vozila';
     offerForm.querySelector('.local-loaded-fields').open = true;
   }
@@ -447,4 +448,11 @@
     text('info-title',record.name);
     parent.postMessage({type:'swiscars-proposal-contact'},location.origin);
   },true);
+  if(listingMode){
+    document.querySelector('h1').textContent='Podaci vozila iz oglasa';document.querySelector('.intro').textContent='Preuzmite podatke i fotografije iz linka koji je klijent poslao.';
+    offerHeading.textContent='Učitaj podatke oglasa';publishButton.textContent='Sačuvaj podatke oglasa';
+    offerForm.querySelector('[data-client-preview]').hidden=true;offerForm.querySelector('[data-save-offer]').hidden=true;manualLabel.hidden=true;
+    offerForm.elements.url.value=record.listingUrl;offerForm.elements.url.readOnly=true;details.hidden=false;document.getElementById('checks-toggle').setAttribute('aria-expanded','true');
+    offerForm.querySelector('.local-link-entry').hidden=false;readButton.click();
+  }
 })();

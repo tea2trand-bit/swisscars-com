@@ -4,7 +4,7 @@ function setup(){const events={},writes=[],posts=[],button={},frame={contentWind
  const dialog={querySelector:s=>s==='iframe'?frame:close,showModal(){},close(){}},bar={querySelector:()=>button};
  const ctx={URL,console,queueMicrotask,location:{origin:'https://swiscars.com'},MutationObserver:class{observe(){}},document:{createElement:t=>t==='dialog'?dialog:bar,body:{append(){}},getElementById:()=>({}),querySelectorAll:()=>[card]},LEADS:[{_id:'test-lead',name:'Miroslav Ilić',model:'Golf 7',status:'novo',proposals:[]}],canWrite:true,teamLeadHasListing:()=>false,actor:()=> 'Test',newToken:()=> 'a'.repeat(24),toast(){},openTeamContact(){},db:{doc:p=>({update:async v=>writes.push({path:p,value:v})})}};
  ctx.window=ctx;ctx.globalThis=ctx;ctx.addEventListener=(name,fn)=>events[name]=fn;vm.createContext(ctx);
- for(const name of ['listing-details.js','proposal-facts.js','listing-snapshot-parser.js','team-listing-proposal.js'])vm.runInContext(read(name),ctx);
+ for(const name of ['purchase-flow.js','listing-details.js','proposal-facts.js','listing-snapshot-parser.js','team-listing-proposal.js'])vm.runInContext(read(name),ctx);
  return {ctx,writes,posts,events,button,frame};
 }
 const snap={url:'https://www.autoscout24.ch/de/d/vw-golf-20885147',title:'VW Golf Kaufen',heading:'VW Golf',text:"CHF 8'990.–\n12.2018\nErstzulassung / Baujahr\n145'000 km\nKilometerstand\ngrau\nAussen\nschwarz\nInnen\nDiesel\nTreibstoff\nHalbautomatisches Getriebe\nGetriebe\n115 PS (85 kW)\nLeistung\nAusstattungen\nSerienmässige Ausstattung\n2 Schlüssel mit Fernbedienung\nEnergie & Emissionen",photos:['https://listing-images.autoscout24.ch/listing/147/20885147/a.jpg','https://listing-images.autoscout24.ch/listing/999/99999/b.jpg'],place:'9464 Lienz'};
@@ -16,3 +16,11 @@ test('only the current authenticated team dialog can publish, with internal sour
  await s.events.message({origin:'https://swiscars.com',source:s.frame.contentWindow,data});assert.equal(s.writes.length,1);const proposal=s.writes[0].value.proposals[0];assert.equal(proposal.internalListingUrl,snap.url);assert.equal(proposal.url,undefined);assert.equal(proposal.price,15025.34);assert.match(proposal.adNote,/Dva ključa/);assert.equal(s.posts.at(-1).ok,true);
 });
 test('invalid photo provenance and stale quotes never write a proposal',async()=>{const s=setup();s.button.onclick();const p=s.ctx.SCListingSnapshotParser.readCapturedListing(snap);const data={type:'swiscars-proposal-publish',fields:{...p,url:snap.url},equipment:p.equipment,photos:['https://listing-images.autoscout24.ch/listing/999/99999/a.jpg'],quote:{total:15000,packageChf:700,adChf:p.price}};await s.events.message({origin:'https://swiscars.com',source:s.frame.contentWindow,data});assert.equal(s.writes.length,0);data.photos=p.photos;data.quote.adChf=1;await s.events.message({origin:'https://swiscars.com',source:s.frame.contentWindow,data});assert.equal(s.writes.length,0);});
+
+test('reading a customer listing stores vehicle facts without accepting a proposal, payment or availability',async()=>{
+ const s=setup();s.ctx.LEADS[0].listingUrl=snap.url;s.ctx.teamLeadHasListing=lead=>!!lead.listingUrl;s.button.onclick();
+ const fields=s.ctx.SCListingSnapshotParser.readCapturedListing(snap);
+ await s.events.message({origin:'https://swiscars.com',source:s.frame.contentWindow,data:{type:'swiscars-proposal-publish',fields:{...fields,url:snap.url},equipment:fields.equipment,photos:fields.photos,quote:null}});
+ assert.equal(s.writes.length,1);const patch=s.writes[0].value;assert.equal(patch.listingVehicle.title,'VW Golf');assert.equal(patch.listingVehicle.adChf,8990);assert.equal(patch.listingVehicle.photos.length,1);
+ assert.equal(patch.proposals,undefined);assert.equal(patch.status,undefined);assert.equal(patch.listingCheck,undefined);assert.equal(patch.inspectionPaid,undefined);assert.equal(patch.listingVehicle.avail,undefined);
+});
