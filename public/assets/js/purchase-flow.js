@@ -11,7 +11,10 @@
   const notes=[d.notes,d.note].filter(v=>typeof v==='string');
   const match=notes.map(v=>v.match(/^Upit za pomoć pri kupovini izabranog auta\. Oglas:\s*(https?:\/\/\S+)/m)).find(Boolean);
   const url=[d.listingUrl,d.listing_url,match?.[1]].map(safeUrl).find(Boolean)||'';
-  return {kind:url?'listing':'search',url,available:d.listingCheck?.status==='available'&&!d.car&&!(d.proposals||[]).length,inactive:d.listingCheck?.status==='inactive'&&!d.car&&!(d.proposals||[]).length,pending:!['available','inactive'].includes(d.listingCheck?.status)&&!d.car&&!(d.proposals||[]).length&&['novo','trazimo','kontakt','kontaktiran'].includes(d.status||'novo'),searchComplete:!!d.aiCheckedAt||!!d.aiAt&&typeof d.aiN==='number'};
+  const notePrice=notes.map(v=>v.match(/^Cena iz oglasa:\s*(\d+(?:\.\d{1,2})?)\s+CHF\s*$/m)).find(Boolean)?.[1];
+  const rawPrice=d.listingVehicle?.adChf??d.listingPriceChf??d.listing_price_chf??notePrice;
+  const listingPriceChf=rawPrice!=null&&Number.isFinite(Number(rawPrice))&&Number(rawPrice)>0?Number(rawPrice):null;
+  return {kind:url?'listing':'search',url,listingPriceChf,available:d.listingCheck?.status==='available'&&!d.car&&!(d.proposals||[]).length,inactive:d.listingCheck?.status==='inactive'&&!d.car&&!(d.proposals||[]).length,pending:!['available','inactive'].includes(d.listingCheck?.status)&&!d.car&&!(d.proposals||[]).length&&['novo','trazimo','kontakt','kontaktiran'].includes(d.status||'novo'),searchComplete:!!d.aiCheckedAt||!!d.aiAt&&typeof d.aiN==='number'};
  }
  const api={request,text:l=>words[l]||words.sr,safeUrl};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.SCPurchaseFlow=api;

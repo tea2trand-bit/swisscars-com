@@ -25,6 +25,16 @@ test('only concrete types and work steps are offered; all is not a hidden fallba
  for(const kind of ['listing','message','team','unknown'])assert.equal(W.kindGroup(kind),'car');
 });
 
+test('work queues follow recorded business state across both entry points without changing the record',()=>{
+ for(const kind of ['budget','listing']){
+  const d={status:'novo',proposals:[]};assert.equal(W.queue(d,{kind}),kind==='listing'?'car':'budget');
+  d.proposals=[{answer:'zelim',avail:'da'}];assert.equal(W.queue(d,{kind}),'inspection');
+  d.proposals[0].choice='buy';assert.equal(W.queue(d,{kind}),'purchase');
+  for(const [status,queue] of [['kupljen','purchase'],['transport','transport'],['carinjen','customs'],['garaza','delivery']]){const before=JSON.stringify(d);assert.equal(W.queue(d,{kind,car:{status}}),queue);assert.equal(JSON.stringify(d),before);}
+ }
+ assert.equal(W.queue({status:'novo'},{kind:'inspection'}),'inspection');
+});
+
 test('each actionable stage remains reachable after removing all steps',()=>{
  const examples={
   'check-data':['Proveri podatke','Proveri dostupnost','Proveri'],
@@ -49,18 +59,18 @@ test('empty or completed filter advances to a step with work; choice is retained
  for(const step of W.steps)assert.equal(W.selectStep(counts,step.value),step.value);
 });
 
-test('actual list filtering shows only the selected work step and counts all jobs in its type',()=>{
+test('the selected queue shows all its work steps together and retains the job count',()=>{
  const source=html.slice(html.indexOf('function applyInquiryStepFilter('),html.indexOf('\nfunction refreshInquiryKinds('));
  const row=step=>({hidden:false,parentElement:{id:'leadList'},querySelector:()=>({dataset:{workStep:step}})});
  const rows=[row('check-data'),row('check-payment'),row('schedule')];
  const controls={mobileInquiryStep:{options:W.steps.map(s=>({value:s.value,dataset:{label:s.label},textContent:''}))},pgSheet:{},teamInquiryCount:{},leadEmpty:{}};
  const context={SCWorkInquiry:W,teamPendingInquiry:'',inquiryStepFilter:'all',leadFilter:'open',$:id=>controls[id],document:{querySelectorAll:q=>q.startsWith('#pgList')?rows:[]}};
  vm.createContext(context);vm.runInContext(source,context);context.applyInquiryStepFilter();
- assert.deepEqual(rows.map(r=>r.hidden),[false,true,true]);
+ assert.deepEqual(rows.map(r=>r.hidden),[false,false,false]);
  assert.equal(context.inquiryStepFilter,'check-data');
  assert.equal(controls.teamInquiryCount.textContent,'Aktivni upiti: 3');
  context.inquiryStepFilter='schedule';context.applyInquiryStepFilter();
- assert.deepEqual(rows.map(r=>r.hidden),[true,true,false]);
+ assert.deepEqual(rows.map(r=>r.hidden),[false,false,false]);
  context.leadFilter='done';context.applyInquiryStepFilter();
  assert.equal(context.inquiryStepFilter,'archive');
  assert.deepEqual(rows.map(r=>r.hidden),[false,false,false]);
@@ -74,7 +84,8 @@ test('search in the filter finds names, selected vehicles and proposal links acr
  const controls={teamInquiryTitle:{},teamInquiryPlanner:{}};
  const context={
   SCWorkInquiry:W,SCInquiryView:require('../public/assets/js/inquiry-view.js'),SCPurchaseFlow:require('../public/assets/js/purchase-flow.js'),
-  teamPendingInquiry:'',leadFilter:'open',leadQuery:'golf',inquiryKindFilter:'inspection',
+  teamPendingInquiry:'',leadFilter:'open',leadQuery:'golf',inquiryKindFilter:'inspection',inquiryKindPinned:false,
+  teamInquiryQueue:record=>W.queue(record,{kind:'budget'}),
   LEADS:[{_id:'lead-1',name:'Jelena Ilić',model:'Volkswagen',proposals:[{title:'VW Golf',url:'https://example.test/vehicle/123'}]}],
   INSPS:[{_id:'inspection-1',name:'Marko',car:'Toyota'}],FINDS:[],
   leadStage:()=>({done:false}),activeInspectionInquiry:()=>true,teamInquiryReference:x=>x._id,buildTeamWorkTasks:()=>[],

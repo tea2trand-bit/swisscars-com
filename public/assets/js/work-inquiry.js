@@ -44,6 +44,18 @@
   return steps.find(s=>counts[s.value]>0)?.value||'check-data';
  }
  function kindGroup(kind){return kind==='inspection'?'inspection':kind==='budget'?'budget':'car';}
+ const queues=[['budget','Pronađite auto'],['car','Upiti sa oglasom'],['inspection','Pregledi'],['purchase','Kupovina'],['transport','Transport'],['customs','Carina'],['delivery','Priprema i predaja']].map(([value,label])=>({value,label}));
+ function queue(record,{kind='budget',car=null}={}){
+  if(kind==='inspection')return 'inspection';
+  const stage=car?.status;
+  if(['garaza','prodaja','prodat'].includes(stage)||record.status==='predato')return 'delivery';
+  if(stage==='carinjen')return 'customs';
+  if(stage==='transport')return 'transport';
+  const proposals=(record.proposals||[]).filter(p=>p.answer!=='ne'&&p.avail!=='ne'&&!p.depositRefundAt&&!['refund','continue','other'].includes(p.choice));
+  if(stage==='kupljen'||record.status==='kupljeno'||proposals.some(p=>p.choice==='buy'))return 'purchase';
+  if(record.listingCheck?.status==='available'||proposals.some(p=>p.inspectionPaid===true||p.inspAt||p.plannedAt||p.inspectionScheduled===true||p.answer==='zelim'&&p.avail==='da'))return 'inspection';
+  return kindGroup(kind);
+ }
  function selectKind(counts,current){return ['inspection','car','budget'].includes(current)&&counts[current]>0?current:['inspection','car','budget'].find(k=>counts[k]>0)||'inspection';}
  function primaryAction(html){
   return String(html||'').replace(/<button\b([^>]*?)class="([^"]*)"/,(_m,attrs,classes)=>'<button'+attrs+'class="'+classes.replace(/\binquiry-primary\b/g,'').trim()+' inquiry-primary"');
@@ -72,6 +84,6 @@
    '<span class="iq-next">'+primaryAction(c.action)+'</span>'+progress+'</summary>';
  }
  function nextFlow(checks,allowed){return checks.find(s=>s.flow&&s.field!=='deposit'&&!s.done&&allowed(s.field))||null;}
- const api={steps,stepFor,selectStep,kindGroup,selectKind,summary,nextFlow};
+ const api={steps,stepFor,selectStep,kindGroup,selectKind,summary,nextFlow,queues,queue};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.SCWorkInquiry=api;
 })(typeof window==='undefined'?this:window);

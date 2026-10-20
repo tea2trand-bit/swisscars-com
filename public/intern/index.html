@@ -2218,7 +2218,7 @@ th.n{font-family:var(--f-body)}
   <section id="t-narudzbine" class="wrap" style="gap:16px" hidden>
     <div class="top">
       <div class="inquiry-heading"><div class="inquiry-heading-copy"><div class="inquiry-heading-title"><h2 id="teamInquiryTitle">Upiti</h2><button class="team-inline-link" type="button" id="leadNewBtn" aria-haspopup="dialog" aria-controls="teamPhonePane">Unesi ručno upit</button></div><p>Klijent, auto i sledeći korak — od prvog upita do završetka usluge.</p></div><div class="inquiry-heading-actions"><button class="b" type="button" id="teamInquiryPlanner">Plan obilaska</button></div></div>
-<div class="inquiry-kinds" role="group" aria-label="Put posla"><button type="button" data-inquiry-kind="car" aria-pressed="false">Oglas <span data-kind-count="car">0</span></button><button type="button" data-inquiry-kind="inspection" aria-pressed="false">Pregled <span data-kind-count="inspection">0</span></button><button type="button" data-inquiry-kind="budget" aria-pressed="false">Pronađi <span data-kind-count="budget">0</span></button></div>
+<div class="inquiry-kinds" role="group" aria-label="Radni tok upita"><button type="button" data-inquiry-kind="budget" aria-pressed="false">Pronađite auto <span data-kind-count="budget">0</span></button><button type="button" data-inquiry-kind="car" aria-pressed="false">Upiti sa oglasom <span data-kind-count="car">0</span></button><button type="button" data-inquiry-kind="inspection" aria-pressed="false">Pregledi <span data-kind-count="inspection">0</span></button><button type="button" data-inquiry-kind="purchase" aria-pressed="false">Kupovina <span data-kind-count="purchase">0</span></button><button type="button" data-inquiry-kind="transport" aria-pressed="false">Transport <span data-kind-count="transport">0</span></button><button type="button" data-inquiry-kind="customs" aria-pressed="false">Carina <span data-kind-count="customs">0</span></button><button type="button" data-inquiry-kind="delivery" aria-pressed="false">Priprema i predaja <span data-kind-count="delivery">0</span></button></div>
 <div class="inquiry-search-row"><input id="leadQuery" type="search" placeholder="Ime, auto ili link oglasa" hidden aria-label="Pretraga upita"><span class="note" id="teamInquiryCount" role="status"></span><select id="mobileInquiryStep" aria-label="Filter koraka"><option value="check-data" data-label="Proveri podatke">Proveri podatke · 0</option><option value="price" data-label="Upiši cenu pregleda">Upiši cenu pregleda · 0</option><option value="check-payment" data-label="Proveri uplatu">Proveri uplatu · 0</option><option value="schedule" data-label="Zakaži termin">Zakaži termin · 0</option><option value="inspection" data-label="Obavi pregled">Obavi pregled · 0</option><option value="report" data-label="Pošalji izveštaj">Pošalji izveštaj · 0</option><option value="search" data-label="Pronađi auto">Pronađi auto · 0</option><option value="client" data-label="Čeka odgovor klijenta">Čeka odgovor klijenta · 0</option><option value="deposit" data-label="Čeka kaparu">Čeka kaparu · 0</option><option value="purchase" data-label="Završi kupovinu">Završi kupovinu · 0</option><option value="transport" data-label="Organizuj transport">Organizuj transport · 0</option><option value="customs" data-label="Carinjenje">Carinjenje · 0</option><option value="prepare" data-label="Pripremi vozilo">Pripremi vozilo · 0</option><option value="handover" data-label="Predaj vozilo">Predaj vozilo · 0</option><option value="review" data-label="Otvori zadatak">Otvori zadatak · 0</option><option value="archive" data-label="Završeni poslovi">Završeni poslovi · 0</option></select><div class="chips" id="leadFilter"><button type="button" data-lf="done" aria-pressed="false" title="Prikaži arhivirane upite">Arhiv</button></div></div>
 <div class="inquiry-steps" role="group" aria-label="Sledeći korak"><button type="button" data-inquiry-step="check-data" aria-pressed="true">Proveri podatke <span data-step-count="check-data">0</span></button><button type="button" data-inquiry-step="price" aria-pressed="false">Upiši cenu pregleda <span data-step-count="price">0</span></button><button type="button" data-inquiry-step="check-payment" aria-pressed="false">Proveri uplatu <span data-step-count="check-payment">0</span></button><button type="button" data-inquiry-step="schedule" aria-pressed="false">Zakaži termin <span data-step-count="schedule">0</span></button><button type="button" data-inquiry-step="inspection" aria-pressed="false">Obavi pregled <span data-step-count="inspection">0</span></button><button type="button" data-inquiry-step="report" aria-pressed="false">Pošalji izveštaj <span data-step-count="report">0</span></button><button type="button" data-inquiry-step="search" aria-pressed="false">Pronađi auto <span data-step-count="search">0</span></button><button type="button" data-inquiry-step="client" aria-pressed="false">Čeka odgovor klijenta <span data-step-count="client">0</span></button><button type="button" data-inquiry-step="deposit" aria-pressed="false">Čeka kaparu <span data-step-count="deposit">0</span></button><button type="button" data-inquiry-step="purchase" aria-pressed="false">Završi kupovinu <span data-step-count="purchase">0</span></button><button type="button" data-inquiry-step="transport" aria-pressed="false">Organizuj transport <span data-step-count="transport">0</span></button><button type="button" data-inquiry-step="customs" aria-pressed="false">Carinjenje <span data-step-count="customs">0</span></button><button type="button" data-inquiry-step="prepare" aria-pressed="false">Pripremi vozilo <span data-step-count="prepare">0</span></button><button type="button" data-inquiry-step="handover" aria-pressed="false">Predaj vozilo <span data-step-count="handover">0</span></button><button type="button" data-inquiry-step="review" aria-pressed="false">Otvori zadatak <span data-step-count="review">0</span></button><button type="button" data-inquiry-step="archive" aria-pressed="false">Završeni poslovi <span data-step-count="archive">0</span></button></div>
 
@@ -2527,7 +2527,7 @@ const SPEC=[
  ["Stanje",[["keys","Ključeva","select",["","1","2","3"]],["serviceBook","Servisna knjiga","select",["","Kompletna","Delimična","Nema"]],["lastService","Poslednji servis","text",{ph:"npr. 198.000 km, 05/2026"}],["belt","Zupčasti kaiš / lanac","text",{ph:"npr. menjan na 180.000 km"}],["tires","Gume","text",{ph:"npr. letnje 6 mm + zimske na felnama"}],["damage","Oštećenja i šta treba popraviti","textarea"],["note","Ostale napomene","textarea"]]],
 ];
 const EQUIP=["Navigacija","Klima automatik","Kamera","Parking senzori","LED / Xenon farovi","Grejanje sedišta","Tempomat","Adaptivni tempomat","Kožna sedišta","Alu felne","Kuka","Panorama krov","Apple CarPlay / Android Auto","Bluetooth","Virtuelna tabla","Keyless","Elektro sedišta","Head-up displej"];
-let leadQuery="",inquiryKindFilter="inspection",inquiryStepFilter="check-data";
+let leadQuery="",inquiryKindFilter="inspection",inquiryStepFilter="check-data",inquiryKindPinned=false;
 // Older links can still point to one request, but they now open that request in the normal work list.
 const teamDeepLinkedInquiry=new URLSearchParams(location.search).get('upit')||'';
 let teamExpandedInquiry=teamDeepLinkedInquiry;
@@ -5015,6 +5015,7 @@ function teamInquirySummary(c){
  const vehiclePending=c.kind==='budget'&&!record?.carId&&!(record?.proposals||[]).some(p=>p.answer!=='ne'&&p.avail!=='ne');
  return SCWorkInquiry.summary({...c,serviceCard:true,criteria,vehicle,vehiclePending},{kindLabel:SCInquiryView.labels[c.kind]||SCInquiryView.labels.unknown,location:teamInquiryLocation(c.context)});
 }
+function teamInquiryQueue(record){return SCWorkInquiry.queue(record,{kind:SCInquiryView.kind(record),car:CARS.find(c=>c._id===record.carId)||null});}
 function applyInquiryStepFilter(){
  const counts=Object.fromEntries(SCWorkInquiry.steps.map(s=>[s.value,0]));
  const rows=[...document.querySelectorAll('#pgList>.pgc,#leadList>.workcard,#leadList>.inquiry-archive-row')].map(row=>{
@@ -5024,7 +5025,7 @@ function applyInquiryStepFilter(){
  if(teamPendingInquiry){const linked=rows.find(({row})=>{const card=row.querySelector('[data-lead-card],[data-inspection-card]');return (card?.dataset.leadCard||card?.dataset.inspectionCard)===teamPendingInquiry;});if(linked){inquiryStepFilter=linked.step;teamPendingInquiry='';}}
  inquiryStepFilter=SCWorkInquiry.selectStep(counts,inquiryStepFilter);
  let visible=0,inspections=0;
- for(const {row,step} of rows){const show=step===inquiryStepFilter;row.hidden=!show;if(show){visible++;if(row.parentElement.id==='pgList')inspections++;}}
+ for(const {row} of rows){row.hidden=false;visible++;if(row.parentElement.id==='pgList')inspections++;}
  document.querySelectorAll('[data-inquiry-step]').forEach(button=>{const count=counts[button.dataset.inquiryStep]||0;button.hidden=count===0;button.setAttribute('aria-pressed',String(button.dataset.inquiryStep===inquiryStepFilter));button.querySelector('[data-step-count]').textContent=count;});
  const select=$('mobileInquiryStep');
  for(const option of select.options){const count=counts[option.value]||0,text=option.dataset.label+' · '+count;option.hidden=count===0;option.disabled=count===0;if(option.textContent!==text)option.textContent=text;}
@@ -5034,13 +5035,13 @@ function applyInquiryStepFilter(){
  $('leadEmpty').hidden=visible>0;
 }
 function refreshInquiryKinds(){
- if(teamPendingInquiry){const linked=LEADS.find(l=>l._id===teamPendingInquiry),inspection=INSPS.find(x=>x._id===teamPendingInquiry);if(linked)inquiryKindFilter=SCWorkInquiry.kindGroup(SCInquiryView.kind(linked));else if(inspection)inquiryKindFilter='inspection';}
- const counts={car:0,budget:0,inspection:leadFilter==='done'?0:INSPS.filter(x=>activeInspectionInquiry(x)&&matchesLeadQuery(x)).length};
- LEADS.filter(l=>!l.demo&&matchesLeadQuery(l)&&(leadFilter==='done'?leadStage(l,0).done:!leadStage(l,0).done)).forEach(l=>counts[SCWorkInquiry.kindGroup(SCInquiryView.kind(l))]++);
- inquiryKindFilter=SCWorkInquiry.selectKind(counts,inquiryKindFilter);
- $('teamInquiryTitle').textContent='Upiti';
+ if(teamPendingInquiry){const linked=LEADS.find(l=>l._id===teamPendingInquiry),inspection=INSPS.find(x=>x._id===teamPendingInquiry);if(linked)inquiryKindFilter=teamInquiryQueue(linked);else if(inspection)inquiryKindFilter='inspection';}
+ const counts=Object.fromEntries(SCWorkInquiry.queues.map(q=>[q.value,0]));counts.inspection=leadFilter==='done'?0:INSPS.filter(x=>activeInspectionInquiry(x)&&matchesLeadQuery(x)).length;
+ LEADS.filter(l=>!l.demo&&matchesLeadQuery(l)&&(leadFilter==='done'?leadStage(l,0).done:!leadStage(l,0).done)).forEach(l=>counts[teamInquiryQueue(l)]++);
+ if(!inquiryKindPinned&&!(counts[inquiryKindFilter]>0))inquiryKindFilter=SCWorkInquiry.queues.find(q=>counts[q.value]>0)?.value||'budget';
+ $('teamInquiryTitle').textContent='Svi upiti';
  $('teamInquiryPlanner').hidden=!buildTeamWorkTasks(LEADS,INSPS,FINDS).length;
- document.querySelectorAll('[data-inquiry-kind]').forEach(b=>{const count=counts[b.dataset.inquiryKind]||0;b.hidden=count===0;b.setAttribute('aria-pressed',String(b.dataset.inquiryKind===inquiryKindFilter));const badge=b.querySelector('[data-kind-count]');badge.textContent=count;badge.hidden=count===0;});
+ document.querySelectorAll('[data-inquiry-kind]').forEach(b=>{const count=counts[b.dataset.inquiryKind]||0;b.hidden=false;b.setAttribute('aria-pressed',String(b.dataset.inquiryKind===inquiryKindFilter));const badge=b.querySelector('[data-kind-count]');badge.textContent=count;badge.hidden=false;});
 }
 function matchesLeadQuery(x){const norm=v=>String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("sr-Latn-RS");const hay=norm([x.name,x.contact,x.model,x.car,x.brand,x.email,SCPurchaseFlow.request(x).url,teamInquiryReference(x),x._id,...(x.proposals||[]).flatMap(p=>[p.inquiryReference,p.title,(p.internalListingUrl||p.url),p.place])].filter(Boolean).join(" "));return norm(leadQuery).trim().split(/\s+/).every(q=>hay.includes(q));}
 function renderInsp(){const L=$("pgList");if(!L)return;
@@ -5339,10 +5340,10 @@ function teamFieldAd(url){const safe=teamWorkAdUrl(url);return safe?'<a class="b
 function leadStripVehicle(l,car,props,finds){
  const p=teamOrderProposal(l,car,props);
  const f=p?.findId?finds.find(x=>x._id===p.findId):null;
- const title=car?.model||p?.title||l.listingVehicle?.title||l.model||'Vozilo nije navedeno',year=car?.year||p?.year;
+ const title=car?.model||p?.title||l.listingVehicle?.title||l.model||'Vozilo nije navedeno',year=car?.year||p?.year||l.listingVehicle?.year;
  const city=car?.city||p?.city||f?.city||f?.sellerCity||l.listingVehicle?.place||'';
  const place=city||car?.place||p?.place||f?.place||'';
- return {p,title:title+(year?' · '+year:''),place:place||'Grad nije upisan',city,postalCode:teamPostalCode(p,f,car),adChf:p?.adChf||f?.priceChf||p?.priceChf||l.listingVehicle?.adChf||null,url:(p?.internalListingUrl||p?.url)||f?.url||SCPurchaseFlow.request(l).url,paid:p?.inspectionPaid===true};
+ return {p,title:title+(year?' · '+year:''),place:place||'Grad nije upisan',city,postalCode:teamPostalCode(p,f,car),adChf:p?.adChf||f?.priceChf||p?.priceChf||l.listingVehicle?.adChf||SCPurchaseFlow.request(l).listingPriceChf||null,url:(p?.internalListingUrl||p?.url)||f?.url||SCPurchaseFlow.request(l).url,paid:p?.inspectionPaid===true};
 }
 function leadStripReport(l,car,info){
  const p=info.p;
@@ -5359,7 +5360,7 @@ function renderLeads(){if(teamOrderCalculatorState)return;refreshInquiryKinds();
   const keptDetails=new Set([...document.querySelectorAll("[data-lead-details][open]")].map(e=>e.dataset.leadDetails));
   const keptChats=new Map([...document.querySelectorAll("[data-lead-chat]")].map(e=>[e.dataset.leadChat,e]));
   const rows=shopRows();
-  const list=[...LEADS].map(l=>{const fs=leadFindsOf(l,rows);return {l,fs,st:leadStage(l,fs.length)};}).filter(x=>(SCWorkInquiry.kindGroup(SCInquiryView.kind(x.l))===inquiryKindFilter)&&matchesLeadQuery(x.l)&&(leadFilter==="open"?!x.st.done:x.st.done)).sort((a,b)=>(b.l.created||0)-(a.l.created||0));
+  const list=[...LEADS].map(l=>{const fs=leadFindsOf(l,rows);return {l,fs,st:leadStage(l,fs.length)};}).filter(x=>(teamInquiryQueue(x.l)===inquiryKindFilter)&&matchesLeadQuery(x.l)&&(leadFilter==="open"?!x.st.done:x.st.done)).sort((a,b)=>(b.l.created||0)-(a.l.created||0));
   const ourCars=CARS.filter(c=>["kupljen","transport","carinjen","garaza","prodaja"].includes(c.status));
   $("leadList").innerHTML=list.map(({l,st,fs})=>{
     if(l.status==='arhiva')return '<article class="inquiry-archive-row"><span><b>'+esc(l.name||'Klijent')+'</b><small>'+esc(teamInquiryReference(l))+'</small></span><span>Završeno — oglas nije dostupan</span><time>'+esc(new Date(l.archivedAt||l.statusChangedAt||l.created).toLocaleDateString(EV.locale()))+'</time></article>';
@@ -5590,7 +5591,7 @@ $("leadNewBtn").onclick=openNewLead;
 $("l_purpose").onchange=syncLeadPurpose;
 $("leadNewCancel").onclick=()=>{if(teamPhoneSaving)return;$("teamPhonePane").close();$("leadNewBox").hidden=true;$("leadForm").reset();};
 $("teamPhoneClose").onclick=()=>$("leadNewCancel").click();
-document.querySelectorAll('[data-inquiry-kind]').forEach(b=>b.onclick=()=>{teamPendingInquiry='';inquiryKindFilter=b.dataset.inquiryKind;inquiryStepFilter='';renderLeads();});
+document.querySelectorAll('[data-inquiry-kind]').forEach(b=>b.onclick=()=>{teamPendingInquiry='';inquiryKindFilter=b.dataset.inquiryKind;inquiryKindPinned=true;inquiryStepFilter='';renderLeads();});
 $('teamInquiryPlanner').onclick=()=>openTeamPlanning();
 $('t-narudzbine').addEventListener('click',e=>{const b=e.target.closest('[data-inquiry-expand]');if(!b)return;e.preventDefault();e.stopPropagation();const card=b.closest('[data-lead-card],[data-inspection-card]');if(card)card.open=true;});
 $("leadQuery").oninput=e=>{leadQuery=e.target.value;renderLeads();};
@@ -6005,7 +6006,7 @@ $("loginForm").addEventListener("submit",async e=>{e.preventDefault();const b=$(
 (() => {
   const mobile = window.matchMedia('(max-width:760px)');
   const titles = {
-    mobileAdminSection: 'Administracija', mobileSection: 'Evidencija', mobileCarFilter: 'Faza auta', mobileInquiryStep: 'Pretraži upite', companyProgressCounter: 'Pregled pretrage',
+    mobileAdminSection: 'Administracija', mobileSection: 'Evidencija', mobileCarFilter: 'Faza auta', companyProgressCounter: 'Pregled pretrage',
     companyFindFilter: 'Rezultati', teamReportPeriod: 'Prikaži preglede', companyAutomaticPriority: 'Model pretrage', companyManualPriority: 'Prioritet pretrage', companyManualProfit: 'Cilj zarade po autu', companyAutomaticProfit: 'Cilj zarade po autu', companyAutomaticYearFrom: 'Godište od', companyAutomaticYearTo: 'Godište do', companyManualYearFrom: 'Godište od', companyManualYearTo: 'Godište do', companyAutomaticKmMax: 'Maks. km', companyManualKmMax: 'Maks. km', companyManualBody: 'Karoserija', companyManualRadius: 'Radijus, km',
     historyTypes: 'Vrsta događaja', historyPeople: 'Ko je uradio', historyClients: 'Klijent',
     ocMonth: 'Mesec obračuna', soldPer: 'Period prodaje',
@@ -6029,7 +6030,7 @@ $("loginForm").addEventListener("submit",async e=>{e.preventDefault();const b=$(
   inquirySearch.innerHTML = '<div class="team-inquiry-search-heading"><label for="leadQuery">Pretraži upite</label><button class="b small" type="button" data-clear-inquiry-search>Obriši</button></div>';
   const inquiryInput = document.getElementById('leadQuery');
   inquiryInput.hidden = false;
-  inquirySearch.append(inquiryInput);
+  // Inquiry search remains inline beside the work queues.
   list.before(inquirySearch);
   const inquiryResults = document.createElement('button');
   inquiryResults.type = 'button';
@@ -6286,5 +6287,5 @@ dialog#teamCarWorkPane::backdrop{background:rgba(36,55,67,.20)}
  #app #t-auta .team-car-action .b{width:100%;min-width:0}
 }
 </style>
-<script src="/assets/js/transport-jobs.js"></script><script src="/assets/js/transport-admin-seed.js"></script><script src="/assets/js/search-location-preview.js"></script><script src="/assets/js/search-vehicle-picker.js"></script><script src="/assets/js/search-budget-entry.js"></script><script src="/assets/js/team-search-layout.js"></script><script src="/assets/js/inspection-market.js"></script><script src="/assets/js/inspection-team-precheck-local.js"></script><link rel="stylesheet" href="/assets/css/team-mobile.css"><script src="/assets/js/team-mobile.js"></script><link rel="stylesheet" href="/assets/css/listing-proposal.css"><script src="/assets/js/listing-details.js"></script><script src="/assets/js/proposal-facts.js"></script><script src="/assets/js/team-listing-proposal.js"></script><link rel="stylesheet" href="/assets/css/team-service-card.css"><script src="/assets/js/team-client-name.js"></script></body>
+<script src="/assets/js/transport-jobs.js"></script><script src="/assets/js/transport-admin-seed.js"></script><script src="/assets/js/search-location-preview.js"></script><script src="/assets/js/search-vehicle-picker.js"></script><script src="/assets/js/search-budget-entry.js"></script><script src="/assets/js/team-search-layout.js"></script><script src="/assets/js/inspection-market.js"></script><script src="/assets/js/inspection-team-precheck-local.js"></script><link rel="stylesheet" href="/assets/css/team-mobile.css"><script src="/assets/js/team-mobile.js"></script><link rel="stylesheet" href="/assets/css/listing-proposal.css"><script src="/assets/js/listing-details.js"></script><script src="/assets/js/proposal-facts.js"></script><script src="/assets/js/team-listing-proposal.js"></script><link rel="stylesheet" href="/assets/css/team-service-card.css"><script src="/assets/js/team-inquiry-editor.js"></script></body>
 </html>
