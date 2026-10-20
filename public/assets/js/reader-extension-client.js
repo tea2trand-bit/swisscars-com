@@ -24,7 +24,7 @@
         const timer = setTimeout(() => {
           cleanup();
           window.postMessage({source: 'swiscars-card', type: 'cancel'}, location.origin);
-          reject(Error('extension_disconnected'));
+          reject(Error('reader_timeout'));
         }, 210000);
         window.addEventListener('message', onMessage);
         window.postMessage({source: 'swiscars-card', type: 'read', id, url}, location.origin);

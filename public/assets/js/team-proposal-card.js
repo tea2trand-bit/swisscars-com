@@ -163,6 +163,9 @@
     offerForm.elements.url.focus();
   });
   const reasons={
+    reader_background_unavailable:'Pozadinski deo SWISCARS čitača nije dostupan. Ponovo učitaj ekstenziju i osveži SWISCARS stranicu. Podaci nisu preuzeti.',
+    reader_source_rejected:'Čitač je odbio ovu SWISCARS stranicu. Potrebna je ažurirana verzija čitača za glavni sajt.',
+    reader_timeout:'Čitač nije odgovorio u predviđenom roku. Podaci nisu preuzeti; pokušaj ponovo.',
     extension_missing:'SWISCARS čitač nije povezan sa ovom karticom. Otvori je u običnom Chrome-u sa uključenom ekstenzijom „SWISCARS čitač oglasa (lokalno)”, pa osveži stranicu. Podaci i fotografije nisu učitani.',
     extension_disconnected:'Veza sa SWISCARS čitačem je prekinuta (ekstenzija je isključena ili ponovo učitana). Pokušaj ponovo.',
     tab_closed:'Kartica oglasa je zatvorena pre kraja čitanja. Podaci i fotografije nisu učitani.',
@@ -211,7 +214,7 @@
   function showListingError(error) {
     setListingStatus('error',error.message==='extension_missing'?'SWISCARS čitač nije povezan':error.message==='cloud_not_configured'?'Cloud čitač nije povezan':'Greška pri učitavanju oglasa',reasons[error.message]||'Automatsko preuzimanje nije uspelo. To ne znači da oglas ne postoji ili da se ne otvara u brauzeru. Podaci i fotografije nisu učitani.');
     if(error.message==='extension_missing'){
-      const link=document.createElement('a');link.href='/downloads/swiscars-citac-0.2.0.zip';link.textContent='Preuzmi čitač 0.2.0 za glavni sajt';link.download='swiscars-citac-0.2.0.zip';readStatus.append(link);
+      const link=document.createElement('a');link.href='/downloads/swiscars-citac-0.2.1.zip';link.textContent='Preuzmi čitač 0.2.1 za glavni sajt';link.download='swiscars-citac-0.2.1.zip';readStatus.append(link);
     }
   }
   readButton.addEventListener('click', async () => {
@@ -229,7 +232,7 @@
     cancel.onclick=()=>{cancel.disabled=true;window.SCReaderExtension.cancel();};
     try {
       const snapshot=await window.SCReaderExtension.read(input.value.trim(),{onStage:stage=>{
-        if(stage==='access_check'){
+        if(stage==='reader_connected'){setListingStatus('loading','Čitač je povezan','Otvaram poslati oglas i preuzimam podatke i fotografije…');}else if(stage==='access_check'){
           setListingStatus('warning','Potrebna je tvoja potvrda u otvorenoj kartici','AutoScout traži ljudsku proveru. U kartici oglasa koja je sada otvorena potvrdi je sam; čitanje čeka do 3 minuta i nastavlja se samo od sebe. Ne zatvaraj tu karticu.');
           readStatus.append(cancel);
         }else if(stage==='access_check_cleared'){

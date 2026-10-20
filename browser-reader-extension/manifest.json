@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "SWISCARS čitač oglasa (lokalno)",
+  "version": "0.2.1",
+  "description": "Na klik tima čita AutoScout oglas, otvara samo odeljke opreme i opisa i vraća podatke SWISCARS predlogu. Ne čita kolačiće i ne rešava proveru čoveka.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.autoscout24.ch/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://127.0.0.1:4193/predlog-kartice/*",
+        "http://127.0.0.2:4193/predlog-kartice/*",
+        "https://swiscars.com/intern/predlog-vozila/*"
+      ],
+      "js": [
+        "bridge.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}
