@@ -54,14 +54,14 @@
  }
  function queue(record,{kind='budget',car=null}={}){
   if(kind==='inspection')return record.needsVehicleCheck?'documents':'inspection';
-  const savedCarQueue=carQueue(car);if(savedCarQueue)return savedCarQueue;
+  const savedCarQueue=carQueue(car);if(savedCarQueue)return savedCarQueue==='sale'&&record.carId&&!record.internalRequest?'delivery':savedCarQueue;
   if(record.status==='predato')return 'delivery';
   const proposals=(record.proposals||[]).filter(p=>p.answer!=='ne'&&p.avail!=='ne'&&!p.depositRefundAt&&!['refund','continue','other'].includes(p.choice));
   if(record.status==='kupljeno'||proposals.some(p=>p.choice==='buy'))return 'purchase';
   if(proposals.some(p=>p.inspectionPaid===true||p.inspAt||p.plannedAt||p.inspectionScheduled===true))return 'inspection';
   const selected=proposals.filter(p=>p.answer==='zelim'||p.serviceFlow==='inspection-first');
   if(selected.length)return selected.every(p=>p.avail==='da'&&typeof p.originProofVerified==='boolean'&&typeof p.chVatRefundVerified==='boolean')?'inspection':'documents';
-  if(record.listingReview)return 'inspection';
+  if(record.listingReview&&typeof record.listingVehicle?.originProofVerified==='boolean'&&typeof record.listingVehicle?.chVatRefundVerified==='boolean')return 'inspection';
   if(record.listingVehicle||record.listingCheck?.status==='available')return 'documents';
   return kindGroup(kind);
  }
@@ -82,7 +82,7 @@
    const action=step==='check-payment'||String(c.action||'').includes('data-inquiry-expand')?'':primaryAction(c.action);
    const request=c.requestFacts?'<span class="sc-request" aria-label="Klijent je tražio"><strong class="sc-request-model">'+escape(c.requestFacts.model)+'</strong><span class="sc-request-facts">'+c.requestFacts.facts.map(([label,value])=>'<span><small>'+escape(label)+'</small><strong>'+escape(value)+'</strong></span>').join('')+'</span></span>':c.criteria?'<span class="sc-request"><span>Klijent je tražio:</span> <strong>'+escape(c.criteria)+'</strong></span>':'';
    const person=escape(c.person||'Ime nije upisano');
-   const client=c.personContact?c.personContact.replace(/<button\b/,'<button title="Otvori kontakt" aria-label="Kontakt: '+person+'"').replace(/class="([^"]*)"/,'class="$1 sc-client-link"').replace(/>[^<]*<\/button>/,'>'+person+'</button>'):'<strong>'+person+'</strong>';
+   const client=c.personContact?c.personContact.replace(/<button\b/,'<button title="Otvori kontakt" aria-label="Kontakt: '+person+'"').replace(/class="([^"]*)"/,'class="$1 sc-client-link"').replace(/>[^<]*<\/button>/,()=>'>'+person+'</button>'):'<strong>'+person+'</strong>';
    const photo=/^https:\/\//.test(c.thumbnail||'')?'<img class="sc-vehicle-photo" src="'+escape(c.thumbnail)+'" alt="Fotografija vozila" loading="lazy" referrerpolicy="no-referrer">':'';
    const vehicle=c.vehiclePending?'':'<span class="sc-vehicle">'+photo+'<span class="sc-vehicle-info"><strong>'+escape(c.vehicle||'Podaci vozila još nisu preuzeti')+'</strong>'+(c.vehicleMeta?'<span class="sc-location">'+escape(c.vehicleMeta)+'</span>':'')+(options.location?'<span class="sc-location">'+options.location+'</span>':'')+'</span><span class="sc-ad">'+(c.contact||'')+'</span><span class="sc-price"><small>'+escape(c.amountLabel)+'</small><strong>'+escape(c.amount)+'</strong></span></span>';
    return '<summary class="inquiry-summary is-service-card" data-work-step="'+step+'">'+

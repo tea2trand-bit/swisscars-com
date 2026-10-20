@@ -38,16 +38,24 @@ test('work queues follow recorded business state across both entry points withou
 test('numbered phases distinguish three parallel entries, document checks and the two destinations',()=>{
  assert.equal(W.queues.length,10);assert.deepEqual(W.queues.map(q=>q.number),[1,1,1,2,3,4,5,6,7,8]);
  assert.equal(W.queue({listingVehicle:{title:'Audi'}},{kind:'listing'}),'documents');
- assert.equal(W.queue({listingReview:{at:1}},{kind:'listing'}),'inspection');
+ assert.equal(W.queue({listingReview:{at:1},listingVehicle:{originProofVerified:null}},{kind:'listing'}),'documents');
+ assert.equal(W.queue({listingReview:{at:1},listingVehicle:{originProofVerified:true,chVatRefundVerified:false}},{kind:'listing'}),'inspection');
  assert.equal(W.companyQueue({status:'favoriti'},null),'documents');
  assert.equal(W.companyQueue({status:'favoriti'},null,{conditionsReviewed:true}),'inspection');
  assert.equal(W.companyQueue({status:'pregled'},{internalReportAt:1},{purchaseReady:true}),'purchase');
  assert.equal(W.carQueue({status:'prodaja',readyFor:'sale'}),'sale');
  assert.equal(W.carQueue({status:'prodaja',orderId:'client'}),'delivery');
+ assert.equal(W.queue({carId:'client-car'},{kind:'budget',car:{status:'prodaja'}}),'delivery');
  assert.equal(W.carQueue({status:'garaza'}),'customs','preparation must not be called ready for sale');
  const card=W.summary({serviceCard:true,kind:'listing',workQueue:'car',vehicle:'Audi RS3',vehicleMeta:'2023 · 73.500 km',person:'Miroslav Ilić',action:'',status:'Upit primljen'},{location:'6850 Mendrisio'});
  assert.equal((card.match(/Audi RS3/g)||[]).length,1);assert.doesNotMatch(card,/Vozilo iz oglasa|Grad nije upisan/);
  assert.match(card,/sc-phase-number">1\./);assert.match(card,/Kupovina vozila \(upit sa oglasom\)/);
+});
+
+test('the client name is the single accessible contact control and retains its existing handler',()=>{
+ const card=W.summary({serviceCard:true,kind:'budget',vehiclePending:true,person:'Stefan <Stanić>',personContact:'<button class="b small" data-contact-toggle="inquiry-1">Kontakt</button>',status:'Primljeno',action:''},{location:''});
+ assert.match(card,/data-contact-toggle="inquiry-1"/);assert.match(card,/sc-client-link/);assert.match(card,/aria-label="Kontakt: Stefan &lt;Stanić&gt;"/);assert.match(card,/>Stefan &lt;Stanić&gt;<\/button>/);
+ assert.doesNotMatch(card,/>Kontakt<|<small>Klijent<\/small>/);
 });
 
 test('company jobs do not duplicate client-linked vehicles or finds already converted into a vehicle',()=>{
