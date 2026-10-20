@@ -6004,7 +6004,7 @@ $("loginForm").addEventListener("submit",async e=>{e.preventDefault();const b=$(
 (() => {
   const mobile = window.matchMedia('(max-width:760px)');
   const titles = {
-    mobileAdminSection: 'Administracija', mobileSection: 'Evidencija', mobileCarFilter: 'Faza auta', mobileInquiryStep: 'Filter / Pretraga', companyProgressCounter: 'Pregled pretrage',
+    mobileAdminSection: 'Administracija', mobileSection: 'Evidencija', mobileCarFilter: 'Faza auta', mobileInquiryStep: 'Pretraži upite', companyProgressCounter: 'Pregled pretrage',
     companyFindFilter: 'Rezultati', teamReportPeriod: 'Prikaži preglede', companyAutomaticPriority: 'Model pretrage', companyManualPriority: 'Prioritet pretrage', companyManualProfit: 'Cilj zarade po autu', companyAutomaticProfit: 'Cilj zarade po autu', companyAutomaticYearFrom: 'Godište od', companyAutomaticYearTo: 'Godište do', companyManualYearFrom: 'Godište od', companyManualYearTo: 'Godište do', companyAutomaticKmMax: 'Maks. km', companyManualKmMax: 'Maks. km', companyManualBody: 'Karoserija', companyManualRadius: 'Radijus, km',
     historyTypes: 'Vrsta događaja', historyPeople: 'Ko je uradio', historyClients: 'Klijent',
     ocMonth: 'Mesec obračuna', soldPer: 'Period prodaje',
@@ -6102,7 +6102,7 @@ $("loginForm").addEventListener("submit",async e=>{e.preventDefault();const b=$(
       const radius = record.select.id === 'companyManualRadius';
       const emptyChoice = profit ? 'Cilj zarade' : year ? (record.select.dataset.searchYear === 'yearFrom' ? 'Od godišta' : 'Do godišta') : radius ? 'Izaberi radijus' : rawText;
       const text = record.select.value ? (profit ? rawText.replace(/\s*€$/, '') : rawText) : emptyChoice;
-      const buttonText=record.select.id==='mobileInquiryStep'?'Filter / Pretraga':record.select.id==='ocMonth'?rawText.replace(/\s*\(.*?\)/g,'').trim():text;
+      const buttonText=record.select.id==='mobileInquiryStep'?'Pretraži upite':record.select.id==='ocMonth'?rawText.replace(/\s*\(.*?\)/g,'').trim():text;
       if (record.label.textContent !== buttonText) record.label.textContent = buttonText;
       record.button.classList.toggle('is-placeholder', (profit || year || radius) && !record.select.value);
       record.button.disabled = record.select.disabled;
