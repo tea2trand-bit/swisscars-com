@@ -1421,3 +1421,10 @@ html{scrollbar-gutter:stable}
  body>.site-header .brand small{font-size:9px}
  body>.site-header .language-switch button{min-height:30px;padding:4px 8px;font-size:10px}
 }
+
+/* Public business profiles, with labels and keyboard-accessible touch targets. */
+.footer-legal{flex-wrap:wrap;align-items:center}
+.footer-legal .social-link{display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.footer-legal .social-link svg{width:18px;height:18px;flex:none}
+.luxury-public .footer-legal .social-link{font-size:14px}
+.contact-links .social-link:focus-visible,.footer-legal .social-link:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
