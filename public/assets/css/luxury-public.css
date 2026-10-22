@@ -280,6 +280,7 @@ body.luxury-public{
 .luxury-home .hero-actions .btn{font-size:16px;font-weight:600;min-height:56px;line-height:1.4}
 .luxury-home .hero-photo{filter:brightness(1.38) saturate(.88)}
 .luxury-home .hero-visual:after{background:linear-gradient(90deg,#141a1d 0%,#141a1db0 15%,#141a1d12 42%,#141a1d10 90%,#141a1d36),linear-gradient(0deg,#141a1d60,transparent 25%)}
+@media(min-width:1101px){.luxury-public .site-header>.nav{order:0}}
 @media(max-width:1100px){
   .luxury-public .nav{gap:0}
   .luxury-public .site-header .nav.open>a,.luxury-public .site-header .nav.open .nav-partners>summary{font-size:16px;font-weight:500;min-height:44px}
